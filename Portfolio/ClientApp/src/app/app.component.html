@@ -1,0 +1,12 @@
+<mat-sidenav-container fullscreen>
+  <mat-sidenav #sidenav mode="side" [fixedInViewport]="true">
+    <div>
+      <app-sidenav></app-sidenav>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <app-header (toggleSidenavEvent)="toggleSidenav()"></app-header>
+    <router-outlet></router-outlet>
+    <app-footer></app-footer>
+  </mat-sidenav-content>
+</mat-sidenav-container>

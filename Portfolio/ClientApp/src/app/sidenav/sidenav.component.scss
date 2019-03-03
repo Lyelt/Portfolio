@@ -1,0 +1,27 @@
+@import 'src/lyelt-theme.scss';
+
+.logo {
+  max-height: 3em;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.nav-item {
+  padding: 1em 1.5em 0 .5em;
+  color: #808080;
+  text-decoration-line: none;
+  font-size: 1.25em;
+}
+
+.sidenav-bar {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.active {
+  text-decoration: underline !important;
+  text-decoration-color: $primary !important;
+}

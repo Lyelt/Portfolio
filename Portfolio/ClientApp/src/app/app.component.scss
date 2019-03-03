@@ -1,0 +1,11 @@
+@import 'src/lyelt-theme.scss';
+
+mat-sidenav-content {
+  padding: .75em;
+  overflow: hidden;
+}
+
+mat-sidenav {
+  border-right: .25px solid;
+  padding-right: .5px; /* for some reason, the border does not render properly otherwise */
+}

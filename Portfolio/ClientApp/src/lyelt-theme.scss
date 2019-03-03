@@ -1,0 +1,9 @@
+﻿@import '~@angular/material/theming';
+
+$lyelt-primary: mat-palette($mat-indigo);
+$lyelt-accent: mat-palette($mat-pink);
+$lyelt-warn: mat-palette($mat-deep-orange);
+
+$primary: mat-color($lyelt-primary);
+$accent: mat-color($lyelt-accent);
+$warn: mat-color($lyelt-warn);
