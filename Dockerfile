@@ -1,6 +1,9 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /app
 
+RUN curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
+RUN sudo apt-get install -y nodejs
+
 # copy csproj and restore as distinct layers
 COPY *.sln .
 COPY Portfolio/*.csproj ./Portfolio/
