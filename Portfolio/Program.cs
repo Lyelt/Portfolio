@@ -19,7 +19,6 @@ namespace Portfolio
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                //.UseSetting("https_port", Environment.GetEnvironmentVariable("PORT"))
                 .UseStartup<Startup>();
     }
 }
