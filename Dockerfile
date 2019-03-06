@@ -16,7 +16,7 @@ RUN dotnet publish -c Release -o out
 
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS runtime
-ENV ASPNETCORE_URLS http://*:5000
+ENV ASPNETCORE_URLS http://*:5000;https://*:5000
 ENV ASPNETCORE_HTTPS_PORT 5000
 WORKDIR /app
 COPY --from=build /app/Portfolio/out ./
