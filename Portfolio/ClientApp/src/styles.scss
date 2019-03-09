@@ -13,6 +13,14 @@ mat-sidenav-container {
   min-height: 100%;
 }
 
+.body-content {
+  min-height: calc(100vh - 125px);
+}
+
+.footer-content {
+  height: 70px;
+}
+
 ul {
   list-style-type: none;
   margin: 0 0 2em 0;
