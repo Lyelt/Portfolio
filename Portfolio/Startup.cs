@@ -40,7 +40,6 @@ namespace Portfolio
             {
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
-
             }
 
             app.UseStaticFiles();
