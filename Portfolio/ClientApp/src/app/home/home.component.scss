@@ -1,0 +1,52 @@
+@import '../../lyelt-theme.scss';
+
+.highlight {
+  color: $primary;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 28px;
+}
+
+.container-vertical {
+  text-align: center;
+}
+
+.head {
+  margin: 4em 0 4em 0;
+}
+
+.projects {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.experience {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.experience {
+}
+
+.card {
+  max-width: 600px;
+  min-width: 325px;
+  text-align: left;
+  margin: 2em 0 2em 0;
+}
+
+.experience-card {
+  background-color: rgba(233, 30, 99, .25);
+}
+
+.project-card {
+  background-color: rgba(63, 81, 181, .25);
+}
+
+.project-card > mat-card-actions {
+  text-align: center;
+}

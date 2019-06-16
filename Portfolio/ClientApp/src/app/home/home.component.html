@@ -1,3 +1,74 @@
-<p>
-  Welcome to Nick's portfolio. Here, you will find all of Nick's personal projects in one place, as well as information about his skills and experiences.
-</p>
+<div class="container-vertical">
+  <div class="head">
+    <h1 class="title">
+      Hi, I'm <span class="highlight">Nicholas Ghobrial</span>.
+    </h1>
+    <p>
+      I'm a software engineer from Connecticut working for <a href="https://bernoullihealth.com">Bernoulli Health</a>, a medical device software company.
+    </p>
+  </div>
+  <div class="projects">
+    <h2>Personal Projects</h2>
+    <mat-card class="card project-card">
+      <mat-card-header>
+        <mat-card-title>D&D Encounter Simulator</mat-card-title>
+      </mat-card-header>
+      <img mat-card-image class="project-image" src="assets/encounter/3.png" alt="Encounter Simulator image" />
+      <mat-card-content>
+        <p>
+          A tool used for tracking initiatives and statistics during a D&D encounter.
+        </p>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button routerLink="encounter"><mat-icon>expand_more</mat-icon> Read More</button>
+        <button mat-button (click)="navigate('https://github.com/Lyelt/EncounterSimulator');"><mat-icon>exit_to_app</mat-icon> View on GitHub</button>
+      </mat-card-actions>
+    </mat-card>
+    <mat-card class="card project-card">
+      <mat-card-header>
+        <mat-card-title>Typing Analyzer</mat-card-title>
+      </mat-card-header>
+      <img mat-card-image class="project-image" src="assets/typing/1.png" alt="Typing Analyzer image" />
+      <mat-card-content>
+        <p>
+          Gather interesting and useful stats about your typing patterns.
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button routerLink="typing"><mat-icon>expand_more</mat-icon> Read More</button>
+        <button mat-button (click)="navigate('https://github.com/Lyelt/TypingAnalyzer');"><mat-icon>exit_to_app</mat-icon> View on GitHub</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="card project-card">
+      <mat-card-header>
+        <mat-card-title>Portfolio</mat-card-title>
+      </mat-card-header>
+      <img mat-card-image class="project-image" src="assets/portfolio/1.png" alt="Portfolio image" />
+      <mat-card-content>
+        <p>
+          This website! A custom portfolio website detailing my personal projects and work experience.
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button routerLink="portfolio"><mat-icon>expand_more</mat-icon> Read More</button>
+        <button mat-button (click)="navigate('https://github.com/Lyelt/Portfolio');"><mat-icon>exit_to_app</mat-icon> View on GitHub</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+  <!-- In progress
+  <div class="experience">
+    <h2>Work Experience</h2>
+    <mat-card class="card experience-card">
+      <mat-card-header>
+        <mat-card-title>Programming</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          Experienced in C# development
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>-->
+</div>

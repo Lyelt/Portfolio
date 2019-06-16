@@ -9,6 +9,9 @@ import { SidenavComponent } from './sidenav/sidenav.component';
 import { AboutComponent } from './about/about.component';
 import { MaterialModule } from './material/material.module';
 import { HomeComponent } from './home/home.component';
+import { EncounterComponent } from './encounter/encounter.component';
+import { TypingComponent } from './typing/typing.component';
+import { PortfolioComponent } from './portfolio/portfolio.component';
 
 const routes: Routes = [
   {
@@ -19,6 +22,15 @@ const routes: Routes = [
   },
   {
     path: 'about', component: AboutComponent
+  },
+  {
+    path: 'encounter', component: EncounterComponent
+  },
+  {
+    path: 'typing', component: TypingComponent
+  },
+  {
+    path: 'portfolio', component: PortfolioComponent
   }
 ];
 
@@ -29,7 +41,10 @@ const routes: Routes = [
     FooterComponent,
     SidenavComponent,
     AboutComponent,
-    HomeComponent
+    HomeComponent,
+    EncounterComponent,
+    TypingComponent,
+    PortfolioComponent
   ],
   imports: [
     BrowserModule,
