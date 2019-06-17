@@ -18,7 +18,17 @@
   color: black;
 }
 
+
+@media only screen and (min-width: 600px) {
+  .icon-row {
+    display: none;
+  }
+}
+
 .footer-row {
-  margin-top: 1em;
   justify-content: center;
+}
+
+.footer-row:first-child {
+  margin-top: 1em;
 }

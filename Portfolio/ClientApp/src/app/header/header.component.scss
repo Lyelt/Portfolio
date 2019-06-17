@@ -3,16 +3,40 @@
 }
 
 .spacer {
-  flex: 1 1 auto;
+  flex: .5 1 auto;
 }
 
 .nav-item {
-  padding: 0 2em;
+  padding: 0 1em;
   color: #808080;
   text-decoration-line: none;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.icon {
+  display: none;
+}
+
+@media only screen and (min-width: 600px) {
+  .nav-item {
+    font-size: 16px;
+  }
+
+  .icon {
+    display: inline;
+  }
+
 }
 
 .header-bar {
   background-color: white;
   border-bottom: .25px solid;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+  z-index: 999;
+  width: 100%;
 }

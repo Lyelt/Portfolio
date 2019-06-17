@@ -16,4 +16,11 @@ export class HeaderComponent implements OnInit {
     toggleSidenav() {
         this.toggleSidenavEvent.emit();
     }
+
+  scrollToElement(elementId: string) {
+    const el = document.querySelector("#" + elementId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
 }
