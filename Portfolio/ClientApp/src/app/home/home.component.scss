@@ -14,44 +14,59 @@
 }
 
 .head {
-  margin: 4em 0 4em 0;
+  margin-bottom: 4em;
 }
 
-.projects {
+.projects, .skills, .about, .contact {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.skills {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.skills {
 }
 
 .card {
-  max-width: 600px;
-  min-width: 330px;
+  width: 330px;
   text-align: left;
   margin: 2em 0 2em 0;
 }
 
 @media only screen and (min-width: 600px) {
   .card {
-    min-width: 600px;
+    min-width: 560px;
   }
 }
 
+@media only screen and (min-width: 1080px) {
+  .card {
+    min-width: 800px;
+  }
+}
 
-.skill-card {
+.skill-card, .about-card {
+  background-color: rgba(63, 81, 181, .25);
+}
+
+.project-card, .contact-card {
   background-color: rgba(233, 30, 99, .25);
 }
 
-.project-card {
-  background-color: rgba(63, 81, 181, .25);
+.bg-image::before {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.1;
+  content: "";
+  height: 75%;
+  width: 100%;
+  position: absolute;
+  z-index: -2;
+}
+
+.unh-logo::before {
+  background-image: url('../../assets/unh-logo.png');
+}
+
+.jenkins-logo::before {
+  background-image: url('../../assets/jenkins-logo.png')
 }
 
 .project-card > mat-card-actions {
