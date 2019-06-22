@@ -18,12 +18,6 @@ const routes: Routes = [
     path: '', component: HomeComponent
   },
   {
-    path: 'home', component: HomeComponent
-  },
-  {
-    path: 'about', component: AboutComponent
-  },
-  {
     path: 'encounter', component: EncounterComponent
   },
   {
@@ -49,7 +43,7 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     HttpModule,
-    RouterModule.forRoot(routes, { useHash: true }),
+    RouterModule.forRoot(routes, { useHash: false }),
     MaterialModule
   ],
   providers: [],
