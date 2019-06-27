@@ -26,7 +26,7 @@
 .card {
   width: 330px;
   text-align: left;
-  margin: 2em 0 2em 0;
+  margin: 1em 0 2em 0;
 }
 
 @media only screen and (min-width: 600px) {
@@ -41,12 +41,24 @@
   }
 }
 
-.skill-card, .about-card {
+.skill-card, .contact-card {
   background-color: rgba(63, 81, 181, .25);
 }
 
-.project-card, .contact-card {
+.project-card, .about-card {
   background-color: rgba(233, 30, 99, .25);
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: flex-start;
+  min-height: 48px;
+}
+
+.contact-info {
+  margin-left: 3em;
 }
 
 .bg-image::before {

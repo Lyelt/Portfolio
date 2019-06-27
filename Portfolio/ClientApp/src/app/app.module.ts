@@ -12,6 +12,8 @@ import { HomeComponent } from './home/home.component';
 import { EncounterComponent } from './encounter/encounter.component';
 import { TypingComponent } from './typing/typing.component';
 import { PortfolioComponent } from './portfolio/portfolio.component';
+import { SpeedrunComponent } from './speedrun/speedrun.component';
+import { BowlingComponent } from './bowling/bowling.component';
 
 const routes: Routes = [
   {
@@ -25,6 +27,12 @@ const routes: Routes = [
   },
   {
     path: 'portfolio', component: PortfolioComponent
+  },
+  {
+    path: 'speedrun', component: SpeedrunComponent
+  },
+  {
+    path: 'bowling', component: BowlingComponent
   }
 ];
 
@@ -38,7 +46,9 @@ const routes: Routes = [
     HomeComponent,
     EncounterComponent,
     TypingComponent,
-    PortfolioComponent
+    PortfolioComponent,
+    SpeedrunComponent,
+    BowlingComponent
   ],
   imports: [
     BrowserModule,
