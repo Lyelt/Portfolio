@@ -33,6 +33,10 @@ const routes: Routes = [
   },
   {
     path: 'bowling', component: BowlingComponent
+  },
+  {
+    path: '**',
+    redirectTo: '/'
   }
 ];
 
