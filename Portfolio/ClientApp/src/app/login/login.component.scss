@@ -1,0 +1,24 @@
+.card {
+  width: 330px;
+  text-align: left;
+  margin: 1em 0 2em 0;
+}
+
+@media only screen and (min-width: 600px) {
+  .card {
+    min-width: 560px;
+  }
+}
+
+@media only screen and (min-width: 1080px) {
+  .card {
+    min-width: 800px;
+  }
+}
+
+.outer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(63, 81, 181, .25);
+}
