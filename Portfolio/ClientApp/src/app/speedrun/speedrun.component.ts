@@ -12,7 +12,7 @@ export class SpeedrunComponent implements OnInit {
   constructor(private http: Http) { }
 
   ngOnInit() {
-    this.http.get('./test.json').subscribe(data => {
+    this.http.get('Speedrun/GetStarTimes').subscribe(data => {
       for (let starTime of data.json()) {
         this.starTimes.push(starTime);
         console.log(starTime);

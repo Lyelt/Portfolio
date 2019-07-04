@@ -14,6 +14,9 @@ import { TypingComponent } from './typing/typing.component';
 import { PortfolioComponent } from './portfolio/portfolio.component';
 import { SpeedrunComponent } from './speedrun/speedrun.component';
 import { BowlingComponent } from './bowling/bowling.component';
+import { LoginComponent } from './login/login.component';
+import { AuthGuard } from './auth/auth-guard.service';
+import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
 
 const routes: Routes = [
   {
@@ -29,10 +32,13 @@ const routes: Routes = [
     path: 'portfolio', component: PortfolioComponent
   },
   {
-    path: 'speedrun', component: SpeedrunComponent
+    path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
   },
   {
     path: 'bowling', component: BowlingComponent
+  },
+  {
+    path: 'login', component: LoginComponent
   },
   {
     path: '**',
@@ -52,15 +58,17 @@ const routes: Routes = [
     TypingComponent,
     PortfolioComponent,
     SpeedrunComponent,
-    BowlingComponent
+    BowlingComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
     HttpModule,
     RouterModule.forRoot(routes, { useHash: false }),
-    MaterialModule
+    MaterialModule,
+    JwtModule.forRoot({})
   ],
-  providers: [],
+  providers: [AuthGuard, JwtHelperService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
