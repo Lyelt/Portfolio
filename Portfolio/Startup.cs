@@ -12,6 +12,9 @@ using Portfolio.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Portfolio.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System;
 
 namespace Portfolio
 {
@@ -35,6 +38,20 @@ namespace Portfolio
             //services.AddDefaultIdentity<ApplicationUser>()
             //    .AddRoles<IdentityRole>()
             //    .AddEntityFrameworkStores<PortfolioContext>();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = "https://ghobrial.dev",
+                        ValidAudience = "https://ghobrial.dev",
+                        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECURITY_KEY")))
+                    };
+                });
 
             services.AddMvc(config =>
             {
