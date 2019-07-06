@@ -33,6 +33,7 @@ namespace Portfolio.Controllers
         [Route("Auth/Login")]
         public IActionResult Login([FromBody]Credentials credentials)
         {
+            return Unauthorized(); // TEMPORARY
             if (credentials?.Username == null || credentials?.Password == null)
                 return BadRequest("Invalid client request");
 
