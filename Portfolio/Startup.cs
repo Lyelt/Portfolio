@@ -53,6 +53,7 @@ namespace Portfolio
                     };
                 });
 
+            services.AddCors();
             services.AddMvc(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -67,7 +68,6 @@ namespace Portfolio
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -89,6 +89,7 @@ namespace Portfolio
 
             app.UseAuthentication();
 
+            app.UseCors();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
