@@ -35,9 +35,6 @@ namespace Portfolio
                 .AddDbContext<SpeedrunContext>(options => options.UseSqlite(Configuration.GetConnectionString("SpeedrunContextConnection")))
                 .AddDbContext<BowlingContext>(options => options.UseSqlite(Configuration.GetConnectionString("BowlingContextConnection")));
 
-            //services.AddDefaultIdentity<ApplicationUser>()
-            //    .AddRoles<IdentityRole>()
-            //    .AddEntityFrameworkStores<PortfolioContext>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -61,6 +58,12 @@ namespace Portfolio
                                 .Build();
                 config.Filters.Add(new AuthorizeFilter(policy));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            //services.AddHttpsRedirection(options =>
+            //{
+            //    options.RedirectStatusCode = Microsoft.AspNetCore.Http.StatusCodes.Status307TemporaryRedirect;
+            //    options.HttpsPort = int.Parse(Environment.GetEnvironmentVariable("ASPNETCORE_HTTPS_PORT"));
+            //});
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -89,6 +92,7 @@ namespace Portfolio
 
             app.UseAuthentication();
 
+            app.UseHttpsRedirection();
             app.UseCors();
             app.UseMvc(routes =>
             {
