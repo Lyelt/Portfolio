@@ -51,7 +51,7 @@ namespace Portfolio.Controllers
                         issuer: "https://ghobrial.dev",
                         audience: "https://ghobrial.dev",
                         claims: new List<Claim>(),
-                        expires: DateTime.Now.AddMonths(1),
+                        expires: DateTime.Now.AddDays(30),
                         signingCredentials: signingCreds
                     );
 

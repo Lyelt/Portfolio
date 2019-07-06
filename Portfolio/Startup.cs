@@ -38,6 +38,7 @@ namespace Portfolio
             //services.AddDefaultIdentity<ApplicationUser>()
             //    .AddRoles<IdentityRole>()
             //    .AddEntityFrameworkStores<PortfolioContext>();
+            Environment.SetEnvironmentVariable("JWT_SECURITY_KEY", "WO1NE20VgCtQzUcktCCdIVApcgS3qFNgtPkM821jphU=");
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

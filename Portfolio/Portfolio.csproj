@@ -19,6 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\auth\credentials.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.11" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="2.1.11" />
@@ -35,6 +39,10 @@
 
   <ItemGroup>
     <Folder Include="Areas\Identity\Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\auth\credentials.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
