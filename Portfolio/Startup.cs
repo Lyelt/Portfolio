@@ -38,7 +38,6 @@ namespace Portfolio
             //services.AddDefaultIdentity<ApplicationUser>()
             //    .AddRoles<IdentityRole>()
             //    .AddEntityFrameworkStores<PortfolioContext>();
-            Environment.SetEnvironmentVariable("JWT_SECURITY_KEY", "WO1NE20VgCtQzUcktCCdIVApcgS3qFNgtPkM821jphU=");
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -67,6 +66,8 @@ namespace Portfolio
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
