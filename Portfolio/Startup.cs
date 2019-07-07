@@ -15,6 +15,7 @@ using Portfolio.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Portfolio
 {
@@ -88,6 +89,11 @@ namespace Portfolio
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
             app.UseAuthentication();
 
