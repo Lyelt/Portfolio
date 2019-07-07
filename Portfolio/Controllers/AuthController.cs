@@ -64,5 +64,13 @@ namespace Portfolio.Controllers
 
             return Unauthorized();
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("Auth/TestLogin")]
+        public IActionResult TestLogin([FromBody]string testString)
+        {
+            return Unauthorized();
+        }
     }
 }
