@@ -18,7 +18,7 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS runtime
 ENV ASPNETCORE_URLS http://*:5000
 WORKDIR /app
-ADD /Portfolio/*-error.html ./
-ADD /Portfolio/nginx.conf.sigil /app/nginx.conf.sigil
+#ADD /Portfolio/*-error.html ./
+#ADD /Portfolio/nginx.conf.sigil /app/nginx.conf.sigil
 COPY --from=build /app/Portfolio/out ./
 ENTRYPOINT ["dotnet", "Portfolio.dll"]
