@@ -62,7 +62,6 @@ namespace Portfolio
             services.AddHttpsRedirection(options =>
             {
                 options.RedirectStatusCode = Microsoft.AspNetCore.Http.StatusCodes.Status307TemporaryRedirect;
-                options.HttpsPort = Configuration.GetValue("Security:HttpsPort", 443);
             });
 
             // In production, the Angular files will be served from this directory
