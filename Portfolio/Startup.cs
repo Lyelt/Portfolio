@@ -50,7 +50,7 @@ namespace Portfolio
                     };
                 });
 
-            services.AddCors();
+            //services.AddCors();
             services.AddMvc(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -59,10 +59,10 @@ namespace Portfolio
                 config.Filters.Add(new AuthorizeFilter(policy));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddHttpsRedirection(options =>
-            {
-                options.RedirectStatusCode = Microsoft.AspNetCore.Http.StatusCodes.Status307TemporaryRedirect;
-            });
+            //services.AddHttpsRedirection(options =>
+            //{
+            //    options.RedirectStatusCode = Microsoft.AspNetCore.Http.StatusCodes.Status307TemporaryRedirect;
+            //});
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -82,8 +82,8 @@ namespace Portfolio
             }
             else
             {
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
+                //app.UseExceptionHandler("/Error");
+                //app.UseHsts();
             }
 
             app.UseStaticFiles();
@@ -91,8 +91,8 @@ namespace Portfolio
 
             app.UseAuthentication();
 
-            app.UseHttpsRedirection();
-            app.UseCors();
+            //app.UseHttpsRedirection();
+            //app.UseCors();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
