@@ -1,5 +1,7 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /app
+ADD /Portfolio/*-error.html .
+ADD /Portfolio/nginx.conf.sigil
 
 RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
 RUN apt-get install -y nodejs
