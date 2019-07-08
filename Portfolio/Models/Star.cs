@@ -11,6 +11,7 @@ namespace Portfolio.Models
     {
         [Key]
         public int StarId { get; set; }
+        [Required]
         public string Name { get; set; }
 
         public Course Course { get; set; }

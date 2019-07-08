@@ -7,30 +7,6 @@ namespace Portfolio.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "ApplicationUser",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    UserName = table.Column<string>(nullable: true),
-                    NormalizedUserName = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    NormalizedEmail = table.Column<string>(nullable: true),
-                    EmailConfirmed = table.Column<bool>(nullable: false),
-                    PasswordHash = table.Column<string>(nullable: true),
-                    SecurityStamp = table.Column<string>(nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
-                    LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ApplicationUser", x => x.Id);
-                });
 
             migrationBuilder.CreateTable(
                 name: "Courses",
@@ -38,7 +14,8 @@ namespace Portfolio.Migrations
                 {
                     CourseId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: false),
+                    Abbreviation = table.Column<string>(maxLength: 5, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -59,9 +36,9 @@ namespace Portfolio.Migrations
                 {
                     table.PrimaryKey("PK_StarTimes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StarTimes_ApplicationUser_UserId",
+                        name: "FK_StarTimes_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "ApplicationUser",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -71,7 +48,7 @@ namespace Portfolio.Migrations
                 columns: table => new
                 {
                     StarId = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: false),
                     CourseForeignKey = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -115,7 +92,7 @@ namespace Portfolio.Migrations
                 name: "StarTimes");
 
             migrationBuilder.DropTable(
-                name: "ApplicationUser");
+                name: "AspNetUsers");
         }
     }
 }

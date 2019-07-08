@@ -51,7 +51,7 @@ namespace Portfolio.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ApplicationUser");
+                    b.ToTable("AspNetUsers");
                 });
 
             modelBuilder.Entity("Portfolio.Models.Course", b =>
@@ -59,7 +59,11 @@ namespace Portfolio.Migrations
                     b.Property<int>("CourseId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Abbreviation")
+                        .HasMaxLength(5);
+
+                    b.Property<string>("Name")
+                        .IsRequired();
 
                     b.HasKey("CourseId");
 
@@ -72,7 +76,8 @@ namespace Portfolio.Migrations
 
                     b.Property<int>("CourseForeignKey");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .IsRequired();
 
                     b.HasKey("StarId");
 

@@ -9,7 +9,7 @@ using Portfolio.Data;
 namespace Portfolio.Migrations
 {
     [DbContext(typeof(SpeedrunContext))]
-    [Migration("20190708044538_Initial")]
+    [Migration("20190708045751_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,7 +53,7 @@ namespace Portfolio.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ApplicationUser");
+                    b.ToTable("AspNetUsers");
                 });
 
             modelBuilder.Entity("Portfolio.Models.Course", b =>
@@ -61,7 +61,11 @@ namespace Portfolio.Migrations
                     b.Property<int>("CourseId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Abbreviation")
+                        .HasMaxLength(5);
+
+                    b.Property<string>("Name")
+                        .IsRequired();
 
                     b.HasKey("CourseId");
 
@@ -74,7 +78,8 @@ namespace Portfolio.Migrations
 
                     b.Property<int>("CourseForeignKey");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .IsRequired();
 
                     b.HasKey("StarId");
 

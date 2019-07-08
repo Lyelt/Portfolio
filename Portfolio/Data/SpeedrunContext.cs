@@ -25,6 +25,9 @@ namespace Portfolio.Data
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<ApplicationUser>()
+                .ToTable("AspNetUsers");
+
             builder.Entity<Star>()
                 .Property<int>("CourseForeignKey");
 
