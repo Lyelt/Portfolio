@@ -10,6 +10,12 @@ namespace Portfolio.Data
 {
     public class SpeedrunContext : DbContext
     {
+        public DbSet<StarTime> StarTimes { get; set; }
+
+        public DbSet<Star> Stars { get; set; }
+
+        public DbSet<Course> Courses { get; set; }
+
         public SpeedrunContext(DbContextOptions<SpeedrunContext> options)
                : base(options)
         {
@@ -18,11 +24,23 @@ namespace Portfolio.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
-        }
 
-        public DbSet<StarTime> StarTimes { get; set; }
+            builder.Entity<Star>()
+                .Property<int>("CourseForeignKey");
+
+            builder.Entity<Star>()
+                .HasOne(s => s.Course)
+                .WithMany(c => c.Stars)
+                .HasForeignKey("CourseForeignKey");
+
+            builder.Entity<StarTime>()
+                .HasOne(st => st.Star)
+                .WithOne()
+                .HasForeignKey<Star>(s => s.StarId);
+
+            builder.Entity<StarTime>()
+                .HasOne(st => st.User)
+                .WithOne();
+        }
     }
 }
