@@ -1,11 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
-import { SidenavComponent } from './sidenav/sidenav.component';
 import { AboutComponent } from './about/about.component';
 import { MaterialModule } from './material/material.module';
 import { HomeComponent } from './home/home.component';
@@ -16,7 +15,8 @@ import { SpeedrunComponent } from './speedrun/speedrun.component';
 import { BowlingComponent } from './bowling/bowling.component';
 import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './auth/auth-guard.service';
-import { JwtHelperService, JwtModule } from '@auth0/angular-jwt';
+import { JwtHelperService, JwtModule, JwtInterceptor } from '@auth0/angular-jwt';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 const routes: Routes = [
   {
@@ -51,7 +51,6 @@ const routes: Routes = [
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    SidenavComponent,
     AboutComponent,
     HomeComponent,
     EncounterComponent,
@@ -63,12 +62,25 @@ const routes: Routes = [
   ],
   imports: [
     BrowserModule,
-    HttpModule,
+    HttpClientModule,
     RouterModule.forRoot(routes, { useHash: false }),
     MaterialModule,
-    JwtModule.forRoot({})
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter
+      }
+    })
   ],
-  providers: [AuthGuard, JwtHelperService],
+  providers: [
+    AuthGuard,
+    JwtHelperService,
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
+
 export class AppModule { }
+
+export function tokenGetter() {
+  return localStorage.getItem("jwt");
+}

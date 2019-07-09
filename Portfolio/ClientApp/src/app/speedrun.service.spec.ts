@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AuthServiceService } from './auth-service.service';
+import { SpeedrunService } from './speedrun.service';
 
-describe('AuthServiceService', () => {
+describe('SpeedrunService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: AuthServiceService = TestBed.get(AuthServiceService);
+    const service: SpeedrunService = TestBed.get(SpeedrunService);
     expect(service).toBeTruthy();
   });
 });

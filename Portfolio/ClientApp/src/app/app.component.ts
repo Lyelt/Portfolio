@@ -1,5 +1,4 @@
 import { Component, ViewChild } from '@angular/core';
-import { SidenavService } from './sidenav.service';
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
 
@@ -9,16 +8,11 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  @ViewChild('sidenav') public sideNav: MatSidenav;
 
-  constructor(router: Router, private sidenavService: SidenavService) {
+  constructor(router: Router) {
   }
 
   ngOnInit() {
-    this.sidenavService.sideNav = this.sideNav;
   }
 
-  toggleSidenav() {
-    this.sidenavService.sideNav.toggle();
-  }
 }

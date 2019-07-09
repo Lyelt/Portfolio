@@ -1,16 +1,16 @@
 <div class="container-vertical">
   <table class="mat-table">
     <tr class="mat-header-row">
-      <th class="mat-header-cell">Star Name</th>
-      <th class="mat-header-cell">Matt Time</th>
-      <th class="mat-header-cell">Nick Time</th>
-      <th class="mat-header-cell">Record Holder</th>
+      <th class="mat-header-cell">ID</th>
+      <th class="mat-header-cell">Time</th>
+      <th class="mat-header-cell">Video URL</th>
+      <th class="mat-header-cell">Star ID</th>
     </tr>
-    <tr class="mat-row">
-      <td class="mat-cell">Shoot Into the Wild Blue</td>
-      <td class="mat-cell">11:11:11</td>
-      <td class="mat-cell">22:22:22</td>
-      <td class="mat-cell">Matt</td>
+    <tr class="mat-row" *ngFor="let starTime of starTimes">
+      <td class="mat-cell">{{starTime.id}}</td>
+      <td class="mat-cell">{{starTime.time}}</td>
+      <td class="mat-cell">{{starTime.videoUrl}}</td>
+      <td class="mat-cell">{{starTime.starId}}</td>e
     </tr>
   </table>
 </div>

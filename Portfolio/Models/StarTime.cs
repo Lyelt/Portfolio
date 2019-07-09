@@ -12,11 +12,13 @@ namespace Portfolio.Models
         [Key]
         public int Id { get; set; }
 
-        public Star Star { get; set; }
-
         public TimeSpan Time { get; set; }
 
         public string VideoUrl { get; set; }
+
+        [ForeignKey("StarId")]
+        public Star Star { get; set; }
+        public int StarId { get; set; }
 
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }

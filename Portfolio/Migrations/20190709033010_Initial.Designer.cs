@@ -9,7 +9,7 @@ using Portfolio.Data;
 namespace Portfolio.Migrations
 {
     [DbContext(typeof(SpeedrunContext))]
-    [Migration("20190708045751_Initial")]
+    [Migration("20190709033010_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,7 +74,8 @@ namespace Portfolio.Migrations
 
             modelBuilder.Entity("Portfolio.Models.Star", b =>
                 {
-                    b.Property<int>("StarId");
+                    b.Property<int>("StarId")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("CourseForeignKey");
 
@@ -93,6 +94,8 @@ namespace Portfolio.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("StarId");
+
                     b.Property<TimeSpan>("Time");
 
                     b.Property<string>("UserId");
@@ -100,6 +103,9 @@ namespace Portfolio.Migrations
                     b.Property<string>("VideoUrl");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StarId")
+                        .IsUnique();
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -113,15 +119,15 @@ namespace Portfolio.Migrations
                         .WithMany("Stars")
                         .HasForeignKey("CourseForeignKey")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Portfolio.Models.StarTime")
-                        .WithOne("Star")
-                        .HasForeignKey("Portfolio.Models.Star", "StarId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Portfolio.Models.StarTime", b =>
                 {
+                    b.HasOne("Portfolio.Models.Star", "Star")
+                        .WithOne()
+                        .HasForeignKey("Portfolio.Models.StarTime", "StarId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Portfolio.Models.ApplicationUser", "User")
                         .WithOne()
                         .HasForeignKey("Portfolio.Models.StarTime", "UserId");

@@ -38,8 +38,7 @@ namespace Portfolio.Data
 
             builder.Entity<StarTime>()
                 .HasOne(st => st.Star)
-                .WithOne()
-                .HasForeignKey<Star>(s => s.StarId);
+                .WithOne();
 
             builder.Entity<StarTime>()
                 .HasOne(st => st.User)

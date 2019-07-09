@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Http } from '@angular/http';
+import { SpeedrunService } from '../speedrun.service';
 
 @Component({
   selector: 'app-speedrun',
@@ -9,28 +9,25 @@ import { Http } from '@angular/http';
 export class SpeedrunComponent implements OnInit {
   starTimes: StarTime[] = [];
 
-  constructor(private http: Http) { }
+  constructor(private srService: SpeedrunService) { }
 
   ngOnInit() {
-    this.http.get('Speedrun/GetStarTimes').subscribe(data => {
-      for (let starTime of data.json()) {
-        this.starTimes.push(starTime);
-        console.log(starTime);
-      }
+
+    this.srService.getStarTimes().subscribe(data => {
+      this.starTimes = data;
     },
     (err) => console.error(err));
   }
-
 }
 
 export class StarTime {
+  id: number;
+
+  time: string;
+
+  videoUrl: string;
+
   starId: number;
 
-  level: string;
-
-  starName: string;
-
-  nickTime: string;
-
-  mattTime: string;
+  userId: string;
 }
