@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="ClientApp\src\app\auth\auth.interceptor.ts" />
     <None Remove="ClientApp\src\app\auth\credentials.ts" />
   </ItemGroup>
 
@@ -39,7 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Include="ClientApp\src\app\auth\auth.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\auth\credentials.ts" />
   </ItemGroup>
 

@@ -16,7 +16,10 @@ export class SpeedrunComponent implements OnInit {
     this.srService.getStarTimes().subscribe(data => {
       this.starTimes = data;
     },
-    (err) => console.error(err));
+    (err) => {
+      console.error(err);
+      alert(err.message);
+    });
   }
 }
 
