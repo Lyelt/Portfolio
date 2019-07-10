@@ -20,6 +20,9 @@ namespace Portfolio
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseUrls($"http://*:{Environment.GetEnvironmentVariable("PORT")}", $"https://*:{Environment.GetEnvironmentVariable("PORT")}");
+                .UseKestrel(options =>
+                {
+                    options.Listen(System.Net.IPAddress.Any, int.Parse(Environment.GetEnvironmentVariable("PORT")));
+                });
     }
 }
