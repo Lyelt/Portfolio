@@ -39,6 +39,10 @@ namespace Portfolio.Data
             builder.Entity<StarTime>()
                 .HasOne(st => st.User)
                 .WithOne();
+
+            builder.Entity<StarTime>()
+                .HasIndex(i => new { i.UserId, i.StarId })
+                .IsUnique();
         }
     }
 }

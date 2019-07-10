@@ -60,10 +60,11 @@ namespace Portfolio
                 config.Filters.Add(new AuthorizeFilter(policy));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            //services.AddHttpsRedirection(options =>
-            //{
-            //    options.RedirectStatusCode = Microsoft.AspNetCore.Http.StatusCodes.Status307TemporaryRedirect;
-            //});
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = Microsoft.AspNetCore.Http.StatusCodes.Status307TemporaryRedirect;
+                options.HttpsPort = int.Parse(Environment.GetEnvironmentVariable("PORT"));
+            });
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -97,7 +98,7 @@ namespace Portfolio
 
             app.UseAuthentication();
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             //app.UseCors();
             app.UseMvc(routes =>
             {
