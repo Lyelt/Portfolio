@@ -22,7 +22,7 @@ namespace Portfolio
                 .UseStartup<Startup>()
                 .UseKestrel(options =>
                 {
-                    options.Listen(System.Net.IPAddress.Any, int.Parse(Environment.GetEnvironmentVariable("PORT")));
+                    options.Listen(System.Net.IPAddress.Loopback, int.Parse(Environment.GetEnvironmentVariable("PORT")));
                 });
     }
 }
