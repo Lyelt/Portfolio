@@ -1,16 +1,19 @@
 <div class="container-vertical">
-  <table class="mat-table">
-    <tr class="mat-header-row">
-      <th class="mat-header-cell">ID</th>
-      <th class="mat-header-cell">Time</th>
-      <th class="mat-header-cell">Video URL</th>
-      <th class="mat-header-cell">Star ID</th>
-    </tr>
-    <tr class="mat-row" *ngFor="let starTime of starTimes">
-      <td class="mat-cell">{{starTime.id}}</td>
-      <td class="mat-cell">{{starTime.time}}</td>
-      <td class="mat-cell">{{starTime.videoUrl}}</td>
-      <td class="mat-cell">{{starTime.starId}}</td>e
-    </tr>
-  </table>
+  <div class="course">
+    <mat-card class="card course-card" *ngFor="let course of courses">
+      <mat-card-header>
+        <mat-card-title>{{course.name}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table class="mat-table">
+          <tr class="mat-header-row">
+            <th class="mat-header-cell">Star</th>
+          </tr>
+          <tr class="mat-row" *ngFor="let star of course.stars">
+            <td class="mat-cell">{{star.name}}</td>
+          </tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

@@ -53,14 +53,14 @@ namespace Portfolio.Migrations
                     StarId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(nullable: false),
-                    CourseForeignKey = table.Column<int>(nullable: false)
+                    CourseId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Stars", x => x.StarId);
                     table.ForeignKey(
-                        name: "FK_Stars_Courses_CourseForeignKey",
-                        column: x => x.CourseForeignKey,
+                        name: "FK_Stars_Courses_CourseId",
+                        column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "CourseId",
                         onDelete: ReferentialAction.Cascade);
@@ -95,9 +95,9 @@ namespace Portfolio.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Stars_CourseForeignKey",
+                name: "IX_Stars_CourseId",
                 table: "Stars",
-                column: "CourseForeignKey");
+                column: "CourseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StarTimes_StarId",

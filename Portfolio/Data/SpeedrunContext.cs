@@ -28,13 +28,9 @@ namespace Portfolio.Data
             builder.Entity<ApplicationUser>()
                 .ToTable("AspNetUsers");
 
-            builder.Entity<Star>()
-                .Property<int>("CourseForeignKey");
-
-            builder.Entity<Star>()
-                .HasOne(s => s.Course)
-                .WithMany(c => c.Stars)
-                .HasForeignKey("CourseForeignKey");
+            builder.Entity<Course>()
+                .HasMany(c => c.Stars)
+                .WithOne();
 
             builder.Entity<StarTime>()
                 .HasOne(st => st.Star)

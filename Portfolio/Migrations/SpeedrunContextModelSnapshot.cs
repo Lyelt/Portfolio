@@ -75,14 +75,14 @@ namespace Portfolio.Migrations
                     b.Property<int>("StarId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("CourseForeignKey");
+                    b.Property<int>("CourseId");
 
                     b.Property<string>("Name")
                         .IsRequired();
 
                     b.HasKey("StarId");
 
-                    b.HasIndex("CourseForeignKey");
+                    b.HasIndex("CourseId");
 
                     b.ToTable("Stars");
                 });
@@ -113,9 +113,9 @@ namespace Portfolio.Migrations
 
             modelBuilder.Entity("Portfolio.Models.Star", b =>
                 {
-                    b.HasOne("Portfolio.Models.Course", "Course")
+                    b.HasOne("Portfolio.Models.Course")
                         .WithMany("Stars")
-                        .HasForeignKey("CourseForeignKey")
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Portfolio.Data;
 using Portfolio.Models;
 using System;
@@ -16,6 +17,14 @@ namespace Portfolio.Controllers
         public SpeedrunController(SpeedrunContext context)
         {
             _context = context;
+        }
+
+        [HttpGet]
+        [Route("Speedrun/GetCourses")]
+        public IActionResult GetCourses()
+        {
+            var courses = _context.Courses.Include(c => c.Stars).ToList();
+            return Ok(courses);
         }
 
         [HttpGet]

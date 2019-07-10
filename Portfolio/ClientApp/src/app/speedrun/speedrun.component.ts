@@ -8,10 +8,19 @@ import { SpeedrunService } from '../speedrun.service';
 })
 export class SpeedrunComponent implements OnInit {
   starTimes: StarTime[] = [];
+  courses: Course[] = [];
 
   constructor(private srService: SpeedrunService) { }
 
   ngOnInit() {
+
+    this.srService.getCourses().subscribe(data => {
+      this.courses = data;
+    },
+    (err) => {
+      console.error(err);
+      alert(err.message);
+    });
 
     this.srService.getStarTimes().subscribe(data => {
       this.starTimes = data;
@@ -28,9 +37,29 @@ export class StarTime {
 
   time: string;
 
+  totalSeconds: number;
+
   videoUrl: string;
 
   starId: number;
 
-  userId: string;
+  userName: string;
+}
+
+export class Star {
+  starId: number;
+
+  name: string;
+
+  courseId: number;
+}
+
+export class Course {
+  courseId: number;
+
+  name: string;
+
+  abbreviation: string;
+
+  stars: Star[];
 }

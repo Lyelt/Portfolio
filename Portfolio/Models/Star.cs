@@ -14,6 +14,6 @@ namespace Portfolio.Models
         [Required]
         public string Name { get; set; }
 
-        public Course Course { get; set; }
+        public int CourseId { get; set; }
     }
 }
