@@ -34,7 +34,7 @@ namespace Portfolio.Controllers
         {
             var validRoles = _userContext.Roles.Where(r => VALID_ROLES.Contains(r.Name));
             var validUserRoles = _userContext.UserRoles.Join(validRoles, ur => ur.RoleId, r => r.Id, (userRole, role) => userRole);
-            var validUsers = _userContext.Users.Join(validUserRoles, u => u.Id, ur => ur.UserId, (user, userRole) => user);
+            var validUsers = _userContext.Users.Join(validUserRoles, u => u.Id, ur => ur.UserId, (user, userRole) => user).Distinct();
 
             return Ok(validUsers.ToList());
         }

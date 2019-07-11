@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <None Remove="ClientApp\src\app\auth\credentials.ts" />
+    <None Remove="ClientApp\src\app\auth\user.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +39,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\auth\user.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\auth\credentials.ts" />
   </ItemGroup>
 

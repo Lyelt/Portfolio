@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit  } from '@angular/core';
 import { SpeedrunService } from '../speedrun.service';
+import { User } from '../auth/user';
 
 @Component({
   selector: 'app-speedrun',
@@ -9,10 +10,23 @@ import { SpeedrunService } from '../speedrun.service';
 export class SpeedrunComponent implements OnInit {
   starTimes: StarTime[] = [];
   courses: Course[] = [];
+  runners: User[] = [];
+  starTimeMap: Map<number, Map<string, StarTime>> = new Map<number, Map<string, StarTime>>();
 
   constructor(private srService: SpeedrunService) { }
 
   ngOnInit() {
+    this.retrieveData();
+  }
+
+  retrieveData() {
+    this.srService.getSpeedrunners().subscribe(data => {
+      this.runners = data;
+    },
+    (err) => {
+      console.error(err);
+      alert(err.message);
+    });
 
     this.srService.getCourses().subscribe(data => {
       this.courses = data;
@@ -24,12 +38,26 @@ export class SpeedrunComponent implements OnInit {
 
     this.srService.getStarTimes().subscribe(data => {
       this.starTimes = data;
+      //for (let st of this.starTimes) {
+      //  this.starTimeMap.set(st.starId, new )
+      //}
     },
     (err) => {
       console.error(err);
       alert(err.message);
     });
   }
+
+  getStarTime(starId: number, userId: string) {
+    return this.starTimes.find(st => st.starId == starId && st.userId == userId);
+  }
+
+  //createUserTimes() {
+  //  for (let st of this.starTimes) {
+  //    let userTimeCell = document.querySelector("#star-row-" + st.starId + " .user-cell-" + st.userId);
+  //    userTimeCell.appendChild(document.createTextNode(st.time));
+  //  }
+  //}
 }
 
 export class StarTime {
@@ -43,7 +71,7 @@ export class StarTime {
 
   starId: number;
 
-  userName: string;
+  userId: string;
 }
 
 export class Star {
