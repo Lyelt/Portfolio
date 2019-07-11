@@ -51,7 +51,7 @@ namespace Portfolio
                     };
                 });
 
-            //services.AddCors();
+            services.AddCors();
             services.AddMvc(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -99,7 +99,14 @@ namespace Portfolio
             app.UseAuthentication();
 
             //app.UseHttpsRedirection();
-            //app.UseCors();
+            app.UseCors(options =>
+            {
+                // TEMP
+                options.WithOrigins("https://ghobrial.dev", "https://ghobrial.dev:5000", "http://ghobrial.dev", "http://ghobrial.dev:5000", "https://localhost", "https://localhost:5000", "http://localhost", "http://localhost:5000")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+            });
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
