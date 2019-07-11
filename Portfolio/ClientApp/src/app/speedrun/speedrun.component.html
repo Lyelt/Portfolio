@@ -12,7 +12,7 @@
           </tr>
           <tr class="mat-row star-row" *ngFor="let star of course.stars">
             <td class="mat-cell">{{star.name}}</td>
-            <td *ngFor="let user of runners" class="mat-cell">{{getStarTime(star.starId, user.id)?.time}}</td>
+            <td *ngFor="let user of runners" class="mat-cell">{{getStarTime(star.starId, user.id)?.timeDisplay}}</td>
           </tr>
         </table>
       </mat-card-content>

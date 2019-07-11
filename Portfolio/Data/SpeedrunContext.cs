@@ -33,16 +33,15 @@ namespace Portfolio.Data
                 .WithOne();
 
             builder.Entity<StarTime>()
+                .HasKey(st => new { st.StarId, st.UserId });
+
+            builder.Entity<StarTime>()
                 .HasOne(st => st.Star)
-                .WithOne();
+                .WithMany();
 
             builder.Entity<StarTime>()
-                .HasOne(st => st.User)
-                .WithOne();
-
-            builder.Entity<StarTime>()
-                .HasIndex(i => new { i.UserId, i.StarId })
-                .IsUnique();
+               .HasOne(st => st.User)
+               .WithMany();
         }
     }
 }

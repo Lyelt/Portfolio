@@ -65,6 +65,8 @@ export class StarTime {
 
   time: string;
 
+  timeDisplay: string;
+
   totalSeconds: number;
 
   videoUrl: string;

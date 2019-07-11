@@ -9,19 +9,22 @@ namespace Portfolio.Models
 {
     public class StarTime
     {
-        [Key]
-        public int Id { get; set; }
-
-        public TimeSpan Time { get; set; }
-
-        public string VideoUrl { get; set; }
-
-        [ForeignKey("StarId")]
         public Star Star { get; set; }
         public int StarId { get; set; }
 
-        [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
         public string UserId { get; set; }
+
+        public TimeSpan Time { get; set; }
+        public string VideoUrl { get; set; }
+
+        [NotMapped]
+        public string TimeDisplay { get; set; }
+
+        public StarTime WithClientView()
+        {
+            TimeDisplay = Time.ToString("mm\\:ss\\.ff");
+            return this;
+        }
     }
 }

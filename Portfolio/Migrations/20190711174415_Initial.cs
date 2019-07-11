@@ -70,16 +70,14 @@ namespace Portfolio.Migrations
                 name: "StarTimes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Time = table.Column<TimeSpan>(nullable: false),
-                    VideoUrl = table.Column<string>(nullable: true),
                     StarId = table.Column<int>(nullable: false),
-                    UserId = table.Column<string>(nullable: true)
+                    UserId = table.Column<string>(nullable: false),
+                    Time = table.Column<TimeSpan>(nullable: false),
+                    VideoUrl = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StarTimes", x => x.Id);
+                    table.PrimaryKey("PK_StarTimes", x => new { x.StarId, x.UserId });
                     table.ForeignKey(
                         name: "FK_StarTimes_Stars_StarId",
                         column: x => x.StarId,
@@ -91,7 +89,7 @@ namespace Portfolio.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -100,16 +98,9 @@ namespace Portfolio.Migrations
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StarTimes_StarId",
-                table: "StarTimes",
-                column: "StarId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_StarTimes_UserId",
                 table: "StarTimes",
-                column: "UserId",
-                unique: true);
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

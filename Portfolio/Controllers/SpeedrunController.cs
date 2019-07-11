@@ -51,7 +51,7 @@ namespace Portfolio.Controllers
         [Route("Speedrun/GetStarTimes")]
         public IActionResult GetStarTimes()
         {
-            return Ok(_srContext.StarTimes.ToList());
+            return Ok(_srContext.StarTimes.Select(st => st.WithClientView()).ToList());
         }
 
         [HttpPost]

@@ -9,7 +9,7 @@ using Portfolio.Data;
 namespace Portfolio.Migrations
 {
     [DbContext(typeof(SpeedrunContext))]
-    [Migration("20190710030251_Initial")]
+    [Migration("20190711174415_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,24 +91,17 @@ namespace Portfolio.Migrations
 
             modelBuilder.Entity("Portfolio.Models.StarTime", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
                     b.Property<int>("StarId");
-
-                    b.Property<TimeSpan>("Time");
 
                     b.Property<string>("UserId");
 
+                    b.Property<TimeSpan>("Time");
+
                     b.Property<string>("VideoUrl");
 
-                    b.HasKey("Id");
+                    b.HasKey("StarId", "UserId");
 
-                    b.HasIndex("StarId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("StarTimes");
                 });
@@ -124,13 +117,14 @@ namespace Portfolio.Migrations
             modelBuilder.Entity("Portfolio.Models.StarTime", b =>
                 {
                     b.HasOne("Portfolio.Models.Star", "Star")
-                        .WithOne()
-                        .HasForeignKey("Portfolio.Models.StarTime", "StarId")
+                        .WithMany()
+                        .HasForeignKey("StarId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Portfolio.Models.ApplicationUser", "User")
-                        .WithOne()
-                        .HasForeignKey("Portfolio.Models.StarTime", "UserId");
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }
