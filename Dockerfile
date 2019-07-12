@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS build
 WORKDIR /app
 
 RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
@@ -15,7 +15,7 @@ WORKDIR /app/Portfolio
 RUN dotnet publish -c Release -o out
 
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS runtime
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.1 AS runtime
 ENV ASPNETCORE_URLS http://*:5000
 WORKDIR /app
 #ADD /Portfolio/*-error.html ./
