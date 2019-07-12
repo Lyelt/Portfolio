@@ -1,21 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Sqlite;
-using Portfolio.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Portfolio.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System;
 using Microsoft.AspNetCore.HttpOverrides;
+using Portfolio.Extensions;
+using System;
 
 namespace Portfolio
 {
@@ -32,26 +25,10 @@ namespace Portfolio
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddDbContext<PortfolioContext>(options => options.UseSqlite(Configuration.GetConnectionString("PortfolioContextConnection")))
-                .AddDbContext<SpeedrunContext>(options => options.UseSqlite(Configuration.GetConnectionString("SpeedrunContextConnection")))
-                .AddDbContext<BowlingContext>(options => options.UseSqlite(Configuration.GetConnectionString("BowlingContextConnection")));
+                .ConfigureDatabase(Configuration)
+                .ConfigureLogging(Configuration)
+                .ConfigureAuthentication(Configuration);
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = "https://ghobrial.dev",
-                        ValidAudience = "https://ghobrial.dev",
-                        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECURITY_KEY")))
-                    };
-                });
-
-            //services.AddCors();
             services.AddMvc(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -60,18 +37,13 @@ namespace Portfolio
                 config.Filters.Add(new AuthorizeFilter(policy));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            //services.AddHttpsRedirection(options =>
-            //{
-            //    options.RedirectStatusCode = Microsoft.AspNetCore.Http.StatusCodes.Status307TemporaryRedirect;
-            //    options.HttpsPort = int.Parse(Environment.GetEnvironmentVariable("PORT"));
-            //});
-
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
             });
 
+            Serilog.Log.Information("Application successfully initialized.");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,11 +53,6 @@ namespace Portfolio
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
-            }
-            else
-            {
-                //app.UseExceptionHandler("/Error");
-                //app.UseHsts();
             }
 
             app.UseStaticFiles();
@@ -98,8 +65,6 @@ namespace Portfolio
 
             app.UseAuthentication();
 
-            //app.UseHttpsRedirection();
-            //app.UseCors();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -119,7 +84,6 @@ namespace Portfolio
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
-
         }
     }
 }

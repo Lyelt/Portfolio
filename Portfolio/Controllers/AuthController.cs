@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Portfolio.Areas.Identity;
 using Portfolio.Models;
 
 namespace Portfolio.Controllers
@@ -18,13 +20,13 @@ namespace Portfolio.Controllers
     {
         private readonly PortfolioContext _context;
         private readonly IPasswordHasher<ApplicationUser> _hasher;
-        private readonly IConfiguration _config;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(PortfolioContext context, IPasswordHasher<ApplicationUser> hasher, IConfiguration config)
+        public AuthController(PortfolioContext context, IPasswordHasher<ApplicationUser> hasher, ILogger<AuthController> logger)
         {
             _context = context;
             _hasher = hasher;
-            _config = config;
+            _logger = logger;
         }
 
 
@@ -48,8 +50,8 @@ namespace Portfolio.Controllers
                     var signingCreds = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
                     var tokeOptions = new JwtSecurityToken(
-                        issuer: "https://ghobrial.dev",
-                        audience: "https://ghobrial.dev",
+                        issuer: IdentityHelpers.ValidIssuer,
+                        audience: IdentityHelpers.ValidAudience,
                         claims: new List<Claim>(),
                         expires: DateTime.Now.AddDays(30),
                         signingCredentials: signingCreds
@@ -60,7 +62,6 @@ namespace Portfolio.Controllers
                 }
             }
 
-
             return Unauthorized();
         }
 
@@ -69,6 +70,7 @@ namespace Portfolio.Controllers
         [Route("Auth/TestLogin")]
         public IActionResult TestLogin([FromBody]string testString)
         {
+            _logger.LogCritical("TEST MESSAGE. Test login method has been reached.");
             return Unauthorized();
         }
     }
