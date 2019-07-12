@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Portfolio.Areas.Identity;
 using Portfolio.Data;
 using Portfolio.Models;
@@ -12,7 +13,6 @@ using System.Threading.Tasks;
 
 namespace Portfolio.Controllers
 {
-    //[Route("api/[controller]")]
     public class SpeedrunController : Controller
     {
         private static string[] VALID_ROLES = new string[] { ApplicationRole.Administrator.ToString(), ApplicationRole.Speedrunner.ToString()};
@@ -20,31 +20,51 @@ namespace Portfolio.Controllers
         private readonly SpeedrunContext _srContext;
         private readonly PortfolioContext _userContext;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<SpeedrunController> _logger;
 
-        public SpeedrunController(SpeedrunContext context, PortfolioContext userContext, UserManager<ApplicationUser> userManager)
+        public SpeedrunController(SpeedrunContext context, PortfolioContext userContext, UserManager<ApplicationUser> userManager, ILogger<SpeedrunController> logger)
         {
             _srContext = context;
             _userContext = userContext;
             _userManager = userManager;
+            _logger = logger;
         }
 
         [HttpGet]
         [Route("Speedrun/GetUsers")]
         public IActionResult GetUsers()
         {
-            var validRoles = _userContext.Roles.Where(r => VALID_ROLES.Contains(r.Name));
-            var validUserRoles = _userContext.UserRoles.Join(validRoles, ur => ur.RoleId, r => r.Id, (userRole, role) => userRole);
-            var validUsers = _userContext.Users.Join(validUserRoles, u => u.Id, ur => ur.UserId, (user, userRole) => user).Distinct();
+            try
+            {
+                var validRoles = _userContext.Roles.Where(r => VALID_ROLES.Contains(r.Name));
+                var validUserRoles = _userContext.UserRoles.Join(validRoles, ur => ur.RoleId, r => r.Id, (userRole, role) => userRole);
+                var validUsers = _userContext.Users.Join(validUserRoles, u => u.Id, ur => ur.UserId, (user, userRole) => user).Distinct().ToList();
 
-            return Ok(validUsers.ToList());
+                _logger.LogDebug($"Found {validUsers.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
+                return Ok(validUsers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return NotFound($"Error while obtaining user information: {ex.Message}");
+            }
         }
 
         [HttpGet]
         [Route("Speedrun/GetCourses")]
         public IActionResult GetCourses()
         {
-            List<Course> courses = _srContext.Courses.Include(c => c.Stars).ToList();
-            return Ok(courses);
+            try
+            {
+                List<Course> courses = _srContext.Courses.Include(c => c.Stars).ToList();
+                _logger.LogDebug($"Found {courses.Count} total courses.");
+                return Ok(courses);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return NotFound($"Error while obtaining course information: {ex.Message}");
+            }
         }
 
         [HttpGet]

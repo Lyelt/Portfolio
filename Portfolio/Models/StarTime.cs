@@ -15,6 +15,7 @@ namespace Portfolio.Models
         public ApplicationUser User { get; set; }
         public string UserId { get; set; }
 
+        public DateTime LastUpdated { get; set; }
         public TimeSpan Time { get; set; }
         public string VideoUrl { get; set; }
 

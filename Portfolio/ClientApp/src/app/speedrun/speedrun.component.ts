@@ -38,9 +38,6 @@ export class SpeedrunComponent implements OnInit {
 
     this.srService.getStarTimes().subscribe(data => {
       this.starTimes = data;
-      //for (let st of this.starTimes) {
-      //  this.starTimeMap.set(st.starId, new )
-      //}
     },
     (err) => {
       console.error(err);
@@ -51,23 +48,16 @@ export class SpeedrunComponent implements OnInit {
   getStarTime(starId: number, userId: string) {
     return this.starTimes.find(st => st.starId == starId && st.userId == userId);
   }
-
-  //createUserTimes() {
-  //  for (let st of this.starTimes) {
-  //    let userTimeCell = document.querySelector("#star-row-" + st.starId + " .user-cell-" + st.userId);
-  //    userTimeCell.appendChild(document.createTextNode(st.time));
-  //  }
-  //}
 }
 
 export class StarTime {
-  id: number;
-
   time: string;
 
   timeDisplay: string;
 
   totalSeconds: number;
+
+  lastUpdated: Date;
 
   videoUrl: string;
 
