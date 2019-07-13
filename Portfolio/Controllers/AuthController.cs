@@ -38,39 +38,39 @@ namespace Portfolio.Controllers
             if (credentials?.Username == null || credentials?.Password == null)
                 return BadRequest("Invalid client request");
 
-            var user = _context.Users.FirstOrDefault(u => u.UserName.Equals(credentials.Username, StringComparison.OrdinalIgnoreCase));
-
-            if (user != null)
+            try
             {
-                var passwordResult =_hasher.VerifyHashedPassword(user, user.PasswordHash, credentials.Password);
 
-                if (passwordResult != PasswordVerificationResult.Failed)
+                var user = _context.Users.FirstOrDefault(u => u.UserName.Equals(credentials.Username, StringComparison.OrdinalIgnoreCase));
+
+                if (user != null)
                 {
-                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECURITY_KEY")));
-                    var signingCreds = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                    var passwordResult = _hasher.VerifyHashedPassword(user, user.PasswordHash, credentials.Password);
 
-                    var tokeOptions = new JwtSecurityToken(
-                        issuer: IdentityHelpers.ValidIssuer,
-                        audience: IdentityHelpers.ValidAudience,
-                        claims: new List<Claim>(),
-                        expires: DateTime.Now.AddDays(30),
-                        signingCredentials: signingCreds
-                    );
+                    if (passwordResult != PasswordVerificationResult.Failed)
+                    {
+                        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECURITY_KEY")));
+                        var signingCreds = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
-                    var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-                    return Ok(new { Token = tokenString });
+                        var tokenOptions = new JwtSecurityToken(
+                            issuer: IdentityHelpers.ValidIssuer,
+                            audience: IdentityHelpers.ValidAudience,
+                            claims: new List<Claim> { new Claim(IdentityHelpers.UserIdClaim, user.Id) },
+                            expires: DateTime.Now.AddDays(30),
+                            signingCredentials: signingCreds
+                        );
+
+                        var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+                        return Ok(new { Token = tokenString });
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return BadRequest($"Error while authenticating user: {ex.Message}");
+            }
 
-            return Unauthorized();
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("Auth/TestLogin")]
-        public IActionResult TestLogin([FromBody]string testString)
-        {
-            _logger.LogCritical("TEST MESSAGE. Test login method has been reached.");
             return Unauthorized();
         }
     }
