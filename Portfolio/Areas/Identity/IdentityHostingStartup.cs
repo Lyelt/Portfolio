@@ -19,8 +19,11 @@ namespace Portfolio.Areas.Identity
                     options.UseSqlite(
                         context.Configuration.GetConnectionString("PortfolioContextConnection")));
 
-                services.AddDefaultIdentity<ApplicationUser>()
-                    .AddEntityFrameworkStores<PortfolioContext>();
+                services.AddDefaultIdentity<ApplicationUser>(options =>
+                {
+                    options.ClaimsIdentity.UserIdClaimType = IdentityHelpers.UserIdClaim;
+                })
+                .AddEntityFrameworkStores<PortfolioContext>();
             });
         }
     }
