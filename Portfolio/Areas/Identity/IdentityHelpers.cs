@@ -7,6 +7,7 @@ namespace Portfolio.Areas.Identity
 {
     public static class IdentityHelpers
     {
+        public static string UserIdClaim = "UserId";
         public static string ValidAudience = "https://ghobrial.dev";
         public static string ValidIssuer = "https://ghobrial.dev";
     }
