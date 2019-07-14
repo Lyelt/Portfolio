@@ -1,4 +1,4 @@
-import { Component, OnInit  } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SpeedrunService } from '../speedrun.service';
 import { User } from '../auth/user';
 import { MatDialog, MatDialogConfig } from "@angular/material";

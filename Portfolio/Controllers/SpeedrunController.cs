@@ -85,16 +85,13 @@ namespace Portfolio.Controllers
 
                 if (userIsAdmin || starTime.UserId == currentUser.Id)
                 {
-                    // if (_srContext.Find(starTime.UserId, starTime.StarId)
-                    //     update
-                    // else add
                     _srContext.StarTimes.Update(starTime);
                     await _srContext.SaveChangesAsync();
                     return Ok();
                 }
 
                 // Warn the user if they tried to make unauthorized changes.
-                return StatusCode((int)System.Net.HttpStatusCode.Unauthorized, "Cannot edit other users' data.");
+                return Unauthorized();
             }
             catch (Exception ex)
             {

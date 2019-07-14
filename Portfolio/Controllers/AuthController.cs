@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,7 +41,6 @@ namespace Portfolio.Controllers
 
             try
             {
-
                 var user = _context.Users.FirstOrDefault(u => u.UserName.Equals(credentials.Username, StringComparison.OrdinalIgnoreCase));
 
                 if (user != null)
@@ -68,7 +68,7 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return BadRequest($"Error while authenticating user: {ex.Message}");
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"Error while authenticating user: {ex.Message}");
             }
 
             return Unauthorized();

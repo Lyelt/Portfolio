@@ -17,6 +17,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button class="mat-raised-button" (click)="close()">Cancel</button>
-  <button class="mat-raised-button mat-primary" (click)="save()" [disabled]="!form.valid">Save Changes</button>
+  <button mat-raised-button (click)="close()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="!form.valid">Save Changes</button>
 </mat-dialog-actions>
