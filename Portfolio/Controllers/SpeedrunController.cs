@@ -76,23 +76,31 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [Route("Speedrun/UpdateStarTime")]
-        public async Task<IActionResult> UpdateStarTime(StarTime starTime)
+        public async Task<IActionResult> UpdateStarTime([FromBody]StarTime starTime)
         {
-            var currentUser = await GetCurrentUser();
-            bool userIsAdmin = User.IsInRole(ApplicationRole.Administrator.ToString());
-
-            if (userIsAdmin || starTime.UserId == currentUser.Id)
+            try
             {
-                // if (_srContext.Find(starTime.UserId, starTime.StarId)
-                //     update
-                // else add
-                _srContext.StarTimes.Update(starTime);
-                await _srContext.SaveChangesAsync();
-                return Ok();
+                var currentUser = await GetCurrentUser();
+                bool userIsAdmin = User.IsInRole(ApplicationRole.Administrator.ToString());
+
+                if (userIsAdmin || starTime.UserId == currentUser.Id)
+                {
+                    // if (_srContext.Find(starTime.UserId, starTime.StarId)
+                    //     update
+                    // else add
+                    _srContext.StarTimes.Update(starTime);
+                    await _srContext.SaveChangesAsync();
+                    return Ok();
+                }
+
+                // Warn the user if they tried to make unauthorized changes.
+                return StatusCode((int)System.Net.HttpStatusCode.Unauthorized, "Cannot edit other users' data.");
             }
-           
-            // Warn the user if they tried to make unauthorized changes.
-            return StatusCode((int)System.Net.HttpStatusCode.Unauthorized, "Cannot edit other users' data.");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return BadRequest($"Error while updating star time: {ex.Message}");
+            }
         }
 
         private async Task<ApplicationUser> GetCurrentUser()

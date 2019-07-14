@@ -22,4 +22,8 @@ export class SpeedrunService {
   getSpeedrunners() {
     return this.http.get<User[]>("Speedrun/GetUsers");
   }
+
+  updateStarTime(starTime: StarTime) {
+    return this.http.post("Speedrun/UpdateStarTime", starTime);
+  }
 }

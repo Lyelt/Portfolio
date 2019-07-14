@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>Editing {{starName}}</h2>
+
+<mat-dialog-content [formGroup]="form" class="container-vertical">
+
+  <mat-form-field class="fullWidth">
+    <input matInput placeholder="Time (mm:ss.ff)" formControlName="time" value="{{starTime.timeDisplay}}" />
+  </mat-form-field>
+
+  <mat-form-field class="fullWidth">
+    <input matInput placeholder="Youtube Watch Code" formControlName="videoUrl" value="{{starTime.videoUrl}}" />
+  </mat-form-field>
+
+  <div *ngIf="starTime.videoUrl">
+    <iframe class="video" [src]="getYoutubeUrl(starTime.videoUrl)" frameborder="0" allowfullscreen></iframe>
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button class="mat-raised-button" (click)="close()">Cancel</button>
+  <button class="mat-raised-button mat-primary" (click)="save()" [disabled]="!form.valid">Save Changes</button>
+</mat-dialog-actions>
