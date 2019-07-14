@@ -1,6 +1,8 @@
 import { Component, OnInit  } from '@angular/core';
 import { SpeedrunService } from '../speedrun.service';
 import { User } from '../auth/user';
+import { MatDialog, MatDialogConfig } from "@angular/material";
+import { EditStarComponent } from '../edit-star/edit-star.component';
 
 @Component({
   selector: 'app-speedrun',
@@ -13,7 +15,7 @@ export class SpeedrunComponent implements OnInit {
   runners: User[] = [];
   starTimeMap: Map<number, Map<string, StarTime>> = new Map<number, Map<string, StarTime>>();
 
-  constructor(private srService: SpeedrunService) { }
+  constructor(private srService: SpeedrunService, private dialog: MatDialog) { }
 
   ngOnInit() {
     this.retrieveData();
@@ -46,7 +48,44 @@ export class SpeedrunComponent implements OnInit {
   }
 
   getStarTime(starId: number, userId: string) {
-    return this.starTimes.find(st => st.starId == starId && st.userId == userId);
+    let foundTime = this.starTimes.find(st => st.starId == starId && st.userId == userId);
+
+    if (!foundTime) {
+      foundTime = new StarTime();
+      foundTime.userId = userId;
+      foundTime.starId = starId;
+    }
+
+    return foundTime;
+  }
+
+  openDialog(starTime: StarTime, starName: string) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = { starTime: starTime, starName: starName };
+
+    const dialogRef = this.dialog.open(EditStarComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(data => {
+      if (data)
+        this.saveStarTime(data)
+    });
+  }
+
+  saveStarTime(data: any) {
+    let starTime: StarTime = data.starTime;
+    starTime.time = "00:" + starTime.time; // Make the C# TimeSpan.Parse happy
+
+    this.srService.updateStarTime(starTime).subscribe(
+      result => {
+      },
+      err => {
+        console.error(err);
+        alert(err.message);
+      },
+      () => {
+        this.retrieveData();
+      });
   }
 }
 

@@ -14,6 +14,7 @@ import { PortfolioComponent } from './portfolio/portfolio.component';
 import { SpeedrunComponent } from './speedrun/speedrun.component';
 import { BowlingComponent } from './bowling/bowling.component';
 import { LoginComponent } from './login/login.component';
+import { EditStarComponent } from './edit-star/edit-star.component';
 import { AuthGuard } from './auth/auth-guard.service';
 import { JwtHelperService, JwtModule, JwtInterceptor } from '@auth0/angular-jwt';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -35,7 +36,7 @@ const routes: Routes = [
     path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
   },
   {
-    path: 'bowling', component: BowlingComponent
+    path: 'bowling', component: BowlingComponent, canActivate: [AuthGuard]
   },
   {
     path: 'login', component: LoginComponent
@@ -58,7 +59,8 @@ const routes: Routes = [
     PortfolioComponent,
     SpeedrunComponent,
     BowlingComponent,
-    LoginComponent
+    LoginComponent,
+    EditStarComponent
   ],
   imports: [
     BrowserModule,
@@ -70,6 +72,12 @@ const routes: Routes = [
         tokenGetter: tokenGetter
       }
     })
+  ],
+  exports: [
+    MaterialModule
+  ],
+  entryComponents: [
+    EditStarComponent
   ],
   providers: [
     AuthGuard,
