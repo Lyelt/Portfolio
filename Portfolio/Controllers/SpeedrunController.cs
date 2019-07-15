@@ -81,14 +81,20 @@ namespace Portfolio.Controllers
             try
             {
                 var currentUser = await GetCurrentUser();
-                bool userIsAdmin = await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Administrator.ToString());// User.IsInRole(ApplicationRole.Administrator.ToString());
+                bool userIsAdmin = await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Administrator.ToString());
 
                 if (userIsAdmin || starTime.UserId == currentUser.Id)
                 {
+                    starTime.LastUpdated = DateTime.UtcNow;
+
                     if (await _srContext.StarTimes.ContainsAsync(starTime))
+                    {
                         _srContext.StarTimes.Update(starTime);
+                    }
                     else
+                    {
                         await _srContext.StarTimes.AddAsync(starTime);
+                    }
 
                     await _srContext.SaveChangesAsync();
                     return Ok();

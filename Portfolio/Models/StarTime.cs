@@ -21,10 +21,13 @@ namespace Portfolio.Models
 
         [NotMapped]
         public string TimeDisplay { get; set; }
+        [NotMapped]
+        public double TotalMilliseconds { get; set; }
 
         public StarTime WithClientView()
         {
             TimeDisplay = Time.ToString("mm\\:ss\\.ff");
+            TotalMilliseconds = Time.TotalMilliseconds;
             return this;
         }
 
