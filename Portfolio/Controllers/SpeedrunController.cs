@@ -81,7 +81,7 @@ namespace Portfolio.Controllers
             try
             {
                 var currentUser = await GetCurrentUser();
-                bool userIsAdmin = User.IsInRole(ApplicationRole.Administrator.ToString());
+                bool userIsAdmin = await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Administrator.ToString());// User.IsInRole(ApplicationRole.Administrator.ToString());
 
                 if (userIsAdmin || starTime.UserId == currentUser.Id)
                 {
