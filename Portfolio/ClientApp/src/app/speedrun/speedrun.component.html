@@ -2,7 +2,7 @@
   <div class="course">
     <mat-card class="card course-card" *ngFor="let course of courses">
       <mat-card-header>
-        <mat-card-title>{{course.name}} ({{course.abbreviation}})</mat-card-title>
+        <mat-card-title>{{course.name}}<span *ngIf="course.abbreviation"> ({{course.abbreviation}})</span></mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <table class="mat-table">
