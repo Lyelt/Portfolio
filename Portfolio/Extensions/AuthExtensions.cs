@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Portfolio.Areas.Identity;
+using Portfolio.Identity;
 using Portfolio.Models;
 using System;
 using System.Collections.Generic;
@@ -31,12 +31,6 @@ namespace Portfolio.Extensions
                         IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECURITY_KEY")))
                     };
                 });
-
-            //services.AddDefaultIdentity<ApplicationUser>(options =>
-            //{
-            //    options.ClaimsIdentity.UserIdClaimType = IdentityHelpers.UserIdClaim;
-            //})
-            //.AddEntityFrameworkStores<PortfolioContext>();
 
             return services;
         }
