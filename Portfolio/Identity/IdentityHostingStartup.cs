@@ -7,8 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Portfolio.Models;
 
-[assembly: HostingStartup(typeof(Portfolio.Areas.Identity.IdentityHostingStartup))]
-namespace Portfolio.Areas.Identity
+[assembly: HostingStartup(typeof(Portfolio.Identity.IdentityHostingStartup))]
+namespace Portfolio.Identity
 {
     public class IdentityHostingStartup : IHostingStartup
     {
