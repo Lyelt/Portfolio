@@ -20,6 +20,7 @@ namespace Portfolio.Identity
                 {
                     options.ClaimsIdentity.UserIdClaimType = IdentityHelpers.UserIdClaim;
                 })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<PortfolioContext>();
             });
         }

@@ -53,3 +53,19 @@
   border-radius: 6px;
   border-spacing: 0px;
 }
+
+.star-row:hover {
+  box-shadow: 0 2px 8px #d4d6d9;
+  -webkit-box-shadow: 0 2px 8px #d4d6d9;
+  -moz-box-shadow: 0 2px 8px #d4d6d9;
+}
+
+.star-time-cell {
+  cursor: pointer;
+}
+
+.star-time-cell:hover {
+  box-shadow: 0 2px 8px #c5cad1;
+  -webkit-box-shadow: 0 2px 8px #c5cad1;
+  -moz-box-shadow: 0 2px 8px #c5cad1;
+}
