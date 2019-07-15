@@ -9,14 +9,15 @@ using Portfolio.Data;
 namespace Portfolio.Migrations
 {
     [DbContext(typeof(SpeedrunContext))]
-    [Migration("20190711191726_StarUpdateTime")]
-    partial class StarUpdateTime
+    [Migration("20190715040918_TimespanTicks")]
+    partial class TimespanTicks
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.11-servicing-32099");
+                .HasAnnotation("ProductVersion", "2.1.11-servicing-32099")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Portfolio.Models.ApplicationUser", b =>
                 {
@@ -97,7 +98,7 @@ namespace Portfolio.Migrations
 
                     b.Property<DateTime>("LastUpdated");
 
-                    b.Property<TimeSpan>("Time");
+                    b.Property<long>("Time");
 
                     b.Property<string>("VideoUrl");
 

@@ -27,5 +27,15 @@ namespace Portfolio.Models
             TimeDisplay = Time.ToString("mm\\:ss\\.ff");
             return this;
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is StarTime st && st.StarId == StarId && st.UserId == UserId;
+        }
+
+        public override int GetHashCode()
+        {
+            return StarId.GetHashCode() + UserId.GetHashCode();
+        }
     }
 }

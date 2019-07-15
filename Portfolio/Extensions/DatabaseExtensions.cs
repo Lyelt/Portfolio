@@ -14,9 +14,12 @@ namespace Portfolio.Extensions
     {
         public static IServiceCollection ConfigureDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<PortfolioContext>(options => options.UseSqlite(configuration.GetConnectionString("PortfolioContextConnection")))
-                .AddDbContext<SpeedrunContext>(options => options.UseSqlite(configuration.GetConnectionString("SpeedrunContextConnection")))
-                .AddDbContext<BowlingContext>(options => options.UseSqlite(configuration.GetConnectionString("BowlingContextConnection")));
+            string connStr = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+            services
+                .AddDbContext<PortfolioContext>(options => options.UseMySql(connStr))
+                .AddDbContext<SpeedrunContext>(options => options.UseMySql(connStr))
+                .AddDbContext<BowlingContext>(options => options.UseMySql(connStr));
             return services;
         }
     }

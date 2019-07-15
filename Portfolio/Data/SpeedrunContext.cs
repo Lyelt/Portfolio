@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Portfolio.Data
 {
@@ -42,6 +43,10 @@ namespace Portfolio.Data
             builder.Entity<StarTime>()
                .HasOne(st => st.User)
                .WithMany();
+
+            builder.Entity<StarTime>()
+                .Property(st => st.Time)
+                .HasConversion(new TimeSpanToTicksConverter());
         }
     }
 }
