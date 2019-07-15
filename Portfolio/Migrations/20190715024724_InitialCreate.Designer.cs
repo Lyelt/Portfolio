@@ -9,8 +9,8 @@ using Portfolio.Data;
 namespace Portfolio.Migrations
 {
     [DbContext(typeof(SpeedrunContext))]
-    [Migration("20190711174415_Initial")]
-    partial class Initial
+    [Migration("20190715024724_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -94,6 +94,8 @@ namespace Portfolio.Migrations
                     b.Property<int>("StarId");
 
                     b.Property<string>("UserId");
+
+                    b.Property<DateTime>("LastUpdated");
 
                     b.Property<TimeSpan>("Time");
 

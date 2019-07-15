@@ -20,5 +20,7 @@ ENV ASPNETCORE_URLS http://*:5000
 WORKDIR /app
 ADD /Portfolio/nginx.conf.sigil /app/nginx.conf.sigil
 COPY /Portfolio/appsettings.json /app/
+COPY /Portfolio/*.csv /app/
+COPY /Portfolio/*.sql /app/
 COPY --from=build /app/Portfolio/out ./
 ENTRYPOINT ["dotnet", "Portfolio.dll"]

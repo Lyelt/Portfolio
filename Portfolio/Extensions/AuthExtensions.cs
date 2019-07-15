@@ -32,6 +32,12 @@ namespace Portfolio.Extensions
                     };
                 });
 
+            //services.AddDefaultIdentity<ApplicationUser>(options =>
+            //{
+            //    options.ClaimsIdentity.UserIdClaimType = IdentityHelpers.UserIdClaim;
+            //})
+            //.AddEntityFrameworkStores<PortfolioContext>();
+
             return services;
         }
     }

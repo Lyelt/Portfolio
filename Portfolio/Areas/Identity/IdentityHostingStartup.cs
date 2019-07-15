@@ -14,11 +14,8 @@ namespace Portfolio.Areas.Identity
     {
         public void Configure(IWebHostBuilder builder)
         {
-            builder.ConfigureServices((context, services) => {
-                services.AddDbContext<PortfolioContext>(options =>
-                    options.UseSqlite(
-                        context.Configuration.GetConnectionString("PortfolioContextConnection")));
-
+            builder.ConfigureServices((context, services) =>
+            {
                 services.AddDefaultIdentity<ApplicationUser>(options =>
                 {
                     options.ClaimsIdentity.UserIdClaimType = IdentityHelpers.UserIdClaim;

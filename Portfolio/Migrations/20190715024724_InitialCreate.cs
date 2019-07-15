@@ -3,41 +3,17 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Portfolio.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    UserName = table.Column<string>(nullable: true),
-                    NormalizedUserName = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    NormalizedEmail = table.Column<string>(nullable: true),
-                    EmailConfirmed = table.Column<bool>(nullable: false),
-                    PasswordHash = table.Column<string>(nullable: true),
-                    SecurityStamp = table.Column<string>(nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
-                    LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
 
             migrationBuilder.CreateTable(
                 name: "Courses",
                 columns: table => new
                 {
                     CourseId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("MySQL:AutoIncrement", true),
                     Name = table.Column<string>(nullable: false),
                     Abbreviation = table.Column<string>(maxLength: 5, nullable: true)
                 },
@@ -51,7 +27,7 @@ namespace Portfolio.Migrations
                 columns: table => new
                 {
                     StarId = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("MySQL:AutoIncrement", true),
                     Name = table.Column<string>(nullable: false),
                     CourseId = table.Column<int>(nullable: false)
                 },
@@ -72,6 +48,7 @@ namespace Portfolio.Migrations
                 {
                     StarId = table.Column<int>(nullable: false),
                     UserId = table.Column<string>(nullable: false),
+                    LastUpdated = table.Column<DateTime>(nullable: false),
                     Time = table.Column<TimeSpan>(nullable: false),
                     VideoUrl = table.Column<string>(nullable: true)
                 },
@@ -110,9 +87,6 @@ namespace Portfolio.Migrations
 
             migrationBuilder.DropTable(
                 name: "Stars");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Courses");

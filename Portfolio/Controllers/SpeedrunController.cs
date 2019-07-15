@@ -85,7 +85,11 @@ namespace Portfolio.Controllers
 
                 if (userIsAdmin || starTime.UserId == currentUser.Id)
                 {
-                    _srContext.StarTimes.Update(starTime);
+                    if (await _srContext.StarTimes.ContainsAsync(starTime))
+                        _srContext.StarTimes.Update(starTime);
+                    else
+                        await _srContext.StarTimes.AddAsync(starTime);
+
                     await _srContext.SaveChangesAsync();
                     return Ok();
                 }
