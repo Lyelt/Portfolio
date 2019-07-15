@@ -59,6 +59,17 @@ export class SpeedrunComponent implements OnInit {
     return foundTime;
   }
 
+  getStyles(starId: number, userId: string) {
+    let starTime = this.getStarTime(starId, userId);
+    let minStarTime = this.starTimes.reduce((prev, curr) => prev.totalMilliseconds < curr.totalMilliseconds ? prev : curr);
+    let isFastestTime = minStarTime.totalMilliseconds == starTime.totalMilliseconds;
+
+    return {
+      'color': isFastestTime ? 'green' : 'inherit',
+      'font-weight': isFastestTime ? 'bold' : 'normal'
+    };
+  }
+
   openDialog(starTime: StarTime, starName: string) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.autoFocus = true;
@@ -94,7 +105,7 @@ export class StarTime {
 
   timeDisplay: string;
 
-  totalSeconds: number;
+  totalMilliseconds: number;
 
   lastUpdated: Date;
 

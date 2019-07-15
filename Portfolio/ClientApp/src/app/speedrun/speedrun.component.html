@@ -12,7 +12,10 @@
           </tr>
           <tr class="mat-row star-row" *ngFor="let star of course.stars">
             <td class="mat-cell">{{star.name}}</td>
-            <td *ngFor="let user of runners" class="mat-cell star-time-cell" (click)="openDialog(getStarTime(star.starId, user.id), star.name)">{{getStarTime(star.starId, user.id)?.timeDisplay}}</td>
+            <td *ngFor="let user of runners"
+                [ngStyle]="getStyles(star.starId, user.id)"
+                class="mat-cell star-time-cell"
+                (click)="openDialog(getStarTime(star.starId, user.id), star.name)">{{getStarTime(star.starId, user.id)?.timeDisplay}}</td>
           </tr>
         </table>
       </mat-card-content>
