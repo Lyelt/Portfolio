@@ -6,7 +6,52 @@
   font-weight: bold;
 }
 
-.course-card {
+.card {
   margin-top: 1em;
-  background-color: lightgray;
+}
+
+.courses > .card {
+  background-color: rgba(233, 30, 99, .25);
+}
+
+.secrets > .card {
+  background-color: rgba(63, 81, 181, .25);
+}
+
+.responsive-container > * {
+  min-width: 400px;
+  max-width: 400px;
+}
+
+.container-vertical > * {
+  text-align: center;
+}
+
+.stay-top {
+  align-items: flex-start;
+}
+
+.secrets > * {
+  min-width: 600px;
+}
+
+td.title {
+  text-align: left;
+}
+
+table.fixed {
+  table-layout: fixed;
+  width: 90px;
+}
+/*Setting the table width is important!*/
+table.fixed td {
+  overflow: hidden;
+}
+/*Hide text outside the cell.*/
+table.fixed td:nth-of-type(n+1) {
+  width: 40px;
+}
+
+table.fixed-lg td:nth-of-type(n+1) {
+  width: 150px;
 }
