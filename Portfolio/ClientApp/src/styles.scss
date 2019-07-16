@@ -86,3 +86,19 @@ table {
 .container-horizontal > * {
   width: 100%;
 }
+
+.responsive, .responsive-container > * {
+  width: 330px;
+}
+
+@media only screen and (min-width: 600px) {
+  .responsive, .responsive-container > * {
+    min-width: 560px;
+  }
+}
+
+@media only screen and (min-width: 1080px) {
+  .responsive, .responsive-container > * {
+    min-width: 800px;
+  }
+}

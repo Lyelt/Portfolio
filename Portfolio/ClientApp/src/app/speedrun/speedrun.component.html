@@ -1,5 +1,10 @@
-<div class="container-vertical">
-  <div class="course">
+<div class="container-vertical responsive-container">
+  <div class="links container-horizontal">
+    <!--<button mat-raised-button routerLink="/speedrun/bingo">Bingo Tool</button>
+  <button mat-raised-button routerLink="/speedrun/configure">Settings</button>
+  <button mat-raised-button routerLink="/login">Logout</button-->
+  </div>
+  <div class="course responsive-container">
     <mat-card class="card course-card" *ngFor="let course of courses">
       <mat-card-header>
         <mat-card-title>{{course.name}}<span *ngIf="course.abbreviation"> ({{course.abbreviation}})</span></mat-card-title>
@@ -13,7 +18,7 @@
           <tr class="mat-row star-row" *ngFor="let star of course.stars">
             <td class="mat-cell star-cell">{{star.name}}</td>
             <td *ngFor="let user of runners"
-                [ngStyle]="getStyles(star.starId, user.id)"
+                [ngClass]="{'fastest-time': starTimeIsFastest(star.starId, user.id)}"
                 class="mat-cell star-time-cell"
                 (click)="openDialog(getStarTime(star.starId, user.id), star.name)">{{getStarTime(star.starId, user.id)?.timeDisplay}}</td>
           </tr>

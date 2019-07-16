@@ -1,0 +1,22 @@
+<div class="container-horizontal">
+  <div class="container-vertical responsive-container">
+    <mat-card class="card course-card" *ngFor="let course of courses">
+      <mat-card-content class="container-horizontal">
+        <span class="course-name">{{course.name}}</span>
+        <mat-icon>star_border</mat-icon>
+        <mat-icon>star_border</mat-icon>
+        <mat-icon>star_border</mat-icon>
+        <mat-icon>star_border</mat-icon>
+        <mat-icon>star_border</mat-icon>
+        <mat-icon>star_border</mat-icon>
+        <span class="divider"></span>
+        <mat-icon>star_border</mat-icon>
+        <span class="divider"></span>
+        <mat-icon *ngIf="course.hasCannon">check_box_outline_blank</mat-icon>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="container-vertical responsive-container">
+
+  </div>
+</div>

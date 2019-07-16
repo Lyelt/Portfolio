@@ -32,21 +32,8 @@
   background-color: rgba(233, 30, 99, .05);
 }
 
-.course-card {
-  width: 330px;
+.course-card, .links {
   margin: 1em 0 0em 0;
-}
-
-@media only screen and (min-width: 600px) {
-  .course-card {
-    min-width: 560px;
-  }
-}
-
-@media only screen and (min-width: 1080px) {
-  .course-card {
-    min-width: 800px;
-  }
 }
 
 .mat-table {
@@ -64,8 +51,6 @@
   -moz-box-shadow: 0 2px 8px #d4d6d9;
 }
 
-
-
 .star-time-cell:hover {
   box-shadow: 0 2px 8px #c5cad1;
   -webkit-box-shadow: 0 2px 8px #c5cad1;
@@ -79,4 +64,13 @@
 
 .runner-header-cell {
   width: 15%;
+}
+
+.container-vertical {
+  align-items: center;
+}
+
+.fastest-time {
+  color: green;
+  font-weight: bold;
 }

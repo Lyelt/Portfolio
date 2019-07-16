@@ -18,6 +18,8 @@ import { EditStarComponent } from './edit-star/edit-star.component';
 import { AuthGuard } from './auth/auth-guard.service';
 import { JwtHelperService, JwtModule, JwtInterceptor } from '@auth0/angular-jwt';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BingoComponent } from './bingo/bingo.component';
+import { ConfigureSpeedrunComponent } from './configure-speedrun/configure-speedrun.component';
 
 const routes: Routes = [
   {
@@ -34,6 +36,12 @@ const routes: Routes = [
   },
   {
     path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: 'speedrun/configure', component: ConfigureSpeedrunComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: 'speedrun/bingo', component: BingoComponent
   },
   {
     path: 'bowling', component: BowlingComponent, canActivate: [AuthGuard]
@@ -60,7 +68,9 @@ const routes: Routes = [
     SpeedrunComponent,
     BowlingComponent,
     LoginComponent,
-    EditStarComponent
+    EditStarComponent,
+    BingoComponent,
+    ConfigureSpeedrunComponent
   ],
   imports: [
     BrowserModule,
