@@ -3,6 +3,7 @@ import { SpeedrunService } from '../speedrun.service';
 import { User } from '../auth/user';
 import { MatDialog, MatDialogConfig } from "@angular/material";
 import { EditStarComponent } from '../edit-star/edit-star.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-speedrun',
@@ -14,7 +15,7 @@ export class SpeedrunComponent implements OnInit {
   courses: Course[] = [];
   runners: User[] = [];
 
-  constructor(private srService: SpeedrunService, private dialog: MatDialog) { }
+  constructor(private srService: SpeedrunService, private dialog: MatDialog, private router: Router) { }
 
   ngOnInit() {
     this.retrieveData();
@@ -58,7 +59,7 @@ export class SpeedrunComponent implements OnInit {
     return foundTime;
   }
 
-  getStyles(starId: number, userId: string) {
+  starTimeIsFastest(starId: number, userId: string) {
     let isFastestTime = false;
     let starTime = this.getStarTime(starId, userId);
     let timesForThisStar = this.starTimes.filter(st => st.starId == starId);
@@ -68,10 +69,7 @@ export class SpeedrunComponent implements OnInit {
       isFastestTime = minStarTime.totalMilliseconds == starTime.totalMilliseconds;
     }
 
-    return {
-      'color': isFastestTime ? 'green' : 'inherit',
-      'font-weight': isFastestTime ? 'bold' : 'normal'
-    };
+    return isFastestTime;
   }
 
   openDialog(starTime: StarTime, starName: string) {

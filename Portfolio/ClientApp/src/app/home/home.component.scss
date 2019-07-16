@@ -17,28 +17,15 @@
   margin-bottom: 4em;
 }
 
-.projects, .skills, .about, .contact {
+.head, .projects, .skills, .about, .contact {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .card {
-  width: 330px;
   text-align: left;
   margin: 1em 0 2em 0;
-}
-
-@media only screen and (min-width: 600px) {
-  .card {
-    min-width: 560px;
-  }
-}
-
-@media only screen and (min-width: 1080px) {
-  .card {
-    min-width: 800px;
-  }
 }
 
 .skill-card, .contact-card {
