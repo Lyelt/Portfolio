@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SpeedrunService } from '../speedrun.service';
+import { BingoService } from '../bingo.service';
 
 @Component({
   selector: 'app-bingo',
@@ -8,12 +9,13 @@ import { SpeedrunService } from '../speedrun.service';
 })
 export class BingoComponent implements OnInit {
   courses: BingoCourse[] = [];
-  secrets: SecretStar[] = [];
+  secrets: SecretCategory[] = [];
+  stageStars: StageStar[] = [];
   cannonsOpened: number = 0;
   secretsCompleted: number = 0;
   hundredsCompleted: number = 0;
 
-  constructor() { }
+  constructor(private bingoService: BingoService) { }
 
   ngOnInit() {
     this.retrieveData();
@@ -39,21 +41,54 @@ export class BingoComponent implements OnInit {
     ];
 
     this.secrets = [
-      { name: "Slide 1" },
-      { name: "Slide 2" },
-      { name: "Aquarium Reds" },
-      { name: "BitDW Reds" },
-      { name: "Wing Cap Reds" },
-      { name: "Toad 1 (12 stars)" },
-      { name: "Toad 2 (25 stars)" },
-      { name: "Toad 3 (35 stars)" },
-      { name: "Mips 1 (15 stars)" },
-      { name: "Mips 2 (50 stars)" },
-      { name: "BitFS Reds" },
-      { name: "BitS Reds" },
-      { name: "Invis Cap Reds" },
-      { name: "Metal Cap Reds" },
-      { name: "Cloud Stage Reds" },
+      {
+        name: "Slides", stars: [
+          { name: "Slide 1" },
+          { name: "Slide 2" }
+        ]
+      },
+      {
+        name: "Bowser Reds", stars: [
+          { name: "BitDW Reds" },
+          { name: "BitFS Reds" },
+          { name: "BitS Reds" }
+        ]
+      },
+      {
+        name: "Cap Stage Reds", stars: [
+          { name: "Wing Cap Reds" },
+          { name: "Invis Cap Reds" },
+          { name: "Metal Cap Reds" }
+        ]
+      },
+      {
+        name: "Toad Stars", stars: [
+          { name: "Toad 1 (12 stars)" },
+          { name: "Toad 2 (25 stars)" },
+          { name: "Toad 3 (35 stars)" }
+        ]
+      },
+      {
+        name: "Secret Reds", stars: [
+          { name: "Aquarium Reds" },
+          { name: "Cloud Stage Reds" }
+        ]
+      },
+      {
+        name: "Mips", stars: [
+          { name: "Mips 1 (15 stars)" },
+          { name: "Mips 2 (50 stars)" }
+        ]
+      }
+    ];
+
+    this.stageStars = [
+      { name: "Star 1" },
+      { name: "Star 2" },
+      { name: "Star 3" },
+      { name: "Star 4" },
+      { name: "Star 5" },
+      { name: "Star 6" }
     ];
   }
 
@@ -61,6 +96,20 @@ export class BingoComponent implements OnInit {
     this.cannonsOpened = 0;
     this.secretsCompleted = 0;
     this.hundredsCompleted = 0;
+
+    this.bingoService.resetComponents();
+  }
+
+  hundredToggled(completed: boolean) {
+    this.hundredsCompleted += completed ? 1 : -1;
+  }
+
+  secretToggled(completed: boolean) {
+    this.secretsCompleted += completed ? 1 : -1;
+  }
+
+  cannonToggled(completed: boolean) {
+    this.cannonsOpened += completed ? 1 : -1;
   }
 }
 
@@ -69,6 +118,16 @@ export class BingoCourse {
   hasCannon: boolean;
 }
 
+export class SecretCategory {
+  name: string;
+
+  stars: SecretStar[];
+}
+
 export class SecretStar {
+  name: string;
+}
+
+export class StageStar {
   name: string;
 }

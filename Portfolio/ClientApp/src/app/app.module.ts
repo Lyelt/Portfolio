@@ -20,6 +20,8 @@ import { JwtHelperService, JwtModule, JwtInterceptor } from '@auth0/angular-jwt'
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BingoComponent } from './bingo/bingo.component';
 import { ConfigureSpeedrunComponent } from './configure-speedrun/configure-speedrun.component';
+import { HighlightDirective } from './highlight.directive';
+import { BingoGoalComponent } from './bingo-goal/bingo-goal.component';
 
 const routes: Routes = [
   {
@@ -70,7 +72,9 @@ const routes: Routes = [
     LoginComponent,
     EditStarComponent,
     BingoComponent,
-    ConfigureSpeedrunComponent
+    ConfigureSpeedrunComponent,
+    HighlightDirective,
+    BingoGoalComponent
   ],
   imports: [
     BrowserModule,

@@ -1,8 +1,8 @@
 <div class="container-vertical responsive-container">
   <div class="links container-horizontal">
-    <!--<button mat-raised-button routerLink="/speedrun/bingo">Bingo Tool</button>
-  <button mat-raised-button routerLink="/speedrun/configure">Settings</button>
-  <button mat-raised-button routerLink="/login">Logout</button-->
+    <button mat-raised-button color="primary" routerLink="/speedrun/bingo">Bingo Tool</button>
+    <button mat-raised-button color="primary" routerLink="/speedrun/configure" disabled>Settings</button>
+    <button mat-raised-button color="primary" routerLink="/login">Logout</button>
   </div>
   <div class="course responsive-container">
     <mat-card class="card course-card" *ngFor="let course of courses">
