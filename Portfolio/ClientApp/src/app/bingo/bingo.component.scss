@@ -18,6 +18,14 @@
   background-color: rgba(63, 81, 181, .25);
 }
 
+.misc-card {
+  background-color: rgba(233, 30, 99, .25);
+}
+
+.star-name {
+  font-size: x-small;
+}
+
 .responsive-container > * {
   min-width: 400px;
   max-width: 400px;
@@ -43,15 +51,19 @@ table.fixed {
   table-layout: fixed;
   width: 90px;
 }
-/*Setting the table width is important!*/
+
 table.fixed td {
   overflow: hidden;
 }
-/*Hide text outside the cell.*/
+
 table.fixed td:nth-of-type(n+1) {
   width: 40px;
 }
 
 table.fixed-lg td:nth-of-type(n+1) {
   width: 150px;
+}
+
+table.fixed-md td:nth-of-type(n+1) {
+  width: 120px;
 }
