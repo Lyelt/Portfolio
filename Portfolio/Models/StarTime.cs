@@ -26,7 +26,7 @@ namespace Portfolio.Models
 
         public StarTime WithClientView()
         {
-            TimeDisplay = Time.ToString("mm\\:ss\\.ff");
+            TimeDisplay = Time.ToString("hh\\:mm\\:ss\\.ff");
             TotalMilliseconds = Time.TotalMilliseconds;
             return this;
         }

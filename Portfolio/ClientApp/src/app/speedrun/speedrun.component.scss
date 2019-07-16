@@ -54,18 +54,29 @@
   border-spacing: 0px;
 }
 
+.star-cell, .star-header-cell {
+  width: 60%;
+}
+
 .star-row:hover {
   box-shadow: 0 2px 8px #d4d6d9;
   -webkit-box-shadow: 0 2px 8px #d4d6d9;
   -moz-box-shadow: 0 2px 8px #d4d6d9;
 }
 
-.star-time-cell {
-  cursor: pointer;
-}
+
 
 .star-time-cell:hover {
   box-shadow: 0 2px 8px #c5cad1;
   -webkit-box-shadow: 0 2px 8px #c5cad1;
   -moz-box-shadow: 0 2px 8px #c5cad1;
+}
+
+.star-time-cell {
+  cursor: pointer;
+  width: 15%;
+}
+
+.runner-header-cell {
+  width: 15%;
 }

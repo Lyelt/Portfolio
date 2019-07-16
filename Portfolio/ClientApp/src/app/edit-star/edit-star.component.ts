@@ -26,7 +26,7 @@ export class EditStarComponent implements OnInit {
     this.form = this.fb.group({
       starId: [this.starTime.starId],
       userId: [this.starTime.userId],
-      time: [this.starTime.timeDisplay, [Validators.required, Validators.pattern("[0-5][0-9]:[0-5][0-9].[0-9][0-9]")]],
+      time: [this.starTime.timeDisplay, [Validators.pattern("[0-9][0-9]:[0-5][0-9]:[0-5][0-9][.][0-9][0-9]")]],
       videoUrl: [this.starTime.videoUrl]
     });
   }
