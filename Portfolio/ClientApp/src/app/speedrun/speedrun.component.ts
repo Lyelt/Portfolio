@@ -13,7 +13,6 @@ export class SpeedrunComponent implements OnInit {
   starTimes: StarTime[] = [];
   courses: Course[] = [];
   runners: User[] = [];
-  starTimeMap: Map<number, Map<string, StarTime>> = new Map<number, Map<string, StarTime>>();
 
   constructor(private srService: SpeedrunService, private dialog: MatDialog) { }
 
@@ -60,9 +59,14 @@ export class SpeedrunComponent implements OnInit {
   }
 
   getStyles(starId: number, userId: string) {
+    let isFastestTime = false;
     let starTime = this.getStarTime(starId, userId);
-    let minStarTime = this.starTimes.reduce((prev, curr) => prev.totalMilliseconds < curr.totalMilliseconds ? prev : curr);
-    let isFastestTime = minStarTime.totalMilliseconds == starTime.totalMilliseconds;
+    let timesForThisStar = this.starTimes.filter(st => st.starId == starId);
+
+    if (timesForThisStar.length > 0) {
+      let minStarTime = timesForThisStar.reduce((prev, curr) => prev.totalMilliseconds < curr.totalMilliseconds ? prev : curr);
+      isFastestTime = minStarTime.totalMilliseconds == starTime.totalMilliseconds;
+    }
 
     return {
       'color': isFastestTime ? 'green' : 'inherit',
@@ -85,7 +89,7 @@ export class SpeedrunComponent implements OnInit {
 
   saveStarTime(data: any) {
     let starTime: StarTime = data.starTime;
-    starTime.time = "00:" + starTime.time; // Make the C# TimeSpan.Parse happy
+    starTime.time = starTime.time || "00:00:00.00"; // If not provided, use TimeSpan.Zero
 
     this.srService.updateStarTime(starTime).subscribe(
       result => {

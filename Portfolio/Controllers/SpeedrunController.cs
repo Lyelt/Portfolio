@@ -89,7 +89,10 @@ namespace Portfolio.Controllers
 
                     if (await _srContext.StarTimes.ContainsAsync(starTime))
                     {
-                        _srContext.StarTimes.Update(starTime);
+                        if (starTime.Time == TimeSpan.Zero)
+                            _srContext.StarTimes.Remove(starTime);
+                        else
+                            _srContext.StarTimes.Update(starTime);
                     }
                     else
                     {

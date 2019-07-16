@@ -7,11 +7,11 @@
       <mat-card-content>
         <table class="mat-table">
           <tr class="mat-header-row">
-            <th class="mat-header-cell">Star</th>
-            <th class="mat-header-cell" *ngFor="let user of runners">{{user.userName}}</th>
+            <th class="mat-header-cell star-header-cell">Star</th>
+            <th class="mat-header-cell runner-header-cell" *ngFor="let user of runners">{{user.userName}}</th>
           </tr>
           <tr class="mat-row star-row" *ngFor="let star of course.stars">
-            <td class="mat-cell">{{star.name}}</td>
+            <td class="mat-cell star-cell">{{star.name}}</td>
             <td *ngFor="let user of runners"
                 [ngStyle]="getStyles(star.starId, user.id)"
                 class="mat-cell star-time-cell"
