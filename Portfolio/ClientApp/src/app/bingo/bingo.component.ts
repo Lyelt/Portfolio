@@ -10,7 +10,9 @@ import { BingoService } from '../bingo.service';
 export class BingoComponent implements OnInit {
   courses: BingoCourse[] = [];
   secrets: SecretCategory[] = [];
-  stageStars: StageStar[] = [];
+  stageStars: BingoStar[] = [];
+  bosses: BingoStar[] = [];
+  races: BingoStar[] = [];
   cannonsOpened: number = 0;
   secretsCompleted: number = 0;
   hundredsCompleted: number = 0;
@@ -69,7 +71,7 @@ export class BingoComponent implements OnInit {
         ]
       },
       {
-        name: "Secret Reds", stars: [
+        name: "Secret Stages", stars: [
           { name: "Aquarium Reds" },
           { name: "Cloud Stage Reds" }
         ]
@@ -89,6 +91,19 @@ export class BingoComponent implements OnInit {
       { name: "Star 4" },
       { name: "Star 5" },
       { name: "Star 6" }
+    ];
+
+    this.bosses = [
+      { name: "Bob-omb King" },
+      { name: "Whomp King" },
+      { name: "Hand Boss" },
+      { name: "Wiggler" }
+    ];
+
+    this.races = [
+      { name: "BoB Koopa" },
+      { name: "CCM Penguin" },
+      { name: "THI Koopa" }
     ];
   }
 
@@ -121,13 +136,9 @@ export class BingoCourse {
 export class SecretCategory {
   name: string;
 
-  stars: SecretStar[];
+  stars: BingoStar[];
 }
 
-export class SecretStar {
-  name: string;
-}
-
-export class StageStar {
+export class BingoStar {
   name: string;
 }
