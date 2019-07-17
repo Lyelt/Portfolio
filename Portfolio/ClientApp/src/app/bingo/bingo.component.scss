@@ -2,12 +2,14 @@
   align-items: center;
 }
 
-.course-name {
-  font-weight: bold;
+.outer {
+  display: flex;
+  overflow: hidden;
+  justify-content: center;
 }
 
 .card {
-  margin-top: 1em;
+  margin-bottom: 1em;
 }
 
 .courses > .card {
@@ -27,8 +29,8 @@
 }
 
 .responsive-container > * {
-  min-width: 400px;
-  max-width: 400px;
+  min-width: 340px;
+  max-width: 340px;
 }
 
 .container-vertical > * {
@@ -37,10 +39,6 @@
 
 .stay-top {
   align-items: flex-start;
-}
-
-.secrets > * {
-  min-width: 600px;
 }
 
 td.title {
@@ -57,13 +55,60 @@ table.fixed td {
 }
 
 table.fixed td:nth-of-type(n+1) {
-  width: 40px;
-}
-
-table.fixed-lg td:nth-of-type(n+1) {
-  width: 150px;
+  width: 35px;
 }
 
 table.fixed-md td:nth-of-type(n+1) {
-  width: 120px;
+  width: 65px;
+}
+
+table.fixed-lg td:nth-of-type(n+1) {
+  width: 80px;
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+}
+
+@media only screen and (min-width: 768px) {
+  .flex-container {
+    flex-direction: row;
+  }
+
+  .courses {
+    margin-right: 1em;
+  }
+}
+
+@media only screen and (min-width: 1080px) {
+  table.fixed td:nth-of-type(n+1) {
+    width: 40px;
+  }
+
+  table.fixed-md td:nth-of-type(n+1) {
+    width: 120px;
+  }
+
+  table.fixed-lg td:nth-of-type(n+1) {
+    width: 150px;
+  }
+
+  .responsive-container > * {
+    min-width: 400px;
+    max-width: 400px;
+  }
+
+  .secrets > * {
+    min-width: 600px;
+    max-width: 600px;
+  }
+
+  .flex-container {
+    flex-direction: row;
+  }
+
+  .courses {
+    margin-right: 2em;
+  }
 }

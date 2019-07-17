@@ -1,108 +1,111 @@
-<div class="container-horizontal stay-top">
-  <div class="container-vertical responsive-container courses">
-    <h2>Courses</h2>
-    <mat-card class="card" *ngFor="let course of courses">
-      <table class="fixed">
-        <tbody>
-          <tr class="goal-row">
-            <td class="title">{{course.name}}</td>
-            <td *ngFor="let star of stageStars" title="{{star.name}}">
-              <div class="container-vertical">
-                <app-bingo-goal [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
-                <span class="star-name"></span>
-              </div>
-            </td>
-            <td title="100 Coin Star">
-              <div class="container-vertical">
-                <app-bingo-goal (toggled)="hundredToggled($event)" [uncheckedIcon]="'radio_button_unchecked'" [checkedIcon]="'radio_button_checked'"></app-bingo-goal>
-                <span class="star-name">100</span>
-              </div>
-            </td>
-            <td title="Cannon" *ngIf="course.hasCannon">
-              <div class="container-vertical">
-                <app-bingo-goal (toggled)="cannonToggled($event)" [uncheckedIcon]="'check_box_outline_blank'" [checkedIcon]="'check_box'"></app-bingo-goal>
-                <span class="star-name">Cannon</span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </mat-card>
-  </div>
-  <div class="container-vertical responsive-container secrets">
-    <h2>Castle Secrets</h2>
-    <mat-card class="card" *ngFor="let category of secrets">
-      <table class="fixed fixed-lg">
-        <tbody>
-          <tr>
-            <td class="title">{{category.name}}</td>
-            <td *ngFor="let star of category.stars">
-              <div class="container-vertical">
-                <app-bingo-goal (toggled)="secretToggled($event)" [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
-                <span class="star-name">{{star.name}}</span>
-              </div>
-            </td>
-            <td *ngIf="category.name == 'Secret Stages'">
-              <div class="container-vertical">
-                <app-bingo-goal (toggled)="cannonToggled($event)" [uncheckedIcon]="'check_box_outline_blank'" [checkedIcon]="'check_box'"></app-bingo-goal>
-                <span class="star-name">Cloud Stage Cannon</span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </mat-card>
-    <h2>Miscellaneous</h2>
-    <mat-card class="card">
-      <table class="fixed fixed-md">
-        <tbody>
-          <tr>
-            <td class="title">Bosses</td>
-            <td *ngFor="let boss of bosses">
-              <div class="container-vertical">
-                <app-bingo-goal (toggled)="bossToggled($event)" [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
-                <span class="star-name">{{boss.name}}</span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </mat-card>
-    <mat-card class="card">
-      <table class="fixed fixed-md">
-        <tbody>
-          <tr>
-            <td class="title">Races</td>
-            <td *ngFor="let race of races">
-              <div class="container-vertical">
-                <app-bingo-goal (toggled)="bossToggled($event)" [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
-                <span class="star-name">{{race.name}}</span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </mat-card>
-    <div class="stats">
-      <mat-list>
-        <h3 mat-subheader>Current Stats</h3>
-        <mat-list-item>
-          <mat-icon mat-list-icon>star</mat-icon>
-          <h4 mat-line>Total secret stars: {{secretsCompleted}}</h4>
-        </mat-list-item>
-        <mat-list-item>
-          <mat-icon mat-list-icon>radio_button_checked</mat-icon>
-          <h4 mat-line>Total 100 coin stars: {{hundredsCompleted}}</h4>
-        </mat-list-item>
-        <mat-list-item>
-          <mat-icon mat-list-icon>check_box</mat-icon>
-          <h4 mat-line>Total cannons: {{cannonsOpened}}</h4>
-        </mat-list-item>
-        <mat-divider></mat-divider>
-        <h3 mat-subheader>Actions</h3>
-        <mat-list-item>
-          <button mat-raised-button color="primary" (click)="reset()"><mat-icon>refresh</mat-icon> Reset</button>
-        </mat-list-item>
-      </mat-list>
+<div class="outer">
+  <div class="flex-container">
+    <div class="container-vertical responsive-container courses">
+      <h2>Courses</h2>
+      <mat-card class="card" *ngFor="let course of courses">
+        <table class="fixed">
+          <tbody>
+            <tr class="goal-row">
+              <td class="title">{{course.name}}</td>
+              <td *ngFor="let star of stageStars" title="{{star.name}}">
+                <div class="container-vertical">
+                  <app-bingo-goal [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
+                  <span class="star-name"></span>
+                </div>
+              </td>
+              <td title="100 Coin Star">
+                <div class="container-vertical">
+                  <app-bingo-goal (toggled)="hundredToggled($event)" [uncheckedIcon]="'radio_button_unchecked'" [checkedIcon]="'radio_button_checked'"></app-bingo-goal>
+                  <span class="star-name">100</span>
+                </div>
+              </td>
+              <td title="Cannon" *ngIf="course.hasCannon">
+                <div class="container-vertical">
+                  <app-bingo-goal (toggled)="cannonToggled($event)" [uncheckedIcon]="'check_box_outline_blank'" [checkedIcon]="'check_box'"></app-bingo-goal>
+                  <span class="star-name">Cannon</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </mat-card>
+    </div>
+    <div class="container-vertical responsive-container secrets">
+      <h2>Castle Secrets</h2>
+      <mat-card class="card" *ngFor="let category of secrets">
+        <table class="fixed fixed-lg">
+          <tbody>
+            <tr>
+              <td class="title">{{category.name}}</td>
+              <td *ngFor="let star of category.stars">
+                <div class="container-vertical">
+                  <app-bingo-goal (toggled)="secretToggled($event)" [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
+                  <span class="star-name">{{star.name}}</span>
+                </div>
+              </td>
+              <td *ngIf="category.name == 'Secret Stages'">
+                <div class="container-vertical">
+                  <app-bingo-goal (toggled)="cannonToggled($event)" [uncheckedIcon]="'check_box_outline_blank'" [checkedIcon]="'check_box'"></app-bingo-goal>
+                  <span class="star-name">Cloud Stage Cannon</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </mat-card>
+      <h2>Miscellaneous</h2>
+      <mat-card class="card">
+        <table class="fixed fixed-md">
+          <tbody>
+            <tr>
+              <td class="title">Bosses</td>
+              <td *ngFor="let boss of bosses">
+                <div class="container-vertical">
+                  <app-bingo-goal [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
+                  <span class="star-name">{{boss.name}}</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </mat-card>
+      <mat-card class="card">
+        <table class="fixed fixed-md">
+          <tbody>
+            <tr>
+              <td class="title">Races</td>
+              <td *ngFor="let race of races">
+                <div class="container-vertical">
+                  <app-bingo-goal [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
+                  <span class="star-name">{{race.name}}</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </mat-card>
+      <div class="stats">
+        <mat-list>
+          <h3 mat-subheader>Current Stats</h3>
+          <mat-list-item>
+            <mat-icon mat-list-icon>star</mat-icon>
+            <h4 mat-line>Total secret stars: {{secretsCompleted}}</h4>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-icon mat-list-icon>radio_button_checked</mat-icon>
+            <h4 mat-line>Total 100 coin stars: {{hundredsCompleted}}</h4>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-icon mat-list-icon>check_box</mat-icon>
+            <h4 mat-line>Total cannons: {{cannonsOpened}}</h4>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <h3 mat-subheader>Actions</h3>
+          <mat-list-item>
+            <button mat-raised-button color="primary" (click)="reset()"><mat-icon>refresh</mat-icon> Reset</button>
+          </mat-list-item>
+        </mat-list>
+      </div>
     </div>
   </div>
+</div>
