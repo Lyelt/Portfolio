@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { SpeedrunService } from '../speedrun.service';
 import { BingoService } from '../bingo.service';
 
 @Component({
@@ -16,6 +15,7 @@ export class BingoComponent implements OnInit {
   cannonsOpened: number = 0;
   secretsCompleted: number = 0;
   hundredsCompleted: number = 0;
+  showingHelp: boolean = false;
 
   constructor(private bingoService: BingoService) { }
 
@@ -105,6 +105,10 @@ export class BingoComponent implements OnInit {
       { name: "CCM Penguin" },
       { name: "THI Koopa" }
     ];
+  }
+
+  toggleHelp(show: boolean) {
+    this.showingHelp = show;
   }
 
   reset() {

@@ -58,6 +58,10 @@ export class LoginComponent implements OnInit {
           this.loading = false;
         });
   }
+
+  navigatingToSpeedrun(): boolean {
+    return this.returnUrl.indexOf('speedrun') >= 0;
+  }
 }
 
 

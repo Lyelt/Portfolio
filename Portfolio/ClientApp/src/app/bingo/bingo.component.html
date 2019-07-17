@@ -103,9 +103,20 @@
           <h3 mat-subheader>Actions</h3>
           <mat-list-item>
             <button mat-raised-button color="primary" (click)="reset()"><mat-icon>refresh</mat-icon> Reset</button>
+            <button mat-raised-button color="warn" (click)="toggleHelp(true)" *ngIf="!showingHelp"><mat-icon>help_outline</mat-icon> Show Help</button>
+            <button mat-raised-button color="warn" (click)="toggleHelp(false)" *ngIf="showingHelp"><mat-icon>help_outline</mat-icon> Hide Help</button>
           </mat-list-item>
         </mat-list>
       </div>
+      <mat-card *ngIf="showingHelp" class="card help-card">
+        <p>This tool is intended to be used as an aid during SM64 bingo runs. It will help you track and count longer-term goals such as cannons and castle secret stars.</p>
+        <hr />
+        <p>To toggle the state of a goal, simply click it. It will turn yellow, indicating that the goal is complete.</p>
+        <hr />
+        <p>If the goal is a castle secret, a cannon, or a 100-coin star, the respective count will be updated.</p>
+        <hr />
+        <p>The 6 regular stars from each stage do not count toward any goals, but can help you visualize "N stars from X stages" goals.</p>
+      </mat-card>
     </div>
   </div>
 </div>

@@ -1,5 +1,8 @@
 <div class="outer-container">
-  <h2>Login</h2>
+  <div class="align-text">
+    <h2>Login</h2>
+    <p style="padding-left: 2em;" *ngIf="navigatingToSpeedrun()">(or, <a routerLink="/speedrun/bingo">click here for the SM64 bingo tool.)</a></p>
+  </div>
   <mat-card class="card">
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
