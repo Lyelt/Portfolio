@@ -94,9 +94,9 @@ export class BingoComponent implements OnInit {
     ];
 
     this.bosses = [
-      { name: "Bob-omb King" },
+      { name: "Big Bob-omb" },
       { name: "Whomp King" },
-      { name: "Hand Boss" },
+      { name: "Eyerok" },
       { name: "Wiggler" }
     ];
 
