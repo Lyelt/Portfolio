@@ -20,10 +20,6 @@
   background-color: rgba(63, 81, 181, .25);
 }
 
-.misc-card {
-  background-color: rgba(233, 30, 99, .25);
-}
-
 .star-name {
   font-size: x-small;
 }
@@ -110,5 +106,13 @@ table.fixed-lg td:nth-of-type(n+1) {
 
   .courses {
     margin-right: 2em;
+  }
+
+  .help-card {
+    font-size: small;
+  }
+
+  mat-list-item button {
+    margin-right: 1em;
   }
 }
