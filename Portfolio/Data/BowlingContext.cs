@@ -10,6 +10,12 @@ namespace Portfolio.Data
 {
     public class BowlingContext : DbContext
     {
+        public DbSet<BowlingSession> Sessions { get; set; }
+
+        public DbSet<BowlingGame> Games { get; set; }
+
+        public DbSet<BowlingFrame> Frames { get; set; }
+
         public BowlingContext(DbContextOptions<BowlingContext> options)
             : base(options)
         {
@@ -18,9 +24,25 @@ namespace Portfolio.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
+
+            builder.Entity<ApplicationUser>()
+                .ToTable("AspNetUsers");
+
+            builder.Entity<BowlingGame>()
+                .HasMany(g => g.Frames)
+                .WithOne();
+
+            builder.Entity<BowlingGame>()
+                .HasOne(g => g.User)
+                .WithMany();
+
+            builder.Entity<BowlingGame>()
+                .HasOne(g => g.Session)
+                .WithMany();
+
+            builder.Entity<BowlingSession>()
+                .HasMany(s => s.Games)
+                .WithOne();
         }
     }
 }

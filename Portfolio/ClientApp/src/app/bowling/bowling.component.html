@@ -1,2 +1,14 @@
-<h2>In progress.</h2>
-<p>Come back soon</p>
+<div class="container-vertical responsive-container">
+  <div class="links container-horizontal">
+    <button mat-raised-button color="primary" routerLink="/bowling/add">Add Scores</button>
+    <mat-select color="primary"><mat-option *ngFor="let bowler of bowlers" [value]="bowler.id">{{bowler.userName}}</mat-option></mat-select>
+    <button mat-raised-button color="primary" routerLink="/login">Logout</button>
+  </div>
+  <div class="responsive-container">
+    <mat-card *ngFor="let session of sessions">
+      <mat-card-header>{{session.date}}</mat-card-header>
+      <mat-card-content>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
