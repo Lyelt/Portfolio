@@ -34,7 +34,7 @@ namespace Portfolio.Migrations.Bowling
             //    });
 
             migrationBuilder.CreateTable(
-                name: "Sessions",
+                name: "BowlingSessions",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -43,38 +43,31 @@ namespace Portfolio.Migrations.Bowling
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sessions", x => x.Id);
+                    table.PrimaryKey("PK_BowlingSessions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Games",
+                name: "BowlingGames",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(nullable: false),
-                    SessionId = table.Column<int>(nullable: false),
+                    BowlingSessionId = table.Column<int>(nullable: false),
                     TotalScore = table.Column<int>(nullable: false),
-                    GameNumber = table.Column<int>(nullable: false),
-                    BowlingSessionId = table.Column<int>(nullable: true)
+                    GameNumber = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Games", x => x.Id);
+                    table.PrimaryKey("PK_BowlingGames", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Games_Sessions_BowlingSessionId",
+                        name: "FK_BowlingGames_BowlingSessions_BowlingSessionId",
                         column: x => x.BowlingSessionId,
-                        principalTable: "Sessions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Games_Sessions_SessionId",
-                        column: x => x.SessionId,
-                        principalTable: "Sessions",
+                        principalTable: "BowlingSessions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Games_AspNetUsers_UserId",
+                        name: "FK_BowlingGames_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -82,61 +75,57 @@ namespace Portfolio.Migrations.Bowling
                 });
 
             migrationBuilder.CreateTable(
-                name: "Frames",
+                name: "BowlingFrames",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    GameId = table.Column<int>(nullable: false),
+                    BowlingGameId = table.Column<int>(nullable: false),
                     FrameNumber = table.Column<int>(nullable: false),
                     Roll1Score = table.Column<int>(nullable: false),
-                    Roll2Score = table.Column<int>(nullable: false),
-                    Roll3Score = table.Column<int>(nullable: false),
-                    IsSplit = table.Column<bool>(nullable: false),
-                    BowlingGameId = table.Column<int>(nullable: true)
+                    Roll2Score = table.Column<int>(nullable: false, defaultValue: 0),
+                    Roll3Score = table.Column<int>(nullable: false, defaultValue: 0),
+                    IsSplit = table.Column<bool>(nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Frames", x => x.Id);
+                    table.PrimaryKey("PK_BowlingFrames", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Frames_Games_BowlingGameId",
+                        name: "FK_BowlingFrames_BowlingGames_BowlingGameId",
                         column: x => x.BowlingGameId,
-                        principalTable: "Games",
+                        principalTable: "BowlingGames",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Frames_BowlingGameId",
-                table: "Frames",
-                column: "BowlingGameId");
+                name: "IX_BowlingFrames_BowlingGameId_FrameNumber",
+                table: "BowlingFrames",
+                columns: new[] { "BowlingGameId", "FrameNumber" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Games_BowlingSessionId",
-                table: "Games",
-                column: "BowlingSessionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Games_SessionId",
-                table: "Games",
-                column: "SessionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Games_UserId",
-                table: "Games",
+                name: "IX_BowlingGames_UserId",
+                table: "BowlingGames",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BowlingGames_BowlingSessionId_GameNumber_UserId",
+                table: "BowlingGames",
+                columns: new[] { "BowlingSessionId", "GameNumber", "UserId" },
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Frames");
+                name: "BowlingFrames");
 
             migrationBuilder.DropTable(
-                name: "Games");
+                name: "BowlingGames");
 
             migrationBuilder.DropTable(
-                name: "Sessions");
+                name: "BowlingSessions");
 
             //migrationBuilder.DropTable(
             //    name: "AspNetUsers");
