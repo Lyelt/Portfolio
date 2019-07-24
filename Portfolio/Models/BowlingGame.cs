@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -14,10 +15,12 @@ namespace Portfolio.Models
 
         [Required]
         public string UserId { get; set; }
+        [JsonIgnore]
         public ApplicationUser User { get; set; }
 
         [Required]
-        public int SessionId { get; set; }
+        public int BowlingSessionId { get; set; }
+        [JsonIgnore]
         public BowlingSession Session { get; set; }
 
         [Required]

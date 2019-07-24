@@ -9,7 +9,7 @@ using Portfolio.Data;
 namespace Portfolio.Migrations.Bowling
 {
     [DbContext(typeof(BowlingContext))]
-    [Migration("20190723041512_InitialCreate")]
+    [Migration("20190724051017_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,25 +62,30 @@ namespace Portfolio.Migrations.Bowling
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("BowlingGameId");
+                    b.Property<int>("BowlingGameId");
 
                     b.Property<int>("FrameNumber");
 
-                    b.Property<int>("GameId");
-
-                    b.Property<bool>("IsSplit");
+                    b.Property<bool>("IsSplit")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(false);
 
                     b.Property<int>("Roll1Score");
 
-                    b.Property<int>("Roll2Score");
+                    b.Property<int>("Roll2Score")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(0);
 
-                    b.Property<int>("Roll3Score");
+                    b.Property<int>("Roll3Score")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(0);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BowlingGameId");
+                    b.HasIndex("BowlingGameId", "FrameNumber")
+                        .IsUnique();
 
-                    b.ToTable("Frames");
+                    b.ToTable("BowlingFrames");
                 });
 
             modelBuilder.Entity("Portfolio.Models.BowlingGame", b =>
@@ -88,11 +93,9 @@ namespace Portfolio.Migrations.Bowling
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("BowlingSessionId");
+                    b.Property<int>("BowlingSessionId");
 
                     b.Property<int>("GameNumber");
-
-                    b.Property<int>("SessionId");
 
                     b.Property<int>("TotalScore");
 
@@ -101,13 +104,12 @@ namespace Portfolio.Migrations.Bowling
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BowlingSessionId");
-
-                    b.HasIndex("SessionId");
-
                     b.HasIndex("UserId");
 
-                    b.ToTable("Games");
+                    b.HasIndex("BowlingSessionId", "GameNumber", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("BowlingGames");
                 });
 
             modelBuilder.Entity("Portfolio.Models.BowlingSession", b =>
@@ -119,25 +121,22 @@ namespace Portfolio.Migrations.Bowling
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sessions");
+                    b.ToTable("BowlingSessions");
                 });
 
             modelBuilder.Entity("Portfolio.Models.BowlingFrame", b =>
                 {
                     b.HasOne("Portfolio.Models.BowlingGame")
                         .WithMany("Frames")
-                        .HasForeignKey("BowlingGameId");
+                        .HasForeignKey("BowlingGameId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Portfolio.Models.BowlingGame", b =>
                 {
-                    b.HasOne("Portfolio.Models.BowlingSession")
-                        .WithMany("Games")
-                        .HasForeignKey("BowlingSessionId");
-
                     b.HasOne("Portfolio.Models.BowlingSession", "Session")
-                        .WithMany()
-                        .HasForeignKey("SessionId")
+                        .WithMany("Games")
+                        .HasForeignKey("BowlingSessionId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Portfolio.Models.ApplicationUser", "User")
