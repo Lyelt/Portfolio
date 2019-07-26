@@ -1,0 +1,21 @@
+<ngx-charts-line-chart *ngIf="visible"
+                       class="chart-container"
+                       [scheme]="colorScheme"
+                       schemeType="ordinal"
+                       [results]="bowlingData"
+                       [legend]="true"
+                       [legendTitle]=null
+                       [legendPosition]=null
+                       (legendLabelClick)="onLegendLabelClick($event)"
+                       gradient="false"
+                       xAxis="true"
+                       yAxis="true"
+                       showXAxisLabel="true"
+                       showYAxisLabel="true"
+                       yAxisLabel="Score"
+                       autoScale="true"
+                       timeline="true"
+                       showGridLines="true"
+                       [curve]="curve"
+                       (select)="select($event)">
+</ngx-charts-line-chart>

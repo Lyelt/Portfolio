@@ -21,6 +21,8 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BingoComponent } from './bingo/bingo.component';
 import { ConfigureSpeedrunComponent } from './configure-speedrun/configure-speedrun.component';
 import { BingoGoalComponent } from './bingo-goal/bingo-goal.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { BowlingChartComponent } from './bowling-chart/bowling-chart.component';
 
 const routes: Routes = [
   {
@@ -72,13 +74,15 @@ const routes: Routes = [
     EditStarComponent,
     BingoComponent,
     ConfigureSpeedrunComponent,
-    BingoGoalComponent
+    BingoGoalComponent,
+    BowlingChartComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     RouterModule.forRoot(routes, { useHash: false }),
     MaterialModule,
+    NgxChartsModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter

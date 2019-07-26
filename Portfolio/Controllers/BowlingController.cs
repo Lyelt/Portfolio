@@ -56,7 +56,12 @@ namespace Portfolio.Controllers
         {
             try
             {
-                List<BowlingSession> sessions = _bowlingContext.Sessions.Include(s => s.Games).ToList();
+                List<BowlingSession> sessions = _bowlingContext
+                    .Sessions
+                    .Include(s => s.Games)
+                    .ThenInclude(g => g.Frames)
+                    .ToList();
+
                 _logger.LogDebug($"Found {sessions.Count} total courses.");
                 return Ok(sessions);
             }
@@ -67,12 +72,30 @@ namespace Portfolio.Controllers
             }
         }
 
-        //[HttpGet]
-        //[Route("Bowling/GetStarTimes")]
-        //public IActionResult GetStarTimes()
-        //{
-        //    return Ok(_bowlingContext.StarTimes.Select(st => st.WithClientView()).ToList());
-        //}
+        [HttpGet]
+        [Route("Bowling/GetOverallStats/{userId}")]
+        public IActionResult GetOverallStats(string userId)
+        {
+            try
+            {
+                var sessions = _bowlingContext
+                    .Sessions
+                    .Include(s => s.Games)
+                    .ThenInclude(g => g.Frames)
+                    .ToList();
+
+                var games = sessions.SelectMany(s => s.Games.Where(g => g.UserId == userId))
+                    .ToList();
+
+                var calc = new BowlingStatCalculator(games);
+                return Ok(calc.GetOverallStats());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return NotFound($"Error while loading stats for user {userId}: {ex.Message}");
+            }
+        }
 
         [HttpPost]
         [Route("Bowling/StartNewSession")]
