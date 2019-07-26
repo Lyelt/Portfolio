@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { User } from './auth/user';
-import { BowlingSession, BowlingGame } from './bowling/bowling.component';
+import { BowlingSession, BowlingGame, BowlingStat } from './bowling/bowling.component';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +16,10 @@ export class BowlingService {
 
   getSessions() {
     return this.http.get<BowlingSession[]>("Bowling/GetSessions");
+  }
+
+  getQuickStats(userId: string) {
+    return this.http.get<BowlingStat[]>("Bowling/GetOverallStats/" + userId);
   }
 
   startNewSession(session: BowlingSession) {

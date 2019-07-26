@@ -102,3 +102,19 @@ table {
     min-width: 800px;
   }
 }
+
+@media only screen and (min-width: 1200px) {
+  .responsive-lg, .responsive-container-lg > * {
+    min-width: 1080px;
+  }
+}
+
+/*.chart-legend .legend-labels {
+  display: flex !important;
+  flex-direction: column !important;
+  width: inherit !important;
+}
+
+.chart-legend {
+  display: flex !important;
+}*/

@@ -61,7 +61,7 @@ namespace Portfolio.Controllers
                         );
 
                         var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-                        return Ok(new { Token = tokenString });
+                        return Ok(new { Token = tokenString, UserId = user.Id });
                     }
                 }
             }
