@@ -105,7 +105,7 @@ namespace Portfolio.Controllers
             {
                 await _bowlingContext.Sessions.AddAsync(session);
                 await _bowlingContext.SaveChangesAsync();
-                return Ok();
+                return Ok(session);
             }
             catch (Exception ex)
             {

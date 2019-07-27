@@ -4,7 +4,7 @@
 @include mat-core();
 
 body {
-  font-family: 'Raleway', 'Arial';
+  font-family: Roboto, "Helvetica Neue", sans-serif;
   margin: 0;
   height: 100%;
 }
@@ -62,6 +62,7 @@ table {
   font-family: "Trebuchet MS", Helvetica, sans-serif;
 }
 
+/* Flex containers */
 .container {
   display: flex;
   max-width: 1012px;
@@ -87,6 +88,7 @@ table {
   width: 100%;
 }
 
+/* Resizing content based on screen size */
 .responsive, .responsive-container > * {
   width: 330px;
 }
@@ -108,6 +110,34 @@ table {
     min-width: 1080px;
   }
 }
+
+/* Horizontal Rule with text in the middle */
+.hr {
+  overflow: hidden;
+  text-align: center;
+}
+
+.hr:before,
+.hr:after {
+  background-color: #000;
+  content: "";
+  display: inline-block;
+  height: 1px;
+  position: relative;
+  vertical-align: middle;
+  width: 50%;
+}
+
+.hr:before {
+  right: 0.5em;
+  margin-left: -50%;
+}
+
+.hr:after {
+  left: 0.5em;
+  margin-right: -50%;
+}
+
 
 /*.chart-legend .legend-labels {
   display: flex !important;
