@@ -21,6 +21,14 @@
   <ItemGroup>
     <None Remove="ClientApp\src\app\auth\credentials.ts" />
     <None Remove="ClientApp\src\app\auth\user.ts" />
+    <None Remove="ClientApp\src\app\bowling\models\bowling-frame.ts" />
+    <None Remove="ClientApp\src\app\bowling\models\bowling-game.ts" />
+    <None Remove="ClientApp\src\app\bowling\models\bowling-series.ts" />
+    <None Remove="ClientApp\src\app\bowling\models\bowling-session.ts" />
+    <None Remove="ClientApp\src\app\bowling\models\bowling-stat.ts" />
+    <None Remove="ClientApp\src\app\speedrun\models\course.ts" />
+    <None Remove="ClientApp\src\app\speedrun\models\star-time.ts" />
+    <None Remove="ClientApp\src\app\speedrun\models\star.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +54,30 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\auth\credentials.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\bowling\models\bowling-series.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\bowling\models\bowling-stat.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\bowling\models\bowling-frame.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\bowling\models\bowling-game.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\bowling\models\bowling-session.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\speedrun\models\course.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\speedrun\models\star.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\speedrun\models\star-time.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

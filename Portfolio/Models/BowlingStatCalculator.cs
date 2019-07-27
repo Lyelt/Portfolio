@@ -26,18 +26,19 @@ namespace Portfolio.Models
 
         public BowlingStat TotalGamesBowled() => new BowlingStat("Total Games Bowled", _games.Count);
 
-        public BowlingStat OverallAverage() => new BowlingStat("Overall Average", _games.Average(g => g.TotalScore));
+        public BowlingStat OverallAverage() => new BowlingStat("Overall Average", _games.Select(g => g.TotalScore).DefaultIfEmpty(0).Average());
 
-        public BowlingStat HighestScore() => new BowlingStat("Highest Score", _games.Max(g => g.TotalScore));
+        public BowlingStat HighestScore() => new BowlingStat("Highest Score", _games.Select(g => g.TotalScore).DefaultIfEmpty(0).Max());
 
         public BowlingStat SinglePinSpares()
         {
             var allFrames = _games.SelectMany(g => g.Frames);
 
             var singlePinSpares = allFrames.Where(frame => IsSinglePinSpare(frame)).ToList();
-            var convertedSinglePins = singlePinSpares.Where(frame => frame.Roll2Score == 1).ToList();
+            var numConvertedSinglePins = singlePinSpares.Where(frame => frame.Roll2Score == 1).ToList().Count;
+            double ratio = singlePinSpares.Count > 0 ? (numConvertedSinglePins / singlePinSpares.Count) : 0;
 
-            return new BowlingStat("Single Pin Spare Conversions", (convertedSinglePins.Count / singlePinSpares.Count) * 100, "%", $"{convertedSinglePins.Count}/{singlePinSpares.Count}");
+            return new BowlingStat("Single Pin Spare Conversions", ratio * 100, "%", $"{numConvertedSinglePins}/{singlePinSpares.Count}");
         }
 
         //public BowlingStat MostConsecutiveStrikes()

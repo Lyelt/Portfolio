@@ -5,24 +5,24 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
-import { AboutComponent } from './about/about.component';
 import { MaterialModule } from './material/material.module';
 import { HomeComponent } from './home/home.component';
-import { EncounterComponent } from './encounter/encounter.component';
-import { TypingComponent } from './typing/typing.component';
-import { PortfolioComponent } from './portfolio/portfolio.component';
-import { SpeedrunComponent } from './speedrun/speedrun.component';
-import { BowlingComponent } from './bowling/bowling.component';
 import { LoginComponent } from './login/login.component';
-import { EditStarComponent } from './edit-star/edit-star.component';
 import { AuthGuard } from './auth/auth-guard.service';
 import { JwtHelperService, JwtModule, JwtInterceptor } from '@auth0/angular-jwt';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { BingoComponent } from './bingo/bingo.component';
-import { ConfigureSpeedrunComponent } from './configure-speedrun/configure-speedrun.component';
-import { BingoGoalComponent } from './bingo-goal/bingo-goal.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { BowlingChartComponent } from './bowling-chart/bowling-chart.component';
+import { EncounterComponent } from './blog/components/encounter/encounter.component';
+import { TypingComponent } from './blog/components/typing/typing.component';
+import { PortfolioComponent } from './blog/components/portfolio/portfolio.component';
+import { SpeedrunComponent } from './speedrun/components/speedrun/speedrun.component';
+import { BowlingComponent } from './bowling/components/bowling/bowling.component';
+import { EditStarComponent } from './speedrun/components/edit-star/edit-star.component';
+import { BingoComponent } from './speedrun/components/bingo/bingo.component';
+import { ConfigureSpeedrunComponent } from './speedrun/components/configure-speedrun/configure-speedrun.component';
+import { BingoGoalComponent } from './speedrun/components/bingo-goal/bingo-goal.component';
+import { BowlingChartComponent } from './bowling/components/bowling-chart/bowling-chart.component';
+import { BowlingAddComponent } from './bowling/components/bowling-add/bowling-add.component';
 
 const routes: Routes = [
   {
@@ -63,7 +63,6 @@ const routes: Routes = [
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    AboutComponent,
     HomeComponent,
     EncounterComponent,
     TypingComponent,
@@ -75,7 +74,8 @@ const routes: Routes = [
     BingoComponent,
     ConfigureSpeedrunComponent,
     BingoGoalComponent,
-    BowlingChartComponent
+    BowlingChartComponent,
+    BowlingAddComponent
   ],
   imports: [
     BrowserModule,
@@ -93,7 +93,8 @@ const routes: Routes = [
     MaterialModule
   ],
   entryComponents: [
-    EditStarComponent
+    EditStarComponent,
+    BowlingAddComponent
   ],
   providers: [
     AuthGuard,
