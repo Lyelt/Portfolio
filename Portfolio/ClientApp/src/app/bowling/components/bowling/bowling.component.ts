@@ -29,7 +29,10 @@ export class BowlingComponent implements OnInit {
 
   ngOnInit() {
     this.currentUserId = localStorage.getItem("userId");
+    this.loadAllData();
+  }
 
+  loadAllData() {
     this.bowlingService.getBowlers().subscribe(data => {
       this.bowlers = data;
     },
@@ -91,8 +94,7 @@ export class BowlingComponent implements OnInit {
     const dialogRef = this.dialog.open(BowlingAddComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(data => {
-      //if (data)
-      //  this.saveCharacter(data)
+      this.loadAllData();
     });
   }
 }

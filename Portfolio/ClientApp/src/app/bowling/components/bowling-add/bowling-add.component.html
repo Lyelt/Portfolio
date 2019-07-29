@@ -1,25 +1,31 @@
 <mat-dialog-content class="container-vertical">
-  <mat-horizontal-stepper linear="true" #stepper>
-    <mat-step>
+  <mat-horizontal-stepper linear #stepper (selectionChange)="onStepChange($event, stepper)">
+    <mat-step [stepControl]="sessionForm">
       <div class="container-vertical">
         <ng-template matStepLabel>Choose Session</ng-template>
-        <p>Choose an existing session</p>
         <mat-form-field>
-          <mat-select [(ngModel)]="selectedSession">
-            <mat-option *ngFor="let session of sessions" [value]="session">{{session.id}}. {{session.date}}</mat-option>
+          <mat-label>Choose a session</mat-label>
+          <mat-select [(ngModel)]="selectedSession" [formControl]="sessionForm.controls['existingSession']">
+            <mat-option></mat-option>
+            <mat-option *ngFor="let session of sessions" [value]="session">{{session.id}}. {{session.date | date: 'mediumDate'}}</mat-option>
           </mat-select>
         </mat-form-field>
         <span class="hr">OR</span>
         <div class="container-vertical">
-          <p>Add a new session</p>
           <mat-form-field>
-            <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" placeholder="Bowling session date">
+            <input matInput [matDatepicker]="picker"
+                   [(ngModel)]="selectedDate"
+                   [formControl]="sessionForm.controls['newSession']"
+                   placeholder="Add a new session">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
         </div>
-        <div>
-          <button mat-raised-button (click)="startAddingGames(stepper)">Go</button>
+        <div class="end-items">
+          <button mat-raised-button
+                  color="primary"
+                  (click)="startAddingGames(stepper)"
+                  [disabled]="this.sessionForm.hasError('missingNewOrExisting')">Go</button>
         </div>
       </div>
     </mat-step>
@@ -29,9 +35,9 @@
         <mat-form-field>
           <input matInput placeholder="Address">
         </mat-form-field>
-        <div>
-          <button mat-button matStepperPrevious>Back</button>
-          <button mat-button matStepperNext (click)="close()">Done</button>
+        <div class="space-items">
+          <button mat-raised-button color="accent">Back</button>
+          <button mat-raised-button color="primary" (click)="close()">Done</button>
         </div>
       </div>
     </mat-step>

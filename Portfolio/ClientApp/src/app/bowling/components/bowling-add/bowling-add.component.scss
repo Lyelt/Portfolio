@@ -1,0 +1,17 @@
+.hr {
+  color: #3f51b5;
+  font-weight: bold;
+  margin: 1em 0 1em 0;
+}
+
+.space-items {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.end-items {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
