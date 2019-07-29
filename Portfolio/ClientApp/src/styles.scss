@@ -111,6 +111,24 @@ table {
   }
 }
 
+@media only screen and (min-width: 600px) {
+  .mat-dialog-container {
+    min-width: 560px;
+  }
+}
+
+@media only screen and (min-width: 1080px) {
+  .mat-dialog-container {
+    min-width: 800px;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .mat-dialog-container {
+    min-width: 1080px;
+  }
+}
+
 /* Horizontal Rule with text in the middle */
 .hr {
   overflow: hidden;
@@ -119,10 +137,10 @@ table {
 
 .hr:before,
 .hr:after {
-  background-color: #000;
+  background-color: #3f51b5;
   content: "";
   display: inline-block;
-  height: 1px;
+  height: 2px;
   position: relative;
   vertical-align: middle;
   width: 50%;
