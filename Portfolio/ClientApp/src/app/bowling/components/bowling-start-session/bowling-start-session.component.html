@@ -1,8 +1,7 @@
 <mat-dialog-content class="container-vertical">
-  <mat-horizontal-stepper linear #stepper (selectionChange)="onStepChange($event, stepper)">
-    <mat-step [stepControl]="sessionForm">
+  <mat-tab-group (selectedTabChange)="onTabChange($event)" [selectedIndex]="selectedTabIndex" dynamicHeight>
+    <mat-tab label="Choose Session">
       <div class="container-vertical">
-        <ng-template matStepLabel>Choose Session</ng-template>
         <mat-form-field>
           <mat-label>Choose a session</mat-label>
           <mat-select [(ngModel)]="selectedSession" [formControl]="sessionForm.controls['existingSession']">
@@ -24,22 +23,19 @@
         <div class="end-items">
           <button mat-raised-button
                   color="primary"
-                  (click)="startAddingGames(stepper)"
-                  [disabled]="this.sessionForm.hasError('missingNewOrExisting')">Go</button>
+                  (click)="startAddingGames()"
+                  [disabled]="this.sessionForm.hasError('missingNewOrExisting')">
+            Go
+          </button>
         </div>
       </div>
-    </mat-step>
-    <mat-step>
-      <div class="container-vertical">
-        <ng-template matStepLabel>Add Games</ng-template>
-        <mat-form-field>
-          <input matInput placeholder="Address">
-        </mat-form-field>
-        <div class="space-items">
-          <button mat-raised-button color="accent">Back</button>
-          <button mat-raised-button color="primary" (click)="close()">Done</button>
-        </div>
+    </mat-tab>
+    <mat-tab label="Add Games" [disabled]="this.sessionForm.hasError('missingNewOrExisting')">
+      <app-bowling-add-game *ngIf="selectedSession" [session]="selectedSession"></app-bowling-add-game>
+      <div class="space-items">
+        <button mat-raised-button color="accent" (click)="changeTab(0)">Back</button>
+        <button mat-raised-button color="primary" (click)="close()">Done</button>
       </div>
-    </mat-step>
-  </mat-horizontal-stepper>
+    </mat-tab>
+  </mat-tab-group>
 </mat-dialog-content>

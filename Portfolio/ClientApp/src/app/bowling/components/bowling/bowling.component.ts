@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialogConfig, MatDialog } from '@angular/material';
-import { BowlingAddComponent } from '../bowling-add/bowling-add.component';
+import { BowlingStartSessionComponent } from '../bowling-start-session/bowling-start-session.component';
 import { BowlingSeries } from '../../models/bowling-series';
 import { BowlingSession } from '../../models/bowling-session';
 import { BowlingStat } from '../../models/bowling-stat';
@@ -14,12 +14,12 @@ import { BowlingService } from '../../services/bowling.service';
   styleUrls: ['./bowling.component.scss']
 })
 export class BowlingComponent implements OnInit {
+  //bowlers: User[] = [];
   allSessions: BowlingSession[] = [];
   filteredSessions: BowlingSession[] = [];
   bowlingDataSeries: BowlingSeries[] = [];
-  bowlers: User[] = [];
   quickStats: BowlingStat[] = [];
-  currentUserId: string;
+  currentUserId: string = localStorage.getItem("userId");
 
   constructor(private bowlingService: BowlingService,
     private router: Router,
@@ -28,24 +28,15 @@ export class BowlingComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.currentUserId = localStorage.getItem("userId");
     this.loadAllData();
   }
 
   loadAllData() {
-    this.bowlingService.getBowlers().subscribe(data => {
-      this.bowlers = data;
-    },
-    (err) => {
-      console.error(err);
-      alert(err.message);
-    });
-
     this.bowlingService.getSessions().subscribe(data => {
       this.allSessions = data;
-      this.selectUser();
+      this.selectUser(this.currentUserId);
 
-      this.bowlingDataSeries = this.bowlers.map(b => new BowlingSeries(this.allSessions, b));
+      //this.bowlingDataSeries = this.bowlers.map(b => new BowlingSeries(this.allSessions, b));
       console.log(this.bowlingDataSeries);
     },
     (err) => {
@@ -54,7 +45,8 @@ export class BowlingComponent implements OnInit {
     });
   }
 
-  selectUser() {
+  selectUser(userId: string) {
+    this.currentUserId = userId;
     this.filteredSessions = this.allSessions.map(session => ({ ...session }));
 
     for (let session of this.filteredSessions) {
@@ -89,9 +81,9 @@ export class BowlingComponent implements OnInit {
   openDialog() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.autoFocus = true;
-    dialogConfig.data = { sessions: this.allSessions, currentUserId: this.currentUserId };
+    dialogConfig.data = { sessions: this.allSessions };
 
-    const dialogRef = this.dialog.open(BowlingAddComponent, dialogConfig);
+    const dialogRef = this.dialog.open(BowlingStartSessionComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(data => {
       this.loadAllData();
