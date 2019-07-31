@@ -22,7 +22,10 @@ import { BingoComponent } from './speedrun/components/bingo/bingo.component';
 import { ConfigureSpeedrunComponent } from './speedrun/components/configure-speedrun/configure-speedrun.component';
 import { BingoGoalComponent } from './speedrun/components/bingo-goal/bingo-goal.component';
 import { BowlingChartComponent } from './bowling/components/bowling-chart/bowling-chart.component';
-import { BowlingAddComponent } from './bowling/components/bowling-add/bowling-add.component';
+import { BowlingStartSessionComponent } from './bowling/components/bowling-start-session/bowling-start-session.component';
+import { BowlingAddGameComponent } from './bowling/components/bowling-add-game/bowling-add-game.component';
+import { BowlingSelectUserComponent } from './bowling/components/bowling-select-user/bowling-select-user.component';
+import { BowlingGameComponent } from './bowling/components/bowling-game/bowling-game.component';
 
 const routes: Routes = [
   {
@@ -75,7 +78,10 @@ const routes: Routes = [
     ConfigureSpeedrunComponent,
     BingoGoalComponent,
     BowlingChartComponent,
-    BowlingAddComponent
+    BowlingStartSessionComponent,
+    BowlingAddGameComponent,
+    BowlingSelectUserComponent,
+    BowlingGameComponent
   ],
   imports: [
     BrowserModule,
@@ -94,7 +100,7 @@ const routes: Routes = [
   ],
   entryComponents: [
     EditStarComponent,
-    BowlingAddComponent
+    BowlingStartSessionComponent
   ],
   providers: [
     AuthGuard,

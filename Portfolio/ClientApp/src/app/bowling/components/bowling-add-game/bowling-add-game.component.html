@@ -1,0 +1,10 @@
+<div class="container-vertical">
+  <h4>Session ({{session.id}}) on {{session.date | date: 'mediumDate'}}</h4>
+  <div class="container-horizontal">
+    <app-bowling-select-user [initialUserId]="currentUserId"
+                             [label]="'Add game for user...'"
+                             (selectionChange)="selectUser($event)"></app-bowling-select-user>
+    <button mat-raised-button color="primary" (click)="addGame()">Add Game</button>
+  </div>
+  <app-bowling-game *ngFor="let game of filteredGames"></app-bowling-game>
+</div>

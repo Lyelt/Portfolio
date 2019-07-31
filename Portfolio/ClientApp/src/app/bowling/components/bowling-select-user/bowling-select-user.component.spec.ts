@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BowlingAddComponent } from './bowling-add.component';
+import { BowlingSelectUserComponent } from './bowling-select-user.component';
 
-describe('BowlingAddComponent', () => {
-  let component: BowlingAddComponent;
-  let fixture: ComponentFixture<BowlingAddComponent>;
+describe('BowlingSelectUserComponent', () => {
+  let component: BowlingSelectUserComponent;
+  let fixture: ComponentFixture<BowlingSelectUserComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BowlingAddComponent ]
+      declarations: [ BowlingSelectUserComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BowlingAddComponent);
+    fixture = TestBed.createComponent(BowlingSelectUserComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

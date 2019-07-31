@@ -8,12 +8,9 @@
     <app-bowling-chart [bowlingData]="bowlingDataSeries"></app-bowling-chart>
   </div>-->
   <div class="user-select-wrapper">
-    <mat-form-field>
-      <mat-label>View stats for bowler...</mat-label>
-      <mat-select [(ngModel)]="currentUserId" (selectionChange)="selectUser()">
-        <mat-option *ngFor="let bowler of bowlers" [value]="bowler.id">{{bowler.userName}}</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <app-bowling-select-user [initialUserId]="currentUserId"
+                             [label]="'View stats for bowler...'"
+                             (selectionChange)="selectUser($event)"></app-bowling-select-user>
   </div>
   <!--<div class="responsive-container">
     <mat-card *ngFor="let session of filteredSessions">
