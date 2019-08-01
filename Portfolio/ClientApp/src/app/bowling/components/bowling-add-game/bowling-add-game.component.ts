@@ -16,11 +16,18 @@ export class BowlingAddGameComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-
+    this.filterGames();
   }
 
   selectUser(userId: string) {
+    this.currentUserId = userId;
+    this.filterGames();
+  }
 
+  filterGames() {
+    if (this.session.games) {
+      this.filteredGames = this.session.games.filter(g => g.userId == this.currentUserId).map(game => ({ ...game }));
+    }
   }
 
   addGame() {
