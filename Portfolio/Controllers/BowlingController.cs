@@ -103,6 +103,7 @@ namespace Portfolio.Controllers
         {
             try
             {
+                _logger.LogInformation($"Starting new session for {session.Date}");
                 await _bowlingContext.Sessions.AddAsync(session);
                 await _bowlingContext.SaveChangesAsync();
                 return Ok(session);
@@ -120,14 +121,13 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var currentUser = await GetCurrentUser();
-                game.UserId = currentUser.Id;
-
+                _logger.LogInformation($"Adding game #{game.GameNumber} to session {game.BowlingSessionId}");
                 foreach (var frame in game.Frames)
                     await _bowlingContext.Frames.AddAsync(frame);
 
                 await _bowlingContext.Games.AddAsync(game);
                 await _bowlingContext.SaveChangesAsync();
+                _logger.LogDebug($"Added game with ID {game.Id} for user {game.UserId} with total score {game.TotalScore}.");
                 return Ok();
             }
             catch (Exception ex)

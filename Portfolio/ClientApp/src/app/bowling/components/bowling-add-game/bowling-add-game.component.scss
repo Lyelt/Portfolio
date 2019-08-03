@@ -1,9 +1,14 @@
 .container {
-  flex-wrap: wrap;
   justify-content: center;
 }
 
-.container-horizontal {
-  flex-wrap: wrap;
+.container-wrap {
+  display: flex;
+  align-items: center;
+  flex-flow: row wrap;
   justify-content: space-around;
+}
+
+.container-wrap > * {
+  margin: 0 auto;
 }
