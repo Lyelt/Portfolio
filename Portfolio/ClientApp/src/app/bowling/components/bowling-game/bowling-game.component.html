@@ -1,15 +1,29 @@
 <p>Game {{game.gameNumber}}: {{game.totalScore}}</p>
+<div class="button-wrapper">
+  <mat-chip-list *ngIf="game.id == 0" class="chip-list">
+    <mat-chip *ngFor="let score of getScoresToDisplay()"
+              (click)="addScore(score.value)"
+              class="score-button"
+              color="primary"
+              selected>{{score.display}}</mat-chip>
+    <mat-chip (click)="back()" class="score-button" color="accent" selected>Back</mat-chip>
+    <mat-chip (click)="save()" class="score-button" color="accent" selected>Save</mat-chip>
+  </mat-chip-list>
+</div>
 <div class="game-wrapper">
   <div class="frame" *ngFor="let frame of game.frames">
     <div class="frame-name">{{frame.frameNumber}}</div>
     <div class="ball-scores">
-      <div class="roll roll1-score" [class.split-thirds]="frame.frameNumber == 10">{{getRoll1Display(frame)}}</div>
-      <div class="roll roll2-score" [class.split-thirds]="frame.frameNumber == 10">{{getRoll2Display(frame)}}</div>
+      <div class="roll roll1-score"
+           [class.split-thirds]="frame.frameNumber == 10">{{getRoll1Display(frame)}}</div>
+      <div class="roll roll2-score"
+           [class.split-thirds]="frame.frameNumber == 10"
+           *ngIf="frame.roll2Score != null" >{{getRoll2Display(frame)}}</div>
       <div class="roll roll3-score"
            [class.split-thirds]="frame.frameNumber == 10"
-           *ngIf="frame.frameNumber == 10 && frame.roll3Score">{{getRoll3Display(frame)}}</div>
+           *ngIf="frame.frameNumber == 10 && frame.roll3Score != null">{{getRoll3Display(frame)}}</div>
     </div>
-    <div class="frame-score">333</div>
+    <div class="frame-score">{{getScoreSoFar(game, frame)}}</div>
   </div>
   <div class="frame">
     <div class="frame-name">Total Score</div>

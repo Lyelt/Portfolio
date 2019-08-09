@@ -4,9 +4,10 @@
   </div>
   <div class="container-wrap">
     <app-bowling-select-user [initialUserId]="currentUserId"
-                             [label]="'Add game for user...'"
+                             [label]="'View games for user...'"
                              (selectionChange)="selectUser($event)"></app-bowling-select-user>
     <button mat-raised-button color="primary" (click)="addGame()">Add Game</button>
   </div>
+  <app-bowling-game *ngIf="newGame" [game]="newGame" (gameSaved)="saveGame($event)"></app-bowling-game>
   <app-bowling-game *ngFor="let game of filteredGames" [game]="game"></app-bowling-game>
 </div>

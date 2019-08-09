@@ -1,1 +1,1 @@
-{"version":3,"file":"bowling-frame.js","sourceRoot":"","sources":["bowling-frame.ts"],"names":[],"mappings":";;AAAA;IAAA;IAcA,CAAC;IAAD,mBAAC;AAAD,CAAC,AAdD,IAcC;AAdY,oCAAY"}
+{"version":3,"file":"bowling-frame.js","sourceRoot":"","sources":["bowling-frame.ts"],"names":[],"mappings":";;AAAA;IAAA;IAqBA,CAAC;IANe,mBAAM,GAApB,UAAqB,MAAc,EAAE,WAAmB;QACtD,IAAI,KAAK,GAAG,IAAI,YAAY,EAAE,CAAC;QAC/B,KAAK,CAAC,MAAM,GAAG,MAAM,CAAC;QACtB,KAAK,CAAC,WAAW,GAAG,WAAW,CAAC;QAChC,OAAO,KAAK,CAAC;IACf,CAAC;IACH,mBAAC;AAAD,CAAC,AArBD,IAqBC;AArBY,oCAAY"}

@@ -29,6 +29,6 @@ export class BowlingService {
   }
 
   addGameToSession(game: BowlingGame) {
-    return this.http.post("Bowling/AddGameToSession", game);
+    return this.http.post<BowlingGame>("Bowling/AddGameToSession", game);
   }
 }

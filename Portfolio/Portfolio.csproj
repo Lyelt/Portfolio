@@ -26,6 +26,7 @@
     <None Remove="ClientApp\src\app\bowling\models\bowling-series.ts" />
     <None Remove="ClientApp\src\app\bowling\models\bowling-session.ts" />
     <None Remove="ClientApp\src\app\bowling\models\bowling-stat.ts" />
+    <None Remove="ClientApp\src\app\bowling\models\bowling-utilities.ts" />
     <None Remove="ClientApp\src\app\speedrun\models\course.ts" />
     <None Remove="ClientApp\src\app\speedrun\models\star-time.ts" />
     <None Remove="ClientApp\src\app\speedrun\models\star.ts" />
@@ -69,6 +70,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\bowling\models\bowling-session.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\bowling\models\bowling-utilities.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\speedrun\models\course.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
