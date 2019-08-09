@@ -30,7 +30,7 @@
         </div>
       </div>
     </mat-tab>
-    <mat-tab label="Add Games" [disabled]="this.sessionForm.hasError('missingNewOrExisting')">
+    <mat-tab label="View Games" [disabled]="this.sessionForm.hasError('missingNewOrExisting')">
       <app-bowling-add-game *ngIf="selectedSession" [session]="selectedSession"></app-bowling-add-game>
       <div class="space-items">
         <button mat-raised-button color="accent" (click)="changeTab(0)">Back</button>

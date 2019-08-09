@@ -14,7 +14,6 @@ import { BowlingService } from '../../services/bowling.service';
   styleUrls: ['./bowling.component.scss']
 })
 export class BowlingComponent implements OnInit {
-  //bowlers: User[] = [];
   allSessions: BowlingSession[] = [];
   filteredSessions: BowlingSession[] = [];
   bowlingDataSeries: BowlingSeries[] = [];

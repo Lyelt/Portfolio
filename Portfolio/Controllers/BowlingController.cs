@@ -128,7 +128,7 @@ namespace Portfolio.Controllers
                 await _bowlingContext.Games.AddAsync(game);
                 await _bowlingContext.SaveChangesAsync();
                 _logger.LogDebug($"Added game with ID {game.Id} for user {game.UserId} with total score {game.TotalScore}.");
-                return Ok();
+                return Ok(game);
             }
             catch (Exception ex)
             {

@@ -26,7 +26,7 @@ namespace Portfolio.Models
 
         public BowlingStat TotalGamesBowled() => new BowlingStat("Total Games Bowled", _games.Count);
 
-        public BowlingStat OverallAverage() => new BowlingStat("Overall Average", _games.Select(g => g.TotalScore).DefaultIfEmpty(0).Average());
+        public BowlingStat OverallAverage() => new BowlingStat("Overall Average", Math.Round(_games.Select(g => g.TotalScore).DefaultIfEmpty(0).Average(), 2));
 
         public BowlingStat HighestScore() => new BowlingStat("Highest Score", _games.Select(g => g.TotalScore).DefaultIfEmpty(0).Max());
 
@@ -36,9 +36,9 @@ namespace Portfolio.Models
 
             var singlePinSpares = allFrames.Where(frame => IsSinglePinSpare(frame)).ToList();
             var numConvertedSinglePins = singlePinSpares.Where(frame => frame.Roll2Score == 1).ToList().Count;
-            double ratio = singlePinSpares.Count > 0 ? (numConvertedSinglePins / singlePinSpares.Count) : 0;
+            double ratio = singlePinSpares.Count > 0 ? ((double)numConvertedSinglePins / singlePinSpares.Count) : 0;
 
-            return new BowlingStat("Single Pin Spare Conversions", ratio * 100, "%", $"{numConvertedSinglePins}/{singlePinSpares.Count}");
+            return new BowlingStat("Single Pin Spare Conversions", Math.Round(ratio * 100, 2), "%", $"{numConvertedSinglePins}/{singlePinSpares.Count}");
         }
 
         //public BowlingStat MostConsecutiveStrikes()
@@ -62,12 +62,6 @@ namespace Portfolio.Models
             return frame.Roll1Score == 9 
                 // If we're in the 10th frame, then the score could also be X9/ or X9-
                 || (frame.FrameNumber == 10 && frame.Roll1Score == 10 && frame.Roll2Score == 9);
-        }
-
-        private bool IsConvertedSinglePinSpare(BowlingFrame frame)
-        {
-            return IsSinglePinSpare(frame) &&
-                (frame.Roll2Score == 1 || frame.Roll3Score == 1);
         }
     }
 }
