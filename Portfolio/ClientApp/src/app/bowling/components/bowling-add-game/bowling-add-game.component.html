@@ -8,6 +8,6 @@
                              (selectionChange)="selectUser($event)"></app-bowling-select-user>
     <button mat-raised-button color="primary" (click)="addGame()">Add Game</button>
   </div>
-  <app-bowling-game *ngIf="newGame" [game]="newGame" (gameSaved)="saveGame($event)"></app-bowling-game>
-  <app-bowling-game *ngFor="let game of filteredGames" [game]="game"></app-bowling-game>
+  <app-bowling-game *ngIf="newGame" [game]="newGame" (gameSaved)="saveGame($event)" (gameDeleted)="deleteGame($event)"></app-bowling-game>
+  <app-bowling-game *ngFor="let game of filteredGames" [game]="game" (gameDeleted)="deleteGame($event)"></app-bowling-game>
 </div>

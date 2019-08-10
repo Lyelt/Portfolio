@@ -46,4 +46,15 @@ export class BowlingAddGameComponent implements OnInit {
       alert(err.message);
     });
   }
+
+  deleteGame(game: BowlingGame) {
+    if (game.id == 0) {
+      this.newGame = null;
+    }
+    else {
+      this.bowlingService.deleteGame(game).subscribe(data => {
+        this.filteredGames.splice(this.filteredGames.findIndex(g => g.id == game.id), 1);
+      });
+    }
+  }
 }
