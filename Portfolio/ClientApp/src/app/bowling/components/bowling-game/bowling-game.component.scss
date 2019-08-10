@@ -95,3 +95,12 @@
 .button-wrapper {
   margin-bottom: .5em;
 }
+
+.circle {
+  border-radius: 50%;
+  border: solid thin black
+}
+
+.selected {
+  background-color: rgba(63, 81, 181, 0.25);
+}

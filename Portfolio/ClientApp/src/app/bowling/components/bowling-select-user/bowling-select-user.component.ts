@@ -21,6 +21,7 @@ export class BowlingSelectUserComponent implements OnInit {
   ngOnInit() {
     this.bowlingService.getBowlers().subscribe(data => {
       this.bowlers = data;
+      this.currentUserId = this.initialUserId;
     },
     (err) => {
       console.error(err);

@@ -32,9 +32,9 @@ export abstract class BowlingUtilities {
     let scoreSoFar: number = 0;
 
     for (let i = 1; i <= frame.frameNumber; i++) {
-      let currFrame = game.getFrame(i);
-      let nextFrame = game.getFrame(i + 1);
-      let frameAfter = game.getFrame(i + 2);
+      let currFrame = BowlingUtilities.getFrame(game, i);
+      let nextFrame = BowlingUtilities.getFrame(game, i + 1);
+      let frameAfter = BowlingUtilities.getFrame(game, i + 2);
 
       // Strike on anything but frame 10
       if (BowlingUtilities.isStrike(currFrame) && currFrame.frameNumber < 10) {
@@ -63,5 +63,9 @@ export abstract class BowlingUtilities {
 
   public static isSpare(frame: BowlingFrame): boolean {
     return frame.roll1Score + frame.roll2Score == 10;
+  }
+
+  public static getFrame(game: BowlingGame, frameNumber: number): BowlingFrame {
+    return game.frames.filter(f => f.frameNumber == frameNumber)[0];
   }
 }

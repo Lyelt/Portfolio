@@ -31,9 +31,9 @@ var BowlingUtilities = /** @class */ (function () {
     BowlingUtilities.getScoreSoFar = function (game, frame) {
         var scoreSoFar = 0;
         for (var i = 1; i <= frame.frameNumber; i++) {
-            var currFrame = game.getFrame(i);
-            var nextFrame = game.getFrame(i + 1);
-            var frameAfter = game.getFrame(i + 2);
+            var currFrame = BowlingUtilities.getFrame(game, i);
+            var nextFrame = BowlingUtilities.getFrame(game, i + 1);
+            var frameAfter = BowlingUtilities.getFrame(game, i + 2);
             // Strike on anything but frame 10
             if (BowlingUtilities.isStrike(currFrame) && currFrame.frameNumber < 10) {
                 if (nextFrame.roll1Score && BowlingUtilities.isStrike(nextFrame) && frameAfter && frameAfter.roll1Score)
@@ -57,6 +57,9 @@ var BowlingUtilities = /** @class */ (function () {
     };
     BowlingUtilities.isSpare = function (frame) {
         return frame.roll1Score + frame.roll2Score == 10;
+    };
+    BowlingUtilities.getFrame = function (game, frameNumber) {
+        return game.frames.filter(function (f) { return f.frameNumber == frameNumber; })[0];
     };
     return BowlingUtilities;
 }());
