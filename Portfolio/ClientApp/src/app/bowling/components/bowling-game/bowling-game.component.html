@@ -14,7 +14,7 @@
     <mat-chip (click)="save()" class="score-button" color="accent" selected>Save</mat-chip>
   </mat-chip-list>
 </div>
-<div class="game-wrapper">
+<div class="game-wrapper" tabindex="0" (keyup)="handleKey($event)">
   <div class="frame" *ngFor="let frame of game.frames" (click)="selectFrame(frame.frameNumber)" [class.selected]="game.id == 0 && frame.frameNumber == currentFrame">
     <div class="frame-name">{{frame.frameNumber}}</div>
     <div class="ball-scores">

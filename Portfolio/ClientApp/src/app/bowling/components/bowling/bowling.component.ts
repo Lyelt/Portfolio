@@ -36,7 +36,6 @@ export class BowlingComponent implements OnInit {
       this.selectUser(this.currentUserId);
 
       //this.bowlingDataSeries = this.bowlers.map(b => new BowlingSeries(this.allSessions, b));
-      console.log(this.bowlingDataSeries);
     },
     (err) => {
       console.error(err);
