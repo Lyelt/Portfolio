@@ -137,6 +137,33 @@ namespace Portfolio.Controllers
             }
         }
 
+        [HttpDelete]
+        [Route("Bowling/DeleteGame/{gameId}")]
+        public async Task<IActionResult> DeleteGame(int gameId)
+        {
+            try
+            {
+                _logger.LogInformation($"Deleting game {gameId}.");
+                var game = await _bowlingContext.Games.FindAsync(gameId);
+
+                var currentUser = await GetCurrentUser();
+                bool userIsAdmin = await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Administrator.ToString());
+
+                if (!userIsAdmin && currentUser.Id != game.UserId)
+                    return Unauthorized();
+
+                _bowlingContext.Games.Remove(game);
+                await _bowlingContext.SaveChangesAsync();
+                _logger.LogDebug($"Removed game with ID {game.Id} for user {game.UserId} in session {game.BowlingSessionId}.");
+                return Ok(game);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return BadRequest($"Error while removing game {gameId}: {ex.Message}");
+            }
+        }
+
         private async Task<ApplicationUser> GetCurrentUser()
         {
             return await _userManager.GetUserAsync(User);

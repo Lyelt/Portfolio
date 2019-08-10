@@ -1,4 +1,7 @@
-<p>Game {{game.gameNumber}}: {{game.totalScore}}</p>
+<div class="container-horizontal">
+  <mat-icon (click)="delete()">delete_forever</mat-icon>
+  <p>Game {{game.gameNumber}}: {{game.totalScore}}</p>
+</div>
 <div class="button-wrapper">
   <mat-chip-list *ngIf="game.id == 0" class="chip-list">
     <mat-chip *ngFor="let score of getScoresToDisplay()"

@@ -17,8 +17,9 @@ export class BowlingScore {
 export class BowlingGameComponent implements OnInit {
   @Input() game: BowlingGame;
   @Output() gameSaved: EventEmitter<BowlingGame> = new EventEmitter();
+  @Output() gameDeleted: EventEmitter<BowlingGame> = new EventEmitter();
 
-  currentFrame: number = 1;
+  currentFrame: number = 1; 
   currentRoll: number = 1;
   isSplit: boolean = false;
 
@@ -103,6 +104,10 @@ export class BowlingGameComponent implements OnInit {
 
   save() {
     this.gameSaved.emit(this.game);
+  }
+
+  delete() {
+    this.gameDeleted.emit(this.game);
   }
 
   getScoreSoFar(game: BowlingGame, frame: BowlingFrame) {
