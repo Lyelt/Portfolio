@@ -36,18 +36,18 @@ var BowlingUtilities = /** @class */ (function () {
             var frameAfter = BowlingUtilities.getFrame(game, i + 2);
             // Strike on anything but frame 10
             if (BowlingUtilities.isStrike(currFrame) && currFrame.frameNumber < 10) {
-                if (nextFrame.roll1Score && BowlingUtilities.isStrike(nextFrame) && frameAfter && frameAfter.roll1Score)
+                if (nextFrame.roll1Score != null && BowlingUtilities.isStrike(nextFrame) && frameAfter && frameAfter.roll1Score != null)
                     scoreSoFar += 10 + nextFrame.roll1Score + frameAfter.roll1Score;
-                else if (nextFrame.roll1Score && nextFrame.roll2Score)
+                else if (nextFrame.roll1Score != null && nextFrame.roll2Score != null)
                     scoreSoFar += 10 + nextFrame.roll1Score + nextFrame.roll2Score;
             }
             // Spare
             else if (BowlingUtilities.isSpare(currFrame) && currFrame.frameNumber < 10) {
-                scoreSoFar += 10 + (nextFrame.roll1Score ? nextFrame.roll1Score : 0);
+                scoreSoFar += 10 + (nextFrame.roll1Score != null ? nextFrame.roll1Score : 0);
             }
             // Open or 10th frame
             else {
-                scoreSoFar += currFrame.roll1Score + currFrame.roll2Score + (currFrame.roll3Score ? currFrame.roll3Score : 0);
+                scoreSoFar += currFrame.roll1Score + currFrame.roll2Score + (currFrame.roll3Score != null ? currFrame.roll3Score : 0);
             }
         }
         return scoreSoFar;
