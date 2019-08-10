@@ -23,8 +23,4 @@ export class BowlingGame {
     game.frames = other.frames;
     return game;
   }
-
-  public getFrame(frameNumber: number): BowlingFrame {
-    return this.frames.filter(f => f.frameNumber == frameNumber)[0];
-  }
 }

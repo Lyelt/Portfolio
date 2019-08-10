@@ -6,16 +6,18 @@
               class="score-button"
               color="primary"
               selected>{{score.display}}</mat-chip>
+    <mat-chip (click)="isSplit = !isSplit" class="score-button" color="accent" selected>{{isSplit ? "Split Off" : "Split On"}}</mat-chip>
     <mat-chip (click)="back()" class="score-button" color="accent" selected>Back</mat-chip>
     <mat-chip (click)="save()" class="score-button" color="accent" selected>Save</mat-chip>
   </mat-chip-list>
 </div>
 <div class="game-wrapper">
-  <div class="frame" *ngFor="let frame of game.frames">
+  <div class="frame" *ngFor="let frame of game.frames" (click)="selectFrame(frame.frameNumber)" [class.selected]="game.id == 0 && frame.frameNumber == currentFrame">
     <div class="frame-name">{{frame.frameNumber}}</div>
     <div class="ball-scores">
       <div class="roll roll1-score"
-           [class.split-thirds]="frame.frameNumber == 10">{{getRoll1Display(frame)}}</div>
+           [class.split-thirds]="frame.frameNumber == 10"
+           [class.circle]="frame.isSplit">{{getRoll1Display(frame)}}</div>
       <div class="roll roll2-score"
            [class.split-thirds]="frame.frameNumber == 10"
            *ngIf="frame.roll2Score != null" >{{getRoll2Display(frame)}}</div>

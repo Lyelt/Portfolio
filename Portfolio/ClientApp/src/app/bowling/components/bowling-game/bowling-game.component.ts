@@ -20,6 +20,7 @@ export class BowlingGameComponent implements OnInit {
 
   currentFrame: number = 1;
   currentRoll: number = 1;
+  isSplit: boolean = false;
 
   possibleScores: BowlingScore[] = [
     { display: "-", value: 0, show: true },
@@ -43,8 +44,14 @@ export class BowlingGameComponent implements OnInit {
     return this.possibleScores.filter(s => s.show);
   }
 
+  selectFrame(frameNumber: number) {
+    this.currentFrame = frameNumber;
+    this.currentRoll = 1;
+  }
+
   addScore(score: number) {
-    let frame = this.game.getFrame(this.currentFrame);
+    let frame = BowlingUtilities.getFrame(this.game, this.currentFrame);
+    frame.isSplit = this.isSplit;
 
     this.possibleScores.forEach(s => s.show = (score == 10 || s.value < (10 - score)) || (this.currentRoll == 2 && this.currentFrame != 10));
     if (score != 10 && (this.currentRoll == 1 || this.currentFrame == 10)) {
@@ -71,7 +78,7 @@ export class BowlingGameComponent implements OnInit {
         this.currentFrame++;
         this.currentRoll = 1;
       }
-      else if (score == 10 || frame.roll1Score + score == 10) {
+      else if (score == 10 || frame.roll1Score + score == 10 || frame.roll1Score == 10) {
         this.currentRoll++;
       }
     }
@@ -84,10 +91,10 @@ export class BowlingGameComponent implements OnInit {
   }
 
   back() {
-    let game = this.game.getFrame(this.currentFrame);
-    game.roll1Score = null;
-    game.roll2Score = null;
-    game.roll3Score = null;
+    let frame = BowlingUtilities.getFrame(this.game, this.currentFrame);
+    frame.roll1Score = null;
+    frame.roll2Score = null;
+    frame.roll3Score = null;
 
     if (this.currentFrame > 1)
       this.currentFrame--;
@@ -114,7 +121,11 @@ export class BowlingGameComponent implements OnInit {
     if (frame.frameNumber == 10 && frame.roll2Score == 10 && frame.roll1Score == 10)
       return "X";
 
-    // Otherwise, we're either a / or just the score itself
+    // If the first roll was a strike and this is not the 10th, we can safely assume there was no second roll.
+    if (frame.frameNumber != 10 && frame.roll1Score == 10)
+      return null;
+
+    // Otherwise, we're either a / or just the score itself.
     return frame.roll2Score + frame.roll1Score == 10 ? "/" :
       frame.roll2Score == 0 ? "-" :
       frame.roll2Score;

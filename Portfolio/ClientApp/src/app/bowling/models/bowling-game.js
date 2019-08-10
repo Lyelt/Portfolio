@@ -13,9 +13,6 @@ var BowlingGame = /** @class */ (function () {
         game.frames = other.frames;
         return game;
     };
-    BowlingGame.prototype.getFrame = function (frameNumber) {
-        return this.frames.filter(function (f) { return f.frameNumber == frameNumber; })[0];
-    };
     return BowlingGame;
 }());
 exports.BowlingGame = BowlingGame;
