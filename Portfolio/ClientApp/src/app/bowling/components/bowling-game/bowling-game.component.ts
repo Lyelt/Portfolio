@@ -46,15 +46,22 @@ export class BowlingGameComponent implements OnInit {
   }
 
   selectFrame(frameNumber: number) {
-    this.currentFrame = frameNumber;
-    this.currentRoll = 1;
+    if (frameNumber > 0) {
+      this.currentFrame = frameNumber;
+      this.currentRoll = 1;
+    }
+
+    this.possibleScores.forEach(s => s.show = true);
+    if (this.possibleScores.find(s => s.display == "/")) {
+      this.possibleScores.pop();
+    }
   }
 
   addScore(score: number) {
     let frame = BowlingUtilities.getFrame(this.game, this.currentFrame);
     frame.isSplit = this.isSplit;
 
-    this.possibleScores.forEach(s => s.show = (score == 10 || s.value < (10 - score)) || (this.currentRoll == 2 && this.currentFrame != 10));
+    this.possibleScores.forEach(s => s.show = (score == 10 || s.value < (10 - score)) || (this.currentRoll == 2));
     if (score != 10 && (this.currentRoll == 1 || this.currentFrame == 10)) {
       this.possibleScores.push({ display: "/", value: (10 - score), show: true });
     }
@@ -97,9 +104,41 @@ export class BowlingGameComponent implements OnInit {
     frame.roll2Score = null;
     frame.roll3Score = null;
 
-    if (this.currentFrame > 1)
-      this.currentFrame--;
-    this.currentRoll = 1;
+    this.selectFrame(this.currentFrame - 1);
+  }
+
+  handleKey(event: KeyboardEvent) {
+    if (this.game.id != 0)
+      return; // Only handle score input for new games.
+
+    let value: number;
+    // Digits 0-9
+    if (event.keyCode >= 48 && event.keyCode <= 57) {
+      value = event.keyCode - 48;
+    }
+    // X
+    else if (event.keyCode == 88) {
+      value = 10;
+    }
+    // Slash (/)
+    else if (event.keyCode == 191) {
+      value = this.possibleScores.find(s => s.display == "/").value;
+    }
+    // Hyphen (-)
+    else if (event.keyCode == 189) {
+      value = 0;
+    }
+    // Left arrow key
+    else if (event.keyCode == 37) {
+      this.back();
+    }
+    // Right arrow key
+    else if (event.keyCode == 39) {
+      this.selectFrame(this.currentFrame + 1);
+    }
+
+    if (value != null && this.possibleScores.filter(s => s.value == value).some(s => s.show))
+      this.addScore(value);
   }
 
   save() {
