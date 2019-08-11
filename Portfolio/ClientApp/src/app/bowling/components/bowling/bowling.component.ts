@@ -18,6 +18,8 @@ export class BowlingComponent implements OnInit {
   filteredSessions: BowlingSession[] = [];
   bowlingDataSeries: BowlingSeries[] = [];
   quickStats: BowlingStat[] = [];
+  splitStats: BowlingStat[] = [];
+  countStats: BowlingStat[] = [];
   currentUserId: string = localStorage.getItem("userId");
 
   constructor(private bowlingService: BowlingService,
@@ -61,10 +63,26 @@ export class BowlingComponent implements OnInit {
     this.bowlingService.getQuickStats(this.currentUserId).subscribe(data => {
       this.quickStats = data;
     },
-      (err) => {
-        console.error(err);
-        alert(err.message);
+    (err) => {
+      console.error(err);
+      alert(err.message);
       });
+
+    this.bowlingService.getSplitStats(this.currentUserId).subscribe(data => {
+      this.splitStats = data;
+    },
+    (err) => {
+      console.error(err);
+      alert(err.message);
+    });
+
+    this.bowlingService.getCountStats(this.currentUserId).subscribe(data => {
+      this.countStats = data;
+    },
+    (err) => {
+      console.error(err);
+      alert(err.message);
+    });
   }
 
   sortData() {

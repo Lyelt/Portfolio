@@ -22,12 +22,20 @@
       </mat-card-content>
     </mat-card>
   </div>-->
-  <div class="responsive-container">
-    <h4>Quick Stats</h4>
-    <p class="stat-wrapper" *ngFor="let stat of quickStats">
-      <span>{{stat.name}}:</span>
-      <span class="spacer"></span>
-      <span>{{stat.value}}{{stat.unit}} <span *ngIf="stat.details != ''">({{stat.details}})</span></span>
-    </p>
+  <div class="responsive-container center">
+    <mat-tab-group dynamicHeight>
+      <mat-tab label="Quick Stats">
+          <app-bowling-stat [stats]="quickStats"></app-bowling-stat>
+      </mat-tab>
+      <mat-tab label="Counts">
+          <app-bowling-stat [stats]="countStats"></app-bowling-stat>
+      </mat-tab>
+      <mat-tab label="Splits">
+        <app-bowling-stat [stats]="splitStats"></app-bowling-stat>
+      </mat-tab>
+      <mat-tab label="Records">
+
+      </mat-tab>
+    </mat-tab-group>
   </div>
 </div>

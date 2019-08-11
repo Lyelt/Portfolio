@@ -56,12 +56,7 @@ namespace Portfolio.Controllers
         {
             try
             {
-                List<BowlingSession> sessions = _bowlingContext
-                    .Sessions
-                    .Include(s => s.Games)
-                    .ThenInclude(g => g.Frames)
-                    .ToList();
-
+                var sessions = GetSessionList();
                 _logger.LogDebug($"Found {sessions.Count} total courses.");
                 return Ok(sessions);
             }
@@ -78,17 +73,44 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var sessions = _bowlingContext
-                    .Sessions
-                    .Include(s => s.Games)
-                    .ThenInclude(g => g.Frames)
-                    .ToList();
-
-                var games = sessions.SelectMany(s => s.Games.Where(g => g.UserId == userId))
-                    .ToList();
-
+                var games = GetGamesForUser(userId);
                 var calc = new BowlingStatCalculator(games);
                 return Ok(calc.GetOverallStats());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return NotFound($"Error while loading stats for user {userId}: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        [Route("Bowling/GetCountStats/{userId}")]
+        public IActionResult GetCountStats(string userId)
+        {
+            try
+            {
+                var games = GetGamesForUser(userId);
+                var calc = new BowlingStatCalculator(games);
+                return Ok(calc.GetCountStats());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return NotFound($"Error while loading stats for user {userId}: {ex.Message}");
+            }
+        }
+
+
+        [HttpGet]
+        [Route("Bowling/GetSplitStats/{userId}")]
+        public IActionResult GetSplitStats(string userId)
+        {
+            try
+            {
+                var games = GetGamesForUser(userId);
+                var calc = new BowlingStatCalculator(games);
+                return Ok(calc.GetSplitStats());
             }
             catch (Exception ex)
             {
@@ -167,6 +189,22 @@ namespace Portfolio.Controllers
         private async Task<ApplicationUser> GetCurrentUser()
         {
             return await _userManager.GetUserAsync(User);
+        }
+
+        private List<BowlingGame> GetGamesForUser(string userId)
+        {
+            return GetSessionList()
+                  .SelectMany(s => s.Games.Where(g => g.UserId == userId))
+                  .ToList();
+        }
+
+        private List<BowlingSession> GetSessionList()
+        {
+            return _bowlingContext
+                    .Sessions
+                    .Include(s => s.Games)
+                    .ThenInclude(g => g.Frames)
+                    .ToList();
         }
     }
 }
