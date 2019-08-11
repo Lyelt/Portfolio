@@ -1,0 +1,4 @@
+<p *ngFor="let stat of stats" class="stat-wrapper">
+  <span>{{stat.name}}:</span>
+  <span>{{stat.value}}{{stat.unit}} <span *ngIf="stat.details != ''">({{stat.details}})</span></span>
+</p>

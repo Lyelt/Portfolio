@@ -70,6 +70,10 @@ table {
   margin-right: auto;
 }
 
+.responsive-container {
+  display: flex;
+}
+
 .container-vertical {
   display: flex;
   flex-direction: column;

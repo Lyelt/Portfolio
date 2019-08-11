@@ -1,5 +1,6 @@
 .container-vertical {
   text-align: center;
+  align-items: center;
 }
 
 .responsive-container > * {
@@ -9,8 +10,9 @@
 .links > * {
   margin-right: .5em;
 }
-.container-vertical {
-  align-items: center;
+
+.center {
+  justify-content: center;
 }
 
 .chart-wrapper {
@@ -25,13 +27,3 @@
   display: flex;
   overflow: hidden;*/
 }
-
-.stat-wrapper {
-  display: flex;
-}
-
-.spacer {
-  flex: 1 1 auto;
-}
-
-

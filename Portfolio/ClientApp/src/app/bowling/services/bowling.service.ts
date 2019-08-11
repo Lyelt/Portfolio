@@ -24,6 +24,14 @@ export class BowlingService {
     return this.http.get<BowlingStat[]>("Bowling/GetOverallStats/" + userId);
   }
 
+  getSplitStats(userId: string) {
+    return this.http.get<BowlingStat[]>("Bowling/GetSplitStats/" + userId);
+  }
+
+  getCountStats(userId: string) {
+    return this.http.get<BowlingStat[]>("Bowling/GetCountStats/" + userId);
+  }
+
   startNewSession(session: BowlingSession) {
     return this.http.post<BowlingSession>("Bowling/StartNewSession", session);
   }
