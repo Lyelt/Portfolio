@@ -137,8 +137,10 @@ export class BowlingGameComponent implements OnInit {
       this.selectFrame(this.currentFrame + 1);
     }
 
-    if (value != null && this.possibleScores.filter(s => s.value == value).some(s => s.show))
+    if (value != null && this.possibleScores.filter(s => s.value == value).some(s => s.show)) {
+      this.isSplit = event.shiftKey;
       this.addScore(value);
+    }
   }
 
   save() {
