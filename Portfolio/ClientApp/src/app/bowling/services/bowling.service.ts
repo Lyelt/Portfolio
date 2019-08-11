@@ -32,6 +32,10 @@ export class BowlingService {
     return this.http.get<BowlingStat[]>("Bowling/GetCountStats/" + userId);
   }
 
+  getRecordStats(userId: string) {
+    return this.http.get<BowlingStat[]>("Bowling/GetRecordStats/" + userId);
+  }
+
   startNewSession(session: BowlingSession) {
     return this.http.post<BowlingSession>("Bowling/StartNewSession", session);
   }

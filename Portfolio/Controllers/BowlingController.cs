@@ -119,6 +119,23 @@ namespace Portfolio.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("Bowling/GetRecordStats/{userId}")]
+        public IActionResult GetRecordStats(string userId)
+        {
+            try
+            {
+                var games = GetGamesForUser(userId);
+                var calc = new BowlingStatCalculator(games);
+                return Ok(calc.GetRecords());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return NotFound($"Error while loading stats for user {userId}: {ex.Message}");
+            }
+        }
+
         [HttpPost]
         [Route("Bowling/StartNewSession")]
         public async Task<IActionResult> StartNewSession([FromBody]BowlingSession session)

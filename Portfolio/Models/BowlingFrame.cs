@@ -65,5 +65,12 @@ namespace Portfolio.Models
                     Roll2Score + Roll3Score == 10 :
                     Roll1Score + Roll2Score == 10);
         }
+
+        // Also flawed, in that the tenth frame will never be counted for its
+        // second and third rolls.
+        public bool IsStrike()
+        {
+            return Roll1Score == 10;
+        }
     }
 }

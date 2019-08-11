@@ -20,6 +20,7 @@ export class BowlingComponent implements OnInit {
   quickStats: BowlingStat[] = [];
   splitStats: BowlingStat[] = [];
   countStats: BowlingStat[] = [];
+  recordStats: BowlingStat[] = [];
   currentUserId: string = localStorage.getItem("userId");
 
   constructor(private bowlingService: BowlingService,
@@ -78,6 +79,14 @@ export class BowlingComponent implements OnInit {
 
     this.bowlingService.getCountStats(this.currentUserId).subscribe(data => {
       this.countStats = data;
+    },
+    (err) => {
+      console.error(err);
+      alert(err.message);
+    });
+
+    this.bowlingService.getRecordStats(this.currentUserId).subscribe(data => {
+      this.recordStats = data;
     },
     (err) => {
       console.error(err);
