@@ -219,8 +219,8 @@ namespace Portfolio.Controllers
         {
             return _bowlingContext
                     .Sessions
-                    .Include(s => s.Games)
-                    .ThenInclude(g => g.Frames)
+                    .Include(s => s.Games.OrderBy(g => g.GameNumber))
+                    .ThenInclude(g => g.Frames.OrderBy(f => f.FrameNumber))
                     .ToList();
         }
     }
