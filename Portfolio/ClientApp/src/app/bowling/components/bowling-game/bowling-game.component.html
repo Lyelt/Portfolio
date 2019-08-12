@@ -1,6 +1,7 @@
 <div class="container-horizontal">
   <mat-icon (click)="delete()">delete_forever</mat-icon>
   <p>Game {{game.gameNumber}}: {{game.totalScore}}</p>
+  <mat-form-field *ngIf="game.id == 0"><input matInput type="number" min="1" [(ngModel)]="game.gameNumber" placeholder="Game number" /></mat-form-field>
 </div>
 <div class="button-wrapper">
   <mat-chip-list *ngIf="game.id == 0" class="chip-list">
