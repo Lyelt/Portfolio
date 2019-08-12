@@ -217,11 +217,15 @@ namespace Portfolio.Controllers
 
         private List<BowlingSession> GetSessionList()
         {
-            return _bowlingContext
+            var sessions = _bowlingContext
                     .Sessions
-                    .Include(s => s.Games.OrderBy(g => g.GameNumber))
-                    .ThenInclude(g => g.Frames.OrderBy(f => f.FrameNumber))
+                    .Include(s => s.Games)
+                    .ThenInclude(g => g.Frames)
                     .ToList();
+
+            sessions.ForEach(s => s.Games = s.Games.OrderBy(g => g.GameNumber).ToList());
+
+            return sessions;
         }
     }
 }
