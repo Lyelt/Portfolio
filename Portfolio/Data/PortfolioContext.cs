@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Portfolio.Models;
+using Portfolio.Models.Auth;
 
-namespace Portfolio.Models
+namespace Portfolio.Data
 {
     public class PortfolioContext : IdentityDbContext<ApplicationUser>
     {

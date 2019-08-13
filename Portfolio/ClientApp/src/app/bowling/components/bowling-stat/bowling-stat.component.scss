@@ -13,3 +13,13 @@
 .stat-wrapper:nth-child(odd) {
   background-color: rgba(233, 30, 99, .25);
 }
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stats > .spinner {
+  align-self: center;
+}

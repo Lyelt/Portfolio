@@ -1,10 +1,11 @@
 ﻿using MoreLinq;
+using Portfolio.Models.Bowling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Portfolio.Models
+namespace Portfolio.Data
 {
     public class BowlingStatCalculator
     {
@@ -13,6 +14,23 @@ namespace Portfolio.Models
         public BowlingStatCalculator(List<BowlingGame> games)
         {
             _games = games;
+        }
+
+        public List<BowlingStat> GetStats(StatCategory category)
+        {
+            switch (category)
+            {
+                case StatCategory.Overall:
+                    return GetOverallStats();
+                case StatCategory.Count:
+                    return GetCountStats();
+                case StatCategory.Record:
+                    return GetRecords();
+                case StatCategory.Split:
+                    return GetSplitStats();
+                default:
+                    throw new NotImplementedException($"Category {category} is not supported.");
+            }
         }
 
         public List<BowlingStat> GetOverallStats()
@@ -26,13 +44,44 @@ namespace Portfolio.Models
             return stats;
         }
 
-        public BowlingStat TotalGamesBowled() => new BowlingStat("Total Games Bowled", _games.Count);
+        public List<BowlingStat> GetCountStats()
+        {
+            var counts = new List<BowlingStat>();
+            var allFrames = _games.SelectMany(g => g.Frames).ToList();
+            var countGroups = allFrames.GroupBy(f => f.GetCount()).Select(g => new { CountValue = g.Key, Number = g.Count() });
 
-        public BowlingStat OverallAverage() => new BowlingStat("Overall Average", AverageOfGames(_games));
+            foreach (var group in countGroups.OrderByDescending(g => g.CountValue))
+            {
+                double ratio = allFrames.Count > 0 ? ((double)group.Number / allFrames.Count) : 0;
+                counts.Add(new BowlingStat($"{group.CountValue} counts", Math.Round(ratio * 100, 2), "%", $"{group.Number}/{allFrames.Count}"));
+            }
 
-        public BowlingStat HighestScore() => new BowlingStat("Highest Score", _games.Select(g => g.TotalScore).DefaultIfEmpty(0).Max());
+            return counts;
+        }
 
-        public BowlingStat LowestScore() => new BowlingStat("Lowest Score", _games.Select(g => g.TotalScore).DefaultIfEmpty(0).Min());
+        public List<BowlingStat> GetSplitStats()
+        {
+            var splits = new List<BowlingStat>();
+            var allFrames = _games.SelectMany(g => g.Frames).ToList();
+            var splitFrames = allFrames.Where(f => f.IsSplit).ToList();
+            var convertedSplits = splitFrames.Where(f => f.IsConvertedSplit()).ToList();
+            double ratio = splitFrames.Count > 0 ? ((double)convertedSplits.Count / splitFrames.Count) : 0;
+
+            splits.Add(new BowlingStat("Total Splits", splitFrames.Count));
+            splits.Add(new BowlingStat("Split Conversions", Math.Round(ratio * 100, 2), "%", $"{convertedSplits.Count}/{splitFrames.Count}"));
+
+            return splits;
+        }
+
+        public List<BowlingStat> GetRecords()
+        {
+            var records = new List<BowlingStat>();
+            records.Add(HighestScore());
+            records.Add(LowestScore());
+            records.Add(BestSessionAverage());
+            records.Add(WorstSessionAverage());
+            return records;
+        }
 
         public BowlingStat BestSessionAverage()
         {
@@ -70,44 +119,13 @@ namespace Portfolio.Models
             return new BowlingStat("Single Pin Spare Conversions", Math.Round(ratio * 100, 2), "%", $"{numConvertedSinglePins}/{singlePinSpares.Count}");
         }
 
-        public List<BowlingStat> GetCountStats()
-        {
-            var counts = new List<BowlingStat>();
-            var allFrames = _games.SelectMany(g => g.Frames).ToList();
-            var countGroups = allFrames.GroupBy(f => f.GetCount()).Select(g => new { CountValue = g.Key, Number = g.Count() });
-            
-            foreach (var group in countGroups.OrderByDescending(g => g.CountValue))
-            {
-                double ratio = allFrames.Count > 0 ? ((double)group.Number / allFrames.Count) : 0;
-                counts.Add(new BowlingStat($"{group.CountValue} counts", Math.Round(ratio * 100, 2), "%", $"{group.Number}/{allFrames.Count}"));
-            }
+        public BowlingStat TotalGamesBowled() => new BowlingStat("Total Games Bowled", _games.Count);
 
-            return counts;
-        }
+        public BowlingStat OverallAverage() => new BowlingStat("Overall Average", AverageOfGames(_games));
 
-        public List<BowlingStat> GetSplitStats()
-        {
-            var splits = new List<BowlingStat>();
-            var allFrames = _games.SelectMany(g => g.Frames).ToList();
-            var splitFrames = allFrames.Where(f => f.IsSplit).ToList();
-            var convertedSplits = splitFrames.Where(f => f.IsConvertedSplit()).ToList();
-            double ratio = splitFrames.Count > 0 ? ((double)convertedSplits.Count / splitFrames.Count) : 0;
+        public BowlingStat HighestScore() => new BowlingStat("Highest Score", _games.Select(g => g.TotalScore).DefaultIfEmpty(0).Max());
 
-            splits.Add(new BowlingStat("Total Splits", splitFrames.Count));
-            splits.Add(new BowlingStat("Split Conversions", Math.Round(ratio * 100, 2), "%", $"{convertedSplits.Count}/{splitFrames.Count}"));
-
-            return splits;
-        }
-
-        public List<BowlingStat> GetRecords()
-        {
-            var records = new List<BowlingStat>();
-            records.Add(HighestScore());
-            records.Add(LowestScore());
-            records.Add(BestSessionAverage());
-            records.Add(WorstSessionAverage());
-            return records;
-        }
+        public BowlingStat LowestScore() => new BowlingStat("Lowest Score", _games.Select(g => g.TotalScore).DefaultIfEmpty(0).Min());
 
         private double AverageOfGames(List<BowlingGame> games) => Math.Round(games.Select(g => g.TotalScore).DefaultIfEmpty(0).Average(), 2);
     }

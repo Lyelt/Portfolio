@@ -12,8 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Portfolio.Data;
 using Portfolio.Identity;
-using Portfolio.Models;
+using Portfolio.Models.Auth;
 
 namespace Portfolio.Controllers
 {

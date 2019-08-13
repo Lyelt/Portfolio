@@ -1,4 +1,9 @@
-<p *ngFor="let stat of stats" class="stat-wrapper">
-  <span>{{stat.name}}:</span>
-  <span>{{stat.value}}{{stat.unit}} <span *ngIf="stat.details != ''">({{stat.details}})</span></span>
-</p>
+<div class="stats">
+  <ng-container *ngIf="!statsLoading">
+    <p *ngFor="let stat of stats" class="stat-wrapper">
+      <span>{{stat.name}}:</span>
+      <span>{{stat.value}}{{stat.unit}} <span *ngIf="stat.details != ''">({{stat.details}})</span></span>
+    </p>
+  </ng-container>
+  <mat-progress-spinner class="spinner" color="accent" mode="indeterminate" *ngIf="statsLoading"></mat-progress-spinner>
+</div>

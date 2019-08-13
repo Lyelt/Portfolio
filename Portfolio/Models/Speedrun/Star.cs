@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Portfolio.Models
+namespace Portfolio.Models.Speedrun
 {
-    public class Course
+    public class Star
     {
         [Key]
-        public int CourseId { get; set; }
+        public int StarId { get; set; }
         [Required]
         public string Name { get; set; }
-        [MaxLength(5)]
-        public string Abbreviation { get; set; }
 
-        public List<Star> Stars { get; set; }
+        public int CourseId { get; set; }
     }
 }

@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Portfolio.Data;
 using Portfolio.Models;
+using Portfolio.Models.Auth;
 
 [assembly: HostingStartup(typeof(Portfolio.Identity.IdentityHostingStartup))]
 namespace Portfolio.Identity
