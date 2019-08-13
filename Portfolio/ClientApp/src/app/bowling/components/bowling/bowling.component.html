@@ -25,16 +25,16 @@
   <div class="responsive-container center">
     <mat-tab-group dynamicHeight>
       <mat-tab label="Quick Stats">
-          <app-bowling-stat [stats]="quickStats"></app-bowling-stat>
+          <app-bowling-stat statCategory="Overall" [userId]="currentUserId"></app-bowling-stat>
       </mat-tab>
       <mat-tab label="Counts">
-          <app-bowling-stat [stats]="countStats"></app-bowling-stat>
+        <app-bowling-stat statCategory="Count" [userId]="currentUserId"></app-bowling-stat>
       </mat-tab>
       <mat-tab label="Splits">
-        <app-bowling-stat [stats]="splitStats"></app-bowling-stat>
+        <app-bowling-stat statCategory="Split" [userId]="currentUserId"></app-bowling-stat>
       </mat-tab>
       <mat-tab label="Records">
-        <app-bowling-stat [stats]="recordStats"></app-bowling-stat>
+        <app-bowling-stat statCategory="Record" [userId]="currentUserId"></app-bowling-stat>
       </mat-tab>
     </mat-tab-group>
   </div>

@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Portfolio.Models.Bowling;
+using Portfolio.Models.Auth;
 
 namespace Portfolio.Data
 {

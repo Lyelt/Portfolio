@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Portfolio.Models.Bowling;
+using Portfolio.Models.Auth;
 
 namespace Portfolio.Controllers
 {
@@ -68,66 +70,14 @@ namespace Portfolio.Controllers
         }
 
         [HttpGet]
-        [Route("Bowling/GetOverallStats/{userId}")]
-        public IActionResult GetOverallStats(string userId)
+        [Route("Bowling/GetStats/{statCategory}/{userId}")]
+        public IActionResult GetStats(StatCategory statCategory, string userId)
         {
             try
             {
                 var games = GetGamesForUser(userId);
                 var calc = new BowlingStatCalculator(games);
-                return Ok(calc.GetOverallStats());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while loading stats for user {userId}: {ex.Message}");
-            }
-        }
-
-        [HttpGet]
-        [Route("Bowling/GetCountStats/{userId}")]
-        public IActionResult GetCountStats(string userId)
-        {
-            try
-            {
-                var games = GetGamesForUser(userId);
-                var calc = new BowlingStatCalculator(games);
-                return Ok(calc.GetCountStats());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while loading stats for user {userId}: {ex.Message}");
-            }
-        }
-
-
-        [HttpGet]
-        [Route("Bowling/GetSplitStats/{userId}")]
-        public IActionResult GetSplitStats(string userId)
-        {
-            try
-            {
-                var games = GetGamesForUser(userId);
-                var calc = new BowlingStatCalculator(games);
-                return Ok(calc.GetSplitStats());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while loading stats for user {userId}: {ex.Message}");
-            }
-        }
-
-        [HttpGet]
-        [Route("Bowling/GetRecordStats/{userId}")]
-        public IActionResult GetRecordStats(string userId)
-        {
-            try
-            {
-                var games = GetGamesForUser(userId);
-                var calc = new BowlingStatCalculator(games);
-                return Ok(calc.GetRecords());
+                return Ok(calc.GetStats(statCategory));
             }
             catch (Exception ex)
             {

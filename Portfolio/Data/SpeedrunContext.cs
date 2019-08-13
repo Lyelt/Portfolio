@@ -1,11 +1,12 @@
-﻿using Portfolio.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Portfolio.Models.Speedrun;
+using Portfolio.Models.Auth;
 
 namespace Portfolio.Data
 {

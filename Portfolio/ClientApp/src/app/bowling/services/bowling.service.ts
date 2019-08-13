@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { User } from '../../auth/user';
 import { BowlingSession } from '../models/bowling-session';
 import { BowlingGame } from '../models/bowling-game';
-import { BowlingStat } from '../models/bowling-stat';
+import { BowlingStat, StatCategory } from '../models/bowling-stat';
 
 @Injectable({
   providedIn: 'root'
@@ -20,20 +20,8 @@ export class BowlingService {
     return this.http.get<BowlingSession[]>("Bowling/GetSessions");
   }
 
-  getQuickStats(userId: string) {
-    return this.http.get<BowlingStat[]>("Bowling/GetOverallStats/" + userId);
-  }
-
-  getSplitStats(userId: string) {
-    return this.http.get<BowlingStat[]>("Bowling/GetSplitStats/" + userId);
-  }
-
-  getCountStats(userId: string) {
-    return this.http.get<BowlingStat[]>("Bowling/GetCountStats/" + userId);
-  }
-
-  getRecordStats(userId: string) {
-    return this.http.get<BowlingStat[]>("Bowling/GetRecordStats/" + userId);
+  getStats(userId: string, statCategory: StatCategory) {
+    return this.http.get<BowlingStat[]>("Bowling/GetStats/" + statCategory + "/" + userId);
   }
 
   startNewSession(session: BowlingSession) {

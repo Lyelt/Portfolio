@@ -7,3 +7,10 @@ export class BowlingStat {
 
   details: string;
 }
+
+export enum StatCategory {
+  Overall,
+  Count,
+  Split,
+  Record
+}

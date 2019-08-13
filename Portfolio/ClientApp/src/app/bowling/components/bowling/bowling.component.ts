@@ -4,8 +4,6 @@ import { MatDialogConfig, MatDialog } from '@angular/material';
 import { BowlingStartSessionComponent } from '../bowling-start-session/bowling-start-session.component';
 import { BowlingSeries } from '../../models/bowling-series';
 import { BowlingSession } from '../../models/bowling-session';
-import { BowlingStat } from '../../models/bowling-stat';
-import { User } from '../../../auth/user';
 import { BowlingService } from '../../services/bowling.service';
 
 @Component({
@@ -17,10 +15,6 @@ export class BowlingComponent implements OnInit {
   allSessions: BowlingSession[] = [];
   filteredSessions: BowlingSession[] = [];
   bowlingDataSeries: BowlingSeries[] = [];
-  quickStats: BowlingStat[] = [];
-  splitStats: BowlingStat[] = [];
-  countStats: BowlingStat[] = [];
-  recordStats: BowlingStat[] = [];
   currentUserId: string = localStorage.getItem("userId");
 
   constructor(private bowlingService: BowlingService,
@@ -57,41 +51,6 @@ export class BowlingComponent implements OnInit {
     }
 
     this.sortData();
-    this.retrieveStats();
-  }
-
-  retrieveStats() {
-    this.bowlingService.getQuickStats(this.currentUserId).subscribe(data => {
-      this.quickStats = data;
-    },
-    (err) => {
-      console.error(err);
-      alert(err.message);
-      });
-
-    this.bowlingService.getSplitStats(this.currentUserId).subscribe(data => {
-      this.splitStats = data;
-    },
-    (err) => {
-      console.error(err);
-      alert(err.message);
-    });
-
-    this.bowlingService.getCountStats(this.currentUserId).subscribe(data => {
-      this.countStats = data;
-    },
-    (err) => {
-      console.error(err);
-      alert(err.message);
-    });
-
-    this.bowlingService.getRecordStats(this.currentUserId).subscribe(data => {
-      this.recordStats = data;
-    },
-    (err) => {
-      console.error(err);
-      alert(err.message);
-    });
   }
 
   sortData() {

@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Portfolio.Models.Speedrun;
+using Portfolio.Models.Auth;
 
 namespace Portfolio.Controllers
 {

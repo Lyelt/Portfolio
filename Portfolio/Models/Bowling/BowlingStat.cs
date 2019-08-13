@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Portfolio.Models
+namespace Portfolio.Models.Bowling
 {
     public class BowlingStat
     {
