@@ -4,24 +4,14 @@
     <button mat-raised-button color="primary">More Details</button>
     <button mat-raised-button color="primary" routerLink="/login">Logout</button>
   </div>
-  <!--<div class="chart-wrapper">
+  <div class="chart-wrapper">
     <app-bowling-chart [bowlingData]="bowlingDataSeries"></app-bowling-chart>
-  </div>-->
+  </div>
   <div class="user-select-wrapper">
     <app-bowling-select-user [initialUserId]="currentUserId"
                              [label]="'View stats for bowler...'"
                              (selectionChange)="selectUser($event)"></app-bowling-select-user>
   </div>
-  <!--<div class="responsive-container">
-    <mat-card *ngFor="let session of filteredSessions">
-      <mat-card-header>{{session.date}}</mat-card-header>
-      <mat-card-content>
-        <ul>
-          <li *ngFor="let game of session.games">{{game.gameNumber}}: {{game.totalScore}} (<p *ngFor="let frame of game.frames">Frame {{frame.frameNumber}}: {{frame.roll1Score}} + {{frame.roll2Score}}</p>)</li>
-        </ul>
-      </mat-card-content>
-    </mat-card>
-  </div>-->
   <div class="responsive-container center">
     <mat-tab-group dynamicHeight>
       <mat-tab label="Quick Stats">

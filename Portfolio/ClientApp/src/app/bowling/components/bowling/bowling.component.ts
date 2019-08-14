@@ -5,6 +5,7 @@ import { BowlingStartSessionComponent } from '../bowling-start-session/bowling-s
 import { BowlingSeries } from '../../models/bowling-series';
 import { BowlingSession } from '../../models/bowling-session';
 import { BowlingService } from '../../services/bowling.service';
+import { User } from '../../../auth/user';
 
 @Component({
   selector: 'app-bowling',
@@ -15,6 +16,7 @@ export class BowlingComponent implements OnInit {
   allSessions: BowlingSession[] = [];
   filteredSessions: BowlingSession[] = [];
   bowlingDataSeries: BowlingSeries[] = [];
+  bowlers: User[] = [];
   currentUserId: string = localStorage.getItem("userId");
 
   constructor(private bowlingService: BowlingService,
@@ -32,7 +34,14 @@ export class BowlingComponent implements OnInit {
       this.allSessions = data;
       this.selectUser(this.currentUserId);
 
-      //this.bowlingDataSeries = this.bowlers.map(b => new BowlingSeries(this.allSessions, b));
+      this.bowlingService.getBowlers().subscribe(data => {
+        this.bowlers = data;
+        this.bowlingDataSeries = this.bowlers.map(b => new BowlingSeries(this.allSessions, b));
+      },
+      (err) => {
+        console.error(err);
+        alert(err.message);
+      });
     },
     (err) => {
       console.error(err);
