@@ -20,7 +20,7 @@ export class BowlingChartComponent implements OnInit, OnChanges {
   colorScheme: any;
   schemeType: string = 'ordinal';
   selectedColorScheme: string;
-  curve = d3.curveNatural;
+  curve = d3.curveMonotoneX;
 
   constructor(private bowlingService: BowlingService) {
     this.setColorScheme('cool');

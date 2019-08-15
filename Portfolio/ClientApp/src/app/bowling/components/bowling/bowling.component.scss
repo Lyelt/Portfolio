@@ -22,26 +22,8 @@
   justify-content: space-between;
 }
 
-.chart-wrapper {
-  /*display: flex;
-  width: 330px;
-
-  max-height: 700px;
-  height: 700px;
-  width: 300px;
-  max-height: 50vh;
-  display: grid;*/
-}
-
-.chart-wrapper > * {
-  /*min-width: 0;*/
-}
-
-@media only screen and (min-width: 600px) {
-  .chart-wrapper {
-    /*width: 600px;*/
-    /*width: 100%;*/
-    /*height: 100%;
-    display: grid;*/
-  }
+/* Temporary hack to work around ngx-chart legend issue.
+    The legend seems to live outside the container if I set a max-height, so I am just padding for it manually. */
+.stat-action-wrapper {
+  padding-top: 100px;
 }
