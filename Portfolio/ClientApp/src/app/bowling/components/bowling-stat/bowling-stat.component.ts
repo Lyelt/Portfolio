@@ -11,6 +11,8 @@ export class BowlingStatComponent implements OnInit, OnChanges {
 
   @Input() userId: string;
   @Input() statCategory: StatCategory;
+  @Input() startTime: Date;
+  @Input() endTime: Date;
 
   stats: BowlingStat[];
   statsLoading: boolean = true;
@@ -27,7 +29,7 @@ export class BowlingStatComponent implements OnInit, OnChanges {
 
   retrieveStats() {
     this.statsLoading = true;
-    this.bowlingService.getStats(this.userId, this.statCategory).subscribe(data => {
+    this.bowlingService.getStats(this.userId, this.statCategory, this.startTime, this.endTime).subscribe(data => {
       this.stats = data;
       this.statsLoading = false;
     },

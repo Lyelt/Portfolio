@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialogConfig, MatDialog } from '@angular/material';
 import { BowlingStartSessionComponent } from '../bowling-start-session/bowling-start-session.component';
@@ -6,6 +6,7 @@ import { BowlingSeries } from '../../models/bowling-series';
 import { BowlingSession } from '../../models/bowling-session';
 import { BowlingService } from '../../services/bowling.service';
 import { User } from '../../../auth/user';
+import { BowlingChartComponent } from '../bowling-chart/bowling-chart.component';
 
 @Component({
   selector: 'app-bowling',
@@ -13,11 +14,17 @@ import { User } from '../../../auth/user';
   styleUrls: ['./bowling.component.scss']
 })
 export class BowlingComponent implements OnInit {
+  @ViewChild('chart') chart: BowlingChartComponent;
+  currentUserId: string = localStorage.getItem("userId");
+
   allSessions: BowlingSession[] = [];
   filteredSessions: BowlingSession[] = [];
+
   bowlingDataSeries: BowlingSeries[] = [];
   bowlers: User[] = [];
-  currentUserId: string = localStorage.getItem("userId");
+
+  selectedStartTime: Date;
+  selectedEndTime: Date;
 
   constructor(private bowlingService: BowlingService,
     private router: Router,
@@ -27,6 +34,11 @@ export class BowlingComponent implements OnInit {
 
   ngOnInit() {
     this.loadAllData();
+  }
+
+  updateStats() {
+    this.selectedStartTime = this.chart.getStartTime();
+    this.selectedEndTime = this.chart.getEndTime();
   }
 
   loadAllData() {
@@ -79,7 +91,7 @@ export class BowlingComponent implements OnInit {
     const dialogRef = this.dialog.open(BowlingStartSessionComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(data => {
-      this.loadAllData();
+      //this.loadAllData();
     });
   }
 }
