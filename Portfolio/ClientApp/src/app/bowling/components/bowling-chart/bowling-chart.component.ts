@@ -1,17 +1,20 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, SimpleChanges, OnChanges } from '@angular/core';
 import { colorSets as ngxChartsColorsets } from '@swimlane/ngx-charts/release/utils/color-sets';
 import * as d3 from 'd3';
-import { BowlingSeries } from '../../models/bowling-series';
+import { BowlingSeries, SeriesCategory } from '../../models/bowling-series';
 import { LineChartComponent } from '@swimlane/ngx-charts';
+import { BowlingService } from '../../services/bowling.service';
 
 @Component({
   selector: 'app-bowling-chart',
   templateUrl: './bowling-chart.component.html',
   styleUrls: ['./bowling-chart.component.scss']
 })
-export class BowlingChartComponent implements OnInit {
-  @Input() bowlingData: BowlingSeries[];
+export class BowlingChartComponent implements OnInit, OnChanges {
+  @Input() category: SeriesCategory;
   @ViewChild('chart') chart: LineChartComponent;
+
+  bowlingData: BowlingSeries[];
 
   visible = false;
   colorScheme: any;
@@ -19,12 +22,28 @@ export class BowlingChartComponent implements OnInit {
   selectedColorScheme: string;
   curve = d3.curveNatural;
 
-  constructor() {
+  constructor(private bowlingService: BowlingService) {
     this.setColorScheme('cool');
   }
 
   ngOnInit() {
-    this.visible = true;
+    this.loadSeriesData();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.loadSeriesData();
+  }
+
+  loadSeriesData() {
+    this.bowlingService.getSeries(this.category).subscribe(data => {
+      data.forEach(d => d.series.forEach(s => s.name = new Date(s.name)));
+      this.bowlingData = data;
+      this.visible = true;
+    },
+    (err) => {
+      console.error(err);
+      alert(err.message);
+    });
   }
 
   getStartTime() {
