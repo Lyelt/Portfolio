@@ -59,7 +59,7 @@ namespace Portfolio.Controllers
             try
             {
                 var sessions = GetSessionList();
-                _logger.LogDebug($"Found {sessions.Count} total courses.");
+                _logger.LogDebug($"Found {sessions.Count} total sessions.");
                 return Ok(sessions);
             }
             catch (Exception ex)
@@ -70,12 +70,12 @@ namespace Portfolio.Controllers
         }
 
         [HttpGet]
-        [Route("Bowling/GetStats/{statCategory}/{userId}")]
-        public IActionResult GetStats(StatCategory statCategory, string userId)
+        [Route("Bowling/GetStats/{statCategory}/{userId}/{startTime?}/{endTime?}")]
+        public IActionResult GetStats(StatCategory statCategory, string userId, long? startTime, long? endTime)
         {
             try
             {
-                var games = GetGamesForUser(userId);
+                var games = GetGames(userId, startTime, endTime);
                 var calc = new BowlingStatCalculator(games);
                 return Ok(calc.GetStats(statCategory));
             }
@@ -158,9 +158,13 @@ namespace Portfolio.Controllers
             return await _userManager.GetUserAsync(User);
         }
 
-        private List<BowlingGame> GetGamesForUser(string userId)
+        private List<BowlingGame> GetGames(string userId, long? startTime, long? endTime)
         {
-            return GetSessionList()
+            var sessions = startTime.HasValue && endTime.HasValue ?
+                GetSessionList().Where(s => s.Date > DateTimeOffset.FromUnixTimeMilliseconds(startTime.Value) && s.Date < DateTimeOffset.FromUnixTimeMilliseconds(endTime.Value)) :
+                GetSessionList();
+
+            return sessions
                   .SelectMany(s => s.Games.Where(g => g.UserId == userId))
                   .ToList();
         }

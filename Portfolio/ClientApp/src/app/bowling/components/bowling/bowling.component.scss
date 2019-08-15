@@ -15,15 +15,14 @@
   justify-content: center;
 }
 
+.stat-action-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .chart-wrapper {
   margin-top: 1em;
   display: grid;
-  /*height: 600px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%)*/
-  /*
-  display: flex;
-  overflow: hidden;*/
 }

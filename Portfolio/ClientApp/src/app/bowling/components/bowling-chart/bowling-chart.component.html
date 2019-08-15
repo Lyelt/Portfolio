@@ -1,4 +1,5 @@
-<ngx-charts-line-chart *ngIf="visible"
+<ngx-charts-line-chart #chart
+                       *ngIf="visible"
                        class="chart-container"
                        [scheme]="colorScheme"
                        schemeType="ordinal"
@@ -12,7 +13,7 @@
                        yAxis="true"
                        showXAxisLabel="true"
                        showYAxisLabel="true"
-                       yAxisLabel="Score"
+                       yAxisLabel="Average Session Score"
                        autoScale="true"
                        timeline="true"
                        showGridLines="true"

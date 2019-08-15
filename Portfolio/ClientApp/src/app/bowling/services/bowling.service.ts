@@ -20,8 +20,12 @@ export class BowlingService {
     return this.http.get<BowlingSession[]>("Bowling/GetSessions");
   }
 
-  getStats(userId: string, statCategory: StatCategory) {
-    return this.http.get<BowlingStat[]>("Bowling/GetStats/" + statCategory + "/" + userId);
+  getStats(userId: string, statCategory: StatCategory, startTime: Date, endTime: Date) {
+    let url = "Bowling/GetStats/" + statCategory + "/" + userId;
+    if (startTime && endTime)
+      url += '/' + startTime.getTime() + '/' + endTime.getTime();
+
+    return this.http.get<BowlingStat[]>(url);
   }
 
   startNewSession(session: BowlingSession) {
