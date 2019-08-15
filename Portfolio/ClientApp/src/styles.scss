@@ -157,14 +157,11 @@ table {
   justify-content: center;
 }
 
-
-
-/*.chart-legend .legend-labels {
-  display: flex !important;
-  flex-direction: column !important;
-  width: inherit !important;
+/* Make the legend labels flow horizontally and wrap instead of one-per-line. */
+.chart-legend .legend-labels {
+  white-space: inherit !important;
 }
 
-.chart-legend {
-  display: flex !important;
-}*/
+.chart-legend ul, .chart-legend li {
+  display: inline-block;
+}

@@ -1,0 +1,9 @@
+.chart-container {
+  /* The max height fixes the ngx-chart resize bug.
+    Chart appears to grow out of control in height if a max-height is not set.*/
+  max-height: 700px;
+  /* Temporary hack to work around ngx-chart legend issue.
+    The legend seems to live outside the container if I set a max-height, so I am just padding for it manually.
+  
+  padding-bottom: 100px;*/
+}
