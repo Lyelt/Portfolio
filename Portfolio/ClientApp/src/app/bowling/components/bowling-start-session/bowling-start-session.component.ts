@@ -3,8 +3,6 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatStepper } from '@angular/material';
 import { BowlingService } from '../../services/bowling.service';
 import { BowlingSession } from '../../models/bowling-session';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { User } from '../../../auth/user';
-import { BowlingGame } from '../../models/bowling-game';
 
 @Component({
   selector: 'app-bowling-start-session',
@@ -25,7 +23,7 @@ export class BowlingStartSessionComponent implements OnInit {
     private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) data) {
 
-    this.sessions = data.sessions;
+    //this.sessions = data.sessions;
     this.sessionForm = this.formBuilder.group({
       existingSession: [''],
       newSession: ['']
@@ -33,7 +31,14 @@ export class BowlingStartSessionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.sessions.sort((s1, s2) => new Date(s2.date).getTime() - new Date(s1.date).getTime());
+    this.bowlingService.getSessions().subscribe(data => {
+      this.sessions = data;
+      this.sessions.sort((s1, s2) => new Date(s2.date).getTime() - new Date(s1.date).getTime());
+    },
+    (err) => {
+      console.error(err);
+      alert(err.message);
+    });
   }
 
   validateHasExactlyOne(formGroup: FormGroup): any {
@@ -62,10 +67,10 @@ export class BowlingStartSessionComponent implements OnInit {
         this.sessions.push(data);
         this.changeTab(1);
       },
-        (err) => {
-          console.error(err);
-          alert(err.message);
-        });
+      (err) => {
+        console.error(err);
+        alert(err.message);
+      });
     }
     else {
       this.changeTab(1);

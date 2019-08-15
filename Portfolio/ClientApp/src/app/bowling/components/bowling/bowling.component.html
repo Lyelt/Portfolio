@@ -5,7 +5,7 @@
     <button mat-raised-button color="primary" routerLink="/login">Logout</button>
   </div>
   <div class="chart-wrapper">
-    <app-bowling-chart [bowlingData]="bowlingDataSeries" #chart></app-bowling-chart>
+    <app-bowling-chart [category]="currentSeriesCategory" #chart></app-bowling-chart>
   </div>
   <div class="stat-action-wrapper">
     <app-bowling-select-user [initialUserId]="currentUserId"
