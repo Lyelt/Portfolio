@@ -165,3 +165,14 @@ table {
 .chart-legend ul, .chart-legend li {
   display: inline-block;
 }
+
+/* Progress spinner */
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.spinner {
+  align-self: center;
+}

@@ -20,10 +20,8 @@ export class BowlingStartSessionComponent implements OnInit {
 
   constructor(private bowlingService: BowlingService,
     private dialogRef: MatDialogRef<BowlingStartSessionComponent>,
-    private formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) data) {
+    private formBuilder: FormBuilder) {
 
-    //this.sessions = data.sessions;
     this.sessionForm = this.formBuilder.group({
       existingSession: [''],
       newSession: ['']

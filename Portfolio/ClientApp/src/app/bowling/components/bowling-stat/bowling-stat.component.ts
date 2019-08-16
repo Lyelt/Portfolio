@@ -8,11 +8,11 @@ import { BowlingService } from '../../services/bowling.service';
   styleUrls: ['./bowling-stat.component.scss']
 })
 export class BowlingStatComponent implements OnInit, OnChanges {
-
   @Input() userId: string;
   @Input() statCategory: StatCategory;
   @Input() startTime: Date;
   @Input() endTime: Date;
+  initialized: boolean = false;
 
   stats: BowlingStat[];
   statsLoading: boolean = true;
@@ -21,10 +21,13 @@ export class BowlingStatComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.retrieveStats();
+    this.initialized = true;
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.retrieveStats();
+    if (this.initialized) {
+      this.retrieveStats();
+    }
   }
 
   retrieveStats() {

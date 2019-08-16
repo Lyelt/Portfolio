@@ -1,6 +1,6 @@
 <div class="chart-container">
   <ngx-charts-line-chart #chart
-                         *ngIf="visible"
+                         *ngIf="!dataLoading"
                          [scheme]="colorScheme"
                          schemeType="ordinal"
                          [results]="bowlingData"
@@ -13,11 +13,14 @@
                          yAxis="true"
                          showXAxisLabel="true"
                          showYAxisLabel="true"
-                         yAxisLabel="Average Session Score"
+                         [yAxisLabel]="yAxistLabel"
                          autoScale="true"
                          timeline="true"
                          showGridLines="true"
                          [curve]="curve"
                          (select)="select($event)">
   </ngx-charts-line-chart>
+</div>
+<div class="spinner-container" *ngIf="dataLoading">
+  <mat-progress-spinner class="spinner" color="accent" mode="indeterminate"></mat-progress-spinner>
 </div>
