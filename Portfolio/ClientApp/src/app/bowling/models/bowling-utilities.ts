@@ -1,7 +1,17 @@
 import { BowlingGame } from './bowling-game';
 import { BowlingFrame } from './bowling-frame';
+import { SeriesCategory } from './bowling-series';
 
 export abstract class BowlingUtilities {
+  private static categoryLabels: Record<SeriesCategory, string> = {
+    [SeriesCategory.SessionAverage]: "Session Average Score",
+    [SeriesCategory.OverallAverage]: "Overall Average Score",
+    [SeriesCategory.Game]: "Game Score"
+  };
+
+  public static getCategoryLabel(category: SeriesCategory): string {
+    return BowlingUtilities.categoryLabels[category];
+  }
 
   public static newGame(sessionId: number, gameNumber: number, userId: string): BowlingGame {
     let game: BowlingGame = new BowlingGame();

@@ -18,28 +18,36 @@
   <div class="responsive-container center">
     <mat-tab-group dynamicHeight>
       <mat-tab label="Quick Stats">
+        <ng-template matTabContent>
           <app-bowling-stat statCategory="Overall"
                             [userId]="currentUserId"
                             [startTime]="selectedStartTime"
                             [endTime]="selectedEndTime"></app-bowling-stat>
+        </ng-template>
       </mat-tab>
       <mat-tab label="Counts">
-        <app-bowling-stat statCategory="Count"
-                          [userId]="currentUserId"
-                          [startTime]="selectedStartTime"
-                          [endTime]="selectedEndTime"></app-bowling-stat>
+        <ng-template matTabContent>
+          <app-bowling-stat statCategory="Count"
+                            [userId]="currentUserId"
+                            [startTime]="selectedStartTime"
+                            [endTime]="selectedEndTime"></app-bowling-stat>
+        </ng-template>
       </mat-tab>
       <mat-tab label="Splits">
-        <app-bowling-stat statCategory="Split"
-                          [userId]="currentUserId"
-                          [startTime]="selectedStartTime"
-                          [endTime]="selectedEndTime"></app-bowling-stat>
+        <ng-template matTabContent>
+          <app-bowling-stat statCategory="Split"
+                            [userId]="currentUserId"
+                            [startTime]="selectedStartTime"
+                            [endTime]="selectedEndTime"></app-bowling-stat>
+        </ng-template>
       </mat-tab>
       <mat-tab label="Records">
-        <app-bowling-stat statCategory="Record"
-                          [userId]="currentUserId"
-                          [startTime]="selectedStartTime"
-                          [endTime]="selectedEndTime"></app-bowling-stat>
+        <ng-template matTabContent>
+          <app-bowling-stat statCategory="Record"
+                            [userId]="currentUserId"
+                            [startTime]="selectedStartTime"
+                            [endTime]="selectedEndTime"></app-bowling-stat>
+        </ng-template>
       </mat-tab>
     </mat-tab-group>
   </div>

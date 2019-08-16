@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 import { BowlingSeries, SeriesCategory } from '../../models/bowling-series';
 import { LineChartComponent } from '@swimlane/ngx-charts';
 import { BowlingService } from '../../services/bowling.service';
+import { BowlingUtilities } from '../../models/bowling-utilities';
 
 @Component({
   selector: 'app-bowling-chart',
@@ -13,10 +14,12 @@ import { BowlingService } from '../../services/bowling.service';
 export class BowlingChartComponent implements OnInit, OnChanges {
   @Input() category: SeriesCategory;
   @ViewChild('chart') chart: LineChartComponent;
+  initialized: boolean = false;
 
   bowlingData: BowlingSeries[];
+  yAxisLabel: string;
 
-  visible = false;
+  dataLoading = true;
   colorScheme: any;
   schemeType: string = 'ordinal';
   selectedColorScheme: string;
@@ -28,22 +31,27 @@ export class BowlingChartComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.loadSeriesData();
+    this.initialized = true;
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.loadSeriesData();
+    if (this.initialized) {
+      this.loadSeriesData();
+    }
   }
 
   loadSeriesData() {
     this.bowlingService.getSeries(this.category).subscribe(data => {
       data.forEach(d => d.series.forEach(s => s.name = new Date(s.name)));
       this.bowlingData = data;
-      this.visible = true;
+      this.dataLoading = false;
     },
     (err) => {
       console.error(err);
       alert(err.message);
     });
+
+    this.yAxisLabel = BowlingUtilities.getCategoryLabel(this.category);
   }
 
   getStartTime() {
