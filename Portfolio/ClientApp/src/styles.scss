@@ -160,8 +160,8 @@ table {
 /* Make the legend labels flow horizontally and wrap instead of one-per-line. */
 .chart-legend .legend-labels {
   white-space: inherit !important;
-  background: white;
-  text-align: center;
+  background: white !important;
+  text-align: center !important;
 }
 
 .chart-legend ul, .chart-legend li {
