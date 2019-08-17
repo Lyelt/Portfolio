@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, ViewChild, SimpleChanges, OnChanges } from '@angular/core';
 import { colorSets as ngxChartsColorsets } from '@swimlane/ngx-charts/release/utils/color-sets';
 import * as d3 from 'd3';
-import { BowlingSeries, SeriesCategory } from '../../models/bowling-series';
+import { BowlingSeries } from '../../models/bowling-series';
+import { SeriesCategory } from '../../models/series-category';
 import { LineChartComponent } from '@swimlane/ngx-charts';
 import { BowlingService } from '../../services/bowling.service';
-import { BowlingUtilities } from '../../models/bowling-utilities';
 
 @Component({
   selector: 'app-bowling-chart',
@@ -41,7 +41,9 @@ export class BowlingChartComponent implements OnInit, OnChanges {
   }
 
   loadSeriesData() {
-    this.bowlingService.getSeries(this.category).subscribe(data => {
+    this.dataLoading = true;
+    this.yAxisLabel = this.category.display;
+    this.bowlingService.getSeries(this.category.category).subscribe(data => {
       data.forEach(d => d.series.forEach(s => s.name = new Date(s.name)));
       this.bowlingData = data;
       this.dataLoading = false;
@@ -50,8 +52,6 @@ export class BowlingChartComponent implements OnInit, OnChanges {
       console.error(err);
       alert(err.message);
     });
-
-    this.yAxisLabel = BowlingUtilities.getCategoryLabel(this.category);
   }
 
   getStartTime() {

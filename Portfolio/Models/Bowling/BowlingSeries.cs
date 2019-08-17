@@ -23,6 +23,8 @@ namespace Portfolio.Models.Bowling
     {
         SessionAverage,
         OverallAverage,
-        Game
+        Game,
+        StrikePct,
+        SinglePinSparePct
     }
 }
