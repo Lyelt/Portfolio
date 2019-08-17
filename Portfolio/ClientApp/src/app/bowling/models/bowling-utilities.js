@@ -1,15 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var _a;
 var bowling_game_1 = require("./bowling-game");
 var bowling_frame_1 = require("./bowling-frame");
-var bowling_series_1 = require("./bowling-series");
+var series_category_1 = require("./series-category");
 var BowlingUtilities = /** @class */ (function () {
     function BowlingUtilities() {
     }
-    BowlingUtilities.getCategoryLabel = function (category) {
-        return BowlingUtilities.categoryLabels[category];
-    };
     BowlingUtilities.newGame = function (sessionId, gameNumber, userId) {
         var game = new bowling_game_1.BowlingGame();
         game.id = 0;
@@ -66,11 +62,13 @@ var BowlingUtilities = /** @class */ (function () {
     BowlingUtilities.getFrame = function (game, frameNumber) {
         return game.frames.filter(function (f) { return f.frameNumber == frameNumber; })[0];
     };
-    BowlingUtilities.categoryLabels = (_a = {},
-        _a[bowling_series_1.SeriesCategory.SessionAverage] = "Session Average Score",
-        _a[bowling_series_1.SeriesCategory.OverallAverage] = "Overall Average Score",
-        _a[bowling_series_1.SeriesCategory.Game] = "Game Score",
-        _a);
+    BowlingUtilities.seriesCategories = [
+        { category: series_category_1.SeriesCategoryEnum.SessionAverage, display: "Session Average Score" },
+        { category: series_category_1.SeriesCategoryEnum.OverallAverage, display: "Overall Average Score" },
+        { category: series_category_1.SeriesCategoryEnum.Game, display: "Game Score" },
+        { category: series_category_1.SeriesCategoryEnum.Game, display: "Overall Strike Percentage" },
+        { category: series_category_1.SeriesCategoryEnum.Game, display: "Game Score" },
+    ];
     return BowlingUtilities;
 }());
 exports.BowlingUtilities = BowlingUtilities;

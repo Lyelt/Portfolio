@@ -2,10 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialogConfig, MatDialog } from '@angular/material';
 import { BowlingStartSessionComponent } from '../bowling-start-session/bowling-start-session.component';
-import { SeriesCategory } from '../../models/bowling-series';
 import { BowlingSession } from '../../models/bowling-session';
 import { BowlingService } from '../../services/bowling.service';
 import { BowlingChartComponent } from '../bowling-chart/bowling-chart.component';
+import { SeriesCategory, SeriesCategoryEnum } from '../../models/series-category';
+import { BowlingUtilities } from '../../models/bowling-utilities';
 
 @Component({
   selector: 'app-bowling',
@@ -15,7 +16,8 @@ import { BowlingChartComponent } from '../bowling-chart/bowling-chart.component'
 export class BowlingComponent implements OnInit {
   @ViewChild('chart') chart: BowlingChartComponent;
   currentUserId: string = localStorage.getItem("userId");
-  currentSeriesCategory: SeriesCategory = SeriesCategory.SessionAverage;
+  currentSeriesCategory: SeriesCategory;
+  categoryLabels: SeriesCategory[] = BowlingUtilities.seriesCategories;
 
   allSessions: BowlingSession[] = [];
 
@@ -29,6 +31,7 @@ export class BowlingComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.currentSeriesCategory = this.categoryLabels.find(c => c.category == SeriesCategoryEnum.SessionAverage);
   }
 
   updateStats() {

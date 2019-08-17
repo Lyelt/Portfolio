@@ -82,25 +82,8 @@ namespace Portfolio.Controllers
             {
                 var sessions = GetSessionList();
                 var bowlers = GetBowlers();
-                List<BowlingSeries> series = new List<BowlingSeries>();
-
-                if (seriesCategory == SeriesCategory.SessionAverage)
-                {
-                    foreach (var bowler in bowlers)
-                    {
-                        List<SeriesEntry> bowlerSeries = new List<SeriesEntry>();
-                        foreach (var session in sessions.OrderBy(s => s.Date))
-                        {
-                            var games = session.Games.Where(g => g.UserId == bowler.Id).ToList();
-                            if (games.Count > 0)
-                                bowlerSeries.Add(new SeriesEntry { Name = session.Date, Value = games.Average(g => g.TotalScore) });
-                        }
-
-                        if (bowlerSeries.Count > 0)
-                            series.Add(new BowlingSeries { Name = bowler.UserName, Series = bowlerSeries });
-                    }
-                }
-
+                List<BowlingSeries> series = new BowlingSeriesService(sessions, bowlers).GetSeries(seriesCategory);
+                _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
                 return Ok(series);
             }
             catch (Exception ex)

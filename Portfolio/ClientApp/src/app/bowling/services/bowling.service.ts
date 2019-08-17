@@ -4,7 +4,8 @@ import { User } from '../../auth/user';
 import { BowlingSession } from '../models/bowling-session';
 import { BowlingGame } from '../models/bowling-game';
 import { BowlingStat, StatCategory } from '../models/bowling-stat';
-import { BowlingSeries, SeriesCategory } from '../models/bowling-series';
+import { BowlingSeries } from '../models/bowling-series';
+import { SeriesCategoryEnum } from '../models/series-category';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,7 @@ export class BowlingService {
     return this.http.get<BowlingSession[]>("Bowling/GetSessions");
   }
 
-  getSeries(seriesCategory: SeriesCategory) {
+  getSeries(seriesCategory: SeriesCategoryEnum) {
     return this.http.get<BowlingSeries[]>("Bowling/GetSeries/" + seriesCategory);
   }
 
