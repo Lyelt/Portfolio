@@ -17,7 +17,7 @@ export class BowlingComponent implements OnInit {
   @ViewChild('chart') chart: BowlingChartComponent;
   currentUserId: string = localStorage.getItem("userId");
   currentSeriesCategory: SeriesCategory;
-  categoryLabels: SeriesCategory[] = BowlingUtilities.seriesCategories;
+  categoryLabels: SeriesCategory[] = BowlingUtilities.lineSeriesCategories;
 
   allSessions: BowlingSession[] = [];
 
@@ -41,6 +41,10 @@ export class BowlingComponent implements OnInit {
 
   selectUser(userId: string) {
     this.currentUserId = userId;
+  }
+
+  selectSeriesCategory(category: SeriesCategory) {
+    this.currentSeriesCategory = category;
   }
 
   openDialog() {

@@ -10,5 +10,7 @@ export class SeriesCategory {
   category: SeriesCategoryEnum;
 
   display: string;
+
+  description: string;
 }
 

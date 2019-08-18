@@ -62,12 +62,12 @@ var BowlingUtilities = /** @class */ (function () {
     BowlingUtilities.getFrame = function (game, frameNumber) {
         return game.frames.filter(function (f) { return f.frameNumber == frameNumber; })[0];
     };
-    BowlingUtilities.seriesCategories = [
-        { category: series_category_1.SeriesCategoryEnum.SessionAverage, display: "Session Average Score" },
-        { category: series_category_1.SeriesCategoryEnum.OverallAverage, display: "Overall Average Score" },
-        { category: series_category_1.SeriesCategoryEnum.Game, display: "Game Score" },
-        { category: series_category_1.SeriesCategoryEnum.Game, display: "Overall Strike Percentage" },
-        { category: series_category_1.SeriesCategoryEnum.Game, display: "Game Score" },
+    BowlingUtilities.lineSeriesCategories = [
+        { category: series_category_1.SeriesCategoryEnum.SessionAverage, display: "Session Average Score", description: "Displays the average session score for each session of bowling. Each session is standalone, so this can be very up-and-down." },
+        { category: series_category_1.SeriesCategoryEnum.OverallAverage, display: "Overall Average Score", description: "Shows how the bowler's overall average has changed over time. Should be relatively steady and easy to see consistent improvements or declines in overall average." },
+        { category: series_category_1.SeriesCategoryEnum.Game, display: "Individual Game Score", description: "Each data point is an individual game's score. This graph will contain a lot of data that is very scattered." },
+        { category: series_category_1.SeriesCategoryEnum.StrikePct, display: "Overall Strike Percentage", description: "Shows how the bowler's overall strike percentage has changed over time. Should be relatively steady and easy to see improvements or declines in strike consistency." },
+        { category: series_category_1.SeriesCategoryEnum.SinglePinSparePct, display: "Overall Single Pin Spare Percentage", description: "Shows how the bowler's overall single-pin spare percentage has changed over time. Should be relatively steady and easy to see improvements or declines in single-pin spare consistency." }
     ];
     return BowlingUtilities;
 }());
