@@ -27,6 +27,7 @@ import { BowlingAddGameComponent } from './bowling/components/bowling-add-game/b
 import { BowlingSelectUserComponent } from './bowling/components/bowling-select-user/bowling-select-user.component';
 import { BowlingGameComponent } from './bowling/components/bowling-game/bowling-game.component';
 import { BowlingStatComponent } from './bowling/components/bowling-stat/bowling-stat.component';
+import { BowlingSelectSeriesCategoryComponent } from './bowling/components/bowling-select-series-category/bowling-select-series-category.component';
 
 const routes: Routes = [
   {
@@ -83,7 +84,8 @@ const routes: Routes = [
     BowlingAddGameComponent,
     BowlingSelectUserComponent,
     BowlingGameComponent,
-    BowlingStatComponent
+    BowlingStatComponent,
+    BowlingSelectSeriesCategoryComponent
   ],
   imports: [
     BrowserModule,

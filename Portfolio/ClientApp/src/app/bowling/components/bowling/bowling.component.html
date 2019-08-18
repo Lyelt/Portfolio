@@ -8,13 +8,8 @@
     <app-bowling-chart [category]="currentSeriesCategory" #chart></app-bowling-chart>
   </div>
   <div class="stat-action-wrapper">
+    <app-bowling-select-series-category [seriesCategories]="categoryLabels" [initialSeriesCategory]="currentSeriesCategory" [label]="'View chart type...'" (selectionChange)="selectSeriesCategory($event)"></app-bowling-select-series-category>
     <app-bowling-select-user [initialUserId]="currentUserId" [label]="'View stats for bowler...'" (selectionChange)="selectUser($event)"></app-bowling-select-user>
-    <mat-form-field>
-      <mat-label>View chart type...</mat-label>
-      <mat-select [(ngModel)]="currentSeriesCategory">
-        <mat-option *ngFor="let category of categoryLabels" [value]="category">{{category.display}}</mat-option>
-      </mat-select>
-    </mat-form-field>
     <button mat-raised-button color="accent" (click)="updateStats()">Update Stats</button>
   </div>
   <h5 *ngIf="selectedStartTime && selectedEndTime">Viewing stats from {{selectedStartTime | date: 'mediumDate'}} to {{selectedEndTime | date: 'mediumDate'}}</h5>

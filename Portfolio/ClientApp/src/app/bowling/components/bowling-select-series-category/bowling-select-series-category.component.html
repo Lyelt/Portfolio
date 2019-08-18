@@ -1,0 +1,7 @@
+<mat-icon [matTooltip]="currentSeriesCategory.description" class="prefix-icon">help_outline</mat-icon>
+<mat-form-field>
+  <mat-label>{{label}}</mat-label>
+  <mat-select [(ngModel)]="currentSeriesCategory" (selectionChange)="selectSeriesCategory()">
+    <mat-option *ngFor="let category of seriesCategories" [value]="category">{{category.display}}</mat-option>
+  </mat-select>
+</mat-form-field>
