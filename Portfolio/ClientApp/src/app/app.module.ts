@@ -34,13 +34,13 @@ const routes: Routes = [
     path: '', component: HomeComponent
   },
   {
-    path: 'encounter', component: EncounterComponent
+    path: 'blog/encounter', component: EncounterComponent
   },
   {
-    path: 'typing', component: TypingComponent
+    path: 'blog/typing', component: TypingComponent
   },
   {
-    path: 'portfolio', component: PortfolioComponent
+    path: 'blog/portfolio', component: PortfolioComponent
   },
   {
     path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
