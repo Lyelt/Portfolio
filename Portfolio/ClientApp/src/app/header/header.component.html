@@ -1,20 +1,19 @@
-<mat-toolbar class="header-bar sticky">
-  <mat-toolbar-row>
-    <span class="nav-item menu-icon"><mat-icon routerLink="">home</mat-icon></span>
-    <span class="spacer"></span>
-    <span class="nav-item" routerLink="" (click)="scrollToElement('projects')">PROJECTS</span>
-    <span class="nav-item" routerLink="" (click)="scrollToElement('skills')">SKILLS</span>
-    <span class="nav-item" routerLink="" (click)="scrollToElement('about')">ABOUT</span>
-    <span class="nav-item" routerLink="" (click)="scrollToElement('contact')">CONTACT</span>
-    <span class="nav-item menu-icon" mat-icon-button [matMenuTriggerFor]="menu">
-      <mat-icon>more_vert</mat-icon>
-    </span>
-    <mat-menu #menu="matMenu">
-      <span mat-menu-item routerLink="speedrun">Speedrun</span>
-      <span mat-menu-item routerLink="bowling">Bowling</span>
-    </mat-menu>
-    <span class="spacer"></span>
-    <a class="nav-item icon" href="https://github.com/Lyelt" title="Github"><img src="assets/github-logo.png" /></a>
-    <a class="nav-item icon" href="https://www.linkedin.com/in/nicholasghobrial/" title="LinkedIn"><img src="assets/linkedin-logo.png" /></a>
-  </mat-toolbar-row>
-</mat-toolbar>
+<header class="fixed top-0 z-999 w-full border-b-4 border-indigo-400 bg-white flex items-center shadow-lg py-4 px-2 text-xs sm:text-base">
+  <span class="px-2 sm:px-4 uppercase tracking-wide"><mat-icon routerLink="">home</mat-icon></span>
+  <span class="flex-shrink flex-auto"></span>
+  <span class="px-2 sm:px-4 uppercase tracking-wide" routerLink="" (click)="scrollToElement('projects')">Projects</span>
+  <span class="px-2 sm:px-4 uppercase tracking-wide" routerLink="" (click)="scrollToElement('skills')">Skills</span>
+  <span class="px-2 sm:px-4 uppercase tracking-wide" routerLink="" (click)="scrollToElement('about')">About</span>
+  <span class="px-2 sm:px-4 uppercase tracking-wide" routerLink="" (click)="scrollToElement('contact')">Contact</span>
+  <span class="flex-shrink flex-auto sm:hidden"></span>
+  <span class="flex" mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
+  </span>
+  <mat-menu #menu="matMenu">
+    <span mat-menu-item routerLink="speedrun">Speedrun</span>
+    <span mat-menu-item routerLink="bowling">Bowling</span>
+  </mat-menu>
+  <span class="flex-shrink flex-auto"></span>
+  <a class="hidden sm:inline px-4" href="https://github.com/Lyelt" title="Github"><img src="assets/github-logo.png" /></a>
+  <a class="hidden sm:inline px-4" href="https://www.linkedin.com/in/nicholasghobrial/" title="LinkedIn"><img src="assets/linkedin-logo.png" /></a>
+</header>
