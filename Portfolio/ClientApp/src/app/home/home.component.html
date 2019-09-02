@@ -1,5 +1,5 @@
-<div class="container mx-auto mt-16 px-4 max-w-sm max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-  <section class="mb-12 flex flex-col items-center text-center">
+<div class="mt-8 pt-8">
+  <section class="flex flex-col items-center text-center px-4">
     <h1 class="font-bold text-2xl mb-4">
       Hi, I'm <span class="text-indigo-400">Nicholas Ghobrial</span>.
     </h1>
@@ -9,15 +9,20 @@
       (formerly Bernoulli Health), a medical device software company.
     </p>
   </section>
+  <div class="bg-svg h-40 w-full"></div>
+</div>
+
+<div class="container mx-auto px-4 max-w-sm max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
+
   <!-- Projects -->
   <section class="mt-16 flex flex-col">
-    <div class="flex justify-start border-l-4 border-pink-400 px-2 py-2 mb-6 font-semibold leading-tight">
+    <div class="flex justify-between border-l-4 border-pink-400 px-2 py-2 mb-6 font-semibold leading-tight">
       <h2 id="projects" class="text-gray-600 text-lg text-left">Personal Projects</h2>
     </div>
 
 
     <div class="text-center bg-white rounded shadow-md mb-6">
-      <div class="px-4 py-4 bg-gray-200">
+      <div class="p-4 bg-gray-200">
         <p class="font-medium">
           D&D Encounter Simulator
         </p>
@@ -25,12 +30,9 @@
           A tool used for tracking initiatives and statistics during a D&D encounter.
         </p>
       </div>
-      <div class="p-8">
-        <mat-icon class="text-pink-400">check_circle</mat-icon>items here
-      </div>
       <div class="flex justify-center py-1 border-t border-gray-300">
         <button type="button" routerLink="blog/encounter" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
-          <mat-icon class="mr-1">expand_more</mat-icon>
+          <mat-icon class="mr-1">speaker_notes</mat-icon>
           <p>Read More</p>
         </button>
         <button type="button" (click)="navigate('https://github.com/Lyelt/EncounterSimulator');" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
@@ -42,7 +44,7 @@
 
 
     <div class="text-center bg-white rounded shadow-md mb-4">
-      <div class="px-4 py-4 bg-gray-200 border-b border-gray-300">
+      <div class="p-4 bg-gray-200 border-b border-gray-300">
         <p class="font-medium">
           Typing Analyzer
         </p>
@@ -52,7 +54,7 @@
       </div>
       <div class="flex justify-center py-1">
         <button type="button" routerLink="blog/encounter" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
-          <mat-icon class="mr-1">expand_more</mat-icon>
+          <mat-icon class="mr-1">speaker_notes</mat-icon>
           <p>Read More</p>
         </button>
         <button type="button" (click)="navigate('https://github.com/Lyelt/EncounterSimulator');" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
@@ -64,7 +66,7 @@
 
 
     <div class="text-center bg-white rounded shadow-md">
-      <div class="px-4 py-4 bg-gray-200 border-b border-gray-300">
+      <div class="p-4 bg-gray-200 border-b border-gray-300">
         <p class="font-medium">
           My Portfolio
         </p>
@@ -74,7 +76,7 @@
       </div>
       <div class="flex justify-center py-1">
         <button type="button" routerLink="blog/encounter" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
-          <mat-icon class="mr-1">expand_more</mat-icon>
+          <mat-icon class="mr-1">speaker_notes</mat-icon>
           <p>Read More</p>
         </button>
         <button type="button" (click)="navigate('https://github.com/Lyelt/TypingAnalyzer');" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
@@ -85,129 +87,161 @@
     </div>
   </section>
 
+  <!-- Skills and Experience -->
   <section class="mt-16 flex flex-col">
     <div class="flex justify-start border-l-4 border-pink-400 px-2 py-2 mb-6 font-semibold leading-tight">
       <h2 id="skills" class="text-gray-600 text-lg text-left">Skills and Experience</h2>
     </div>
 
-    <div class="text-center">
-      <h3 class="text-gray-600 text-md">Programming</h3>
-      <div class="text-left font-medium">
-        <div class="flex items-center">
-          <mat-icon class="text-pink-400">check_circle</mat-icon>
-          <span class="inline-block px-2">C# and .NET / .NET Core</span>
+    <div class="text-left p-2 mt-1">
+      <h3 class="text-gray-600 text-md mb-2">Programming & Back-End</h3>
+      <div class="font-medium">
+        <div class="flex items-center py-2 px-1 rounded bg-gray-200">
+          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
+          <span class="inline-block px-2">C# and the .NET ecosystem</span>
         </div>
-        <div class="flex items-center">
-          <mat-icon class="text-pink-400">check_circle</mat-icon>
+        <div class="flex items-center py-2 px-1 rounded">
+          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
+          <span class="inline-block px-2">SQL Server / MySQL Databases</span>
+        </div>
+        <div class="flex items-center py-2 px-1 bg-gray-200 rounded">
+          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
           <span class="inline-block px-2">Java</span>
         </div>
       </div>
     </div>
 
-    <div class="text-center">
-      <h3 class="text-gray-600 text-md">Front-End</h3>
-      <div class="text-left font-medium">
-        <div class="flex items-center">
-          <mat-icon class="text-pink-400">check_circle</mat-icon>
-          <span class="inline-block px-2">HTML / CSS / Javascript</span>
+    <div class="text-left p-2 mt-4">
+      <h3 class="text-gray-600 text-md mb-2">Front-End</h3>
+      <div class="font-medium">
+        <div class="flex items-center mb-2 rounded bg-gray-200">
+          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
+          <span class="inline-block px-2">HTML, CSS, Javascript, & jQuery</span>
         </div>
-        <div class="flex items-center">
-          <mat-icon class="text-pink-400">check_circle</mat-icon>
-          <span class="inline-block px-2">jQuery / Bootstrap</span>
+        <div class="flex items-center mb-2 rounded">
+          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
+          <span class="inline-block px-2">Typescript / Angular</span>
         </div>
-        <div class="flex items-center">
-          <mat-icon class="text-pink-400">check_circle</mat-icon>
-          <span class="inline-block px-2">Typescript / Angular / Angular Material / TailwindCSS</span>
+        <div class="flex items-center mb-2 rounded bg-gray-200">
+          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
+          <span class="inline-block px-2">Material, Bootstrap, & TailwindCSS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-left p-2 mt-4">
+      <h3 class="text-gray-600 text-md mb-2">Continuous Integration & Deployment</h3>
+      <div class="font-medium">
+        <div class="flex items-center mb-2 rounded bg-gray-200">
+          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
+          <span class="inline-block px-2">Docker</span>
+        </div>
+        <div class="flex items-center mb-2 rounded">
+          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
+          <span class="inline-block px-2">Jenkins</span>
+        </div>
+        <div class="flex items-center mb-2 rounded bg-gray-200">
+          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
+          <span class="inline-block px-2">Dokku</span>
         </div>
       </div>
     </div>
 
   </section>
 
-    <div class="skills responsive-container">
-
-      <mat-card class="card skill-card">
-        <mat-card-header>
-          <mat-card-title>Front-End</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p>
-            In web development at Bernoulli, I've mainly used HTML/CSS along with Javascript/jQuery and Bootstrap.
-
-            In my personal projects, I am quite interested in the latest front-end frameworks and I have experimented with NodeJS, Angular 7, Angular Material, and TypeScript.
-          </p>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="card skill-card bg-image jenkins-logo">
-        <mat-card-header>
-          <mat-card-title>Continous Integration / Deployment</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p>
-            At Bernoulli, I am responsible for managing the build and continuous integration of the software.
-
-            I learned Jenkins in order to simplify this process, and I am leading the initiative for a completely automated build environment conducive to constant testing.
-
-            I also have experience with continuous deployment using dokku and Docker - that's how this website is deployed!
-          </p>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="card skill-card">
-        <mat-card-header>
-          <mat-card-title>Health Care Industry Standards</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p>
-            Working at Bernoulli has given me an in-depth understanding of the medical device / clinical surveillance industry.
-
-            As an FDA-compliant company, many protocols and processes had to be adhered to to ensure patient safety.
-
-            In health care, HL7 is the defacto standard when it comes to patient data transfer and storage.
-
-            I have worked extensively with HL7 in the context of electronic health records and alarm management.
-          </p>
-        </mat-card-content>
-      </mat-card>
+  <!-- About -->
+  <section class="mt-16 flex flex-col">
+    <div class="flex justify-start border-l-4 border-pink-400 px-2 py-2 mb-6 font-semibold leading-tight">
+      <h2 id="about" class="text-gray-600 text-lg text-left">About Me</h2>
     </div>
 
-    <div class="about responsive-container">
-      <h2 id="about">About Me</h2>
-      <mat-card class="card about-card bg-image unh-logo">
-        <mat-card-header>
-          <mat-card-title>Education</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p>
-            In 2014, I graduated high school with absolutely no clue what I wanted to do in life. I knew I liked video games, though, so I decided to try my hand at a computer science degree.
-
-            In 2018, I graduated from the University of New Haven with said degree and a passion for programming that I discovered along the way.
-          </p>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="card about-card">
-        <mat-card-header>
-          <mat-card-title>Hobbies</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p>
-            Aside from my aforementioned love of video games, I also enjoy tennis, bowling, playing guitar, and cooking.
-          </p>
-        </mat-card-content>
-      </mat-card>
-    </div>
+  </section>
 
 
-    <div class="contact responsive-container">
-      <h2 id="contact">Contact Me</h2>
-      <mat-card class="card contact-card">
-        <div class="container-vertical">
-          <div class="contact-row"><mat-icon>email</mat-icon><span class="contact-info">nicholas.ghobrial@gmail.com</span></div>
-          <div class="contact-row"><mat-icon>call</mat-icon><span class="contact-info">(203) 318-4094</span></div>
-          <div class="contact-row"><mat-icon>location_on</mat-icon><span class="contact-info"><a href="https://www.google.com/maps/place/New+Haven,+CT">New Haven, CT</a></span></div>
-        </div>
-      </mat-card>
-    </div>
+  <div class="skills responsive-container">
+
+    <mat-card class="card skill-card">
+      <mat-card-header>
+        <mat-card-title>Front-End</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          In web development at Bernoulli, I've mainly used HTML/CSS along with Javascript/jQuery and Bootstrap.
+
+          In my personal projects, I am quite interested in the latest front-end frameworks and I have experimented with NodeJS, Angular 7, Angular Material, and TypeScript.
+        </p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="card skill-card bg-image jenkins-logo">
+      <mat-card-header>
+        <mat-card-title>Continous Integration / Deployment</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          At Bernoulli, I am responsible for managing the build and continuous integration of the software.
+
+          I learned Jenkins in order to simplify this process, and I am leading the initiative for a completely automated build environment conducive to constant testing.
+
+          I also have experience with continuous deployment using dokku and Docker - that's how this website is deployed!
+        </p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="card skill-card">
+      <mat-card-header>
+        <mat-card-title>Health Care Industry Standards</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          Working at Bernoulli has given me an in-depth understanding of the medical device / clinical surveillance industry.
+
+          As an FDA-compliant company, many protocols and processes had to be adhered to to ensure patient safety.
+
+          In health care, HL7 is the defacto standard when it comes to patient data transfer and storage.
+
+          I have worked extensively with HL7 in the context of electronic health records and alarm management.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="about responsive-container">
+    <h2 id="about">About Me</h2>
+    <mat-card class="card about-card bg-image unh-logo">
+      <mat-card-header>
+        <mat-card-title>Education</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          In 2014, I graduated high school with absolutely no clue what I wanted to do in life. I knew I liked video games, though, so I decided to try my hand at a computer science degree.
+
+          In 2018, I graduated from the University of New Haven with said degree and a passion for programming that I discovered along the way.
+        </p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="card about-card">
+      <mat-card-header>
+        <mat-card-title>Hobbies</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          Aside from my aforementioned love of video games, I also enjoy tennis, bowling, playing guitar, and cooking.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+
+  <div class="contact responsive-container">
+    <h2 id="contact">Contact Me</h2>
+    <mat-card class="card contact-card">
+      <div class="container-vertical">
+        <div class="contact-row"><mat-icon>email</mat-icon><span class="contact-info">nicholas.ghobrial@gmail.com</span></div>
+        <div class="contact-row"><mat-icon>call</mat-icon><span class="contact-info">(203) 318-4094</span></div>
+        <div class="contact-row"><mat-icon>location_on</mat-icon><span class="contact-info"><a href="https://www.google.com/maps/place/New+Haven,+CT">New Haven, CT</a></span></div>
+      </div>
+    </mat-card>
+  </div>
 </div>
