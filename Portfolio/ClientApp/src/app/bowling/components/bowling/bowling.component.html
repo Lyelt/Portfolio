@@ -1,13 +1,13 @@
-<div class="container-vertical responsive-container responsive-container-lg">
-  <div class="links container-horizontal">
-    <button mat-raised-button color="primary" (click)="openDialog()">Scores</button>
-    <button mat-raised-button color="primary">More Details</button>
+<div class="mt-8 flex flex-col justify-center">
+  <div class="flex">
+    <button mat-raised-button class="mr-1" color="primary" (click)="openDialog()">Scores</button>
+    <button mat-raised-button class="mr-1" color="primary">More Details</button>
     <button mat-raised-button color="primary" routerLink="/login">Logout</button>
   </div>
-  <div class="chart-wrapper">
+  <div>
     <app-bowling-chart [category]="currentSeriesCategory" #chart></app-bowling-chart>
   </div>
-  <div class="stat-action-wrapper">
+  <div class="flex flex-row justify-between align-center flex-wrap pt-64">
     <app-bowling-select-series-category [seriesCategories]="categoryLabels" [initialSeriesCategory]="currentSeriesCategory" [label]="'View chart type...'" (selectionChange)="selectSeriesCategory($event)"></app-bowling-select-series-category>
     <app-bowling-select-user [initialUserId]="currentUserId" [label]="'View stats for bowler...'" (selectionChange)="selectUser($event)"></app-bowling-select-user>
     <button mat-raised-button color="accent" (click)="updateStats()">Update Stats</button>
