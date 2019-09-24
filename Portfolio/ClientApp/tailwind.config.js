@@ -13,6 +13,7 @@ module.exports = {
     borderColor: ['responsive', 'hover', 'focus', 'active', 'group-hover']
   },
   plugins: [
-    require('@tailwindcss/custom-forms')
+    require('@tailwindcss/custom-forms'),
+    require('glhd-tailwindcss-transitions')()
   ]
 };

@@ -21,6 +21,6 @@
                          (select)="select($event)">
   </ngx-charts-line-chart>
 </div>
-<div class="spinner-container" *ngIf="dataLoading">
-  <mat-progress-spinner class="spinner" color="accent" mode="indeterminate"></mat-progress-spinner>
+<div class="flex flex-col justify-center" *ngIf="dataLoading">
+  <mat-progress-spinner class="self-center" color="accent" mode="indeterminate"></mat-progress-spinner>
 </div>
