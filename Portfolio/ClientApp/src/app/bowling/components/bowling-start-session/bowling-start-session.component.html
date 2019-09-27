@@ -1,7 +1,7 @@
-<mat-dialog-content class="container-vertical">
+<mat-dialog-content class="flex flex-col">
   <mat-tab-group (selectedTabChange)="onTabChange($event)" [selectedIndex]="selectedTabIndex" dynamicHeight  mat-align-tabs="center">
     <mat-tab label="Choose Session">
-      <div class="container-vertical">
+      <div class="flex flex-col py-6">
         <mat-form-field>
           <mat-label>Choose a session</mat-label>
           <mat-select [(ngModel)]="selectedSession" [formControl]="sessionForm.controls['existingSession']">
@@ -9,8 +9,8 @@
             <mat-option *ngFor="let session of sessions" [value]="session">{{session.id}}. {{session.date | date: 'mediumDate'}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <span class="hr">OR</span>
-        <div class="container-vertical">
+        <span class="font-bold my-1 text-indigo-400 text-center">OR</span>
+        <div class="flex flex-col">
           <mat-form-field>
             <input matInput [matDatepicker]="picker"
                    [(ngModel)]="selectedDate"
@@ -20,11 +20,8 @@
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
         </div>
-        <div class="end-items">
-          <button mat-raised-button
-                  color="primary"
-                  (click)="startAddingGames()"
-                  [disabled]="this.sessionForm.hasError('missingNewOrExisting')">
+        <div class="flex items-center justify-end">
+          <button type="button" class="btn btn-primary px-8" (click)="startAddingGames()" [disabled]="this.sessionForm.hasError('missingNewOrExisting')">
             Go
           </button>
         </div>
@@ -32,9 +29,9 @@
     </mat-tab>
     <mat-tab label="View Games" [disabled]="this.sessionForm.hasError('missingNewOrExisting')">
       <app-bowling-add-game *ngIf="selectedSession" [session]="selectedSession"></app-bowling-add-game>
-      <div class="space-items">
-        <button mat-raised-button color="accent" (click)="changeTab(0)">Back</button>
-        <button mat-raised-button color="primary" (click)="close()">Done</button>
+      <div class="flex justify-between mt-1">
+        <button type="button" class="btn btn-secodary" (click)="changeTab(0)">Back</button>
+        <button type="button" class="btn btn-primary" (click)="close()">Done</button>
       </div>
     </mat-tab>
   </mat-tab-group>

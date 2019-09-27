@@ -1,6 +1,6 @@
-<div class="container-horizontal">
+<div class="flex">
   <mat-icon (click)="delete()">delete_forever</mat-icon>
-  <p>Game {{game.gameNumber}}: {{game.totalScore}}</p>
+  <span>Game {{game.gameNumber}}: {{game.totalScore}}</span>
   <mat-form-field *ngIf="game.id == 0"><input matInput type="number" min="1" [(ngModel)]="game.gameNumber" placeholder="Game number" /></mat-form-field>
 </div>
 <div class="button-wrapper">

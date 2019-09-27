@@ -6,8 +6,24 @@
   @apply font-bold py-2 px-4 rounded;
 }
 
+.btn-primary {
+  @apply bg-indigo-500 text-indigo-100;
+}
+
+.btn-secondary {
+  @apply bg-pink-500 text-pink-100;
+}
+
 .btn:hover {
   @apply bg-gray-200;
+}
+
+.btn-primary:hover {
+  @apply bg-indigo-600;
+}
+
+.btn-secondary:hover {
+  @apply bg-pink-200;
 }
 
 .link {
@@ -43,4 +59,26 @@ path {
 
 .chart-legend ul, .chart-legend li {
   display: inline-block;
+}
+
+/* Some manual overriding of dialog window responsive sizing */
+@media only screen and (min-width: 600px) {
+  .mat-dialog-container {
+    min-width: 560px;
+    max-width: 560px;
+  }
+}
+
+@media only screen and (min-width: 1080px) {
+  .mat-dialog-container {
+    min-width: 800px;
+    max-width: 800px;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .mat-dialog-container {
+    min-width: 1080px;
+    max-width: 1080px;
+  }
 }

@@ -1,9 +1,9 @@
-<div class="stats spinner-container">
+<div class="flex flex-col justify-center">
   <ng-container *ngIf="!statsLoading">
-    <p *ngFor="let stat of stats" class="stat-wrapper">
+    <p *ngFor="let stat of stats" class="flex justify-between rounded-lg spinner p-4 even:bg-gray-200">
       <span>{{stat.name}}:</span>
       <span>{{stat.value}}{{stat.unit}} <span *ngIf="stat.details != ''">({{stat.details}})</span></span>
     </p>
   </ng-container>
-  <mat-progress-spinner class="spinner" color="accent" mode="indeterminate" *ngIf="statsLoading"></mat-progress-spinner>
+  <mat-progress-spinner class="self-center my-6" color="accent" mode="indeterminate" *ngIf="statsLoading"></mat-progress-spinner>
 </div>
