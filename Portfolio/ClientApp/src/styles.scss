@@ -13290,6 +13290,29 @@ path {
   display: inline-block;
 }
 
+/* Some manual overriding of dialog window responsive sizing */
+
+@media only screen and (min-width: 600px) {
+  .mat-dialog-container {
+    min-width: 560px;
+    max-width: 560px;
+  }
+}
+
+@media only screen and (min-width: 1080px) {
+  .mat-dialog-container {
+    min-width: 800px;
+    max-width: 800px;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .mat-dialog-container {
+    min-width: 1080px;
+    max-width: 1080px;
+  }
+}
+
 @media (min-width: 640px){
   .sm\:sr-only{
     position: absolute;
