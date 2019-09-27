@@ -1,12 +1,12 @@
-<div class="container-vertical">
-  <div class="container">
+<div class="flex flex-col">
+  <div class="flex justify-center">
     <p><strong>Session ({{session.id}}) on {{session.date | date: 'mediumDate'}}</strong></p>
   </div>
-  <div class="container-wrap">
+  <div class="flex items-center justify-around flex-wrap">
     <app-bowling-select-user [initialUserId]="currentUserId"
                              [label]="'View games for user...'"
                              (selectionChange)="selectUser($event)"></app-bowling-select-user>
-    <button mat-raised-button color="primary" (click)="addGame()">Add Game</button>
+    <button type="button" class="btn btn-primary" (click)="addGame()">Add Game</button>
   </div>
   <app-bowling-game *ngIf="newGame" [game]="newGame" (gameSaved)="saveGame($event)" (gameDeleted)="deleteGame($event)"></app-bowling-game>
   <app-bowling-game *ngFor="let game of filteredGames" [game]="game" (gameDeleted)="deleteGame($event)"></app-bowling-game>
