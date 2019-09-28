@@ -895,7 +895,7 @@ video {
 }
 
 .btn {
-  font-weight: 700;
+  font-weight: 600;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   padding-left: 1rem;
@@ -922,7 +922,7 @@ video {
 }
 
 .btn-secondary:hover {
-  background-color: #fed7e2;
+  background-color: #d53f8c;
 }
 
 .link {
@@ -12769,6 +12769,14 @@ path {
   font-size: 4rem;
 }
 
+.text-2xs{
+  font-size: .5rem;
+}
+
+.text-3xs{
+  font-size: .25rem;
+}
+
 .italic{
   font-style: italic;
 }
@@ -13292,21 +13300,21 @@ path {
 
 /* Some manual overriding of dialog window responsive sizing */
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 640px) {
   .mat-dialog-container {
     min-width: 560px;
     max-width: 560px;
   }
 }
 
-@media only screen and (min-width: 1080px) {
+@media only screen and (min-width: 900px) {
   .mat-dialog-container {
     min-width: 800px;
     max-width: 800px;
   }
 }
 
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: 1250px) {
   .mat-dialog-container {
     min-width: 1080px;
     max-width: 1080px;
@@ -25125,6 +25133,14 @@ path {
 
   .sm\:text-6xl{
     font-size: 4rem;
+  }
+
+  .sm\:text-2xs{
+    font-size: .5rem;
+  }
+
+  .sm\:text-3xs{
+    font-size: .25rem;
   }
 
   .sm\:italic{
@@ -37359,6 +37375,14 @@ path {
     font-size: 4rem;
   }
 
+  .md\:text-2xs{
+    font-size: .5rem;
+  }
+
+  .md\:text-3xs{
+    font-size: .25rem;
+  }
+
   .md\:italic{
     font-style: italic;
   }
@@ -49591,6 +49615,14 @@ path {
     font-size: 4rem;
   }
 
+  .lg\:text-2xs{
+    font-size: .5rem;
+  }
+
+  .lg\:text-3xs{
+    font-size: .25rem;
+  }
+
   .lg\:italic{
     font-style: italic;
   }
@@ -61821,6 +61853,14 @@ path {
 
   .xl\:text-6xl{
     font-size: 4rem;
+  }
+
+  .xl\:text-2xs{
+    font-size: .5rem;
+  }
+
+  .xl\:text-3xs{
+    font-size: .25rem;
   }
 
   .xl\:italic{

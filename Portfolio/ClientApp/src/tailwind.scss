@@ -3,7 +3,7 @@
 @tailwind components;
 
 .btn {
-  @apply font-bold py-2 px-4 rounded;
+  @apply font-semibold py-2 px-4 rounded;
 }
 
 .btn-primary {
@@ -23,7 +23,7 @@
 }
 
 .btn-secondary:hover {
-  @apply bg-pink-200;
+  @apply bg-pink-600;
 }
 
 .link {
@@ -62,21 +62,21 @@ path {
 }
 
 /* Some manual overriding of dialog window responsive sizing */
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 640px) {
   .mat-dialog-container {
     min-width: 560px;
     max-width: 560px;
   }
 }
 
-@media only screen and (min-width: 1080px) {
+@media only screen and (min-width: 900px) {
   .mat-dialog-container {
     min-width: 800px;
     max-width: 800px;
   }
 }
 
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: 1250px) {
   .mat-dialog-container {
     min-width: 1080px;
     max-width: 1080px;

@@ -6,6 +6,10 @@ module.exports = {
       },
       flexGrow: {
         '1/2': 1/2
+      },
+      fontSize: {
+        '2xs': '.5rem',
+        '3xs': '.25rem'
       }
     }
   },
