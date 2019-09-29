@@ -28,10 +28,15 @@ import { BowlingSelectUserComponent } from './bowling/components/bowling-select-
 import { BowlingGameComponent } from './bowling/components/bowling-game/bowling-game.component';
 import { BowlingStatComponent } from './bowling/components/bowling-stat/bowling-stat.component';
 import { BowlingSelectSeriesCategoryComponent } from './bowling/components/bowling-select-series-category/bowling-select-series-category.component';
+import { BlogComponent } from './blog/components/blog/blog.component';
+import { BackgroundIconComponent } from './background-icon/background-icon.component';
 
 const routes: Routes = [
   {
     path: '', component: HomeComponent
+  },
+  {
+    path: 'blog', component: BlogComponent
   },
   {
     path: 'blog/encounter', component: EncounterComponent
@@ -85,7 +90,9 @@ const routes: Routes = [
     BowlingSelectUserComponent,
     BowlingGameComponent,
     BowlingStatComponent,
-    BowlingSelectSeriesCategoryComponent
+    BowlingSelectSeriesCategoryComponent,
+    BlogComponent,
+    BackgroundIconComponent
   ],
   imports: [
     BrowserModule,
