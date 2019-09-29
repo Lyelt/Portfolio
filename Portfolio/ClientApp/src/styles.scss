@@ -928,13 +928,12 @@ video {
 .link {
   color: #7f9cf5;
   font-weight: 600;
-  border-bottom-width: 1px;
-  border-color: #7f9cf5;
+  text-decoration: underline;
   cursor: pointer;
 }
 
 .link:hover {
-  border-color: #5a67d8;
+  color: #667eea;
 }
 
 .blog-date {

@@ -27,11 +27,11 @@
 }
 
 .link {
-  @apply text-indigo-400 font-semibold border-b border-indigo-400 cursor-pointer;
+  @apply text-indigo-400 font-semibold underline cursor-pointer;
 }
 
 .link:hover {
-  @apply border-indigo-600;
+  @apply text-indigo-500;
 }
 
 .blog-date {
