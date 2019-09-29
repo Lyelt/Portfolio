@@ -34,6 +34,24 @@
   @apply border-indigo-600;
 }
 
+.blog-date {
+  @apply text-gray-500 text-xs font-medium uppercase tracking-wider mb-1;
+}
+
+.nav-link {
+  @apply px-2 uppercase tracking-wide cursor-pointer;
+}
+
+.nav-link:focus {
+  @apply outline-none;
+}
+
+@screen sm {
+  .nav-link {
+    @apply px-4;
+  }
+}
+
 path {
   stroke-dasharray: 2100;
   stroke-dashoffset: 2100;
