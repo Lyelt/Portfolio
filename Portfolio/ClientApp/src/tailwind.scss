@@ -42,6 +42,10 @@
   @apply font-semibold text-lg mt-6;
 }
 
+.blog-card {
+  @apply rounded shadow-xl p-2 bg-gray-200;
+}
+
 .nav-link {
   @apply px-2 uppercase tracking-wide cursor-pointer;
 }
@@ -59,7 +63,22 @@
 path {
   stroke-dasharray: 2100;
   stroke-dashoffset: 2100;
+}
+
+path.path-1 {
+  animation: line-anim 1s ease forwards;
+}
+
+path.path-2 {
   animation: line-anim 2s ease forwards;
+}
+
+path.path-3 {
+  animation: line-anim 3s ease forwards;
+}
+
+path.path-4 {
+  animation: line-anim 4s ease forwards;
 }
 
 @keyframes line-anim {

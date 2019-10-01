@@ -1,3 +1,119 @@
-<p>
-  In progress. Come back soon!
-</p>
+<app-blog-article>
+  <app-blog-header>
+    <app-blog-title>Building My Portfolio Website</app-blog-title>
+    <app-blog-date>October 1, 2019</app-blog-date>
+    <app-blog-subtitle>Showcasing my development skills and personal projects in one neat place.</app-blog-subtitle>
+  </app-blog-header>
+
+  <app-blog-section>
+    <app-blog-section-title>The Idea</app-blog-section-title>
+    <p>
+      My idea to build a portfolio website came from out of the blue.
+      I had no plan, but I bought a <span class="bg-gray-200">.dev</span> domain on a whim because I read that Google was releasing them to the public and, hey, I've never had my own domain before!
+    </p>
+    <p class="mt-6">
+      I started with a little bit of research on actually hosting the site.
+      My initial plan was to use a static site host like Netlify, but I decided that I may want some backend features eventually.
+    </p>
+    <p class="mt-6">
+      I didn't like any of the options I found right away.
+      Most of them were either too expensive (read: not free) or way over my head.
+      I finally decided on <a href="https://www.digitalocean.com/" class="link">Digital Ocean</a> as a relatively cheap option,
+      reasoning that if I was actually paying for a server, it would force me to see the project through without losing interest or giving up when it got hard.
+    </p>
+    <p class="mt-6">
+      On top of that, I soon discovered I'd be forced to learn at least a little bit about SSL / TLS
+      since Google would be preloading HSTS on all <span class="bg-gray-200">.dev</span> domains.
+      There was no option for me to take a shortcut and "figure it out later".
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Continuous Deployment</app-blog-section-title>
+    <p>
+      As long as I was diving into a whole bunch of uncharted territory, this seemed like a great opportunity to get some experience with containers and continuous deployment, which I had not used before.
+    </p>
+    <p class="mt-6">
+      Lucky for me, <a class="link" href="http://dokku.viewdocs.io/dokku/">Dokku</a> seemed to provide exactly what I was looking for, and even came with instructions for use with Digital Ocean.
+      Things couldn't be easier!
+    </p>
+    <p class="mt-6">
+      Normally, here is where I would come back with a contradiction.
+      Something like: "<em>or so I thought</em>".
+      But it actually <em>was</em> that easy.
+      The initial setup was very straightforward, and I didn't even have too much trouble with the SSL setup.
+      Seeing the website live for the first time was actually really exciting - something I had built <em>myself</em> was on the internet for anyone to see!
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>The First Iteration</app-blog-section-title>
+    <p>
+      While I wanted to learn Vue or React, I decided to stick to Angular for this project since I was familiar with it.
+      This didn't seem like the right time to throw <em>yet another</em> new technology in the mix.
+    </p>
+    <p class="mt-6">
+      I had never done anything without a CSS framework in my few web projects, so something like Angular Material seemed like a necessity.
+    </p>
+    <p class="mt-6">
+      A few days of consistent work, and I had something to show. It was <em>okay</em>.
+      The homepage looked passable - not eye-catching - and there were definitely some accessibility issues.
+    </p>
+    <div class="blog-card mt-6">
+      <img src="assets/portfolio/2.png" alt="First iteration of my portfolio landing page" />
+      <p class="italic text-sm p-2">First iteration of my portfolio landing page.</p>
+    </div>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Getting My Money's Worth</app-blog-section-title>
+    <p>
+      Once I had a decent-looking landing page, I was eager to add some backend code to make this Digital Ocean droplet "worth my while".
+      I had just gotten back into speedrunning Super Mario 64, so I decided to make a page that would help my friend and me compare our best times.
+    </p>
+    <p class="mt-6">
+      In order to accomplish this, I had to start considering authentication.
+      Previously, the website was a single, static page accessible to anyone.
+      Now, however, I needed to ensure that only authorized users could edit our speedrun times.
+    </p>
+    <p class="mt-6">
+      Check out <span class="link" routerLink="/blog/speedrun">my speedrunning blog post</span> for more details on the implementation.
+      In short, a simple data table resulted in having to implement and learn Entity Framework (Core), .NET Core Identity, JSON Web Tokens, and more!
+    </p>
+    <p class="mt-6">
+      With the groundwork in place and that seemingly simple tool out of the way, I was free to move onto the next thing I was excited about: <em>bowling</em>!
+      I started bowling every couple of weeks with a group of friends, and a few of us started to take it more seriously.
+      Soon enough, this seemed like the perfect opportunity to create something else that would actually be useful.
+      So, the next big project was to create a tool, hosted on my website, to track all of our bowling scores and visualize cool statistics and graphs. 
+      <span class="link" routerLink="/blog/bowling">More details here!</span>
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Making the Whole Thing Better</app-blog-section-title>
+    <p class="mt-6">
+      At this point, I had a decent-looking portfolio with some tools I was proud of, but I still wasn't <em>quite</em> satisfied.
+      I was going to continue working on some bug fixes and enhancements, but I was sidetracked by a new video/article series I had discovered -
+      <a class="link" href="https://refactoringui.com/">Refactoring UI</a>.
+      Hearing some design tips I had never considered was very eye-opening, and it made me want to put significantly more work into my hastily-thrown-together landing page.
+    </p>
+    <p class="mt-6">
+      Refactoring UI led me to <a class="link" href="https://tailwindcss.com/">TailwindCSS</a>, a CSS framework completely divergent to the Bootstrap- and Material-esque ones I was accustomed to. 
+      Watching <a class="link" href="https://adamwathan.me">Adam Wathan</a>'s screencasts convinced me, though, and I actually started to understand CSS beyond these prepackaged components that come with frameworks.
+      It made me realize that I could make my website <em>actually my own</em>.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>What You See Now</app-blog-section-title>
+    <p>
+      I guess there's no better way to see the results than to look around the website!
+      Since the first iteration, the site has been completely rewritten using Tailwind and I have taken many new concepts into consideration in my design.
+    </p>
+    <p class="mt-6">
+      I still have plenty to work on, but I can say confidently that I'm proud of how it has turned out so far, and I have been having a blast working on the project.
+      Outstanding tasks can be found on <a class="link" href="https://trello.com/b/hpTp1H0B/portfolio-tasks">my public Trello board</a> where I organize and track all of my tasks and projects.
+      Also, feel free to check out the <a class="link" href="https://github.com/Lyelt/Portfolio">entire project on GitHub</a> if you're interested!
+    </p>
+  </app-blog-section>
+</app-blog-article>

@@ -1,3 +1,94 @@
-<p>
-  speedrun-article works!
-</p>
+<app-blog-article>
+  <app-blog-header>
+    <app-blog-title> Uploading and Comparing Super Mario 64 Speedrun Times</app-blog-title>
+    <app-blog-date>October 1, 2019</app-blog-date>
+    <app-blog-subtitle>An overcomplicated spreadsheet that taught me about EF Core, MySQL, .NET Core Identity, and Angular JWTs.</app-blog-subtitle>
+  </app-blog-header>
+
+  <app-blog-section>
+    <app-blog-section-title>Speedrunning - What?</app-blog-section-title>
+    <p>
+      It's bold of me to assume that everyone will know what I'm talking about here, so I'll give a quick summary. 
+      Speedrunning is, basically, completing a particular objective in a video game as quickly as possible.
+      In this case, that game is <a class="link" href="https://www.speedrun.com/sm64">Super Mario 64</a>
+      and we are trying to collect a certain number of stars and beat the game as quickly as possible.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Reviving an Old Idea</app-blog-section-title>
+    <p>
+      This idea actually came from many years ago, when my friend, Matt, and I created a free little website with a CMS called “Webs”.
+      It was hosted on Webs with a URL of something like “sm64nick.webs.com”.
+    </p>
+    <p class="mt-6">
+      It was literally <em>just</em> an ugly data table.
+      Honestly, why didn’t we use Google Sheets?
+      Maybe we didn’t know about it at the time. Here’s a picture.
+    </p>
+    <div class="blog-card mt-6">
+      <img src="assets/speedrun/1.png" alt="Old speedrun data table" />
+      <p class="italic text-sm p-2">Yep. It's a table. That's it.</p>
+    </div>
+    <p class="mt-6">
+      Nowadays, I would just create a spreadsheet where we could both update our times.
+      It would be dead-simple, and take around 15 minutes.
+      But... that’s not quite as fun, I guess. I decided I’d make it a part of my website instead.
+      I was already hosting it, so how hard could it be to just add a table myself?
+    </p>
+    <h3 class="blog-h3">
+      Answer: hard.
+    </h3>
+    <p class="mt-6">
+      At least for me.
+      Once I considered the fact that I needed to learn about authentication and Entity Framework and MySQL, there was a steeper learning curve than I had bargained for.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Information Overload</app-blog-section-title>
+    <h3 class="blog-h3">Databases</h3>
+    <p>
+      I was comfortable with SQL Server, but I needed something that would play nicely with the Linux-based Digital Ocean droplet that the website was being hosted in.
+      My choice at first was SQLite, because it was similar to SQL Server, easy to set up with Entity Framework, and didn't require setting up an actual database.
+    </p>
+    <p class="mt-6">
+      Luckily, it didn't take long for me to learn that Docker doesn't make file storage and access easy.
+      I knew I needed to decide on an actual database before getting much further, and MySQL seemed like the easy choice once I learned about its
+      <a class="link" href="https://github.com/dokku/dokku-mysql">plugin compatibility with Dokku</a>.
+    </p>
+    <h3 class="blog-h3">ORM</h3>
+    <p>
+      I hadn't ever used an ORM before this, but I knew I was <em>supposed</em> to.
+      Entity Framework appeared to be the de-facto standard for ORMs in the .NET ecosystem, and it was even better that a .NET Core-compatible version had been recently released.
+      Not to mention I'd much rather let EF do the object mapping and migrations <em>for me</em> rather than writing all that boilerplate code myself as I had done thus far.
+    </p>
+    <h3 class="blog-h3">Authentication</h3>
+    <p>
+      For me, authentication was a beast. I wasn't even sure where to start.
+      Every time I started to do some research, new concepts would pop up that just baffled me. 
+      What's done on the client side? Angular has support for JWTs? What's done on the server side? EF Core has <em>built in</em> identity? How does <em>that</em> work?
+    </p>
+    <p class="mt-6">
+      But I only wanted Matt and myself to be able to edit these speedrun times, so I knew I couldn't avoid it.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>An Abrupt Conclusion</app-blog-section-title>
+    <p>
+      In the end, I did it.
+      Through research and articles and videos and documentation and trial and error, I managed to piece together something that actually allowed a user to <em>log in</em> to my website.
+      I was proud. I still am, actually.
+    </p>
+    <p class="mt-6">
+      There are still some features I'd like to add in the future, but I am happy with how the tool turned out for a quick prototype I spun up.
+      It allowed me to lay the groundwork for all my future backend work that I would do in my website,
+      and it was a great learning opportunity despite the fact that it really could've just been a spreadsheet all along.
+    </p>
+    <p class="mt-6">
+      Outstanding tasks can be found on <a class="link" href="https://trello.com/b/hpTp1H0B/portfolio-tasks">my public Trello board</a> where I organize and track all of my tasks and projects.
+      Also, feel free to check out the <a class="link" href="https://github.com/Lyelt/Portfolio">entire project on GitHub</a> if you're interested!
+    </p>
+  </app-blog-section>
+</app-blog-article>

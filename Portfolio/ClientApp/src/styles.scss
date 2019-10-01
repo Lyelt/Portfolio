@@ -951,6 +951,13 @@ video {
   margin-top: 1.5rem;
 }
 
+.blog-card {
+  border-radius: 0.25rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 0.5rem;
+  background-color: #edf2f7;
+}
+
 .nav-link {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -973,8 +980,26 @@ video {
 path {
   stroke-dasharray: 2100;
   stroke-dashoffset: 2100;
+}
+
+path.path-1 {
+  -webkit-animation: line-anim 1s ease forwards;
+          animation: line-anim 1s ease forwards;
+}
+
+path.path-2 {
   -webkit-animation: line-anim 2s ease forwards;
           animation: line-anim 2s ease forwards;
+}
+
+path.path-3 {
+  -webkit-animation: line-anim 3s ease forwards;
+          animation: line-anim 3s ease forwards;
+}
+
+path.path-4 {
+  -webkit-animation: line-anim 4s ease forwards;
+          animation: line-anim 4s ease forwards;
 }
 
 @-webkit-keyframes line-anim {
