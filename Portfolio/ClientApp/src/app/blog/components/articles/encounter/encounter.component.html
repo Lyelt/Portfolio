@@ -1,0 +1,94 @@
+<app-blog-article>
+  <app-blog-header>
+    <app-blog-title>Building an Encounter Tracker for Dungeons and Dragons</app-blog-title>
+    <app-blog-date>September 29, 2019</app-blog-date>
+    <app-blog-subtitle>A web application that tracks initiative order and combat actions during a D&D encounter.</app-blog-subtitle>
+  </app-blog-header>
+
+  <app-blog-section>
+    <app-blog-section-title>From Idea to Implementation</app-blog-section-title>
+    <p>
+      The initial idea for this project actually stemmed from a real-life problem I was having every week.
+      My friends and I would gather every Saturday to play <a class="link" href="https://en.wikipedia.org/wiki/Dungeons_%26_Dragons">Dungeons and Dragons</a>.
+      In my group, I am the designated note-taker; I document the group’s adventures so that we can look back week by week and see what happened.
+    </p>
+    <p class="mt-6">
+      If you are familiar with D&D, you’ll know that it is pretty common to encounter “enemies” that must be fought.
+      What I noticed was the following: <strong>sessions that were heavy in combat had very few notes</strong>!
+      I was always too focused on the combat to take notes, and much of the story-telling was on hold while we simply battled it out.
+    </p>
+    <h3 class="blog-h3">
+      So, what's the problem?
+    </h3>
+    <p class="mt-6">
+      Well, I <em>wanted</em> to know what happened in a particular encounter.
+      There were many fun moments that would get lost because I didn’t have the time to write them down.
+      Not to mention actually <em>tracking</em> each player’s turn.
+      If I had a dollar for every time I heard “whose turn is it?” or “did you skip my turn?”...
+    </p>
+    <p class="mt-6">
+      The solution, in my mind, was to create an application that can be easily used for tracking a D&D encounter, including turn-by-turn note taking, turn-order tracking, and potentially even statistic tracking.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Ready to Code... Right?</app-blog-section-title>
+    <p>
+      With the idea vaguely in my head, I did what any starry-eyed developer would do - I started coding.
+      I only knew Bootstrap and jQuery from work, but those wouldn’t do.
+      Everyone said Angular, React, or Vue.
+      So after not-quite-enough research, I landed on Angular because “Typescript is similar to C#”.
+      Good enough for me.
+    </p>
+    <p class="mt-6">
+      I dove in head-first, running into plenty of problems and questions on the way, but ignoring most of them.
+      My usual justification was that <em>I'm only building it for myself</em> and <em>I’ll deal with the hard stuff later</em>.
+      Once I had a basic initiative tracker that allowed me to enter some notes each turn, I was done.
+      Well, not really, but I had <em>something</em>.
+      Ultimately, though, I decided it wasn’t good enough. Instead of paying of some technical debt, I decided it needed more.
+    </p>
+    <p class="mt-6">
+      Self-admittedly, this is where I started going off the rails a little bit.
+      I imagined cataloging every single turn, every bit of damage dealt, every spell used, every action a character took.
+      <em>It would be so cool to see statistics on your total damage… your most common spell used… everything!</em>
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Making the Customer Happy</app-blog-section-title>
+    <p>
+      Well, as it turned out, I didn’t quite know what the customer actually wanted. Which is weird because I’m the only customer…
+    </p>
+    <p class="mt-6">
+      Once I had it up and running, I used it in an actual game.
+      It went okay, but the biggest critique I had was that it took up a ton of time and attention for me to actually fill out every single action taken by a particular character.
+      All of the cool ideas I had for statistic tracking were actually hindering my ability to keep track, and it really took me out of the immersion of the battle and the cool roleplaying and storytelling.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <div class="rounded shadow-xl p-2 bg-gray-200">
+      <img src="assets/encounter/3.png" alt="Encounter Tracker image" />
+      <p class="italic text-sm p-2">The main piece of the encounter tracker in action.</p>
+    </div>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>In Conclusion</app-blog-section-title>
+    <p>
+      After my first test-drive of the app was around this time that I started looking into the idea of buying a domain and hosting an actual website so that I could do this stuff online instead of just using this tool in a local development environment.
+    </p>
+    <p class="mt-6">
+      Once I made that decision, this tool took more of a backseat as I decided to make my site mainly a Portfolio website / landing page.
+      See my <span routerLink="/blog/portfolio" class="link">portfolio blog post</span> to see how that unfolded.
+    </p>
+    <p class="mt-6">
+      In the near future, I plan on re-implementing a simpler, more realistic version of this app within my Portfolio project, as I have done with some other tools for
+      <span routerLink="/blog/bowling" class="link">bowling</span> and
+      <span routerLink="/blog/speedrun" class="link">speedrunning</span>.
+    </p>
+    <p class="mt-6">
+      Outstanding tasks can be found on <a class="link" href="https://trello.com/b/hpTp1H0B/portfolio-tasks">my public Trello board</a> where I organize and track all of my tasks and projects.
+    </p>
+  </app-blog-section>
+</app-blog-article>

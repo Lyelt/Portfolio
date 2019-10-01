@@ -12,9 +12,9 @@ import { AuthGuard } from './auth/auth-guard.service';
 import { JwtHelperService, JwtModule, JwtInterceptor } from '@auth0/angular-jwt';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { EncounterComponent } from './blog/components/encounter/encounter.component';
-import { TypingComponent } from './blog/components/typing/typing.component';
-import { PortfolioComponent } from './blog/components/portfolio/portfolio.component';
+import { EncounterComponent } from './blog/components/articles/encounter/encounter.component';
+import { TypingComponent } from './blog/components/articles/typing/typing.component';
+import { PortfolioComponent } from './blog/components/articles/portfolio/portfolio.component';
 import { SpeedrunComponent } from './speedrun/components/speedrun/speedrun.component';
 import { BowlingComponent } from './bowling/components/bowling/bowling.component';
 import { EditStarComponent } from './speedrun/components/edit-star/edit-star.component';
@@ -30,6 +30,15 @@ import { BowlingStatComponent } from './bowling/components/bowling-stat/bowling-
 import { BowlingSelectSeriesCategoryComponent } from './bowling/components/bowling-select-series-category/bowling-select-series-category.component';
 import { BlogComponent } from './blog/components/blog/blog.component';
 import { BackgroundIconComponent } from './background-icon/background-icon.component';
+import { BlogArticleComponent } from './blog/components/blog-template/blog-article/blog-article.component';
+import { BlogHeaderComponent } from './blog/components/blog-template/blog-header/blog-header.component';
+import { BlogTitleComponent } from './blog/components/blog-template/blog-title/blog-title.component';
+import { BlogDateComponent } from './blog/components/blog-template/blog-date/blog-date.component';
+import { BlogSubtitleComponent } from './blog/components/blog-template/blog-subtitle/blog-subtitle.component';
+import { BlogSectionComponent } from './blog/components/blog-template/blog-section/blog-section.component';
+import { BlogSectionTitleComponent } from './blog/components/blog-template/blog-section-title/blog-section-title.component';
+import { BowlingArticleComponent } from './blog/components/articles/bowling-article/bowling-article.component';
+import { SpeedrunArticleComponent } from './blog/components/articles/speedrun-article/speedrun-article.component';
 
 const routes: Routes = [
   {
@@ -46,6 +55,12 @@ const routes: Routes = [
   },
   {
     path: 'blog/portfolio', component: PortfolioComponent
+  },
+  {
+    path: 'blog/bowling', component: BowlingArticleComponent
+  },
+  {
+    path: 'blog/speedrun', component: SpeedrunArticleComponent
   },
   {
     path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
@@ -92,7 +107,16 @@ const routes: Routes = [
     BowlingStatComponent,
     BowlingSelectSeriesCategoryComponent,
     BlogComponent,
-    BackgroundIconComponent
+    BackgroundIconComponent,
+    BlogArticleComponent,
+    BlogHeaderComponent,
+    BlogTitleComponent,
+    BlogDateComponent,
+    BlogSubtitleComponent,
+    BlogSectionComponent,
+    BlogSectionTitleComponent,
+    BowlingArticleComponent,
+    SpeedrunArticleComponent
   ],
   imports: [
     BrowserModule,
