@@ -1,3 +1,66 @@
-<p>
-  bowling-article works!
-</p>
+<app-blog-article>
+  <app-blog-header>
+    <app-blog-title>Tracking Bowling Scores and Visualizing Interesting Statistics</app-blog-title>
+    <app-blog-date>October 1, 2019</app-blog-date>
+    <app-blog-subtitle>A page on my website for my friends and I to enter our bowling scores and calculate relevant statistics.</app-blog-subtitle>
+  </app-blog-header>
+
+  <app-blog-section>
+    <app-blog-section-title>The Idea</app-blog-section-title>
+    <p>
+      In April 2019, a few friends and I decided to go bowling for fun.
+      It was a pretty common thing for us to do, maybe once or twice a year.
+      This time, though, we decided we’d get ever-so-slightly more serious about it and start bowling regularly.
+    </p>
+    <p class="mt-6">
+      Naturally, I started taking pictures of every game we bowled so I could see how we all improved as we started getting better.
+      It wasn’t long before I realized this was a perfect opportunity to build something that would actually be useful - and not only to me, but to all of my friends who bowled as well.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <div class="blog-card">
+      <img src="assets/bowling/1.jpg" alt="First bowling game scores" />
+      <p class="italic text-sm p-2">I would take a picture of the score after every game. This is the first one I documented!</p>
+    </div>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Getting to Work</app-blog-section-title>
+    <p>
+      Once I got identity and authentication set up for <span class="link" routerLink="/blog/speedrun">my speedrunning project</span> I couldn’t wait to start working on the bowling app.
+      By this point, I had racked up nearly three months worth of bowling scores (the more dedicated of us were bowling 3-4 times a week, so it was adding up) and I wanted the ability to at least <em>start</em> adding the scores to a database.
+    </p>
+    <p class="mt-6">
+      I looked to online bowling score calculators for inspiration as to how to actually enter the scores digitally, and started there.
+      I figured my friends wouldn’t be entering their scores themselves anyway, so the first step was a barely-working, clunky prototype that got the job done.
+    </p>
+    <p class="mt-6">
+      From there, I focused on the backend.
+      Since I could actually start analyzing real bowling scores, I was able to do all sorts of calculations to come up with neat stats -
+      from basic ones like "Overall Average" and "Strike Percentage" to some more abstract ones like "Single-Pin Spare Percentage".
+    </p>
+    <p class="mt-6">
+      With the backend being serviceable, I looked to a front-end charting library that would play well with Angular, eventually settling on <a href="https://github.com/swimlane/ngx-charts" class="link">ngx-charts</a>.
+      I mocked up a design on how the page itself would look and function now that I knew approximately what I was working with.
+      I came up with various different ways to chart the bowling scores, and wrote down every statistic I had access to that I thought might be interesting to a bowler.
+    </p>
+    <p class="mt-6">
+      As soon as I could, I bulldozed my way to a “minimum viable product” that I could show to my friends.
+      It wasn’t pretty, but it was functional, and that’s what I cared about.
+      It got some “wow”s from my friends and it allowed me to enter scores with relative ease, which was a success in my eyes.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>In Conclusion... Sort Of</app-blog-section-title>
+    <p>
+      As of the writing of this article, I’m still actively working on this project as I continue to use the tool every week.
+      The page got a major facelift when I learned a bit more about UI design and started converting the site to TailwindCSS, but there is still plenty to work on.
+    </p>
+    <p class="mt-6">
+      Outstanding tasks can be found on <a class="link" href="https://trello.com/b/hpTp1H0B/portfolio-tasks">my public Trello board</a> where I organize and track all of my tasks and projects.
+      Also, feel free to check out the <a class="link" href="https://github.com/Lyelt/Portfolio">entire project on GitHub</a> if you're interested!
+    </p>
+  </app-blog-section>
+</app-blog-article>
