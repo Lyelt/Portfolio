@@ -17,10 +17,14 @@ export class HeaderComponent implements OnInit {
         this.toggleSidenavEvent.emit();
     }
 
-  scrollToElement(elementId: string) {
-    const el = document.querySelector("#" + elementId);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    scrollToElement(elementId: string) {
+      const el = document.querySelector("#" + elementId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
     }
-  }
+
+    isLoggedIn() {
+        return localStorage.getItem("jwt");
+    }
 }

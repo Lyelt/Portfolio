@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav, MatIconRegistry } from '@angular/material';
 import { Router } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
@@ -9,10 +10,14 @@ import { Router } from '@angular/router';
 })
 export class AppComponent {
 
-  constructor(router: Router) {
-  }
+    constructor(router: Router, private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer) {
+        this.matIconRegistry.addSvgIcon(
+            "bowling",
+            this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/bowling.svg")
+        );
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 
 }

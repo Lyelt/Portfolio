@@ -60,24 +60,24 @@
   }
 }
 
-path {
+.bg-wave {
   stroke-dasharray: 2100;
   stroke-dashoffset: 2100;
 }
 
-path.path-1 {
+.bg-wave.wave-1 {
   animation: line-anim 1s ease forwards;
 }
 
-path.path-2 {
+.bg-wave.wave-2 {
   animation: line-anim 2s ease forwards;
 }
 
-path.path-3 {
+.bg-wave.wave-3 {
   animation: line-anim 3s ease forwards;
 }
 
-path.path-4 {
+.bg-wave.wave-4 {
   animation: line-anim 4s ease forwards;
 }
 
