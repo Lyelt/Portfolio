@@ -955,7 +955,7 @@ video {
   border-radius: 0.25rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   padding: 0.5rem;
-  background-color: #edf2f7;
+  background-color: #fff;
 }
 
 .nav-link {
@@ -13344,6 +13344,8 @@ video {
   transition-delay: 0s;
 }
 
+/* purgecss start ignore */
+
 /* Make the legend labels flow horizontally and wrap instead of one-per-line. */
 
 .chart-legend .legend-labels {
@@ -13378,6 +13380,8 @@ video {
     max-width: 1080px;
   }
 }
+
+/* purgecss end ignore */
 
 @media (min-width: 640px){
   .sm\:sr-only{
