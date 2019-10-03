@@ -1,29 +1,29 @@
-<div class="container-vertical responsive-container">
-  <div class="links container-horizontal">
-    <button mat-raised-button color="primary" routerLink="/speedrun/bingo">Bingo Tool</button>
-    <button mat-raised-button color="primary" routerLink="/speedrun/configure" disabled>Settings</button>
-    <button mat-raised-button color="primary" routerLink="/login">Logout</button>
+<div class="mt-8 flex flex-col justify-center px-8">
+  <div class="flex justify-end mb-6">
+    <span class="link" routerLink="bingo">Bingo Tool &rarr;</span>
   </div>
-  <div class="course responsive-container">
-    <mat-card class="card course-card" *ngFor="let course of courses">
-      <mat-card-header>
-        <mat-card-title>{{course.name}}<span *ngIf="course.abbreviation"> ({{course.abbreviation}})</span></mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <table class="mat-table">
-          <tr class="mat-header-row">
-            <th class="mat-header-cell star-header-cell">Star</th>
-            <th class="mat-header-cell runner-header-cell" *ngFor="let user of runners">{{user.userName}}</th>
-          </tr>
-          <tr class="mat-row star-row" *ngFor="let star of course.stars">
-            <td class="mat-cell star-cell">{{star.name}}</td>
-            <td *ngFor="let user of runners"
-                [ngClass]="{'fastest-time': starTimeIsFastest(star.starId, user.id)}"
-                class="mat-cell star-time-cell"
-                (click)="openDialog(getStarTime(star.starId, user.id), star.name)">{{getStarTime(star.starId, user.id)?.timeDisplay}}</td>
-          </tr>
-        </table>
-      </mat-card-content>
-    </mat-card>
+  <div class="container mx-auto">
+    <div class="flex justify-between p-4">
+      <h3 class="font-semibold" *ngFor="let user of runners">{{user.userName}}</h3>
+    </div>
+    <div class="mb-12" *ngFor="let course of courses">
+      <h4 class="font-semibold text-center mb-1">{{course.name}}<span *ngIf="course.abbreviation"> ({{course.abbreviation}})</span></h4>
+      <div class="border rounded bg-white">
+        <div class="flex flex-col even:bg-gray-200 rounded px-4" *ngFor="let star of course.stars">
+          <div class="mb-6">
+            <p class="text-center">{{star.name}}</p>
+            <div class="flex justify-between">
+              <p *ngFor="let user of runners"
+                 class="link font-normal"
+                 [ngClass]="{'font-bold': starTimeIsFastest(star.starId, user.id)}"
+                 (click)="openDialog(getStarTime(star.starId, user.id), star.name)">
+                <span *ngIf="getStarTime(star.starId, user.id)?.timeDisplay">{{getStarTime(star.starId, user.id)?.timeDisplay}}</span>
+                <span *ngIf="!getStarTime(star.starId, user.id)?.timeDisplay" class="text-gray-500 underline uppercase tracking-wide hover:text-indigo-500">No Entry</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
