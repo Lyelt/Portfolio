@@ -903,6 +903,11 @@ video {
   border-radius: 0.25rem;
 }
 
+.btn:disabled {
+  opacity: 0.75;
+  pointer-events: none;
+}
+
 .btn-primary {
   background-color: #667eea;
   color: #ebf4ff;

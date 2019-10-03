@@ -6,6 +6,10 @@
   @apply font-semibold py-2 px-4 rounded;
 }
 
+.btn:disabled {
+  @apply opacity-75 pointer-events-none;
+}
+
 .btn-primary {
   @apply bg-indigo-500 text-indigo-100;
 }
