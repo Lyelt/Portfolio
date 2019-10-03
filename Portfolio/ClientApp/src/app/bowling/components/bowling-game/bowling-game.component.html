@@ -1,7 +1,7 @@
-<div>
-  <mat-icon (click)="delete()">delete_forever</mat-icon>
+<div class="flex items-center">
+  <mat-icon class="cursor-pointer" (click)="delete()">delete_forever</mat-icon>
   <span>Game {{game.gameNumber}}: {{game.totalScore}}</span>
-  <mat-form-field *ngIf="game.id == 0"><input matInput type="number" min="1" [(ngModel)]="game.gameNumber" placeholder="Game number" /></mat-form-field>
+  <mat-form-field class="ml-8" *ngIf="game.id == 0"><input matInput type="number" min="1" [(ngModel)]="game.gameNumber" placeholder="Game number" /></mat-form-field>
 </div>
 <div class="button-wrapper">
   <mat-chip-list *ngIf="game.id == 0" class="chip-list">
