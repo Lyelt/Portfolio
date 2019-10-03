@@ -100,7 +100,7 @@
 /* Make the legend labels flow horizontally and wrap instead of one-per-line. */
 .chart-legend .legend-labels {
   white-space: inherit !important;
-  background: white !important;
+  background: inherit !important;
   text-align: center !important;
 }
 
