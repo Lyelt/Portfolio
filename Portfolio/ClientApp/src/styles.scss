@@ -964,26 +964,27 @@ video {
 }
 
 .nav-link {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.025em;
   cursor: pointer;
 }
 
-.nav-link:hover {
+.nav-link-hover:hover {
   border-bottom-width: 1px;
-  border-color: #667eea;
 }
 
 .nav-link:focus {
   outline: 0;
+  border-bottom-width: 1px;
+  border-color: #667eea;
 }
 
 @media (min-width: 640px) {
   .nav-link {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
   }
 }
 
