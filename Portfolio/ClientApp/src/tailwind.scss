@@ -54,6 +54,10 @@
   @apply px-2 uppercase tracking-wide cursor-pointer;
 }
 
+.nav-link:hover {
+  @apply border-b border-indigo-500;
+}
+
 .nav-link:focus {
   @apply outline-none;
 }

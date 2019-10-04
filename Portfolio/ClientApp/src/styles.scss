@@ -971,6 +971,11 @@ video {
   cursor: pointer;
 }
 
+.nav-link:hover {
+  border-bottom-width: 1px;
+  border-color: #667eea;
+}
+
 .nav-link:focus {
   outline: 0;
 }
