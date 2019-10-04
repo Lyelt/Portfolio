@@ -51,20 +51,20 @@
 }
 
 .nav-link {
-  @apply px-2 uppercase tracking-wide cursor-pointer;
+  @apply mx-2 uppercase tracking-wide cursor-pointer;
 }
 
-.nav-link:hover {
-  @apply border-b border-indigo-500;
+.nav-link-hover:hover {
+  @apply border-b;
 }
 
 .nav-link:focus {
-  @apply outline-none;
+  @apply outline-none border-b border-indigo-500;
 }
 
 @screen sm {
   .nav-link {
-    @apply px-4;
+    @apply mx-4;
   }
 }
 
