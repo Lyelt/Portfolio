@@ -1,12 +1,12 @@
 <header class="fixed top-0 z-999 w-full bg-white shadow-lg py-4 px-2 text-xs sm:text-base overflow-x-auto">
   <nav class="flex items-center">
-    <span class="nav-link hidden sm:inline"><mat-icon routerLink="">home</mat-icon></span>
+    <a href="#" class="nav-link hidden sm:inline"><mat-icon routerLink="">home</mat-icon></a>
     <span class="flex-shrink flex-auto"></span>
-    <span class="nav-link nav-link-hover" routerLink="" (click)="scrollToElement('projects')">Projects</span>
-    <span class="nav-link nav-link-hover" routerLink="" (click)="scrollToElement('skills')">Skills</span>
-    <span class="nav-link nav-link-hover" routerLink="" (click)="scrollToElement('about')">About</span>
-    <span class="nav-link nav-link-hover" routerLink="" (click)="scrollToElement('contact')">Contact</span>
-    <span class="nav-link nav-link-hover" routerLink="blog">Blog</span>
+    <a class="nav-link nav-link-hover" routerLink="" href="#projects" (click)="scrollToElement('projects')">Projects</a>
+    <a class="nav-link nav-link-hover" routerLink="" href="#skills" (click)="scrollToElement('skills')">Skills</a>
+    <a class="nav-link nav-link-hover" routerLink="" href="#about" (click)="scrollToElement('about')">About</a>
+    <a class="nav-link nav-link-hover" routerLink="" href="#contact" (click)="scrollToElement('contact')">Contact</a>
+    <a class="nav-link nav-link-hover" routerLink="blog">Blog</a>
     <span class="flex-shrink flex-auto sm:hidden"></span>
     <span class="flex cursor-pointer" mat-icon-button [matMenuTriggerFor]="menu">
       <mat-icon class="sm:ml-2">more_vert</mat-icon>
