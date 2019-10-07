@@ -39,6 +39,7 @@ import { BlogSectionComponent } from './blog/components/blog-template/blog-secti
 import { BlogSectionTitleComponent } from './blog/components/blog-template/blog-section-title/blog-section-title.component';
 import { BowlingArticleComponent } from './blog/components/articles/bowling-article/bowling-article.component';
 import { SpeedrunArticleComponent } from './blog/components/articles/speedrun-article/speedrun-article.component';
+import { TurnTrackerComponent } from './turn-tracker/components/turn-tracker/turn-tracker.component';
 
 const routes: Routes = [
   {
@@ -116,12 +117,13 @@ const routes: Routes = [
     BlogSectionComponent,
     BlogSectionTitleComponent,
     BowlingArticleComponent,
-    SpeedrunArticleComponent
+    SpeedrunArticleComponent,
+    TurnTrackerComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    RouterModule.forRoot(routes, { useHash: false }),
+    RouterModule.forRoot(routes, { useHash: false, scrollPositionRestoration: 'enabled' }),
     MaterialModule,
     NgxChartsModule,
     JwtModule.forRoot({

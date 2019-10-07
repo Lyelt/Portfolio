@@ -45,7 +45,7 @@
         <span>Bosses</span>
         <div class="flex justify-end">
           <div class="flex flex-col items-center w-16 sm:w-24" *ngFor="let boss of bosses">
-            <app-bingo-goal (toggled)="secretToggled($event)" [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
+            <app-bingo-goal [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
             <span class="text-2xs sm:text-xs">{{boss.name}}</span>
           </div>
         </div>
@@ -56,7 +56,7 @@
         <span>Races</span>
         <div class="flex justify-end">
           <div class="flex flex-col items-center w-20 sm:w-32" *ngFor="let race of races">
-            <app-bingo-goal (toggled)="secretToggled($event)" [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
+            <app-bingo-goal [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
             <span class="text-2xs sm:text-xs">{{race.name}}</span>
           </div>
         </div>
