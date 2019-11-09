@@ -34,6 +34,7 @@ export class BowlingComponent implements OnInit {
   updateStats() {
     this.selectedStartTime = this.chart.getStartTime();
     this.selectedEndTime = this.chart.getEndTime();
+    this.chart.loadSeriesDataWithTimeRange();
   }
 
   selectUser(userId: string) {
