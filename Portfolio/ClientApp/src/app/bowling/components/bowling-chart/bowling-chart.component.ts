@@ -63,7 +63,14 @@ export class BowlingChartComponent implements OnInit, OnChanges {
   }
 
   select(data) {
-    console.log('Item clicked', data);
+      if (data.name == null) {
+          this.bowlingData = this.bowlingData.filter(s => s.name != data);
+          console.log("Data for user" + data + " filtered out");
+      }
+      else {
+          console.log("Data point clicked: ", data);
+          console.log("Time: ", data.name);
+      }
   }
 
   setColorScheme(name) {

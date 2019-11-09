@@ -1,4 +1,4 @@
-<mat-icon [matTooltip]="currentSeriesCategory.description" class="prefix-icon" #tooltip="matTooltip" (click)="tooltip.toggle()">help_outline</mat-icon>
+<mat-icon [matTooltip]="currentSeriesCategory.description" class="mr-2 text-gray-500" #tooltip="matTooltip" (click)="tooltip.toggle()">help_outline</mat-icon>
 <mat-form-field>
   <mat-label>{{label}}</mat-label>
   <mat-select [(ngModel)]="currentSeriesCategory" (selectionChange)="selectSeriesCategory()">
