@@ -7,8 +7,9 @@
     </div>
     <span class="link" (click)="openDialog()">Add / View Scores</span>
   </div>
-  <div>
+  <div class="flex flex-col justify-center">
     <app-bowling-chart [category]="currentSeriesCategory" #chart></app-bowling-chart>
+    <p class="text-gray-500 px-8 text-center text-xs">Click a name in the legend to remove it from the chart. Use the above refresh button to reset the chart.</p>
   </div>
   <div class="mt-24 self-center">
     <app-bowling-select-user [initialUserId]="currentUserId" [label]="'View stats for bowler...'" (selectionChange)="selectUser($event)"></app-bowling-select-user>
