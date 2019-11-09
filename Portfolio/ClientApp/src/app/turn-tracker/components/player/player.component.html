@@ -1,0 +1,10 @@
+<!-- players -->
+<div class="bg-gray-300 rounded-full px-4 py-2 flex justify-between mt-4" [class.animate-border]="active">
+  <mat-icon class="cursor-pointer">clear</mat-icon>
+  <span class="truncate px-1">{{name}}</span>
+  <span class="border-l pl-2">{{order}}</span>
+</div>
+<!-- active player actions -->
+<div class="flex justify-end" *ngIf="active">
+  <button class="link">End Turn</button>
+</div>

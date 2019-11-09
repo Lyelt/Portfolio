@@ -40,6 +40,7 @@ import { BlogSectionTitleComponent } from './blog/components/blog-template/blog-
 import { BowlingArticleComponent } from './blog/components/articles/bowling-article/bowling-article.component';
 import { SpeedrunArticleComponent } from './blog/components/articles/speedrun-article/speedrun-article.component';
 import { TurnTrackerComponent } from './turn-tracker/components/turn-tracker/turn-tracker.component';
+import { PlayerComponent } from './turn-tracker/components/player/player.component';
 
 const routes: Routes = [
   {
@@ -74,6 +75,9 @@ const routes: Routes = [
   },
   {
     path: 'bowling', component: BowlingComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: 'turn-tracker', component: TurnTrackerComponent
   },
   {
     path: 'login', component: LoginComponent
@@ -118,7 +122,8 @@ const routes: Routes = [
     BlogSectionTitleComponent,
     BowlingArticleComponent,
     SpeedrunArticleComponent,
-    TurnTrackerComponent
+    TurnTrackerComponent,
+    PlayerComponent
   ],
   imports: [
     BrowserModule,
