@@ -24,7 +24,11 @@ export class BowlingService {
 
   getSeries(seriesCategory: SeriesCategoryEnum) {
     return this.http.get<BowlingSeries[]>("Bowling/GetSeries/" + seriesCategory);
-  }
+    }
+
+    getSeriesWithRange(seriesCategory: SeriesCategoryEnum, startTime: Date, endTime: Date) {
+        return this.http.get<BowlingSeries[]>("Bowling/GetSeries/" + seriesCategory + "/" + startTime.getTime() + "/" + endTime.getTime());
+    }
 
   getStats(userId: string, statCategory: StatCategory, startTime: Date, endTime: Date) {
     let url = "Bowling/GetStats/" + statCategory + "/" + userId;

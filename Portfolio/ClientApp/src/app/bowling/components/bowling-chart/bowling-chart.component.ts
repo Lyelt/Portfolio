@@ -43,6 +43,7 @@ export class BowlingChartComponent implements OnInit, OnChanges {
   loadSeriesData() {
     this.dataLoading = true;
     this.yAxisLabel = this.category.display;
+
     this.bowlingService.getSeries(this.category.category).subscribe(data => {
       data.forEach(d => d.series.forEach(s => s.name = new Date(s.name)));
       this.bowlingData = data;
@@ -54,6 +55,18 @@ export class BowlingChartComponent implements OnInit, OnChanges {
     });
   }
 
+    loadSeriesDataWithTimeRange() {
+
+      this.bowlingService.getSeriesWithRange(this.category.category, this.getStartTime(), this.getEndTime()).subscribe(data => {
+          data.forEach(d => d.series.forEach(s => s.name = new Date(s.name)));
+          this.bowlingData = data;
+      },
+      (err) => {
+          console.error(err);
+          alert(err.message);
+      });
+  }
+
   getStartTime() {
     return this.chart.filteredDomain[0];
   }
@@ -63,14 +76,14 @@ export class BowlingChartComponent implements OnInit, OnChanges {
   }
 
   select(data) {
-      if (data.name == null) {
-          this.bowlingData = this.bowlingData.filter(s => s.name != data);
-          console.log("Data for user" + data + " filtered out");
-      }
-      else {
-          console.log("Data point clicked: ", data);
-          console.log("Time: ", data.name);
-      }
+    if (data.name == null) {
+        this.bowlingData = this.bowlingData.filter(s => s.name != data);
+        console.log("Data for user" + data + " filtered out");
+    }
+    else {
+        console.log("Data point clicked: ", data);
+        console.log("Time: ", data.name);
+    }
   }
 
   setColorScheme(name) {

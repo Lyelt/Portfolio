@@ -63,7 +63,7 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var sessions = GetSessionList();
+                var sessions = GetSessionList(null, null);
                 _logger.LogDebug($"Found {sessions.Count} total sessions.");
                 return Ok(sessions);
             }
@@ -75,12 +75,12 @@ namespace Portfolio.Controllers
         }
 
         [HttpGet]
-        [Route("Bowling/GetSeries/{seriesCategory}")]
-        public IActionResult GetSeries(SeriesCategory seriesCategory)
+        [Route("Bowling/GetSeries/{seriesCategory}/{startTime?}/{endTime?}")]
+        public IActionResult GetSeries(SeriesCategory seriesCategory, long? startTime = null, long? endTime = null)
         {
             try
             {
-                var sessions = GetSessionList();
+                var sessions = GetSessionList(startTime, endTime);
                 var bowlers = GetBowlers();
                 List<BowlingSeries> series = new BowlingSeriesService(sessions, bowlers).GetSeries(seriesCategory);
                 _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
@@ -184,21 +184,21 @@ namespace Portfolio.Controllers
 
         private List<BowlingGame> GetGames(string userId, long? startTime, long? endTime)
         {
-            var sessions = startTime.HasValue && endTime.HasValue ?
-                GetSessionList().Where(s => s.Date > DateTimeOffset.FromUnixTimeMilliseconds(startTime.Value) && s.Date < DateTimeOffset.FromUnixTimeMilliseconds(endTime.Value)) :
-                GetSessionList();
+            var sessions = GetSessionList(startTime, endTime);
 
             return sessions
                   .SelectMany(s => s.Games.Where(g => g.UserId == userId))
                   .ToList();
         }
 
-        private List<BowlingSession> GetSessionList()
+        private List<BowlingSession> GetSessionList(long? startTime, long? endTime)
         {
             var sessions = _bowlingContext
                     .Sessions
                     .Include(s => s.Games)
                     .ThenInclude(g => g.Frames)
+                    .Where(s => s.Date > DateTimeOffset.FromUnixTimeMilliseconds(startTime ?? 0) && 
+                                s.Date < DateTimeOffset.FromUnixTimeMilliseconds(endTime ?? new DateTimeOffset(DateTime.Now.AddYears(999)).ToUnixTimeMilliseconds()))
                     .ToList();
 
             sessions.ForEach(s => s.Games = s.Games.OrderBy(g => g.GameNumber).ToList());
