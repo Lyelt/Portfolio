@@ -1,7 +1,5 @@
 <div class="flex flex-col justify-center px-8">
-  <h1 class="font-bold text-2xl mb-4 text-center">
-    <span class="text-indigo-400">Bowling</span> Scores
-  </h1>
+  <h1 class="font-bold text-2xl mb-4 text-center">Bowling Scores</h1>
   <div class="flex justify-around items-center flex-wrap">
     <app-bowling-select-series-category [seriesCategories]="categoryLabels" [initialSeriesCategory]="currentSeriesCategory" [label]="'View chart type...'" (selectionChange)="selectSeriesCategory($event)"></app-bowling-select-series-category>
     <span class="link" (click)="openDialog()">Add / View Scores</span>
