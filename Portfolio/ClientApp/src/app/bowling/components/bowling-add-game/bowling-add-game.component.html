@@ -3,7 +3,7 @@
   <div class="flex items-center justify-around flex-wrap">
     <app-bowling-select-user [initialUserId]="currentUserId"
                              [label]="'View games for user...'"
-                             (selectionChange)="selectUser($event)"></app-bowling-select-user>
+                             (selectionChange)="selectUser($event)" #userSelect></app-bowling-select-user>
     <button type="button" class="btn btn-primary" (click)="addGame()">Add Game</button>
   </div>
   <app-bowling-game class="mt-8" *ngIf="newGame" [game]="newGame" (gameSaved)="saveGame($event)" (gameDeleted)="deleteGame($event)"></app-bowling-game>

@@ -7,13 +7,15 @@
     </div>
     <span class="link" (click)="openDialog()">Add / View Scores</span>
   </div>
-  <div class="flex flex-col justify-center">
-    <app-bowling-chart [category]="currentSeriesCategory" #chart></app-bowling-chart>
-    <p class="text-gray-500 px-8 text-center text-xs">Click a name in the legend to remove it from the chart. Use the above refresh button to reset the chart.</p>
-  </div>
-  <div class="mt-24 flex flex-wrap justify-around">
-    <app-bowling-select-user [initialUserId]="currentUserId" [label]="'View stats for bowler...'" (selectionChange)="selectUser($event)"></app-bowling-select-user>
-    <span class="link" (click)="updateStats()">Update based on selected time range</span>
+  <div>
+    <app-bowling-chart [category]="currentSeriesCategory" (dataPointClicked)="openDialog($event)" #chart></app-bowling-chart>
+    </div>
+  <div class="mt-24 flex flex-col">
+    <p class="text-gray-500 px-8 pb-8 text-center text-xs">Click a name in the legend to remove it from the chart. Use the above refresh button to reset the chart. You can also click a data point on the chart to open the corresponding session.</p>
+    <div class="flex flex-wrap justify-around">
+      <app-bowling-select-user [initialUserId]="currentUserId" [label]="'View stats for bowler...'" (selectionChange)="selectUser($event)"></app-bowling-select-user>
+      <span class="link" (click)="updateStats()">Update based on selected time range</span>
+    </div>
   </div>
   <div class="my-4 text-center">
     <span *ngIf="selectedStartTime && selectedEndTime">Viewing stats from <span class="font-semibold">{{selectedStartTime | date: 'mediumDate'}} to {{selectedEndTime | date: 'mediumDate'}}</span>.</span>
