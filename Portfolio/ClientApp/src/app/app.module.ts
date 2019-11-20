@@ -41,6 +41,7 @@ import { BowlingArticleComponent } from './blog/components/articles/bowling-arti
 import { SpeedrunArticleComponent } from './blog/components/articles/speedrun-article/speedrun-article.component';
 import { TurnTrackerComponent } from './turn-tracker/components/turn-tracker/turn-tracker.component';
 import { PlayerComponent } from './turn-tracker/components/player/player.component';
+import { TierListComponent } from './tier-list/components/tier-list/tier-list.component';
 
 const routes: Routes = [
   {
@@ -77,7 +78,10 @@ const routes: Routes = [
     path: 'bowling', component: BowlingComponent, canActivate: [AuthGuard]
   },
   {
-    path: 'turn-tracker', component: TurnTrackerComponent
+    path: 'initiative', component: TurnTrackerComponent
+  },
+  {
+    path: 'tier', component: TierListComponent
   },
   {
     path: 'login', component: LoginComponent
@@ -123,7 +127,8 @@ const routes: Routes = [
     BowlingArticleComponent,
     SpeedrunArticleComponent,
     TurnTrackerComponent,
-    PlayerComponent
+    PlayerComponent,
+    TierListComponent
   ],
   imports: [
     BrowserModule,

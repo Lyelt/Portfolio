@@ -3,21 +3,51 @@
 
   <url>
     <loc>https://ghobrial.dev</loc>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://ghobrial.dev/typing</loc>
+    <loc>https://ghobrial.dev/blog/typing</loc>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://ghobrial.dev/encounter</loc>
+    <loc>https://ghobrial.dev/blog/encounter</loc>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://ghobrial.dev/portfolio</loc>
+    <loc>https://ghobrial.dev/blog/bowling</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://ghobrial.dev/blog/portfolio</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://ghobrial.dev/blog/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://ghobrial.dev/bowling/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://ghobrial.dev/speedrun/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://ghobrial.dev/initiative/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://ghobrial.dev/tier/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
