@@ -30,6 +30,7 @@
     <None Remove="ClientApp\src\app\speedrun\models\course.ts" />
     <None Remove="ClientApp\src\app\speedrun\models\star-time.ts" />
     <None Remove="ClientApp\src\app\speedrun\models\star.ts" />
+    <None Remove="ClientApp\src\app\turn-tracker\models\player.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -79,6 +80,9 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\speedrun\models\star-time.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\turn-tracker\models\player.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
   </ItemGroup>
