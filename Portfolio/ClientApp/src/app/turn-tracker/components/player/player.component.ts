@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Player } from '../../models/player'
 
 @Component({
   selector: 'app-player',
@@ -7,14 +8,21 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class PlayerComponent implements OnInit {
 
-    @Input() name: string;
-    @Input() order: number;
+    @Input() player: Player;
+    @Output() playerRemoved: EventEmitter<number> = new EventEmitter<number>();
+    @Output() playerEndedTurn: EventEmitter<any> = new EventEmitter<any>();
 
-    active: boolean = true;
-
-    constructor() { }
+    constructor() {
+    }
 
     ngOnInit() {
     }
 
+    emitPlayerRemoved() {
+        this.playerRemoved.emit(this.player.id);
+    }
+
+    emitPlayerEndedTurn() {
+        this.playerEndedTurn.emit();
+    }
 }
