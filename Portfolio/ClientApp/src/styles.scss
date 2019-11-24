@@ -988,6 +988,24 @@ video {
   }
 }
 
+.logout-link {
+  background-color: #ebf4ff !important;
+  font-weight: 700 !important;
+  border-style: solid !important;
+  border-width: 0 !important;
+  border-top-width: 1px !important;
+  border-color: #718096 !important;
+  margin-bottom: -0.5rem !important;
+}
+
+.logout-link:hover {
+  background-color: #c3dafe !important;
+}
+
+.menu-item:hover {
+  background-color: #ebf4ff !important;
+}
+
 .bg-wave {
   stroke-dasharray: 2100;
   stroke-dashoffset: 2100;

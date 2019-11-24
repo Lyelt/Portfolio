@@ -42,6 +42,8 @@ import { SpeedrunArticleComponent } from './blog/components/articles/speedrun-ar
 import { TurnTrackerComponent } from './turn-tracker/components/turn-tracker/turn-tracker.component';
 import { PlayerComponent } from './turn-tracker/components/player/player.component';
 import { TierListComponent } from './tier-list/components/tier-list/tier-list.component';
+import { InitiativeComponent } from './blog/components/articles/initiative/initiative.component';
+import { RecipesComponent } from './cooking/components/recipes/recipes.component';
 
 const routes: Routes = [
   {
@@ -66,6 +68,9 @@ const routes: Routes = [
     path: 'blog/speedrun', component: SpeedrunArticleComponent
   },
   {
+    path: 'blog/initiative', component: InitiativeComponent
+  },
+  {
     path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
   },
   {
@@ -82,6 +87,9 @@ const routes: Routes = [
   },
   {
     path: 'tier', component: TierListComponent
+  },
+  {
+    path: 'recipes', component: RecipesComponent
   },
   {
     path: 'login', component: LoginComponent
@@ -128,7 +136,9 @@ const routes: Routes = [
     SpeedrunArticleComponent,
     TurnTrackerComponent,
     PlayerComponent,
-    TierListComponent
+    TierListComponent,
+    InitiativeComponent,
+    RecipesComponent
   ],
   imports: [
     BrowserModule,
