@@ -12,11 +12,12 @@
       <mat-icon class="sm:ml-2">more_vert</mat-icon>
     </span>
     <mat-menu #menu="matMenu">
-      <span mat-menu-item routerLink="bowling"><mat-icon svgIcon="bowling"></mat-icon>Bowling</span>
-      <span mat-menu-item routerLink="tier"><mat-icon>format_list_numbered</mat-icon>Tier Lists</span>
-      <span mat-menu-item routerLink="initiative"><mat-icon>repeat_one</mat-icon>Initiative</span>
-      <span mat-menu-item routerLink="speedrun"><mat-icon>sports_esports</mat-icon>Speedrun</span>
-      <span mat-menu-item routerLink="login" *ngIf="isLoggedIn()"><mat-icon>exit_to_app</mat-icon>Logout</span>
+      <span mat-menu-item routerLink="bowling" class="menu-item"><mat-icon svgIcon="bowling"></mat-icon>Bowling</span>
+      <span mat-menu-item routerLink="tier" class="menu-item"><mat-icon>format_list_numbered</mat-icon>Tier Lists</span>
+      <span mat-menu-item routerLink="initiative" class="menu-item"><mat-icon>repeat_one</mat-icon>Initiative</span>
+      <span mat-menu-item routerLink="recipes" class="menu-item"><mat-icon>menu_book</mat-icon>Recipes</span>
+      <span mat-menu-item routerLink="speedrun" class="menu-item"><mat-icon>sports_esports</mat-icon>Speedrun</span>
+      <span mat-menu-item routerLink="login" class="logout-link"><mat-icon>exit_to_app</mat-icon>Logout</span>
     </mat-menu>
     <span class="flex-shrink flex-auto"></span>
     <a class="hidden md:inline px-4 cursor-pointer" href="https://github.com/Lyelt" title="Github"><img src="assets/github-logo.png" /></a>

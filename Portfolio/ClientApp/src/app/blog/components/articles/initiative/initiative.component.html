@@ -1,0 +1,48 @@
+<app-blog-article>
+  <app-blog-header>
+    <app-blog-title>Migrating the Core Features of the Original Encounter Simulator</app-blog-title>
+    <app-blog-date>November 24, 2019</app-blog-date>
+    <app-blog-subtitle>A very simple tracker for turns or initiative order in board games, D&D, and more.</app-blog-subtitle>
+  </app-blog-header>
+
+  <app-blog-section>
+    <app-blog-section-title>Complexity Regrets</app-blog-section-title>
+    <p>
+      As I wrote about in my <span class="link" routerLink="/blog/encounter">encounter simulator blog post</span>, I somewhat overcomplicated and overengineered my first attempt at the encounter simulator.
+      The idea was to be able to track all sorts of stats and information about the encounter,
+      but in practice I just didn’t have enough time to focus on all the extra information I had to provide.
+      The solution in my mind was to take the core idea and just keep it simple. So I did.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Features</app-blog-section-title>
+    <p>
+      The core of this little utility is to simply show a list of characters or players and rotate through them in turn order.
+      The original idea, of course, was for this to be used during D&D encounters, but I wanted to make sure it was generic enough to be used for anything.
+      Namely, board games with long turns that may be difficult to keep track of (I’m looking at you, Twilight Imperium).
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <div class="blog-card">
+      <img src="assets/initiative/1.png" alt="Initiative Tracker image" />
+      <p class="italic text-sm p-2">Initiative tracker in action</p>
+    </div>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Future Work</app-blog-section-title>
+    <p>
+      Coming soon!
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>In Conclusion</app-blog-section-title>
+    <p class="mt-6">
+      Outstanding tasks can be found on <a class="link" href="https://trello.com/b/hpTp1H0B/portfolio-tasks">my public Trello board</a> where I organize and track all of my tasks and projects.
+      Also, feel free to check out the <a class="link" href="https://github.com/Lyelt/EncounterSimulator">entire project on GitHub</a> if you're interested!
+    </p>
+  </app-blog-section>
+</app-blog-article>
