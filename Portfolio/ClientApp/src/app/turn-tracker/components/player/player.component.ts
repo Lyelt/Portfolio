@@ -8,14 +8,26 @@ import { trigger, transition, style, animate } from '@angular/animations';
     styleUrls: ['./player.component.scss'],
     animations: [
         trigger(
-            'slideButton', [
+            'slideButtonRight', [
             transition(':enter', [
                 style({ transform: 'translateX(-50%)', opacity: 0 }),
                 animate('500ms', style({ transform: 'translateX(0)', opacity: 1 }))
             ]),
             transition(':leave', [
-                style({ transform: 'translateX(0%)', opacity: 1 }),
+                style({ transform: 'translateX(0)', opacity: 1 }),
                 animate('500ms', style({ transform: 'translateX(50%)', opacity: 0 }))
+            ]),
+        ]
+        ),
+        trigger(
+            'slideButtonLeft', [
+            transition(':enter', [
+                style({ transform: 'translateX(50%)', opacity: 0 }),
+                animate('500ms', style({ transform: 'translateX(0)', opacity: 1 }))
+            ]),
+            transition(':leave', [
+                style({ transform: 'translateX(-100%)', opacity: 1 }),
+                animate('500ms', style({ transform: 'translateX(-150%)', opacity: 0 }))
             ]),
         ]
         ),
@@ -23,12 +35,8 @@ import { trigger, transition, style, animate } from '@angular/animations';
             'fade', [
             transition(':enter', [
                 style({ opacity: 0 }),
-                animate('100ms 500ms', style({ opacity: 1 }))
-            ]),
-            //transition(':leave', [
-            //    style({ opacity: 1 }),
-            //    animate('100ms 1000ms', style({ opacity: 0 }))
-            //]),
+                animate('50ms 500ms', style({ opacity: 1 }))
+            ])
         ]
         )
     ]
@@ -38,6 +46,7 @@ export class PlayerComponent implements OnInit {
     @Input() player: Player;
     @Output() playerRemoved: EventEmitter<number> = new EventEmitter<number>();
     @Output() playerEndedTurn: EventEmitter<any> = new EventEmitter<any>();
+    @Output() playerPreviousTurn: EventEmitter<any> = new EventEmitter<any>();
 
     constructor() {
     }
@@ -51,5 +60,9 @@ export class PlayerComponent implements OnInit {
 
     emitPlayerEndedTurn() {
         this.playerEndedTurn.emit();
+    }
+
+    emitPlayerNavigatedBackward() {
+        this.playerPreviousTurn.emit();
     }
 }

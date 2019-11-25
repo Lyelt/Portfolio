@@ -102,4 +102,24 @@ export class TurnTrackerComponent implements OnInit {
         if (activePlayerIndex == 0)
             this.roundsElapsed++;
     }
+
+    moveToPreviousPlayer() {
+        // Find the currently active player and deactivate them
+        let activePlayerIndex = this.players.findIndex(p => p.isActive);
+        this.players[activePlayerIndex].isActive = false;
+
+        // Set the index to the previous position and activate
+        activePlayerIndex--;
+
+        if (activePlayerIndex == -1)
+            activePlayerIndex = this.players.length - 1;
+
+        this.players[activePlayerIndex].isActive = true;
+
+        // Handle rounds and turns elapsing
+        if (this.turnsElapsed > 0)
+          this.turnsElapsed--;
+        if (activePlayerIndex == this.players.length - 1 && this.roundsElapsed > 0)
+            this.roundsElapsed--;
+    }
 }
