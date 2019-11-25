@@ -1,9 +1,19 @@
 <form (ngSubmit)="emitPlayerEndedTurn()">
   <div class="bg-gray-300 rounded-full px-4 py-2 mt-4 flex justify-between items-center" [class.animate-border]="player.isActive">
-    <mat-icon [ngClass]="{'pointer-events-none text-gray-300': player.isActive}" class="cursor-pointer h-6" (click)="emitPlayerRemoved()" title="Remove {{player.name}}">clear</mat-icon>
+    <mat-icon *ngIf="!player.isActive" title="Remove {{player.name}}"
+              class="cursor-pointer h-6"
+              (click)="emitPlayerRemoved()" [@fade]>clear</mat-icon>
+
+    <button *ngIf="player.isActive" title="Previous player"
+            class="cursor-pointer text-indigo-500 h-6" type="button"
+            (click)="emitPlayerNavigatedBackward()" [@slideButtonLeft]><mat-icon>navigate_before</mat-icon></button>
+
     <p class="truncate px-1 h-6 text-left flex-grow ml-8 sm:ml-12">{{player.name}}</p>
-    <span class="h-6" *ngIf="!player.isActive" [@fade]>{{player.order}}</span>
-    <button type="submit" class="cursor-pointer text-indigo-500 h-6" *ngIf="player.isActive" title="Next player" [@slideButton]><mat-icon>navigate_next</mat-icon></button>
+
+    <span *ngIf="!player.isActive" class="h-6" [@fade]>{{player.order}}</span>
+
+    <button *ngIf="player.isActive" title="Next player"
+            class="cursor-pointer text-indigo-500 h-6" type="submit" [@slideButtonRight]><mat-icon>navigate_next</mat-icon></button>
   </div>
 </form>
 
