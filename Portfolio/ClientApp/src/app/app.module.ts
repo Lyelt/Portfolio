@@ -44,6 +44,7 @@ import { PlayerComponent } from './turn-tracker/components/player/player.compone
 import { TierListComponent } from './tier-list/components/tier-list/tier-list.component';
 import { InitiativeComponent } from './blog/components/articles/initiative/initiative.component';
 import { RecipesComponent } from './cooking/components/recipes/recipes.component';
+import { YugiohComponent } from './yugioh/components/yugioh/yugioh.component';
 
 const routes: Routes = [
   {
@@ -95,6 +96,9 @@ const routes: Routes = [
     path: 'login', component: LoginComponent
   },
   {
+    path: 'yugioh', component: YugiohComponent
+  },
+  {
     path: '**',
     redirectTo: '/'
   }
@@ -138,7 +142,8 @@ const routes: Routes = [
     PlayerComponent,
     TierListComponent,
     InitiativeComponent,
-    RecipesComponent
+    RecipesComponent,
+    YugiohComponent
   ],
   imports: [
     BrowserModule,
