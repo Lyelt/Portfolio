@@ -15,6 +15,11 @@ export class AppComponent {
             "bowling",
             this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/bowling.svg")
         );
+
+        this.matIconRegistry.addSvgIcon(
+            "yugioh",
+            this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/yugioh.svg")
+        );
     }
 
     ngOnInit() {
