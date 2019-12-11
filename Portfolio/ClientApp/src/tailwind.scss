@@ -145,4 +145,20 @@
     max-width: 1080px;
   }
 }
+
+.ng-autocomplete, .autocomplete-container {
+  @apply rounded-full rounded-r-none w-auto mb-2 #{!important};
+}
+
+.autocomplete-container {
+  @apply shadow-md #{!important};
+}
+
+.autocomplete-container .input-container input {
+  @apply rounded-full rounded-r-none bg-gray-300 #{!important};
+
+  &:focus {
+    @apply bg-gray-200 #{!important};
+  }
+}
 /* purgecss end ignore */
