@@ -13891,6 +13891,29 @@ video {
   }
 }
 
+.ng-autocomplete, .autocomplete-container {
+  border-radius: 9999px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  width: auto !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.autocomplete-container {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.autocomplete-container .input-container input {
+  border-radius: 9999px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  background-color: #e2e8f0 !important;
+}
+
+.autocomplete-container .input-container input:focus {
+  background-color: #edf2f7 !important;
+}
+
 /* purgecss end ignore */
 
 @media (min-width: 640px){

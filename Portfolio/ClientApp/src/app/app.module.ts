@@ -45,6 +45,7 @@ import { TierListComponent } from './tier-list/components/tier-list/tier-list.co
 import { InitiativeComponent } from './blog/components/articles/initiative/initiative.component';
 import { RecipesComponent } from './cooking/components/recipes/recipes.component';
 import { YugiohComponent } from './yugioh/components/yugioh/yugioh.component';
+import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 
 const routes: Routes = [
   {
@@ -151,6 +152,7 @@ const routes: Routes = [
     RouterModule.forRoot(routes, { useHash: false, scrollPositionRestoration: 'enabled' }),
     MaterialModule,
     NgxChartsModule,
+    AutocompleteLibModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter
