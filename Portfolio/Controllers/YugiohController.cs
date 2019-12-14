@@ -26,19 +26,21 @@ namespace Portfolio.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<YugiohController> _logger;
         private readonly IMemoryCache _cardCache;
+        private readonly YugiohApiClient _yugiohClient;
 
-        public YugiohController(PortfolioContext userContext, UserManager<ApplicationUser> userManager, ILogger<YugiohController> logger, IMemoryCache cardCache)
+        public YugiohController(PortfolioContext userContext, UserManager<ApplicationUser> userManager, ILogger<YugiohController> logger, IMemoryCache cardCache, YugiohApiClient yugiohClient)
         {
             _userContext = userContext;
             _userManager = userManager;
             _logger = logger;
             _cardCache = cardCache;
+            _yugiohClient = yugiohClient;
         }
 
         [HttpGet]
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
-        [Route("Yugioh/GetCards/{pageNumber}/{count}")]
-        public async Task<IActionResult> GetCards(int pageNumber, int count)
+        [Route("Yugioh/GetCards/{pageNumber}/{count}/{nameFilter?}")]
+        public async Task<IActionResult> GetCards(int pageNumber, int count, string nameFilter)
         {
             IEnumerable<YugiohCard> cards = new List<YugiohCard>();
 
@@ -46,36 +48,19 @@ namespace Portfolio.Controllers
             {
                 if (!_cardCache.TryGetValue(CACHE_KEY, out cards))
                 {
-                    cards = await FindCardsAsync("");
+                    cards = await _yugiohClient.FindCardsAsync();
                     _cardCache.Set(CACHE_KEY, cards, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5)));
                 }
+
+                if (!string.IsNullOrWhiteSpace(nameFilter))
+                    cards = cards.Where(c => c.Name.Contains(nameFilter, StringComparison.OrdinalIgnoreCase));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
             }
-            //cards.OrderByDescending(c => c.Card_Prices.Tcgplayer_Price).Take(100);
-            //var tst = string.Join(",", cards.OrderByDescending(c => c.Card_Prices.Tcgplayer_Price).Take(100).Select(c => $"{c.Name}:{c.Card_Prices.Tcgplayer_Price}{Environment.NewLine}"));
-            
-            //var card = string.Join(Environment.NewLine, cards.OrderByDescending(c => c.Name.Split(new char[] { ' ' }).Where(s => s != "-").Count()).Take(100).Select(c => c.Name));
-            
-            //var card = string.Join(Environment.NewLine, cards.OrderByDescending(c => c.Desc.Length).Take(100).Select(c => $"{c.Name}: {c.Desc}"));
-            
+
             return Ok(cards.Skip((pageNumber - 1) * count).Take(count).ToList());
-        }
-
-        private async Task<IEnumerable<YugiohCard>> FindCardsAsync(string requestParams)
-        {
-            using var httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("https://db.ygoprodeck.com/api/v5/cardinfo.php");
-
-            var response = await httpClient.GetAsync(requestParams);
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadAsAsync<IEnumerable<YugiohCard>>();
-            }
-
-            return new List<YugiohCard>();
         }
     }
 }

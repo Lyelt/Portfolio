@@ -26,4 +26,8 @@ export class YugiohService {
     getAllCards() {
         return this.http.get<YugiohCard[]>('Yugioh/GetCards/1/30000');
     }
+
+    getCardsWithFilter(nameFilter: string) {
+        return this.http.get<YugiohCard[]>('Yugioh/GetCards/1/30000/' + encodeURIComponent(nameFilter));
+    }
 }
