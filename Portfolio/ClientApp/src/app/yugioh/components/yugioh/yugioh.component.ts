@@ -11,6 +11,8 @@ export class YugiohComponent implements OnInit {
 
     keyword: string = "name";
     allCards: YugiohCard[];
+
+    selectedCard: YugiohCard;
     constructor(private yugiohService: YugiohService) { }
     @ViewChild('auto') auto;
     
@@ -24,23 +26,28 @@ export class YugiohComponent implements OnInit {
         });
     }
 
-    test() {
-        this.yugiohService.test();
-    }
-
     onFocused(e) {
         this.auto.close();
     }
 
     onSelected(e) {
-        console.log(e);
+        this.selectedCard = e;
     }
 
     onSearch(e) {
-        console.log(e);
+        this.yugiohService.getCardsWithFilter(e).subscribe(data => {
+            this.auto.data = data;
+        },
+        (err) => {
+            console.error(err);
+            alert(err.message);
+        });
+        //console.log(e);
     }
 
     onCleared(e) {
+        this.selectedCard = null;
+        this.auto.data = this.allCards;
         this.auto.close();
     }
 

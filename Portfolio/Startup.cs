@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Portfolio.Extensions;
 using System;
+using Portfolio.Data;
 
 namespace Portfolio
 {
@@ -29,6 +30,11 @@ namespace Portfolio
                 .ConfigureLogging(Configuration)
                 .ConfigureAuthentication(Configuration);
 
+            services.AddHttpClient<YugiohApiClient>(client =>
+            {
+                client.BaseAddress = new Uri(Configuration.GetValue("Api:Yugioh:CardEndpoint", "https://db.ygoprodeck.com/api/v5/cardinfo.php"));
+            });
+
             services.AddMvc(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -42,6 +48,7 @@ namespace Portfolio
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
 
             Serilog.Log.Information("Application successfully initialized.");
         }
