@@ -16,6 +16,7 @@ namespace Portfolio.Identity
     {
         Administrator,
         Speedrunner,
-        Bowler
+        Bowler,
+        Duelist
     }
 }

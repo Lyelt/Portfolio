@@ -1,0 +1,6 @@
+<mat-form-field>
+  <mat-label>{{label}}</mat-label>
+  <mat-select [(ngModel)]="currentUserId" (selectionChange)="selectUser()">
+    <mat-option *ngFor="let duelist of duelists" [value]="duelist.id">{{duelist.userName}}</mat-option>
+  </mat-select>
+</mat-form-field>

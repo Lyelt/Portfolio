@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpBackend } from '@angular/common/http';
 import { YugiohCard } from '../models/yugioh.model';
+import { User } from '../../auth/user';
+import { CardCollection, Card } from '../models/card-collections';
 
 @Injectable({
   providedIn: 'root'
@@ -13,21 +15,27 @@ export class YugiohService {
         this.http = new HttpClient(handler);
     }
 
-    test() {
-        this.http.get('Yugioh/GetCards/1/25').subscribe(data => {
-            console.log(data);
-        },
-        (err) => {
-            console.error(err);
-            alert(err.message);
-        });
-    }
-
     getAllCards() {
         return this.http.get<YugiohCard[]>('Yugioh/GetCards/1/30000');
     }
 
     getCardsWithFilter(nameFilter: string) {
         return this.http.get<YugiohCard[]>('Yugioh/GetCards/1/30000/' + encodeURIComponent(nameFilter));
+    }
+
+    getDuelists() {
+        return this.http.get<User[]>('Yugioh/GetUsers');
+    }
+
+    getCollectionsForUser(userId: string) {
+        return this.http.get<CardCollection[]>('Yugioh/GetCollections/' + userId);
+    }
+
+    updateCollection(collection: CardCollection) {
+        return this.http.post<CardCollection>('Yugioh/UpdateCollection', collection);
+    }
+
+    addCardToCollection(card: Card) {
+        return this.http.post<YugiohCard>('Yugioh/AddCardToCollection', card);
     }
 }

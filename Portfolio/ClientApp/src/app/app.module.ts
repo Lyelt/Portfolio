@@ -46,6 +46,9 @@ import { InitiativeComponent } from './blog/components/articles/initiative/initi
 import { RecipesComponent } from './cooking/components/recipes/recipes.component';
 import { YugiohComponent } from './yugioh/components/yugioh/yugioh.component';
 import { AutocompleteLibModule } from 'angular-ng-autocomplete';
+import { CollectionsComponent } from './yugioh/components/collections/collections.component';
+import { YugiohSelectUserComponent } from './yugioh/components/yugioh-select-user/yugioh-select-user.component';
+import { CardSearchComponent } from './yugioh/components/card-search/card-search.component';
 
 const routes: Routes = [
   {
@@ -100,6 +103,9 @@ const routes: Routes = [
     path: 'yugioh', component: YugiohComponent
   },
   {
+    path: 'yugioh/collections', component: CollectionsComponent, canActivate: [AuthGuard]
+  },
+  {
     path: '**',
     redirectTo: '/'
   }
@@ -144,7 +150,10 @@ const routes: Routes = [
     TierListComponent,
     InitiativeComponent,
     RecipesComponent,
-    YugiohComponent
+    YugiohComponent,
+    CollectionsComponent,
+    YugiohSelectUserComponent,
+    CardSearchComponent
   ],
   imports: [
     BrowserModule,

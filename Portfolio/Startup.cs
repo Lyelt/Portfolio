@@ -49,7 +49,6 @@ namespace Portfolio
                 configuration.RootPath = "ClientApp/dist";
             });
 
-
             Serilog.Log.Information("Application successfully initialized.");
         }
 
