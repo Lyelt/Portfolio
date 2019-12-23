@@ -12,3 +12,4 @@ Other features of the website:
 * [Bowling Tool](https://ghobrial.dev/bowling) (requires login). See [blog post](https://ghobrial.dev/blog/bowling) for more info.
 * [Speedrun Tool](https://ghobrial.dev/speedrun) (requires login). See [blog post](https://ghobrial.dev/blog/speedrun) for more info.
 * [Super Mario 64 Bingo Tool](https://ghobrial.dev/speedrun/bingo)
+* [Turn Tracker](https://ghobrial.dev/initiative). See [blog post](https://ghobrial.dev/blog/initiative) for more info.
