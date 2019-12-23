@@ -14,7 +14,7 @@ namespace Portfolio.Extensions
     {
         public static IServiceCollection ConfigureDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            string connStr = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? "Server=127.0.0.1;Database=portfolio;Uid=root;Pwd=Dolphin92Dslshst;";
+            string connStr = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
             services
                 .AddDbContext<PortfolioContext>(options => options.UseMySql(connStr))

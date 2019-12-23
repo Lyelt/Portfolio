@@ -43,7 +43,7 @@ namespace Portfolio.Models.Yugioh
         [Key]
         public int Id { get; set; }
 
-        public int Quantity { get; set; }
+        public string SetCode { get; set; }
 
         public CardCollection CardCollection { get; set; }
     }
