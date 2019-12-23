@@ -1,4 +1,4 @@
-<form *ngIf="allCards != null" class="flex" (submit)="searchSubmitted()">
+<form *ngIf="allCards != null" class="flex" (submit)="searchSubmitted($event)">
   <ng-autocomplete #auto
                    [data]="allCards"
                    [itemTemplate]="itemTemplate"
@@ -14,7 +14,7 @@
   <ng-template #itemTemplate let-item>
     <div class="flex items-center border-b">
       <a [innerHtml]="getCardDisplay(item)"></a>
-      <span class="absolute flex right-0 rounded-full mr-10 bg-pink-300 hover:bg-pink-500" (click)="addCardToCollection(item); $event.stopPropagation()">
+      <span class="absolute flex right-0 rounded-full mr-10 bg-pink-300 hover:bg-pink-500" (click)="$event.stopPropagation(); addCardToCollection(item)">
         <mat-icon class="text-white">add</mat-icon>
       </span>
     </div>
