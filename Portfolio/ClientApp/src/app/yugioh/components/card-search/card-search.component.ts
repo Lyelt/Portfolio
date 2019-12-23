@@ -20,16 +20,16 @@ export class CardSearchComponent implements OnInit {
     constructor(private yugiohService: YugiohService) { }
 
     ngOnInit() {
-        if (!this.allCards) {
-            this.yugiohService.getAllCards().subscribe(data => {
-                this.allCards = data;
-                this.getCardsFromService = true;
-            },
-            (err) => {
-                console.error(err);
-                alert(err.message);
-            });
-        }
+        //if (!this.allCards) {
+        //    this.yugiohService.getAllCards().subscribe(data => {
+        //        this.allCards = data;
+        //        this.getCardsFromService = true;
+        //    },
+        //    (err) => {
+        //        console.error(err);
+        //        alert(err.message);
+        //    });
+        //}
     }
 
     onFocused(e) {
@@ -41,19 +41,19 @@ export class CardSearchComponent implements OnInit {
     }
 
     onSearch(e) {
-        //if (this.getCardsFromService) {
-        //    this.yugiohService.getCardsWithFilter(e).subscribe(data => {
-        //        this.auto.data = data;
-        //    },
-        //    (err) => {
-        //        console.error(err);
-        //        alert(err.message);
-        //    });
-        //}
+        if (!this.allCards) {
+            this.yugiohService.getCardsWithFilter(e).subscribe(data => {
+                this.auto.data = data;
+            },
+            (err) => {
+                console.error(err);
+                alert(err.message);
+            });
+        }
     }
 
     onCleared(e) {
-        //this.auto.data = this.allCards;
+        this.auto.data = this.allCards;
         this.auto.close();
         this.searchCleared.emit();
     }
