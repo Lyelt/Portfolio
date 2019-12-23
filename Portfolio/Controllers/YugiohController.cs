@@ -134,7 +134,7 @@ namespace Portfolio.Controllers
         {
             try
             {
-                _logger.LogInformation($"Adding {card.Quantity} copies of card #{card.Id} to collection {card.CardCollection.Id}");
+                _logger.LogInformation($"Adding card #{card.Id} in set {card.SetCode} to collection {card.CardCollection.Id}");
 
                 var collection = await _yugiohContext.Collections.FindAsync(card.CardCollection);
                 collection.CardIds.Add(card);
