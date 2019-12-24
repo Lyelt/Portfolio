@@ -31,7 +31,7 @@ export class CollectionsComponent implements OnInit {
         },
         error => {
             console.log(error);
-            alert(error);
+            alert(error.error);
         });
     }
 
@@ -42,7 +42,7 @@ export class CollectionsComponent implements OnInit {
         },
         error => {
             console.log(error);
-            alert(error);
+            alert(error.error);
         });
     }
 
@@ -52,7 +52,6 @@ export class CollectionsComponent implements OnInit {
         },
         error => {
             console.log(error);
-            alert(error);
         });
     }
 

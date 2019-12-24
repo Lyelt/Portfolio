@@ -9,10 +9,7 @@ import { CardCollection, Card } from '../models/card-collections';
 })
 export class YugiohService {
 
-    private http: HttpClient;
-
-    constructor(handler: HttpBackend) {
-        this.http = new HttpClient(handler);
+    constructor(private http: HttpClient) {
     }
 
     getAllCards() {

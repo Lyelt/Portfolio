@@ -115,6 +115,9 @@ namespace Portfolio.Controllers
         {
             try
             {
+                if (!await UserCanPerformAction(collection.UserId))
+                    return Unauthorized();
+
                 if (await _yugiohContext.Collections.ContainsAsync(collection))
                     _yugiohContext.Collections.Update(collection);
                 else
@@ -137,6 +140,9 @@ namespace Portfolio.Controllers
         {
             try
             {
+                if (!await UserCanPerformAction(card.CardCollection.UserId))
+                    return Unauthorized();
+
                 _logger.LogInformation($"Adding card #{card.Id} in set {card.SetCode} to collection {card.CardCollection.UserId}.{card.CardCollection.Name}");
 
                 var collection = await _yugiohContext.Collections.FindAsync(card.CardCollection);
@@ -158,9 +164,13 @@ namespace Portfolio.Controllers
         {
             try
             {
+                var collection = await _yugiohContext.Collections.FindAsync(collectionId);
+
+                if (!await UserCanPerformAction(collection.UserId))
+                    return Unauthorized();
+
                 _logger.LogInformation($"Deleting collection #{collectionId}");
 
-                var collection = await _yugiohContext.Collections.FindAsync(collectionId);
                 _yugiohContext.Collections.Remove(collection);
                 await _yugiohContext.SaveChangesAsync();
                 return Ok(collection);
@@ -188,6 +198,20 @@ namespace Portfolio.Controllers
             return cards;
         }
 
+        // Ensure the given user ID matches the current user, and that they are in the appropriate role
+        private async Task<bool> UserCanPerformAction(string itemUserId)
+        {
+            var currentUser = await GetCurrentUserAsync();
+            return await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Administrator.ToString()) ||
+                (itemUserId == currentUser.Id && 
+                await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Duelist.ToString()));
+        }
+
         private async Task<YugiohCard> GetCardByIdAsync(int cardId) => (await GetCardsAsync()).First(c => c.Id == cardId);
+
+        private async Task<ApplicationUser> GetCurrentUserAsync()
+        {
+            return await _userManager.GetUserAsync(User);
+        }
     }
 }
