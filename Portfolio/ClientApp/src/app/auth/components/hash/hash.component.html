@@ -1,0 +1,14 @@
+<div class="container p-12 mx-auto flex flex-col">
+  <form (submit)="hash()" class="flex justify-between mt-4" name="hash">
+    <input class="form-input flex-grow sm:mr-6" type="password" placeholder="Enter password"
+           [(ngModel)]="input" name="pw" required />
+    <button type="submit" class="btn btn-secondary">Go</button>
+  </form>
+  <div class="flex flex-col mt-12">
+    <div class="flex justify-between">
+      <p>Password Hash Below</p>
+      <button type="button" class="text-pink-400 flex flex-col items-center"><mat-icon>file_copy</mat-icon><p class="text-2xs">Copy</p></button>
+    </div>
+    <input class="form-input" (click)="copyToClipboard()" #output />
+  </div>
+</div>

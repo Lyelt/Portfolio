@@ -30,6 +30,13 @@ export class AuthService {
             }));
     }
 
+    getHashedPassword(password: string) {
+        let creds = new Credentials();
+        creds.username = "";
+        creds.password = password;
+        return this.http.post<{ hash: string }>('Auth/Hash', creds);
+    }
+
     logout() {
         // remove user from local storage to log user out
         localStorage.removeItem('jwt');

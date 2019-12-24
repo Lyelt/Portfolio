@@ -74,5 +74,21 @@ namespace Portfolio.Controllers
 
             return Unauthorized();
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("Auth/Hash")]
+        public IActionResult Hash([FromBody]Credentials input)
+        {
+            try
+            {
+                return Ok(new { Hash = _hasher.HashPassword(null, input?.Password ?? "") });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"Error while hashing string: {ex.Message}");
+            }
+        }
     }
 }

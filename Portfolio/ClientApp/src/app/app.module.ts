@@ -49,10 +49,14 @@ import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 import { CollectionsComponent } from './yugioh/components/collections/collections.component';
 import { YugiohSelectUserComponent } from './yugioh/components/yugioh-select-user/yugioh-select-user.component';
 import { CardSearchComponent } from './yugioh/components/card-search/card-search.component';
+import { HashComponent } from './auth/components/hash/hash.component';
 
 const routes: Routes = [
   {
     path: '', component: HomeComponent
+  },
+  {
+    path: 'hash', component: HashComponent
   },
   {
     path: 'blog', component: BlogComponent
@@ -153,7 +157,8 @@ const routes: Routes = [
     YugiohComponent,
     CollectionsComponent,
     YugiohSelectUserComponent,
-    CardSearchComponent
+    CardSearchComponent,
+    HashComponent
   ],
   imports: [
     BrowserModule,
