@@ -62,7 +62,26 @@ export class CardSearchComponent implements OnInit {
         return "$" + card.card_Prices.tcgplayer_Price + " - " + card.name;
     }
 
+    redirectToTcgPlayer(event, card) {
+        event.stopPropagation();
+        let link = "https://shop.tcgplayer.com/yugioh/product/show?ProductName=" + encodeURIComponent(this.removeHtml(card.name)) + "&newSearch=false&ProductType=All&IsProductNameExact=true";
+        window.open(link, '_blank');
+    }
+
     searchSubmitted(e) {
         console.log("Search: ", e);
+    }
+
+    removeHtml(str) {
+        let startTagRemoved = this.replaceAll(str, "<b>", "");
+        return this.replaceAll(startTagRemoved, "</b>", "");
+    }
+
+    replaceAll(str, find, replace) {
+        return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
+    }
+
+    escapeRegExp(str) {
+        return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     }
 }

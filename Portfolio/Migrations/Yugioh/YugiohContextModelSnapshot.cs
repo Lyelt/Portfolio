@@ -55,6 +55,22 @@ namespace Portfolio.Migrations.Yugioh
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Portfolio.Models.Yugioh.Card", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int?>("CardCollectionId");
+
+                    b.Property<string>("SetCode");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CardCollectionId");
+
+                    b.ToTable("CardIds");
+                });
+
             modelBuilder.Entity("Portfolio.Models.Yugioh.CardCollection", b =>
                 {
                     b.Property<int>("Id")
@@ -74,18 +90,11 @@ namespace Portfolio.Migrations.Yugioh
                     b.ToTable("CardCollections");
                 });
 
-            modelBuilder.Entity("Portfolio.Models.Yugioh.CardId", b =>
+            modelBuilder.Entity("Portfolio.Models.Yugioh.Card", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int?>("CardCollectionId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CardCollectionId");
-
-                    b.ToTable("CardIds");
+                    b.HasOne("Portfolio.Models.Yugioh.CardCollection", "CardCollection")
+                        .WithMany("CardIds")
+                        .HasForeignKey("CardCollectionId");
                 });
 
             modelBuilder.Entity("Portfolio.Models.Yugioh.CardCollection", b =>
@@ -94,13 +103,6 @@ namespace Portfolio.Migrations.Yugioh
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Portfolio.Models.Yugioh.CardId", b =>
-                {
-                    b.HasOne("Portfolio.Models.Yugioh.CardCollection", "CardCollection")
-                        .WithMany("CardIds")
-                        .HasForeignKey("CardCollectionId");
                 });
 #pragma warning restore 612, 618
         }

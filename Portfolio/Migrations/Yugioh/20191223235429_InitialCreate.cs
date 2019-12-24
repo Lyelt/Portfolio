@@ -59,6 +59,7 @@ namespace Portfolio.Migrations.Yugioh
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    SetCode = table.Column<string>(nullable: true),
                     CardCollectionId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
