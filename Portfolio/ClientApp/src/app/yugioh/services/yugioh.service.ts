@@ -38,4 +38,8 @@ export class YugiohService {
     addCardToCollection(card: Card) {
         return this.http.post<YugiohCard>('Yugioh/AddCardToCollection', card);
     }
+
+    deleteCollection(collection: CardCollection) {
+        return this.http.delete<YugiohCard>('Yugioh/DeleteCollection/' + collection.id);
+    }
 }

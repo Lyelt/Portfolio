@@ -15,6 +15,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Portfolio.Models.Yugioh;
 using System.Net.Http;
 using MoreLinq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Portfolio.Controllers
 {
@@ -42,7 +43,7 @@ namespace Portfolio.Controllers
         }
 
         [HttpGet]
-        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        [AllowAnonymous]
         [Route("Yugioh/GetCards/{pageNumber}/{count}/{nameFilter?}")]
         public async Task<IActionResult> GetCards(int pageNumber, int count, string nameFilter)
         {
@@ -109,7 +110,7 @@ namespace Portfolio.Controllers
         }
 
         [HttpPost]
-        [Route("Yugioh/UpdateCollection/{collection}")]
+        [Route("Yugioh/UpdateCollection")]
         public async Task<IActionResult> UpdateCollection([FromBody]CardCollection collection)
         {
             try
@@ -118,6 +119,8 @@ namespace Portfolio.Controllers
                     _yugiohContext.Collections.Update(collection);
                 else
                     await _yugiohContext.Collections.AddAsync(collection);
+
+                await _yugiohContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -129,7 +132,7 @@ namespace Portfolio.Controllers
         }
 
         [HttpPost]
-        [Route("Yugioh/AddCardToCollection/{card}")]
+        [Route("Yugioh/AddCardToCollection")]
         public async Task<IActionResult> AddCardToCollection(Card card)
         {
             try
@@ -147,6 +150,26 @@ namespace Portfolio.Controllers
             }
 
             return Ok(await GetCardByIdAsync(card.Id));
+        }
+
+        [HttpDelete]
+        [Route("Yugioh/DeleteCollection/{collectionId}")]
+        public async Task<IActionResult> DeleteCollection(int collectionId)
+        {
+            try
+            {
+                _logger.LogInformation($"Deleting collection #{collectionId}");
+
+                var collection = await _yugiohContext.Collections.FindAsync(collectionId);
+                _yugiohContext.Collections.Remove(collection);
+                await _yugiohContext.SaveChangesAsync();
+                return Ok(collection);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return BadRequest($"Error while deleting collection: {ex.Message}");
+            }
         }
 
         private async Task<IEnumerable<YugiohCard>> GetCardsAsync(string nameFilter = null)
