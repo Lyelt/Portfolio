@@ -72,5 +72,15 @@ namespace Portfolio.Models.Bowling
         {
             return Roll1Score == 10;
         }
+
+        public bool IsClear()
+        {
+            // Frames 1-9, it's a clear if the two rolls add up to 10
+            return FrameNumber < 10 ? Roll1Score + Roll2Score == 10 :
+                // Frame 10, I will count it a clear if all three rolls add up to 10.
+                // It becomes a little inaccurate, because three strikes will only count as "yes, it's a clear",
+                // but for the sake of percentages, I'm fine with it.
+                Roll1Score + Roll2Score + Roll3Score >= 10;
+        }
     }
 }

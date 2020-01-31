@@ -40,6 +40,7 @@ namespace Portfolio.Data
             stats.Add(HighestScore());
             stats.Add(TotalGamesBowled());
             stats.Add(StrikePercentage());
+            stats.Add(ClearPercentage());
             stats.Add(SinglePinSpares());
             return stats;
         }
@@ -106,6 +107,14 @@ namespace Portfolio.Data
             var strikes = allFrames.Where(f => f.IsStrike()).ToList();
             double ratio = allFrames.Count > 0 ? ((double)strikes.Count / allFrames.Count) : 0;
             return new BowlingStat("Strike Percentage", Math.Round(ratio * 100, 2), "%", $"{strikes.Count}/{allFrames.Count}");
+        }
+
+        public BowlingStat ClearPercentage()
+        {
+            var allFrames = _games.SelectMany(g => g.Frames).ToList();
+            var clears = allFrames.Where(f => f.IsClear()).ToList();
+            double ratio = allFrames.Count > 0 ? ((double)clears.Count / allFrames.Count) : 0;
+            return new BowlingStat("Clear Percentage", Math.Round(ratio * 100, 2), "%", $"{clears.Count}/{allFrames.Count}");
         }
 
         public BowlingStat SinglePinSpares()
