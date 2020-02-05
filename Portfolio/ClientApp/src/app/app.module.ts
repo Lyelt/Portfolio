@@ -50,6 +50,7 @@ import { CollectionsComponent } from './yugioh/components/collections/collection
 import { YugiohSelectUserComponent } from './yugioh/components/yugioh-select-user/yugioh-select-user.component';
 import { CardSearchComponent } from './yugioh/components/card-search/card-search.component';
 import { HashComponent } from './auth/components/hash/hash.component';
+import { YugiohArticleComponent } from './blog/components/articles/yugioh-article/yugioh-article.component';
 
 const routes: Routes = [
   {
@@ -78,6 +79,9 @@ const routes: Routes = [
   },
   {
     path: 'blog/initiative', component: InitiativeComponent
+  },
+  {
+    path: 'blog/yugioh', component: YugiohArticleComponent
   },
   {
     path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
@@ -158,7 +162,8 @@ const routes: Routes = [
     CollectionsComponent,
     YugiohSelectUserComponent,
     CardSearchComponent,
-    HashComponent
+    HashComponent,
+    YugiohArticleComponent
   ],
   imports: [
     BrowserModule,

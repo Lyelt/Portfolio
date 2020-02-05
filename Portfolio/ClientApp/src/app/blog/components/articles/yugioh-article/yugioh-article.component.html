@@ -1,0 +1,70 @@
+<app-blog-article>
+  <app-blog-header>
+    <app-blog-title>Another Hobby, Another Project (Yu-Gi-Oh!)</app-blog-title>
+    <app-blog-date>February 5, 2020</app-blog-date>
+    <app-blog-subtitle>A collection keeper for Yu-Gi-Oh decks and lists.</app-blog-subtitle>
+  </app-blog-header>
+
+  <app-blog-section>
+    <app-blog-section-title>What is Yu-Gi-Oh?</app-blog-section-title>
+    <p>
+      As you’ve most certainly read all of my other <span class="link" routerLink="/blog">blog posts</span>, you’re probably tired of reading about my hobbies.
+      I’ll keep this one short. Yu-Gi-Oh is a trading card game that involves building a deck and “duelling” others.
+      The cards needed to build a deck can be found by opening packs and hoping to pull the card(s) you’re looking for (great for gambling addicts) or, more reasonably (but less fun), by purchasing the single cards you’re looking for online.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Solving a Problem</app-blog-section-title>
+    <p>
+      Of course, I had to invent a problem to solve as soon as we started getting into this new hobby.
+      My friends and I tend to indulge <i>a bit too much</i> on the gambling side of things, so we’ve ended up with hundreds upon hundreds of cards that we will simply never use and are not worth selling.
+      Still, it can be helpful for trading and deck-building purposes to know exactly what cards we own, which is quite difficult when they’re stowed away in boxes by the thousand.
+    </p>
+    <h3 class="blog-h3">Hence, the Collection Keeper. Or something. I haven’t really named it.</h3>
+    <p class="mt-6">
+      Authorized users are able to log in to the site, create collections, and virtually add cards to those collections with the click of a button.
+      The collections may represent the person’s entire real life collection, or a smaller subset of those cards such as a single deck.
+      In addition, it may be handy to create a wish list so that others can see which cards you’re looking for and strike up a trade.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>The Fun Part</app-blog-section-title>
+    <p>
+      The most fun part about this project was exploring the <a class="link" href="https://db.ygoprodeck.com/api-guide/">Yu-Gi-Oh API</a>. I love when I can pull a ton of data about something and just play with it - that was the motivation for my <span class="link" routerLink="/blog/bowling">bowling score tracker</span> as well.
+      In this case, the API offers metadata and price information about every card imaginable (which, at the time of writing, is upwards of 21,000).
+    </p>
+    <p class="mt-6">
+      The first step was making this information available in a useful way.
+      For this, I used an autocomplete control where all cards can be searched by name, similarly to how the popular <a class="link" href="https://www.tcgplayer.com/">TCGPlayer</a> website handles it.
+      Nothing wrong with a little inspiration from someone who has it all figured out!
+      I decided to leave this part open to the public, since there is no interface with my database and the API results are cached to avoid going over the rate limit. <span class="link" routerLink="/yugioh">Check it out here!</span>
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>The Hard Part</app-blog-section-title>
+    <p>
+      Once the autocomplete worked, it was time to actually make it possible to interface with the collection keeper.
+      The backend was pretty simple, just the familiar one-to-many pattern I had dealt with in both the <span class="link" routerLink="/blog/bowling">bowling</span> and <span class="link" routerLink="/blog/speedrun">speedrun</span> projects.
+      The UI, however, was a challenge that I had to carefully design and plan for. What is the most user-friendly way of adding items to a collection when that collection might contain hundreds of unique items, including duplicates?
+      What about adding the same item to multiple collections at once? These are two completely valid scenarios, but the workflow is very different between the two.
+      Not to mention the fact that the same card can exist several times in various rarities with different prices… It was quite a hurdle.
+      Given that I myself am a user in this scenario, I tried to imagine exactly what I would want if I were to download a similar third-party app that does this, and went from there.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Results</app-blog-section-title>
+    <h3 class="blog-h3">Coming soon!</h3>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>In Conclusion</app-blog-section-title>
+    <p class="mt-6">
+      Outstanding tasks can be found on <a class="link" href="https://trello.com/b/hpTp1H0B/portfolio-tasks">my public Trello board</a> where I organize and track all of my tasks and projects.
+      Also, feel free to check out the <a class="link" href="https://github.com/Lyelt/EncounterSimulator">entire project on GitHub</a> if you're interested!
+    </p>
+  </app-blog-section>
+</app-blog-article>
