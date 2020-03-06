@@ -6,10 +6,14 @@ export class CardCollection {
     userId: string;
     cardIds: Card[];
     cards: YugiohCard[];
+    sections: string[];
 }
 
 
 export class Card {
     id: number;
     cardCollection: CardCollection;
+    setCode: string;
+    section: string;
+    quantity: number;
 }

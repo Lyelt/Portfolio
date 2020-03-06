@@ -57,20 +57,21 @@ namespace Portfolio.Migrations.Yugioh
                 name: "CardIds",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Id = table.Column<int>(nullable: false),
+                    Section = table.Column<string>(nullable: false),
                     SetCode = table.Column<string>(nullable: true),
-                    CardCollectionId = table.Column<int>(nullable: true)
+                    Quantity = table.Column<int>(nullable: false),
+                    CardCollectionId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CardIds", x => x.Id);
+                    table.PrimaryKey("PK_CardIds", x => new { x.Id, x.Section });
                     table.ForeignKey(
                         name: "FK_CardIds_CardCollections_CardCollectionId",
                         column: x => x.CardCollectionId,
                         principalTable: "CardCollections",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

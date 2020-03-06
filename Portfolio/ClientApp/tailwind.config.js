@@ -14,9 +14,9 @@ module.exports = {
         }
     },
     variants: {
-        borderWidth: ['responsive', 'hover', 'focus', 'active', 'group-hover'],
-        borderStyle: ['responsive', 'hover', 'focus', 'active', 'group-hover'],
-        borderColor: ['responsive', 'hover', 'focus', 'active', 'group-hover'],
+        borderWidth: ['responsive', 'hover', 'focus', 'active', 'group-hover', 'last'],
+        borderStyle: ['responsive', 'hover', 'focus', 'active', 'group-hover', 'last'],
+        borderColor: ['responsive', 'hover', 'focus', 'active', 'group-hover', 'last'],
         backgroundColor: ['responsive', 'hover', 'focus', 'odd', 'even']
     },
     plugins: [

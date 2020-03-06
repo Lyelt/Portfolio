@@ -30,12 +30,30 @@ namespace Portfolio.Data
             builder.Entity<CardCollection>()
                 .ToTable("CardCollections");
 
+            // Cards in a collection
             builder.Entity<Card>()
                 .ToTable("CardIds");
 
+            builder.Entity<Card>()
+                .HasOne(c => c.CardCollection)
+                .WithMany(c => c.CardIds)
+                .HasForeignKey(c => c.CardCollectionId);
+
+            builder.Entity<Card>()
+                .HasKey(c => new { c.Id, c.Section });
+
+            builder.Entity<Card>()
+                .Property(c => c.Id)
+                .ValueGeneratedNever();
+
+            // Card collections
             builder.Entity<CardCollection>()
                 .HasMany(cc => cc.CardIds)
                 .WithOne(cc => cc.CardCollection);
+
+            builder.Entity<CardCollection>()
+                .HasOne(c => c.User)
+                .WithMany();
 
             builder.Entity<CardCollection>()
                 .HasIndex(cc => new { cc.UserId, cc.Name })

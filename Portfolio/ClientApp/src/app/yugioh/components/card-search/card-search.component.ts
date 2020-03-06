@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, EventEmitter, Input, Output } from '@angular/core';
 import { YugiohCard } from '../../models/yugioh.model';
 import { YugiohService } from '../../services/yugioh.service';
+import { CardCollection, Card } from '../../models/card-collections';
 
 @Component({
     selector: 'app-card-search',
@@ -11,8 +12,12 @@ export class CardSearchComponent implements OnInit {
     keyword: string = "name";
     @Output() cardSelected = new EventEmitter<YugiohCard>();
     @Output() searchCleared = new EventEmitter<any>();
+    //@Output() cardAdded = new EventEmitter<YugiohCard>();
+    //@Output() cardRemoved = new EventEmitter<YugiohCard>();
 
     @Input() allCards?: YugiohCard[];
+    @Input() collection: CardCollection;
+    @Input() section: string;
 
     getCardsFromService: boolean = false;
 
@@ -41,21 +46,16 @@ export class CardSearchComponent implements OnInit {
     }
 
     onSearch(e) {
-        //if (!this.allCards) {
-        //    this.yugiohService.getCardsWithFilter(e).subscribe(data => {
-        //        this.auto.data = data;
-        //    },
-        //    (err) => {
-        //        console.error(err);
-        //        alert(err.message);
-        //    });
-        //}
     }
 
     onCleared(e) {
         this.auto.data = this.allCards;
         this.auto.close();
         this.searchCleared.emit();
+    }
+
+    getSetCard(card: YugiohCard) {
+        return this.collection.cardIds.find(c => c.id == card.id);
     }
 
     getCardDisplay(card: YugiohCard) {
@@ -68,8 +68,28 @@ export class CardSearchComponent implements OnInit {
         window.open(link, '_blank');
     }
 
+    addCard(card: Card) {
+        event.stopPropagation();
+        card.cardCollection = this.collection;
+        card.section = this.section;
+
+        //card.id = ygCard.id;
+        //card.setCode = setCode;
+        this.yugiohService.addCardToCollection(card).subscribe(data => {
+            
+        },
+        error => {
+            console.log(error);
+            alert(error.error);
+        });
+    }
+
+    removeCard(event, card) {
+        event.stopPropagation();
+    }
+
     searchSubmitted(e) {
-        console.log("Search: ", e);
+        //console.log("Search: ", e);
     }
 
     removeHtml(str) {

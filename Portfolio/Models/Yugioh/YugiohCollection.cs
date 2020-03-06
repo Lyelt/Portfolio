@@ -27,6 +27,9 @@ namespace Portfolio.Models.Yugioh
         [NotMapped]
         public List<YugiohCard> Cards { get; set; }
 
+        [NotMapped]
+        public List<string> Sections { get; set; }
+
         public void PopulateCards(IEnumerable<YugiohCard> allCards)
         {
             Cards = allCards
@@ -35,16 +38,23 @@ namespace Portfolio.Models.Yugioh
                     cardId => cardId.Id, 
                     (ygoCard, cardId) => ygoCard)
                 .ToList();
+
+            Sections = CardIds.Select(c => c.Section).Distinct().ToList();
         }
     }
 
     public class Card
     {
-        [Key]
         public int Id { get; set; }
+
+        public string Section { get; set; }
 
         public string SetCode { get; set; }
 
+        public int Quantity { get; set; }
+
         public CardCollection CardCollection { get; set; }
+
+        public int CardCollectionId { get; set; }
     }
 }

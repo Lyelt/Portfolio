@@ -10,9 +10,13 @@ import { Card, CardCollection } from '../../models/card-collections';
 })
 export class YugiohComponent implements OnInit {
     currentUserId: string;
+    selectedSection: string;
 
     selectedCard: YugiohCard;
     selectedCollection: CardCollection;
+    openedCollection: CardCollection;
+
+    selectedTabIndex: number = 0;
 
     constructor(private yugiohService: YugiohService) { }
     
@@ -32,12 +36,25 @@ export class YugiohComponent implements OnInit {
         this.selectedCard = null;
     }
 
-    addCardToCollection(card: YugiohCard) {
-        let cardInCollection: Card = { cardCollection: this.selectedCollection, id: card.id };
-        this.yugiohService.addCardToCollection(cardInCollection);
+    openCollection(collection: CardCollection) {
+        this.openedCollection = collection;
+    }
+
+    closeCollection() {
+        this.openedCollection = null;
+    }
+
+    selectCollection(event: any) {
+        this.selectedCollection = event.collection;
+        this.selectedSection = event.section;
+        this.selectedTabIndex = 0;
     }
 
     isLoggedIn() {
         return localStorage.getItem('jwt');
+    }
+
+    onTabChange(event: any) {
+        this.selectedTabIndex = event.index;
     }
 }

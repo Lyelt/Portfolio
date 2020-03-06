@@ -51,6 +51,8 @@ import { YugiohSelectUserComponent } from './yugioh/components/yugioh-select-use
 import { CardSearchComponent } from './yugioh/components/card-search/card-search.component';
 import { HashComponent } from './auth/components/hash/hash.component';
 import { YugiohArticleComponent } from './blog/components/articles/yugioh-article/yugioh-article.component';
+import { ViewCollectionComponent } from './view-collection/view-collection.component';
+import { AddCardComponent } from './yugioh/components/add-card/add-card.component';
 
 const routes: Routes = [
   {
@@ -163,7 +165,9 @@ const routes: Routes = [
     YugiohSelectUserComponent,
     CardSearchComponent,
     HashComponent,
-    YugiohArticleComponent
+    YugiohArticleComponent,
+    ViewCollectionComponent,
+    AddCardComponent
   ],
   imports: [
     BrowserModule,

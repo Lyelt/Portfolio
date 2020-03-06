@@ -1,0 +1,15 @@
+<div class="flex justify-between items-center px-2 w-full">
+  <div>
+    <div *ngIf="card.card_Sets && card.card_Sets.length > 0" (click)="$event.stopPropagation()">
+      <select class="form-select" [(ngModel)]="selectedSet">
+        <option *ngFor="let set of card.card_Sets" [ngValue]="set">{{set.set_Code}}</option>
+      </select>
+    </div>
+    <p *ngIf="!card.card_Sets || card.card_Sets.length == 0" class="link text-gray-400">No Sets Found</p>
+  </div>
+  <div class="flex">
+    <span class="cursor-pointer text-red-500 hover:text-red-600" (click)="removeCard($event)"><mat-icon>remove_circle</mat-icon></span>
+    <span class="px-2">{{getQuantityDisplay()}}</span>
+    <span class="cursor-pointer text-green-500 hover:text-green-600" (click)="addCard($event)"><mat-icon>add_circle</mat-icon></span>
+  </div>
+</div>

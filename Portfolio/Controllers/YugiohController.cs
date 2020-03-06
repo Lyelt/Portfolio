@@ -95,8 +95,10 @@ namespace Portfolio.Controllers
                     .Include(cc => cc.CardIds)
                     .ToListAsync();
 
+                var allCards = await GetCardsAsync();
+
                 foreach (var collection in collections)
-                    collection.PopulateCards(await GetCardsAsync());
+                    collection.PopulateCards(allCards);
 
                 _logger.LogDebug($"Found {collections.Count} collections for user ID {userId}");
             }
@@ -136,23 +138,32 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [Route("Yugioh/AddCardToCollection")]
-        public async Task<IActionResult> AddCardToCollection(Card card)
+        public async Task<IActionResult> AddCardToCollection([FromBody]Card card)
         {
             try
             {
                 if (!await UserCanPerformAction(card.CardCollection.UserId))
                     return Unauthorized();
 
-                _logger.LogInformation($"Adding card #{card.Id} in set {card.SetCode} to collection {card.CardCollection.UserId}.{card.CardCollection.Name}");
+                _logger.LogInformation($"Adding card #{card.Id} in set {card.SetCode} to collection {card.CardCollection.UserId}/{card.CardCollection.Name}/{card.Section}");
 
-                var collection = await _yugiohContext.Collections.FindAsync(card.CardCollection);
-                collection.CardIds.Add(card);
+                var collection = await _yugiohContext.Collections
+                    .Include(c => c.CardIds)
+                    .FirstOrDefaultAsync(c => c.Id == card.CardCollection.Id);
+
+                var existingCard = collection.CardIds.FirstOrDefault(c => c.Id == card.Id);
+                if (existingCard == null)
+                    collection.CardIds.Add(card);
+                else
+                    existingCard.Quantity++;
+
+                card.Quantity++;
                 await _yugiohContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return BadRequest($"Error while creating collection: {ex.Message}");
+                return BadRequest($"Error while adding card to collection: {ex.Message}");
             }
 
             return Ok(await GetCardByIdAsync(card.Id));

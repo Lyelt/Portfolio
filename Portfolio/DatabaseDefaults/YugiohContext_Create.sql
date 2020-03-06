@@ -13,11 +13,13 @@ CREATE TABLE `CardCollections` (
 );
 
 CREATE TABLE `CardIds` (
-    `Id` int NOT NULL AUTO_INCREMENT,
+    `Id` int NOT NULL,
+    `Section` varchar(255) NOT NULL,
     `SetCode` longtext NULL,
-    `CardCollectionId` int NULL,
-    CONSTRAINT `PK_CardIds` PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_CardIds_CardCollections_CardCollectionId` FOREIGN KEY (`CardCollectionId`) REFERENCES `CardCollections` (`Id`) ON DELETE RESTRICT
+    `Quantity` int NOT NULL,
+    `CardCollectionId` int NOT NULL,
+    CONSTRAINT `PK_CardIds` PRIMARY KEY (`Id`, `Section`),
+    CONSTRAINT `FK_CardIds_CardCollections_CardCollectionId` FOREIGN KEY (`CardCollectionId`) REFERENCES `CardCollections` (`Id`) ON DELETE CASCADE
 );
 
 CREATE UNIQUE INDEX `IX_CardCollections_UserId_Name` ON `CardCollections` (`UserId`, `Name`);
@@ -25,5 +27,5 @@ CREATE UNIQUE INDEX `IX_CardCollections_UserId_Name` ON `CardCollections` (`User
 CREATE INDEX `IX_CardIds_CardCollectionId` ON `CardIds` (`CardCollectionId`);
 
 INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20191223235429_InitialCreate', '2.1.11-servicing-32099');
+VALUES ('20200306044139_InitialCreate', '2.1.11-servicing-32099');
 

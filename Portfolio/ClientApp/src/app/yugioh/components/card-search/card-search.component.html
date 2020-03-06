@@ -13,18 +13,11 @@
   </ng-autocomplete>
   <ng-template #itemTemplate let-item>
     <div class="flex flex-col border-b">
-      <div class="flex items-center">
+      <div class="flex flex-col items-start sm:items-center sm:flex-row">
         <a [innerHtml]="getCardDisplay(item)"></a>
-        <span class="absolute right-0 mr-8 cursor-pointer text-indigo-400 hover:text-indigo-600" title="View on TCGPlayer" (click)="redirectToTcgPlayer($event, item)"><mat-icon>open_in_new</mat-icon></span>
+        <span *ngIf="!collection" class="absolute right-0 mr-8 cursor-pointer text-indigo-400 hover:text-indigo-600" title="View on TCGPlayer" (click)="redirectToTcgPlayer($event, item)"><mat-icon>open_in_new</mat-icon></span>
+        <app-add-card *ngIf="collection" [card]="item" [setCard]="getSetCard(item)" (cardAdded)="addCard($event)" (cardRemoved)="removeCard($event)"></app-add-card>
       </div>
-      <!--<div>
-        <div *ngFor="let set of item.card_Sets" class="flex justify-between text-xs text-indigo-400">
-          <span>{{set.set_Code}} ({{set.set_Rarity}})</span>
-        </div>
-        <span class="absolute flex right-0 rounded-full mr-10 bg-pink-300 hover:bg-pink-500" (click)="$event.stopPropagation(); addCardToCollection(item)">
-      <mat-icon class="text-white">add</mat-icon>
-    </span>
-      </div>-->
     </div>
   </ng-template>
   <ng-template #notFoundTemplate let-notFound>

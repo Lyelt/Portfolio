@@ -21,6 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\Yugioh\20200306044100_YugiohInitialCreate.cs" />
+    <Compile Remove="Migrations\Yugioh\20200306044100_YugiohInitialCreate.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="ClientApp\src\app\auth\credentials.ts" />
     <None Remove="ClientApp\src\app\auth\user.ts" />
     <None Remove="ClientApp\src\app\bowling\models\bowling-frame.ts" />

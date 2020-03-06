@@ -9,7 +9,7 @@ using Portfolio.Data;
 namespace Portfolio.Migrations.Yugioh
 {
     [DbContext(typeof(YugiohContext))]
-    [Migration("20191223235429_InitialCreate")]
+    [Migration("20200306044139_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,14 +59,17 @@ namespace Portfolio.Migrations.Yugioh
 
             modelBuilder.Entity("Portfolio.Models.Yugioh.Card", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id");
 
-                    b.Property<int?>("CardCollectionId");
+                    b.Property<string>("Section");
+
+                    b.Property<int>("CardCollectionId");
+
+                    b.Property<int>("Quantity");
 
                     b.Property<string>("SetCode");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id", "Section");
 
                     b.HasIndex("CardCollectionId");
 
@@ -96,7 +99,8 @@ namespace Portfolio.Migrations.Yugioh
                 {
                     b.HasOne("Portfolio.Models.Yugioh.CardCollection", "CardCollection")
                         .WithMany("CardIds")
-                        .HasForeignKey("CardCollectionId");
+                        .HasForeignKey("CardCollectionId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Portfolio.Models.Yugioh.CardCollection", b =>

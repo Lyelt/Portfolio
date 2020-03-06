@@ -96,5 +96,4 @@ export class BowlingStartSessionComponent implements OnInit {
     close() {
         this.dialogRef.close();
     }
-
 }

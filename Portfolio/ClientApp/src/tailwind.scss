@@ -68,11 +68,11 @@
   }
 }
 
-.logout-link {
+.last-menu-item {
   @apply font-bold uppercase tracking-wide border-solid border-0 border-t border-gray-400 -mb-2 #{!important};
 }
 
-.logout-link:hover {
+.last-menu-item:hover {
   @apply bg-indigo-200 #{!important};
 }
 
