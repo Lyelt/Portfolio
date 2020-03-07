@@ -14,7 +14,7 @@ export class YugiohComponent implements OnInit {
 
     selectedCard: YugiohCard;
     selectedCollection: CardCollection;
-    openedCollection: CardCollection;
+    //openedCollection: CardCollection;
 
     selectedTabIndex: number = 0;
 
@@ -36,13 +36,19 @@ export class YugiohComponent implements OnInit {
         this.selectedCard = null;
     }
 
-    openCollection(collection: CardCollection) {
-        this.openedCollection = collection;
+    openedCollection() {
+        return this.yugiohService.getCurrentCollection();
     }
 
-    closeCollection() {
-        this.openedCollection = null;
-    }
+    //openCollection(collection: CardCollection) {
+    //    this.yugiohService.setCurrentCollection(collection);
+    //    //this.openedCollection = collection;
+    //}
+
+    //closeCollection() {
+    //    this.yugiohService.setCurrentCollection(null);
+    //    //this.openedCollection = null;
+    //}
 
     selectCollection(event: any) {
         this.selectedCollection = event.collection;

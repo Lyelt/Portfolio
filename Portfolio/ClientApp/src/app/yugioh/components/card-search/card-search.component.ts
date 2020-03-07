@@ -69,14 +69,11 @@ export class CardSearchComponent implements OnInit {
     }
 
     addCard(card: Card) {
-        event.stopPropagation();
         card.cardCollection = this.collection;
         card.section = this.section;
 
-        //card.id = ygCard.id;
-        //card.setCode = setCode;
         this.yugiohService.addCardToCollection(card).subscribe(data => {
-            
+            this.yugiohService.setCurrentCollection(data);
         },
         error => {
             console.log(error);
@@ -84,8 +81,17 @@ export class CardSearchComponent implements OnInit {
         });
     }
 
-    removeCard(event, card) {
-        event.stopPropagation();
+    removeCard(card: Card) {
+        card.cardCollection = this.collection;
+        card.section = this.section;
+
+        this.yugiohService.removeCardFromCollection(card).subscribe(data => {
+            this.yugiohService.setCurrentCollection(data);
+        },
+        error => {
+            console.log(error);
+            alert(error.error);
+        });
     }
 
     searchSubmitted(e) {

@@ -9,6 +9,8 @@ import { CardCollection, Card } from '../models/card-collections';
 })
 export class YugiohService {
 
+    private currentCollection: CardCollection;
+
     constructor(private http: HttpClient) {
     }
 
@@ -33,10 +35,22 @@ export class YugiohService {
     }
 
     addCardToCollection(card: Card) {
-        return this.http.post<YugiohCard>('Yugioh/AddCardToCollection', card);
+        return this.http.post<CardCollection>('Yugioh/AddCardToCollection', card);
+    }
+
+    removeCardFromCollection(card: Card) {
+        return this.http.post<CardCollection>('Yugioh/DeleteCardFromCollection', card);
     }
 
     deleteCollection(collection: CardCollection) {
         return this.http.delete<YugiohCard>('Yugioh/DeleteCollection/' + collection.id);
     }
-}
+
+    setCurrentCollection(collection: CardCollection): void {
+        this.currentCollection = collection;
+    }
+
+    getCurrentCollection(): CardCollection {
+        return this.currentCollection;
+    }
+ }

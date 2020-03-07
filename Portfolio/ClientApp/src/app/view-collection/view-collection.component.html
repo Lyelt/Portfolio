@@ -1,18 +1,29 @@
 <div class="py-4 px-2">
   <div class="flex flex-col">
-    <div class="mb-4 flex justify-start">
-      <p class="link" (click)="back()">&larr; Back to Collections</p> 
+    <div class="mb-6 flex justify-between w-full">
+      <p class="link" (click)="back()">&larr; Back to Collections</p>
+      <div class="flex flex-col items-center">
+        <h2 class="text-xl">{{collection.name}}</h2>
+        <h5 class="text-xs">{{getCardQuantity(null)}} cards, ${{getSectionPrice(null)}}</h5>
+      </div>
     </div>
-    <p>
-      Viewing {{collection.name}}
-    </p>
-    <div class="flex flex-col">
-      <div *ngFor="let section of this.collection.sections">
-        <span>Section: {{section}}</span>
-        <div *ngFor="let c of getCardList(section)" class="flex justify-between border-b">
-          <span>{{c.setCard.quantity}}x {{c.ygoCard.name}} ({{c.setCard.setCode}})</span>
-          <span>${{c.ygoCard.card_Prices.tcgplayer_Price}} (${{c.ygoCard.card_Prices.tcgplayer_Price * c.setCard.quantity}})</span>
+    <div class="flex flex-col items-center">
+      <div *ngFor="let section of this.collection.sections" class="w-full mb-12 flex flex-col">
+        <div class="flex flex-col items-center">
+          <div class="flex text-center mb-2 hover:text-gray-800 hover:border-b cursor-pointer" (click)="startEditing(section)"><h3 class="font-semibold mr-2">{{section}}</h3><mat-icon>edit</mat-icon></div>
+          <h5 class="font-medium">({{getCardQuantity(section)}} cards, ${{getSectionPrice(section)}})</h5>
         </div>
+        <div *ngFor="let subSection of getSubSections(section)">
+          <h4 class="font-semibold">{{getSubSectionDisplay(subSection)}}</h4>
+          <div *ngFor="let c of getCardList(section, subSection)" class="flex justify-between border-b py-2">
+            <span><span class="font-bold">{{c.setCard.quantity}}x</span><span class="pl-2 truncate">{{c.ygoCard.name}}</span></span>
+            <span>${{getCardPrice(c)}}</span>
+          </div>
+        </div>
+        <app-card-search class="pt-4 pb-32"
+                         [collection]="collection"
+                         [section]="section"
+                         *ngIf="editingSection && editingSection == section"></app-card-search>
       </div>
     </div>
   </div>

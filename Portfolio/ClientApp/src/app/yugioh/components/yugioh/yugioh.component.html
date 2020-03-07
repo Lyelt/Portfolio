@@ -38,8 +38,8 @@
           </div>
         </ng-template>
         <ng-template matTabContent>
-          <app-collections *ngIf="!openedCollection" (collectionOpened)="openCollection($event)" (collectionSelected)="selectCollection($event)"></app-collections>
-          <app-view-collection *ngIf="openedCollection" [collection]="openedCollection" (collectionClosed)="closeCollection()" (collectionSelected)="selectCollection($event)"></app-view-collection>
+          <app-collections *ngIf="!openedCollection()" (collectionSelected)="selectCollection($event)"></app-collections>
+          <app-view-collection *ngIf="openedCollection()"></app-view-collection>
         </ng-template>
       </mat-tab>
       <mat-tab>

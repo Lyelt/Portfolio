@@ -44,3 +44,46 @@ export class BanlistInfo {
     ban_Ocg: string;
     ban_Goat: string;
 }
+
+export enum CardTypeEnum {
+    Monster,
+    Spell,
+    Trap,
+    Link,
+    XYZ,
+    Synchro,
+    Fusion
+}
+
+export class CardType {
+    deckSection: string;
+    cardType: CardTypeEnum;
+}
+
+export abstract class YugiohUtilities {
+    public static getCardType(card: YugiohCard): CardTypeEnum {
+        if (card.type.includes('Trap'))
+            return CardTypeEnum.Trap;
+        if (card.type.includes('Spell'))
+            return CardTypeEnum.Spell;
+        if (card.type.includes('Fusion'))
+            return CardTypeEnum.Fusion;
+        if (card.type.includes('Synchro'))
+            return CardTypeEnum.Synchro;
+        if (card.type.includes('XYZ'))
+            return CardTypeEnum.XYZ;
+
+        return CardTypeEnum.Monster;
+    }
+
+    public static getCardTypeDisplay(cardType: CardTypeEnum): string {
+        switch (cardType) {
+            case CardTypeEnum.Monster:
+            case CardTypeEnum.Spell:
+            case CardTypeEnum.Trap:
+                return CardTypeEnum[cardType] + 's';
+            default:
+                return CardTypeEnum[cardType];
+        }
+    }
+}

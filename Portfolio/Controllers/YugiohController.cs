@@ -159,14 +159,47 @@ namespace Portfolio.Controllers
 
                 card.Quantity++;
                 await _yugiohContext.SaveChangesAsync();
+
+                collection.PopulateCards(await GetCardsAsync());
+                return Ok(collection);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
                 return BadRequest($"Error while adding card to collection: {ex.Message}");
             }
+        }
 
-            return Ok(await GetCardByIdAsync(card.Id));
+        [HttpPost]
+        [Route("Yugioh/DeleteCardFromCollection")]
+        public async Task<IActionResult> DeleteCardFromCollection([FromBody]Card card)
+        {
+            try
+            {
+                if (!await UserCanPerformAction(card.CardCollection.UserId))
+                    return Unauthorized();
+
+                _logger.LogInformation($"Deleting card #{card.Id} in set {card.SetCode} from collection {card.CardCollection.UserId}/{card.CardCollection.Name}/{card.Section}");
+
+                var collection = await _yugiohContext.Collections
+                    .Include(c => c.CardIds)
+                    .FirstOrDefaultAsync(c => c.Id == card.CardCollection.Id);
+
+                var existingCard = collection.CardIds.FirstOrDefault(c => c.Id == card.Id && c.SetCode == card.SetCode && c.Section == card.Section);
+                if (existingCard != null && --existingCard.Quantity == 0)
+                {
+                    collection.CardIds.RemoveAll(c => c.Id == card.Id && c.SetCode == card.SetCode && c.Section == card.Section);
+                }
+                await _yugiohContext.SaveChangesAsync();
+
+                collection.PopulateCards(await GetCardsAsync());
+                return Ok(collection);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return BadRequest($"Error while removing card from collection: {ex.Message}");
+            }
         }
 
         [HttpDelete]

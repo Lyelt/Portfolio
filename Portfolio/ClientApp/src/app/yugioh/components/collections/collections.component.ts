@@ -39,7 +39,7 @@ export class CollectionsComponent implements OnInit {
         if (event.target.id == "menuSpan" || event.target.id == "menuIcon")
             return;
 
-        this.collectionOpened.emit(collection);
+        this.yugiohService.setCurrentCollection(collection);
     }
 
     selectCollection(collection: CardCollection, section: string) {
