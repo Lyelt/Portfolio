@@ -9,10 +9,6 @@ import { YugiohService } from '../yugioh/services/yugioh.service';
     styleUrls: ['./view-collection.component.scss']
 })
 export class ViewCollectionComponent implements OnInit {
-    //@Input() collection: CardCollection;
-    //@Output() collectionClosed: EventEmitter<any> = new EventEmitter();
-    //@Output() collectionModified: EventEmitter<any> = new EventEmitter();
-
     collection: CardCollection;
     editingSection: string;
     newSectionName: string;
@@ -25,7 +21,6 @@ export class ViewCollectionComponent implements OnInit {
 
     back() {
         this.ygoService.setCurrentCollection(null);
-        //this.collectionClosed.emit();
     }
 
     addSectionToCollection() {
@@ -45,13 +40,13 @@ export class ViewCollectionComponent implements OnInit {
         return YugiohUtilities.getCardTypeDisplay(cardType);
     }
 
-    getCardList(section: string, subSection: CardTypeEnum): { ygoCard: YugiohCard, setCard: Card }[] {
+    getCardList(section: string, subSection?: CardTypeEnum): { ygoCard: YugiohCard, setCard: Card }[] {
         return this.collection.cards
-            .sort((c1, c2) => c1.card_Prices.tcgplayer_Price - c2.card_Prices.tcgplayer_Price)
+            .sort((c1, c2) => c2.card_Prices.tcgplayer_Price - c1.card_Prices.tcgplayer_Price)
             .map(c => {
                 return { ygoCard: c, setCard: this.getSetCard(c.id, section) }
             })
-            .filter(c => c.setCard && (subSection ? YugiohUtilities.getCardType(c.ygoCard) == subSection : true));
+            .filter(c => c.setCard && (subSection != null ? YugiohUtilities.getCardType(c.ygoCard) == subSection : true));
     }
 
     getSetCard(id: number, section: string): Card {

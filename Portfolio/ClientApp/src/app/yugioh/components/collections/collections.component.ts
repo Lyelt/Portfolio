@@ -18,6 +18,7 @@ export class CollectionsComponent implements OnInit {
 
     addingSectionsTo: CardCollection;
     newSectionName: string;
+    loading: boolean = true;
 
     constructor(private yugiohService: YugiohService) { }
 
@@ -80,6 +81,8 @@ export class CollectionsComponent implements OnInit {
             if (!this.collections || this.collections.length == 0) {
                 this.addingCollection = true;
             }
+
+            this.loading = false;
         },
         error => {
             console.log(error);

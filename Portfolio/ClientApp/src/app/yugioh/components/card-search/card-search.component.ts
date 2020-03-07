@@ -12,16 +12,13 @@ export class CardSearchComponent implements OnInit {
     keyword: string = "name";
     @Output() cardSelected = new EventEmitter<YugiohCard>();
     @Output() searchCleared = new EventEmitter<any>();
-    //@Output() cardAdded = new EventEmitter<YugiohCard>();
-    //@Output() cardRemoved = new EventEmitter<YugiohCard>();
 
-    //@Input() allCards?: YugiohCard[];
     @Input() placeholder?: string;
     @Input() collection: CardCollection;
     @Input() section: string;
+
     filteredCards: YugiohCard[];
     currentFilter: string;
-    //getCardsFromService: boolean = false;
 
     @ViewChild('auto') auto;
     constructor(private yugiohService: YugiohService) { }
@@ -29,16 +26,6 @@ export class CardSearchComponent implements OnInit {
     ngOnInit() {
         if (!this.placeholder)
             this.placeholder = "Search for a card";
-        //if (!this.allCards) {
-        //    this.yugiohService.getAllCards().subscribe(data => {
-        //        this.allCards = data;
-        //        this.getCardsFromService = true;
-        //    },
-        //    (err) => {
-        //        console.error(err);
-        //        alert(err.message);
-        //    });
-        //}
     }
 
     onFocused(e) {

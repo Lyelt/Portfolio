@@ -11,7 +11,7 @@
       <app-card-search class="pb-32"
                        placeholder="Editing contents of {{editingSection}}"
                        [collection]="collection"
-                       [section]="section"></app-card-search>
+                       [section]="editingSection"></app-card-search>
     </div>
     <div class="mb-6 flex flex-col items-center lg:flex-row lg:items-start lg:flex-wrap">
       <div *ngFor="let section of this.collection.sections" class="w-full mb-12 flex flex-col lg:mr-20 lg:w-auto lg:flex-grow xl:mr-32 last:mr-0">
