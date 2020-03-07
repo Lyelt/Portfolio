@@ -7,6 +7,12 @@
         <h5 class="text-xs">{{getCardQuantity(null)}} cards, ${{getSectionPrice(null)}}</h5>
       </div>
     </div>
+    <div class="mb-6" *ngIf="editingSection">
+      <app-card-search class="pb-32"
+                       placeholder="Editing contents of {{editingSection}}"
+                       [collection]="collection"
+                       [section]="section"></app-card-search>
+    </div>
     <div class="mb-6 flex flex-col items-center lg:flex-row lg:items-start lg:flex-wrap">
       <div *ngFor="let section of this.collection.sections" class="w-full mb-12 flex flex-col lg:mr-20 lg:w-auto lg:flex-grow xl:mr-32 last:mr-0">
         <div class="flex flex-col items-center">
@@ -23,14 +29,7 @@
       </div>
     </div>
     <div>
-      <div *ngIf="editingSection">
-        <app-card-search class="pb-32"
-                         placeholder="Editing contents of {{editingSection}}"
-                         [collection]="collection"
-                         [section]="section"></app-card-search>
-      </div>
-      <form *ngIf="!editingSection"
-            (submit)="addSectionToCollection()"
+      <form (submit)="addSectionToCollection()"
             class="flex justify-between"
             name="section">
         <input class="form-input flex-grow mr-4 sm:mr-6" type="text" placeholder="Add a section"
