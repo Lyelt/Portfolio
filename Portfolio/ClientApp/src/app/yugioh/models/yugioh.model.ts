@@ -72,6 +72,8 @@ export abstract class YugiohUtilities {
             return CardTypeEnum.Synchro;
         if (card.type.includes('XYZ'))
             return CardTypeEnum.XYZ;
+        if (card.type.includes('Link'))
+            return CardTypeEnum.Link;
 
         return CardTypeEnum.Monster;
     }
