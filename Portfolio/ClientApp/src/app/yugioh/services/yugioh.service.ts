@@ -19,7 +19,7 @@ export class YugiohService {
     }
 
     getCardsWithFilter(nameFilter: string) {
-        return this.http.get<YugiohCard[]>('Yugioh/GetCards/1/30000/' + encodeURIComponent(nameFilter));
+        return this.http.get<YugiohCard[]>('Yugioh/GetCards/1/20/' + encodeURIComponent(nameFilter));
     }
 
     getDuelists() {

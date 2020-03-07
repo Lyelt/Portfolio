@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, EventEmitter, Input, Output } from '@angular/core';
-import { YugiohCard } from '../../models/yugioh.model';
+import { YugiohCard, YugiohUtilities } from '../../models/yugioh.model';
 import { YugiohService } from '../../services/yugioh.service';
 import { CardCollection, Card } from '../../models/card-collections';
 
@@ -15,26 +15,30 @@ export class CardSearchComponent implements OnInit {
     //@Output() cardAdded = new EventEmitter<YugiohCard>();
     //@Output() cardRemoved = new EventEmitter<YugiohCard>();
 
-    @Input() allCards?: YugiohCard[];
+    //@Input() allCards?: YugiohCard[];
+    @Input() placeholder?: string;
     @Input() collection: CardCollection;
     @Input() section: string;
-
-    getCardsFromService: boolean = false;
+    filteredCards: YugiohCard[];
+    currentFilter: string;
+    //getCardsFromService: boolean = false;
 
     @ViewChild('auto') auto;
     constructor(private yugiohService: YugiohService) { }
 
     ngOnInit() {
-        if (!this.allCards) {
-            this.yugiohService.getAllCards().subscribe(data => {
-                this.allCards = data;
-                this.getCardsFromService = true;
-            },
-            (err) => {
-                console.error(err);
-                alert(err.message);
-            });
-        }
+        if (!this.placeholder)
+            this.placeholder = "Search for a card";
+        //if (!this.allCards) {
+        //    this.yugiohService.getAllCards().subscribe(data => {
+        //        this.allCards = data;
+        //        this.getCardsFromService = true;
+        //    },
+        //    (err) => {
+        //        console.error(err);
+        //        alert(err.message);
+        //    });
+        //}
     }
 
     onFocused(e) {
@@ -46,10 +50,17 @@ export class CardSearchComponent implements OnInit {
     }
 
     onSearch(e) {
+        this.yugiohService.getCardsWithFilter(e).subscribe(data => {
+            this.filteredCards = data;
+        },
+        (err) => {
+            console.error(err);
+            alert(err.message);
+        });
     }
 
     onCleared(e) {
-        this.auto.data = this.allCards;
+        //this.auto.data = this.allCards;
         this.auto.close();
         this.searchCleared.emit();
     }
@@ -64,8 +75,7 @@ export class CardSearchComponent implements OnInit {
 
     redirectToTcgPlayer(event, card) {
         event.stopPropagation();
-        let link = "https://shop.tcgplayer.com/yugioh/product/show?ProductName=" + encodeURIComponent(this.removeHtml(card.name)) + "&newSearch=false&ProductType=All&IsProductNameExact=true";
-        window.open(link, '_blank');
+        YugiohUtilities.redirectToTcgPlayer(card);
     }
 
     addCard(card: Card) {
@@ -96,18 +106,5 @@ export class CardSearchComponent implements OnInit {
 
     searchSubmitted(e) {
         //console.log("Search: ", e);
-    }
-
-    removeHtml(str) {
-        let startTagRemoved = this.replaceAll(str, "<b>", "");
-        return this.replaceAll(startTagRemoved, "</b>", "");
-    }
-
-    replaceAll(str, find, replace) {
-        return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
-    }
-
-    escapeRegExp(str) {
-        return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     }
 }

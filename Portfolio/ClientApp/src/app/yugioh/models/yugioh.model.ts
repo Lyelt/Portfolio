@@ -88,4 +88,25 @@ export abstract class YugiohUtilities {
                 return CardTypeEnum[cardType];
         }
     }
+
+    public static redirectToTcgPlayer(card: YugiohCard) {
+        window.open(this.getTcgLink(card), '_blank');
+    }
+
+    public static getTcgLink(card: YugiohCard): string {
+        return "https://shop.tcgplayer.com/yugioh/product/show?ProductName=" + encodeURIComponent(this.removeHtml(card.name)) + "&newSearch=false&ProductType=All&IsProductNameExact=true";
+    }
+
+    private static removeHtml(str) {
+        let startTagRemoved = this.replaceAll(str, "<b>", "");
+        return this.replaceAll(startTagRemoved, "</b>", "");
+    }
+
+    private static replaceAll(str, find, replace) {
+        return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
+    }
+
+    private static escapeRegExp(str) {
+        return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    }
 }

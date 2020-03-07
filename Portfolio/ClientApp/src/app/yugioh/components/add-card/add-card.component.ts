@@ -18,6 +18,13 @@ export class AddCardComponent implements OnInit {
     constructor() { }
 
     ngOnInit() {
+        if (this.setCard && this.setCard.setCode) {
+            this.selectedSet = this.card.card_Sets.find(s => s.set_Code == this.setCard.setCode);
+        }
+        else if (this.card.card_Sets) {
+            let minPrice = Math.min(...this.card.card_Sets.map(c => +c.set_Price).filter(price => price > 0));
+            this.selectedSet = this.card.card_Sets.find(s => +s.set_Price == minPrice);
+        }
     }
 
     addCard(event: any) {

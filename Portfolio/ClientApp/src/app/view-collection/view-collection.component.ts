@@ -15,6 +15,7 @@ export class ViewCollectionComponent implements OnInit {
 
     collection: CardCollection;
     editingSection: string;
+    newSectionName: string;
 
     constructor(private ygoService: YugiohService) { }
 
@@ -25,6 +26,11 @@ export class ViewCollectionComponent implements OnInit {
     back() {
         this.ygoService.setCurrentCollection(null);
         //this.collectionClosed.emit();
+    }
+
+    addSectionToCollection() {
+        this.collection.sections.push(this.newSectionName);
+        this.newSectionName = null;
     }
 
     getSubSections(section: string): CardTypeEnum[] {
@@ -80,5 +86,9 @@ export class ViewCollectionComponent implements OnInit {
 
     round(amount: number): number {
         return Math.round(amount * 100) / 100;
+    }
+
+    getTcgLink(card: YugiohCard) {
+        return YugiohUtilities.getTcgLink(card);
     }
 }

@@ -1,14 +1,14 @@
 <form class="flex" (submit)="searchSubmitted($event)">
   <ng-autocomplete #auto
-                   [data]="allCards"
+                   [data]="filteredCards"
                    [itemTemplate]="itemTemplate"
                    [notFoundTemplate]="notFoundTemplate"
                    [searchKeyword]="keyword"
+                   [placeHolder]="placeholder"
                    (inputFocused)="onFocused($event)"
                    (inputChanged)="onSearch($event)"
                    (inputCleared)="onCleared($event)"
                    (selected)="onSelected($event)"
-                   placeHolder="Search for a card"
                    class="flex-grow">
   </ng-autocomplete>
   <ng-template #itemTemplate let-item>
