@@ -13,3 +13,4 @@ Other features of the website:
 * [Speedrun Tool](https://ghobrial.dev/speedrun) (requires login). See [blog post](https://ghobrial.dev/blog/speedrun) for more info.
 * [Super Mario 64 Bingo Tool](https://ghobrial.dev/speedrun/bingo)
 * [Turn Tracker](https://ghobrial.dev/initiative). See [blog post](https://ghobrial.dev/blog/initiative) for more info.
+* [Yu-Gi-Oh Deck Builder](https://ghobrial.dev/yugioh) (partially requires login). See [blog post](https://ghobrial.dev/blog/yugioh) for more info.
