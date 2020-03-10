@@ -40,7 +40,7 @@ namespace Portfolio.Data
                 .HasForeignKey(c => c.CardCollectionId);
 
             builder.Entity<Card>()
-                .HasKey(c => new { c.Id, c.Section });
+                .HasKey(c => new { c.Id, c.Section, c.CardCollectionId });
 
             builder.Entity<Card>()
                 .Property(c => c.Id)
