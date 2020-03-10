@@ -1,7 +1,7 @@
 <app-blog-article>
   <app-blog-header>
     <app-blog-title>Another Hobby, Another Project (Yu-Gi-Oh!)</app-blog-title>
-    <app-blog-date>February 5, 2020</app-blog-date>
+    <app-blog-date>March 10, 2020</app-blog-date>
     <app-blog-subtitle>A collection keeper for Yu-Gi-Oh decks and lists.</app-blog-subtitle>
   </app-blog-header>
 
@@ -9,7 +9,7 @@
     <app-blog-section-title>What is Yu-Gi-Oh?</app-blog-section-title>
     <p>
       As you’ve most certainly read all of my other <span class="link" routerLink="/blog">blog posts</span>, you’re probably tired of reading about my hobbies.
-      I’ll keep this one short. Yu-Gi-Oh is a trading card game that involves building a deck and “duelling” others.
+      I’ll keep this one short. Yu-Gi-Oh is a trading card game that involves building a deck and “dueling” others.
       The cards needed to build a deck can be found by opening packs and hoping to pull the card(s) you’re looking for (great for gambling addicts) or, more reasonably (but less fun), by purchasing the single cards you’re looking for online.
     </p>
   </app-blog-section>
@@ -39,7 +39,7 @@
       The first step was making this information available in a useful way.
       For this, I used an autocomplete control where all cards can be searched by name, similarly to how the popular <a class="link" href="https://www.tcgplayer.com/">TCGPlayer</a> website handles it.
       Nothing wrong with a little inspiration from someone who has it all figured out!
-      I decided to leave this part open to the public, since there is no interface with my database and the API results are cached to avoid going over the rate limit. <span class="link" routerLink="/yugioh">Check it out here!</span>
+      I decided to leave this part open to the public, since there is no interface with my database and the API results are cached to avoid going over the rate limit. <a class="link" href="/yugioh" target="_blank">Check it out here!</a>
     </p>
   </app-blog-section>
 
@@ -57,7 +57,31 @@
 
   <app-blog-section>
     <app-blog-section-title>Results</app-blog-section-title>
-    <h3 class="blog-h3">Coming soon!</h3>
+    <p>
+      Getting the first iteration of the deck builder / collection keeper working was quite a nice feeling.
+      It was something that my friends and I could start using immediately, despite a few bugs and annoyances here and there.
+      I decided to go with a layout similar to that of <a class="link" href="http://yugiohtopdecks.com/deck/8537">YugiohTopDecks</a> for displaying the contents of a collection, as I always found that layout quite easy to read and nice-looking on mobile.
+      Here's a peek behind the login screen:
+    </p>
+    <div class="blog-card mt-6">
+      <img src="assets/yugioh/1.png" alt="Collection view" />
+      <p class="italic text-sm p-2">Collections are split into "sections" (in this case, Main Deck and Extra Deck) which are displayed separately. Information about the overall collection is found in the top-right.</p>
+    </div>
+    <p class="mt-6">
+      At the time of writing, the features available for a particular collection are somewhat limited, but it's a very promising starting point.
+      The price next to each card links to the entry on TCGPlayer for easy purchasing or price verification.
+      Clicking the pencil next to each deck section opens up a card search (the same one that's open to the public) to add cards to said section.
+      Within each section, the cards are separated further by type. Don't worry, it makes sense in Yu-Gi-Oh.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>What's Next?</app-blog-section-title>
+    <p>
+      In the immediate future, I anticipate working out some of the more frustrating kinks, and then moving on to some cool advanced search features.
+      I did not prioritize the search functionality (other than the basic typeahead you see now) because there are already plenty of online resources that do a pretty good job of it.
+      Still, there are some common searches that would be nice to have available at the click of a button, as we are always looking for the recent changes in price and whatnot. 
+    </p>
   </app-blog-section>
 
   <app-blog-section>
