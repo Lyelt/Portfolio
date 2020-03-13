@@ -22,11 +22,7 @@ export class BowlingSelectUserComponent implements OnInit {
         this.bowlingService.getBowlers().subscribe(data => {
             this.bowlers = data;
             this.currentUserId = this.initialUserId;
-        },
-            (err) => {
-                console.error(err);
-                alert(err.message);
-            });
+        });
     }
 
     changeUser(userId: string) {

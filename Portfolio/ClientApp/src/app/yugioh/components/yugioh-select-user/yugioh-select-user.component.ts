@@ -22,10 +22,6 @@ export class YugiohSelectUserComponent implements OnInit {
         this.yugiohService.getDuelists().subscribe(data => {
             this.duelists = data;
             this.currentUserId = this.initialUserId;
-        },
-        (err) => {
-            console.error(err);
-            alert(err.message);
         });
     }
 

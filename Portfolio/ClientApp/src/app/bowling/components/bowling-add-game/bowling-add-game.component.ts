@@ -36,10 +36,6 @@ export class BowlingAddGameComponent implements OnInit {
             let userId = this.bowlers.find(u => u.userName == userName).id;
             this.selectUser(userId);
             this.userSelect.changeUser(userId)
-        },
-        (err) => {
-            console.error(err);
-            alert(err.message);
         });
     }
 
@@ -57,11 +53,7 @@ export class BowlingAddGameComponent implements OnInit {
         this.bowlingService.addGameToSession(game).subscribe(data => {
             this.newGame = null;
             this.filteredGames.push(data);
-        },
-            (err) => {
-                console.error(err);
-                alert(err.message);
-            });
+        });
     }
 
     deleteGame(game: BowlingGame) {

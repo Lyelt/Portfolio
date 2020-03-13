@@ -46,10 +46,6 @@ export class BowlingStartSessionComponent implements OnInit {
                 this.ref.detectChanges();
                 this.addGames.selectUserByName(this.data.series);
             }
-        },
-        (err) => {
-            console.error(err);
-            alert(err.message);
         });
     }
 
@@ -78,11 +74,7 @@ export class BowlingStartSessionComponent implements OnInit {
                 this.selectedSession = data;
                 this.sessions.push(data);
                 this.changeTab(1);
-            },
-              (err) => {
-                  console.error(err);
-                  alert(err.message);
-              });
+            });
         }
         else {
             this.changeTab(1);

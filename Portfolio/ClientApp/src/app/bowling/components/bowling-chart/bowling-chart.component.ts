@@ -50,10 +50,6 @@ export class BowlingChartComponent implements OnInit, OnChanges {
             data.forEach(d => d.series.forEach(s => s.name = new Date(s.name)));
             this.bowlingData = data;
             this.dataLoading = false;
-        },
-        (err) => {
-            console.error(err);
-            alert(err.message);
         });
     }
 
@@ -61,10 +57,6 @@ export class BowlingChartComponent implements OnInit, OnChanges {
         this.bowlingService.getSeriesWithRange(this.category.category, this.getStartTime(), this.getEndTime()).subscribe(data => {
             data.forEach(d => d.series.forEach(s => s.name = new Date(s.name)));
             this.bowlingData = data;
-        },
-        (err) => {
-            console.error(err);
-            alert(err.message);
         });
     }
 

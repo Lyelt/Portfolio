@@ -38,17 +38,14 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var validRoles = _userContext.Roles.Where(r => VALID_ROLES.Contains(r.Name));
-                var validUserRoles = _userContext.UserRoles.Join(validRoles, ur => ur.RoleId, r => r.Id, (userRole, role) => userRole);
-                var validUsers = _userContext.Users.Join(validUserRoles, u => u.Id, ur => ur.UserId, (user, userRole) => user).Distinct().ToList();
-
-                _logger.LogDebug($"Found {validUsers.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-                return Ok(validUsers);
+                var speedrunners = _userContext.GetValidUsersForRoles(VALID_ROLES);
+                _logger.LogDebug($"Found {speedrunners.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
+                return Ok(speedrunners);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining user information: {ex.Message}");
+                return NotFound($"Error while obtaining user information.");
             }
         }
 
@@ -65,7 +62,7 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining course information: {ex.Message}");
+                return NotFound($"Error while obtaining course information.");
             }
         }
 
@@ -111,7 +108,7 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return BadRequest($"Error while updating star time: {ex.Message}");
+                return BadRequest($"Error while updating star time.");
             }
         }
 

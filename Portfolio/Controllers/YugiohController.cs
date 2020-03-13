@@ -47,18 +47,16 @@ namespace Portfolio.Controllers
         [Route("Yugioh/GetCards/{pageNumber}/{count}/{nameFilter?}")]
         public async Task<IActionResult> GetCards(int pageNumber, int count, string nameFilter)
         {
-            IEnumerable<YugiohCard> cards = new List<YugiohCard>();
-
             try
             {
-                cards = await GetCardsAsync(nameFilter);
+                var cards = await GetCardsAsync(nameFilter);
+                return Ok(cards.Skip((pageNumber - 1) * count).Take(count).ToList());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
+                return NotFound($"Error while obtaining {count} cards containing the string \"{nameFilter}\"");
             }
-
-            return Ok(cards.Skip((pageNumber - 1) * count).Take(count).ToList());
         }
 
         [HttpGet]
@@ -67,17 +65,14 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var validRoles = _userContext.Roles.Where(r => VALID_ROLES.Contains(r.Name));
-                var validUserRoles = _userContext.UserRoles.Join(validRoles, ur => ur.RoleId, r => r.Id, (userRole, role) => userRole);
-                var validUsers = _userContext.Users.Join(validUserRoles, u => u.Id, ur => ur.UserId, (user, userRole) => user).Distinct().ToList();
-
-                _logger.LogDebug($"Found {validUsers.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-                return Ok(validUsers);
+                var duelists = _userContext.GetValidUsersForRoles(VALID_ROLES);
+                _logger.LogDebug($"Found {duelists.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
+                return Ok(duelists);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining user information: {ex.Message}");
+                return NotFound($"Error while obtaining user information.");
             }
         }
 

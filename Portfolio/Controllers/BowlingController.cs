@@ -38,23 +38,15 @@ namespace Portfolio.Controllers
         {
             try
             {
-                List<ApplicationUser> validUsers = GetBowlers();
+                List<ApplicationUser> validUsers = _userContext.GetValidUsersForRoles(VALID_ROLES);
                 _logger.LogDebug($"Found {validUsers.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
                 return Ok(validUsers);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining user information: {ex.Message}");
+                return NotFound($"Error while obtaining user information.");
             }
-        }
-
-        private List<ApplicationUser> GetBowlers()
-        {
-            var validRoles = _userContext.Roles.Where(r => VALID_ROLES.Contains(r.Name));
-            var validUserRoles = _userContext.UserRoles.Join(validRoles, ur => ur.RoleId, r => r.Id, (userRole, role) => userRole);
-            var validUsers = _userContext.Users.Join(validUserRoles, u => u.Id, ur => ur.UserId, (user, userRole) => user).Distinct().ToList();
-            return validUsers;
         }
 
         [HttpGet]
@@ -70,7 +62,7 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining session information: {ex.Message}");
+                return NotFound($"Error while obtaining bowling session information.");
             }
         }
 
@@ -81,7 +73,7 @@ namespace Portfolio.Controllers
             try
             {
                 var sessions = GetSessionList(startTime, endTime);
-                var bowlers = GetBowlers();
+                var bowlers = _userContext.GetValidUsersForRoles(VALID_ROLES);
                 List<BowlingSeries> series = new BowlingSeriesService(sessions, bowlers).GetSeries(seriesCategory);
                 _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
                 return Ok(series);
@@ -89,7 +81,7 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining series information: {ex.Message}");
+                return NotFound($"Error while obtaining bowling series information.");
             }
         }
 
@@ -106,7 +98,7 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return NotFound($"Error while loading stats for user {userId}: {ex.Message}");
+                return NotFound($"Error while loading \"{statCategory}\" bowling stats.");
             }
         }
 
@@ -124,7 +116,7 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return BadRequest($"Error while starting new session: {ex.Message}");
+                return BadRequest($"Error while initializing new bowling session.");
             }
         }
 
@@ -146,7 +138,7 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return BadRequest($"Error while adding game to session: {ex.Message}");
+                return BadRequest($"Error while adding new game to session.");
             }
         }
 
@@ -173,7 +165,7 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return BadRequest($"Error while removing game {gameId}: {ex.Message}");
+                return BadRequest($"Error while deleting bowling game.");
             }
         }
 

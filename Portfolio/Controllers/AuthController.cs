@@ -57,7 +57,7 @@ namespace Portfolio.Controllers
                             issuer: IdentityHelpers.ValidIssuer,
                             audience: IdentityHelpers.ValidAudience,
                             claims: new List<Claim> { new Claim(IdentityHelpers.UserIdClaim, user.Id) },
-                            expires: DateTime.Now.AddDays(30),
+                            expires: DateTime.Now.AddDays(180),
                             signingCredentials: signingCreds
                         );
 
@@ -69,7 +69,7 @@ namespace Portfolio.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return StatusCode((int)HttpStatusCode.InternalServerError, $"Error while authenticating user: {ex.Message}");
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"Error while authenticating user.");
             }
 
             return Unauthorized();

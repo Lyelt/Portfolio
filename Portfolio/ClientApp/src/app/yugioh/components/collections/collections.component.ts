@@ -51,10 +51,6 @@ export class CollectionsComponent implements OnInit {
         this.yugiohService.deleteCollection(collection).subscribe(data => {
             this.resetSelection();
             this.refreshCollections();
-        },
-        error => {
-            console.log(error);
-            alert(error.error);
         });
     }
 
@@ -63,10 +59,6 @@ export class CollectionsComponent implements OnInit {
             this.resetSelection();
             this.refreshCollections();
             this.addingCollection = false;
-        },
-        error => {
-            console.log(error);
-            alert(error.error);
         });
     }
 
@@ -83,9 +75,6 @@ export class CollectionsComponent implements OnInit {
             }
 
             this.loading = false;
-        },
-        error => {
-            console.log(error);
         });
     }
 

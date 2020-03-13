@@ -26,26 +26,14 @@ export class SpeedrunComponent implements OnInit {
   retrieveData() {
     this.srService.getSpeedrunners().subscribe(data => {
       this.runners = data;
-    },
-    (err) => {
-      console.error(err);
-      alert(err.message);
     });
 
     this.srService.getCourses().subscribe(data => {
       this.courses = data;
-    },
-    (err) => {
-      console.error(err);
-      alert(err.message);
     });
 
     this.srService.getStarTimes().subscribe(data => {
       this.starTimes = data;
-    },
-    (err) => {
-      console.error(err);
-      alert(err.message);
     });
   }
 
@@ -93,10 +81,6 @@ export class SpeedrunComponent implements OnInit {
 
     this.srService.updateStarTime(starTime).subscribe(
       result => {
-      },
-      err => {
-        console.error(err);
-        alert(err.message);
       },
       () => {
         this.retrieveData();

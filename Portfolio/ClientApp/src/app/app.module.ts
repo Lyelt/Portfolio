@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
@@ -53,148 +53,155 @@ import { HashComponent } from './auth/components/hash/hash.component';
 import { YugiohArticleComponent } from './blog/components/articles/yugioh-article/yugioh-article.component';
 import { ViewCollectionComponent } from './view-collection/view-collection.component';
 import { AddCardComponent } from './yugioh/components/add-card/add-card.component';
+import { AlertComponent } from './error-handling/components/alert/alert.component';
+import { CustomErrorHandler } from './error-handling/error-handler';
+import { HttpErrorInterceptor } from './error-handling/http-error-interceptor';
+import { AlertService } from './error-handling/alert.service';
 
 const routes: Routes = [
-  {
-    path: '', component: HomeComponent
-  },
-  {
-    path: 'hash', component: HashComponent
-  },
-  {
-    path: 'blog', component: BlogComponent
-  },
-  {
-    path: 'blog/encounter', component: EncounterComponent
-  },
-  {
-    path: 'blog/typing', component: TypingComponent
-  },
-  {
-    path: 'blog/portfolio', component: PortfolioComponent
-  },
-  {
-    path: 'blog/bowling', component: BowlingArticleComponent
-  },
-  {
-    path: 'blog/speedrun', component: SpeedrunArticleComponent
-  },
-  {
-    path: 'blog/initiative', component: InitiativeComponent
-  },
-  {
-    path: 'blog/yugioh', component: YugiohArticleComponent
-  },
-  {
-    path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
-  },
-  {
-    path: 'speedrun/configure', component: ConfigureSpeedrunComponent, canActivate: [AuthGuard]
-  },
-  {
-    path: 'speedrun/bingo', component: BingoComponent
-  },
-  {
-    path: 'bowling', component: BowlingComponent, canActivate: [AuthGuard]
-  },
-  {
-    path: 'initiative', component: TurnTrackerComponent
-  },
-  {
-    path: 'tier', component: TierListComponent
-  },
-  {
-    path: 'recipes', component: RecipesComponent
-  },
-  {
-    path: 'login', component: LoginComponent
-  },
-  {
-    path: 'yugioh', component: YugiohComponent
-  },
-  {
-    path: 'yugioh/collections', component: CollectionsComponent, canActivate: [AuthGuard]
-  },
-  {
-    path: '**',
-    redirectTo: '/'
-  }
+    {
+        path: '', component: HomeComponent
+    },
+    {
+        path: 'hash', component: HashComponent
+    },
+    {
+        path: 'blog', component: BlogComponent
+    },
+    {
+        path: 'blog/encounter', component: EncounterComponent
+    },
+    {
+        path: 'blog/typing', component: TypingComponent
+    },
+    {
+        path: 'blog/portfolio', component: PortfolioComponent
+    },
+    {
+        path: 'blog/bowling', component: BowlingArticleComponent
+    },
+    {
+        path: 'blog/speedrun', component: SpeedrunArticleComponent
+    },
+    {
+        path: 'blog/initiative', component: InitiativeComponent
+    },
+    {
+        path: 'blog/yugioh', component: YugiohArticleComponent
+    },
+    {
+        path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
+    },
+    {
+        path: 'speedrun/configure', component: ConfigureSpeedrunComponent, canActivate: [AuthGuard]
+    },
+    {
+        path: 'speedrun/bingo', component: BingoComponent
+    },
+    {
+        path: 'bowling', component: BowlingComponent, canActivate: [AuthGuard]
+    },
+    {
+        path: 'initiative', component: TurnTrackerComponent
+    },
+    {
+        path: 'tier', component: TierListComponent
+    },
+    {
+        path: 'recipes', component: RecipesComponent
+    },
+    {
+        path: 'login', component: LoginComponent
+    },
+    {
+        path: 'yugioh', component: YugiohComponent
+    },
+    {
+        path: 'yugioh/collections', component: CollectionsComponent, canActivate: [AuthGuard]
+    },
+    {
+        path: '**',
+        redirectTo: '/'
+    }
 ];
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent,
-    FooterComponent,
-    HomeComponent,
-    EncounterComponent,
-    TypingComponent,
-    PortfolioComponent,
-    SpeedrunComponent,
-    BowlingComponent,
-    LoginComponent,
-    EditStarComponent,
-    BingoComponent,
-    ConfigureSpeedrunComponent,
-    BingoGoalComponent,
-    BowlingChartComponent,
-    BowlingStartSessionComponent,
-    BowlingAddGameComponent,
-    BowlingSelectUserComponent,
-    BowlingGameComponent,
-    BowlingStatComponent,
-    BowlingSelectSeriesCategoryComponent,
-    BlogComponent,
-    BackgroundIconComponent,
-    BlogArticleComponent,
-    BlogHeaderComponent,
-    BlogTitleComponent,
-    BlogDateComponent,
-    BlogSubtitleComponent,
-    BlogSectionComponent,
-    BlogSectionTitleComponent,
-    BowlingArticleComponent,
-    SpeedrunArticleComponent,
-    TurnTrackerComponent,
-    PlayerComponent,
-    TierListComponent,
-    InitiativeComponent,
-    RecipesComponent,
-    YugiohComponent,
-    CollectionsComponent,
-    YugiohSelectUserComponent,
-    CardSearchComponent,
-    HashComponent,
-    YugiohArticleComponent,
-    ViewCollectionComponent,
-    AddCardComponent
-  ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    RouterModule.forRoot(routes, { useHash: false, scrollPositionRestoration: 'enabled' }),
-    MaterialModule,
-    NgxChartsModule,
-    AutocompleteLibModule,
-    JwtModule.forRoot({
-      config: {
-        tokenGetter: tokenGetter
-      }
-    })
-  ],
-  exports: [
-    MaterialModule
-  ],
-  entryComponents: [
-    EditStarComponent,
-    BowlingStartSessionComponent
-  ],
-  providers: [
-    AuthGuard,
-    JwtHelperService,
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        HeaderComponent,
+        FooterComponent,
+        HomeComponent,
+        EncounterComponent,
+        TypingComponent,
+        PortfolioComponent,
+        SpeedrunComponent,
+        BowlingComponent,
+        LoginComponent,
+        EditStarComponent,
+        BingoComponent,
+        ConfigureSpeedrunComponent,
+        BingoGoalComponent,
+        BowlingChartComponent,
+        BowlingStartSessionComponent,
+        BowlingAddGameComponent,
+        BowlingSelectUserComponent,
+        BowlingGameComponent,
+        BowlingStatComponent,
+        BowlingSelectSeriesCategoryComponent,
+        BlogComponent,
+        BackgroundIconComponent,
+        BlogArticleComponent,
+        BlogHeaderComponent,
+        BlogTitleComponent,
+        BlogDateComponent,
+        BlogSubtitleComponent,
+        BlogSectionComponent,
+        BlogSectionTitleComponent,
+        BowlingArticleComponent,
+        SpeedrunArticleComponent,
+        TurnTrackerComponent,
+        PlayerComponent,
+        TierListComponent,
+        InitiativeComponent,
+        RecipesComponent,
+        YugiohComponent,
+        CollectionsComponent,
+        YugiohSelectUserComponent,
+        CardSearchComponent,
+        HashComponent,
+        YugiohArticleComponent,
+        ViewCollectionComponent,
+        AddCardComponent,
+        AlertComponent
+    ],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        RouterModule.forRoot(routes, { useHash: false, scrollPositionRestoration: 'enabled' }),
+        MaterialModule,
+        NgxChartsModule,
+        AutocompleteLibModule,
+        JwtModule.forRoot({
+            config: {
+                tokenGetter: tokenGetter
+            }
+        })
+    ],
+    exports: [
+        MaterialModule
+    ],
+    entryComponents: [
+        EditStarComponent,
+        BowlingStartSessionComponent
+    ],
+    providers: [
+        AuthGuard,
+        JwtHelperService,
+        { provide: ErrorHandler, useClass: CustomErrorHandler },
+        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
+    ],
+    bootstrap: [AppComponent]
 })
 
 export class AppModule { }

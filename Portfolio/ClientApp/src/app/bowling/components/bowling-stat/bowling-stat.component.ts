@@ -35,10 +35,6 @@ export class BowlingStatComponent implements OnInit, OnChanges {
     this.bowlingService.getStats(this.userId, this.statCategory, this.startTime, this.endTime).subscribe(data => {
       this.stats = data;
       this.statsLoading = false;
-    },
-    (err) => {
-      console.error(err);
-      alert(err.message);
     });
   }
 }

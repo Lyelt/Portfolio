@@ -39,15 +39,10 @@ export class CardSearchComponent implements OnInit {
     onSearch(e) {
         this.yugiohService.getCardsWithFilter(e).subscribe(data => {
             this.filteredCards = data;
-        },
-        (err) => {
-            console.error(err);
-            alert(err.message);
         });
     }
 
     onCleared(e) {
-        //this.auto.data = this.allCards;
         this.auto.close();
         this.searchCleared.emit();
     }
@@ -71,10 +66,6 @@ export class CardSearchComponent implements OnInit {
 
         this.yugiohService.addCardToCollection(card).subscribe(data => {
             this.yugiohService.setCurrentCollection(data);
-        },
-        error => {
-            console.log(error);
-            alert(error.error);
         });
     }
 
@@ -84,10 +75,6 @@ export class CardSearchComponent implements OnInit {
 
         this.yugiohService.removeCardFromCollection(card).subscribe(data => {
             this.yugiohService.setCurrentCollection(data);
-        },
-        error => {
-            console.log(error);
-            alert(error.error);
         });
     }
 
