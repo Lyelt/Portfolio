@@ -1,6 +1,7 @@
-import { ErrorHandler } from '@angular/core';
+import { ErrorHandler, Injectable } from '@angular/core';
 import { AlertService } from './alert.service';
 
+@Injectable()
 export class CustomErrorHandler implements ErrorHandler {
 
     constructor(private alertService: AlertService) { }

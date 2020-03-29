@@ -1,5 +1,5 @@
 <div class="flex justify-between items-center px-2 w-full">
-  <div>
+  <div class="mr-4">
     <div *ngIf="card.card_Sets && card.card_Sets.length > 0" (click)="$event.stopPropagation()">
       <select class="form-select" [(ngModel)]="selectedSet">
         <option *ngFor="let set of card.card_Sets" [ngValue]="set">{{set.set_Code}}</option>

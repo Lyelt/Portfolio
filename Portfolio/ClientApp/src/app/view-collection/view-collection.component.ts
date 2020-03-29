@@ -16,6 +16,36 @@ export class ViewCollectionComponent implements OnInit {
     constructor(private ygoService: YugiohService) { }
 
     ngOnInit() {
+        this.refresh();
+    }
+
+    addCard(card: Card) {
+        card.cardCollection = this.getCopyOfCollection();
+
+        this.ygoService.addCardToCollection(card).subscribe(data => {
+            this.ygoService.setCurrentCollection(data);
+            this.refresh();
+        });
+    }
+
+    removeCard(card: Card) {
+        card.cardCollection = this.getCopyOfCollection();
+
+        this.ygoService.removeCardFromCollection(card).subscribe(data => {
+            this.ygoService.setCurrentCollection(data);
+            this.refresh();
+        });
+    }
+
+    getCopyOfCollection() {
+        let collection = new CardCollection();
+        collection.id = this.collection.id;
+        collection.name = this.collection.name;
+        collection.userId = this.collection.userId;
+        return collection;
+    }
+
+    refresh() {
         this.collection = this.ygoService.getCurrentCollection();
     }
 

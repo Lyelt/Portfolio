@@ -12,6 +12,8 @@ export class CardSearchComponent implements OnInit {
     keyword: string = "name";
     @Output() cardSelected = new EventEmitter<YugiohCard>();
     @Output() searchCleared = new EventEmitter<any>();
+    @Output() cardAdded = new EventEmitter<Card>();
+    @Output() cardRemoved = new EventEmitter<Card>();
 
     @Input() placeholder?: string;
     @Input() collection: CardCollection;
@@ -66,6 +68,7 @@ export class CardSearchComponent implements OnInit {
 
         this.yugiohService.addCardToCollection(card).subscribe(data => {
             this.yugiohService.setCurrentCollection(data);
+            this.cardAdded.emit(card);
         });
     }
 
@@ -75,6 +78,7 @@ export class CardSearchComponent implements OnInit {
 
         this.yugiohService.removeCardFromCollection(card).subscribe(data => {
             this.yugiohService.setCurrentCollection(data);
+            this.cardRemoved.emit(card);
         });
     }
 
