@@ -55,6 +55,7 @@ export class ViewCollectionComponent implements OnInit {
 
     addSectionToCollection() {
         this.collection.sections.push(this.newSectionName);
+        this.editingSection = this.newSectionName;
         this.newSectionName = null;
     }
 
