@@ -17,7 +17,7 @@
       <div *ngIf="categories" class="mb-6">
         <div class="grid grid-cols-3 mb-4">
           <h3 class="font-semibold">{{categories.name}}</h3>
-          <h3 class="pl-2" *ngFor="let user of runners">{{user.userName}}</h3>
+          <h3 class="pl-2" *ngFor="let user of runners">{{user.userName}} ({{getStarCount(user, null)}})</h3>
         </div>
         <div class="border rounded bg-white mb-6">
           <div class="even:bg-gray-100 rounded px-4" *ngFor="let star of orderStars(categories.stars)">
@@ -35,14 +35,16 @@
         </div>
       </div>
 
-      <div>
+      <div class="flex flex-col">
         <div *ngFor="let course of getVisibleCourses()" class="mb-4 pb-4">
           <div class="grid grid-cols-3">
             <div class="flex cursor-pointer" (click)="toggleCourseCollapsed(course)">
-              <mat-icon class="mr-1 text-indigo-500 hover:text-indigo-600">{{courseIsCollapsed(course) ? 'keyboard_arrow_right' : 'keyboard_arrow_down'}}</mat-icon>
-              <h3 class="font-semibold">{{course.name}}<span *ngIf="course.abbreviation"> ({{course.abbreviation}})</span></h3>
+              <mat-icon class="mr-1">{{courseIsCollapsed(course) ? 'keyboard_arrow_right' : 'keyboard_arrow_down'}}</mat-icon>
+              <h3 class="font-semibold mr-1">{{course.name}}</h3>
+              <span *ngIf="getCompletedStars(course) as completedStars"
+                    [ngClass]="{'text-red-500': completedStars.percentage >= 0, 'text-yellow-500': completedStars.percentage > 50, 'text-green-500': completedStars.percentage > 80}">({{completedStars.completed}}/{{completedStars.total}})</span>
             </div>
-            <h3 class="text-indigo-500 pl-2" *ngFor="let user of runners">{{getStarCount(course, user)}}</h3>
+            <h3 class="text-indigo-500 pl-2" *ngFor="let user of runners">{{getStarCount(user, course)}}</h3>
           </div>
           <div class="border rounded bg-white mb-6 mt-6" [ngClass]="{'hidden': courseIsCollapsed(course)}">
             <div class="even:bg-gray-100 rounded px-4" *ngFor="let star of orderStars(course.stars)">

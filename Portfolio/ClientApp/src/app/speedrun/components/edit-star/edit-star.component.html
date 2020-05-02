@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>Editing {{starName}}</h2>
 
-<mat-dialog-content [formGroup]="form" class="flex flex-col">
+<mat-dialog-content [formGroup]="form" class="flex flex-col" [ngClass]="{'h-screen': starTime.videoUrl}">
 
   <mat-form-field class="w-full">
     <input matInput placeholder="Time (hh:mm:ss.ff)" formControlName="time" value="{{starTime.timeDisplay}}" />
@@ -10,8 +10,8 @@
     <input matInput placeholder="Youtube Watch Code" formControlName="videoUrl" value="{{starTime.videoUrl}}" />
   </mat-form-field>
 
-  <div *ngIf="starTime.videoUrl">
-    <iframe class="w-full" [src]="getYoutubeUrl(starTime.videoUrl)" frameborder="0" allowfullscreen></iframe>
+  <div *ngIf="starTime.videoUrl" class="h-full">
+    <iframe class="w-full h-full" [src]="getYoutubeUrl(starTime.videoUrl)" frameborder="0" allowfullscreen></iframe>
   </div>
 
 </mat-dialog-content>

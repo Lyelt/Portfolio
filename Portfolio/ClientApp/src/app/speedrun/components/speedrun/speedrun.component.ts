@@ -4,6 +4,7 @@ import { EditStarComponent } from '../edit-star/edit-star.component';
 import { Router } from '@angular/router';
 import { StarTime } from '../../models/star-time';
 import { Course } from '../../models/course';
+import { CompletedStars } from '../../models/completedStars';
 import { SpeedrunService } from '../../services/speedrun.service';
 import { User } from '../../../auth/user';
 import { Star } from '../../models/star';
@@ -49,6 +50,16 @@ export class SpeedrunComponent implements OnInit {
         });
     }
 
+    getCompletedStars(course: Course): CompletedStars {
+        let completed = 0;
+        for (let star of course.stars) {
+            if (this.starTimes.filter(st => st.starId == star.starId).length == this.runners.length)
+                completed++;
+        }
+
+        return { total: course.stars.length, completed: completed, percentage: (completed / course.stars.length) * 100 };
+    }
+
     orderStars(stars: Star[]) {
         return stars.filter(s => s.displayOrder >= 0).sort((s1, s2) => s1.displayOrder - s2.displayOrder);
     }
@@ -62,12 +73,21 @@ export class SpeedrunComponent implements OnInit {
         return this.courses.filter(c => c.stars.find(s => s.displayOrder >= 0) != null);
     }
 
-    getStarCount(course: Course, user: User): number {
+    getStarCount(user: User, course: Course): number {
         let count = 0;
 
-        for (let star of course.stars) {
-            if (this.starTimeIsFastest(star.starId, user.id)) {
-                count++;
+        if (course) {
+            for (let star of course.stars) {
+                if (this.starTimeIsFastest(star.starId, user.id)) {
+                    count++;
+                }
+            }
+        }
+        else {
+            for (let star of this.allCourses.map(c => c.stars).reduce((a, b) => a.concat(b))) {
+                if (this.starTimeIsFastest(star.starId, user.id)) {
+                    count++;
+                }
             }
         }
 
