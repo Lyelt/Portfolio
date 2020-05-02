@@ -7,40 +7,20 @@
     </div>
     <span class="link" routerLink="bingo">Bingo Tool &rarr;</span>
   </div>
-  <div class="flex flex-col" *ngIf="view == 'grid'">
-    <!-- Component -->
-    <div *ngIf="categories" class="mb-6">
-      <div class="grid grid-cols-3">
-        <h3 class="font-semibold">{{categories.name}}</h3>
-        <h3 class="pl-2" *ngFor="let user of runners">{{user.name}}</h3>
-      </div>
-      <div class="border rounded bg-white mb-6">
-        <div class="even:bg-gray-100 rounded px-4" *ngFor="let star of orderStars(categories.stars)">
-          <div class="grid grid-cols-3 py-2">
-            <p class="link">{{star.name}}</p>
-            <div *ngFor="let user of runners"
-                 class="link font-normal pl-2"
-                 [ngClass]="{'font-bold': starTimeIsFastest(star.starId, user.id)}"
-                 (click)="openDialog(getStarTime(star.starId, user.id), star.name)">
-              <span *ngIf="getStarTime(star.starId, user.id)?.timeDisplay">{{getStarTime(star.starId, user.id)?.timeDisplay}}</span>
-              <span *ngIf="!getStarTime(star.starId, user.id)?.timeDisplay" class="text-gray-500 underline uppercase tracking-wide hover:text-indigo-500">No Entry</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div>
-      <div *ngFor="let course of courses" class="mb-4 pb-4">
-        <div class="grid grid-cols-3">
-          <div class="flex cursor-pointer hover:underline" (click)="toggleCourseCollapsed(course)">
-            <mat-icon class="mr-1 text-indigo-500 hover:text-indigo-600 hover:no-underline">{{courseIsCollapsed(course) ? 'keyboard_arrow_right' : 'keyboard_arrow_down'}}</mat-icon>
-            <h3 class="font-semibold">{{course.name}}<span *ngIf="course.abbreviation"> ({{course.abbreviation}})</span></h3>
-          </div>
-          <h3 class="text-indigo-500 pl-2" *ngFor="let user of runners">{{getStarCount(course, user)}}</h3>
+  <div class="flex flex-col" *ngIf="view == 'list'">
+    <h5 class="text-center text-indigo-500 font-semibold">I have no idea how this view is going to look...</h5>
+  </div>
+
+    <div class="flex flex-col" *ngIf="view == 'grid'">
+      <!-- Component -->
+      <div *ngIf="categories" class="mb-6">
+        <div class="grid grid-cols-3 mb-4">
+          <h3 class="font-semibold">{{categories.name}}</h3>
+          <h3 class="pl-2" *ngFor="let user of runners">{{user.userName}}</h3>
         </div>
-        <div class="border rounded bg-white mb-6 mt-6" [ngClass]="{'hidden': courseIsCollapsed(course)}">
-          <div class="even:bg-gray-100 rounded px-4" *ngFor="let star of orderStars(course.stars)">
+        <div class="border rounded bg-white mb-6">
+          <div class="even:bg-gray-100 rounded px-4" *ngFor="let star of orderStars(categories.stars)">
             <div class="grid grid-cols-3 py-2">
               <p class="link">{{star.name}}</p>
               <div *ngFor="let user of runners"
@@ -54,6 +34,31 @@
           </div>
         </div>
       </div>
+
+      <div>
+        <div *ngFor="let course of courses" class="mb-4 pb-4">
+          <div class="grid grid-cols-3">
+            <div class="flex cursor-pointer" (click)="toggleCourseCollapsed(course)">
+              <mat-icon class="mr-1 text-indigo-500 hover:text-indigo-600">{{courseIsCollapsed(course) ? 'keyboard_arrow_right' : 'keyboard_arrow_down'}}</mat-icon>
+              <h3 class="font-semibold">{{course.name}}<span *ngIf="course.abbreviation"> ({{course.abbreviation}})</span></h3>
+            </div>
+            <h3 class="text-indigo-500 pl-2" *ngFor="let user of runners">{{getStarCount(course, user)}}</h3>
+          </div>
+          <div class="border rounded bg-white mb-6 mt-6" [ngClass]="{'hidden': courseIsCollapsed(course)}">
+            <div class="even:bg-gray-100 rounded px-4" *ngFor="let star of orderStars(course.stars)">
+              <div class="grid grid-cols-3 py-2">
+                <p class="link">{{star.name}}</p>
+                <div *ngFor="let user of runners"
+                     class="link font-normal pl-2"
+                     [ngClass]="{'font-bold': starTimeIsFastest(star.starId, user.id)}"
+                     (click)="openDialog(getStarTime(star.starId, user.id), star.name)">
+                  <span *ngIf="getStarTime(star.starId, user.id)?.timeDisplay">{{getStarTime(star.starId, user.id)?.timeDisplay}}</span>
+                  <span *ngIf="!getStarTime(star.starId, user.id)?.timeDisplay" class="text-gray-500 underline uppercase tracking-wide hover:text-indigo-500">No Entry</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
