@@ -58,6 +58,10 @@ export class SpeedrunComponent implements OnInit {
         localStorage.setItem('view', view);
     }
 
+    getVisibleCourses() {
+        return this.courses.filter(c => c.stars.find(s => s.displayOrder >= 0) != null);
+    }
+
     getStarCount(course: Course, user: User): number {
         let count = 0;
 
