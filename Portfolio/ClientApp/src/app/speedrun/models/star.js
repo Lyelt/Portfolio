@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var StarTime = /** @class */ (function () {
-    function StarTime() {
+var Star = /** @class */ (function () {
+    function Star() {
     }
-    return StarTime;
+    return Star;
 }());
-exports.StarTime = StarTime;
-//# sourceMappingURL=star-time.js.map
+exports.Star = Star;
+//# sourceMappingURL=star.js.map

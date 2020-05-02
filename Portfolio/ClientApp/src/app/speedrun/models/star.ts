@@ -1,7 +1,9 @@
 export class Star {
-  starId: number;
+    starId: number;
 
-  name: string;
+    name: string;
 
-  courseId: number;
+    courseId: number;
+
+    displayOrder: number;
 }

@@ -6,84 +6,131 @@ import { StarTime } from '../../models/star-time';
 import { Course } from '../../models/course';
 import { SpeedrunService } from '../../services/speedrun.service';
 import { User } from '../../../auth/user';
+import { Star } from '../../models/star';
 
 @Component({
-  selector: 'app-speedrun',
-  templateUrl: './speedrun.component.html',
-  styleUrls: ['./speedrun.component.scss']
+    selector: 'app-speedrun',
+    templateUrl: './speedrun.component.html',
+    styleUrls: ['./speedrun.component.scss']
 })
 export class SpeedrunComponent implements OnInit {
-  starTimes: StarTime[] = [];
-  courses: Course[] = [];
-  runners: User[] = [];
+    allCourses: Course[] = [];
+    starTimes: StarTime[] = [];
+    courses: Course[] = [];
+    runners: User[] = [];
+    categories: Course;
 
-  constructor(private srService: SpeedrunService, private dialog: MatDialog, private router: Router) { }
+    expanded: number[];
+    view: string;
 
-  ngOnInit() {
-    this.retrieveData();
-  }
+    constructor(private srService: SpeedrunService, private dialog: MatDialog, private router: Router) { }
 
-  retrieveData() {
-    this.srService.getSpeedrunners().subscribe(data => {
-      this.runners = data;
-    });
+    ngOnInit() {
+        this.srService.getSpeedrunners().subscribe(data => {
+            this.runners = data;
+        });
 
-    this.srService.getCourses().subscribe(data => {
-      this.courses = data;
-    });
+        this.srService.getCourses().subscribe(data => {
+            this.allCourses = data;
+            this.courses = this.allCourses.filter(c => c.name != "Categories");
+            this.categories = this.allCourses.find(c => c.name == "Categories");
+        });
 
-    this.srService.getStarTimes().subscribe(data => {
-      this.starTimes = data;
-    });
-  }
-
-  getStarTime(starId: number, userId: string) {
-    let foundTime = this.starTimes.find(st => st.starId == starId && st.userId == userId);
-
-    if (!foundTime) {
-      foundTime = new StarTime();
-      foundTime.userId = userId;
-      foundTime.starId = starId;
+        this.refreshTimes();
+        this.expanded = JSON.parse(localStorage.getItem('expandedCourses'));
+        this.view = localStorage.getItem('view');
+        if (!this.view)
+            this.view = 'grid';
     }
 
-    return foundTime;
-  }
-
-  starTimeIsFastest(starId: number, userId: string) {
-    let isFastestTime = false;
-    let starTime = this.getStarTime(starId, userId);
-    let timesForThisStar = this.starTimes.filter(st => st.starId == starId);
-
-    if (timesForThisStar.length > 0) {
-      let minStarTime = timesForThisStar.reduce((prev, curr) => prev.totalMilliseconds < curr.totalMilliseconds ? prev : curr);
-      isFastestTime = minStarTime.totalMilliseconds == starTime.totalMilliseconds;
+    refreshTimes() {
+        this.srService.getStarTimes().subscribe(data => {
+            this.starTimes = data;
+        });
     }
 
-    return isFastestTime;
-  }
+    orderStars(stars: Star[]) {
+        return stars.filter(s => s.displayOrder >= 0).sort((s1, s2) => s1.displayOrder - s2.displayOrder);
+    }
 
-  openDialog(starTime: StarTime, starName: string) {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.autoFocus = true;
-    dialogConfig.data = { starTime: starTime, starName: starName };
+    toggleView(view: string) {
+        this.view = view;
+        localStorage.setItem('view', view);
+    }
 
-    const dialogRef = this.dialog.open(EditStarComponent, dialogConfig);
+    getStarCount(course: Course, user: User): number {
+        let count = 0;
 
-    dialogRef.afterClosed().subscribe(data => {
-      if (data)
-        this.saveStarTime(data)
-    });
-  }
+        for (let star of course.stars) {
+            if (this.starTimeIsFastest(star.starId, user.id)) {
+                count++;
+            }
+        }
 
-  saveStarTime(data: any) {
-    let starTime: StarTime = data.starTime;
-    starTime.time = starTime.time || "00:00:00.00"; // If not provided, use TimeSpan.Zero
+        return count;
+    }
 
-    this.srService.updateStarTime(starTime).subscribe(
-      result => {
-      },
-      () => {
-        this.retrieveData();
-      });
-  }
+    getStarTime(starId: number, userId: string) {
+        let foundTime = this.starTimes.find(st => st.starId == starId && st.userId == userId);
+
+        if (!foundTime) {
+            foundTime = new StarTime();
+            foundTime.userId = userId;
+            foundTime.starId = starId;
+        }
+
+        return foundTime;
+    }
+
+    starTimeIsFastest(starId: number, userId: string) {
+        let isFastestTime = false;
+        let starTime = this.getStarTime(starId, userId);
+        let timesForThisStar = this.starTimes.filter(st => st.starId == starId);
+
+        if (timesForThisStar.length > 0) {
+            let minStarTime = timesForThisStar.reduce((prev, curr) => prev.totalMilliseconds < curr.totalMilliseconds ? prev : curr);
+            isFastestTime = minStarTime.totalMilliseconds == starTime.totalMilliseconds;
+        }
+
+        return isFastestTime;
+    }
+
+    openDialog(starTime: StarTime, starName: string) {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.autoFocus = true;
+        dialogConfig.data = { starTime: starTime, starName: starName };
+
+        const dialogRef = this.dialog.open(EditStarComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe(data => {
+            if (data)
+                this.saveStarTime(data);
+        });
+    }
+
+    saveStarTime(data: any) {
+        let starTime: StarTime = data.starTime;
+        starTime.time = starTime.time || "00:00:00.00"; // If not provided, use TimeSpan.Zero
+
+        this.srService.updateStarTime(starTime).subscribe(
+            result => {
+                this.refreshTimes();
+            });
+    }
+
+    courseIsCollapsed(course: Course): boolean {
+        return this.expanded ? this.expanded.find(c => c == course.courseId) == null : true;
+    }
+
+    toggleCourseCollapsed(course: Course) {
+        if (!this.expanded)
+            this.expanded = [];
+
+        if (this.courseIsCollapsed(course))
+            this.expanded.push(course.courseId);
+        else
+            this.expanded.splice(this.expanded.findIndex(c => c == course.courseId));
+
+        localStorage.setItem('expandedCourses', JSON.stringify(this.expanded));
+    }
 }

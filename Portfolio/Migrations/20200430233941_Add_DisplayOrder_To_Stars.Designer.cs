@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Portfolio.Data;
 
 namespace Portfolio.Migrations
 {
     [DbContext(typeof(SpeedrunContext))]
-    partial class SpeedrunContextModelSnapshot : ModelSnapshot
+    [Migration("20200430233941_Add_DisplayOrder_To_Stars")]
+    partial class Add_DisplayOrder_To_Stars
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
