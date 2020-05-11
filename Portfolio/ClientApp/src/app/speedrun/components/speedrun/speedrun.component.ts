@@ -153,7 +153,7 @@ export class SpeedrunComponent implements OnInit {
         if (this.courseIsCollapsed(course))
             this.expanded.push(course.courseId);
         else
-            this.expanded.splice(this.expanded.findIndex(c => c == course.courseId));
+            this.expanded.splice(this.expanded.findIndex(c => c == course.courseId), 1);
 
         localStorage.setItem('expandedCourses', JSON.stringify(this.expanded));
     }
