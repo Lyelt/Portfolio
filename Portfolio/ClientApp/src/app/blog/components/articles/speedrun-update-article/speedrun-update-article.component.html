@@ -1,0 +1,68 @@
+<app-blog-article>
+  <app-blog-header>
+    <app-blog-title>Overhauling the SM64 Time Tracker</app-blog-title>
+    <app-blog-date>June 14, 2020</app-blog-date>
+    <app-blog-subtitle>Because once I actually started to use it, I realized how terrible it was.</app-blog-subtitle>
+  </app-blog-header>
+
+  <app-blog-section>
+    <app-blog-section-title>The Original</app-blog-section-title>
+    <p>
+      <a class="link" routerLink="/blog/speedrun">In my previous blog post</a>, I talked about my motivation for making this application and some of the technical challenges.
+      What I failed to touch on, however, was the usability of the final product.
+      The reason for that, truthfully, is that we really hadn't used it at all.
+      I tend to go through phases when it comes to hobbies, and I just happened to be on a bit of a downswing in speedrunning after I finalized the application.
+      Once I got back into it and started to use it, though, I realized much it left to be desired.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Shortcomings</app-blog-section-title>
+    <p>
+      I was always taught to develop web applications "mobile-first" since so much web traffic occurs via mobile devices, and it's typically easier to convert a mobile design to a desktop design than vice versa.
+      In this case, I think that sentiment was actually hindering me.
+      The original design was developed with responsiveness in mind, and it looked fine on a small screen.
+      The desktop version just looked like the mobile version, but stretched... In other words, it wasn't pretty.
+    </p>
+    <p class="mt-6">
+      Not only was it not pretty, it was sort of clunky and hard to actually <i>use</i> on desktop as well.
+      I started to think about the actual use case of the application (I <i>am</i> the user, after all) and realized that I could hardly even compare our times on a desktop view.
+      That's supposed to be the core feature of the app!
+    </p>
+    <p class="mt-6">
+      So, I took a step back and pondered how to tackle the issue.
+      Ultimately, the stretched rows in the desktop view resulted in the times being too far apart to efficiently compare, and the user experience was simply lacking.
+      Instead of devoting a ton of time to redesigning the desktop view and implementing responsive styling to handle it, I decided to overhaul the entire page.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>Improvements</app-blog-section-title>
+    <p>
+      Given that my friend and I were the only users, and we knew we only access the page from a desktop, I took the approach of developing "desktop-first".
+      The page was redone to look more like a table rather than a bunch of stacked cards, and the times were much closer together and easier to compare. 
+      In addition, new features were added for expanding/collapsing specific categories as well as trackers for how many records each of us held. 
+    </p>
+    <div class="blog-card mt-6">
+      <img src="assets/speedrun/2.png" alt="Current state of the speedrun page" />
+      <p class="italic text-sm p-2">A big improvement over the previous implementation.</p>
+    </div>
+    <p class="mt-6">
+      Matt and I started using the new and improved page and immediately felt the difference.
+      As we started to invest a lot more time into practicing the game, we also started using the site a lot more to upload our best times and get even more competitive with one another.
+      The site seemed to be working as intended at this point: it was facilitating tracking our best times while encouraging us to practice more to stay competitive.
+    </p>
+  </app-blog-section>
+
+  <app-blog-section>
+    <app-blog-section-title>In Conclusion</app-blog-section-title>
+    <p>
+      There are still features I would like to implement, including making a more mobile-friendly version of the page (I know, I kind of went backwards from where I started in this regard).
+      Ultimately, though, I am very happy with its current state. 
+    </p>
+    <p class="mt-6">
+      Outstanding tasks can be found on <a class="link" href="https://trello.com/b/hpTp1H0B/portfolio-tasks">my public Trello board</a> where I organize and track all of my tasks and projects.
+      Also, feel free to check out the <a class="link" href="https://github.com/Lyelt/Portfolio">entire project on GitHub</a> if you're interested!
+    </p>
+  </app-blog-section>
+</app-blog-article>

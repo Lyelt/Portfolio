@@ -57,6 +57,7 @@ import { AlertComponent } from './error-handling/components/alert/alert.componen
 import { CustomErrorHandler } from './error-handling/error-handler';
 import { HttpErrorInterceptor } from './error-handling/http-error-interceptor';
 import { AlertService } from './error-handling/alert.service';
+import { SpeedrunUpdateArticleComponent } from './blog/components/articles/speedrun-update-article/speedrun-update-article.component';
 
 const routes: Routes = [
     {
@@ -82,6 +83,9 @@ const routes: Routes = [
     },
     {
         path: 'blog/speedrun', component: SpeedrunArticleComponent
+    },
+    {
+        path: 'blog/speedrun-update', component: SpeedrunUpdateArticleComponent
     },
     {
         path: 'blog/initiative', component: InitiativeComponent
@@ -172,7 +176,8 @@ const routes: Routes = [
         YugiohArticleComponent,
         ViewCollectionComponent,
         AddCardComponent,
-        AlertComponent
+        AlertComponent,
+        SpeedrunUpdateArticleComponent
     ],
     imports: [
         BrowserModule,
