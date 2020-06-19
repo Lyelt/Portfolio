@@ -132,6 +132,28 @@ namespace Portfolio.Controllers
         }
 
         [HttpPost]
+        [Route("Yugioh/DuplicateCollection")]
+        public async Task<IActionResult> DuplicateCollection([FromBody]CardCollection collection)
+        {
+            try
+            {
+                if (!await UserCanPerformAction(collection.UserId))
+                    return Unauthorized();
+
+                var newCollection = collection.GetCopy();
+                await _yugiohContext.Collections.AddAsync(newCollection);
+                await _yugiohContext.SaveChangesAsync();
+                return Ok(newCollection);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return BadRequest($"Error while duplicating collection: {ex.Message}");
+            }
+
+        }
+
+        [HttpPost]
         [Route("Yugioh/AddCardToCollection")]
         public async Task<IActionResult> AddCardToCollection([FromBody]Card card)
         {

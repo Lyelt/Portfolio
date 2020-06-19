@@ -46,6 +46,10 @@ export class YugiohService {
         return this.http.delete<YugiohCard>('Yugioh/DeleteCollection/' + collection.id);
     }
 
+    duplicate(collection: CardCollection) {
+        return this.http.post<CardCollection>('Yugioh/DuplicateCollection', collection);
+    }
+
     setCurrentCollection(collection: CardCollection): void {
         this.currentCollection = collection;
     }

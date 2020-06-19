@@ -18,7 +18,7 @@
         <mat-icon class="sm:ml-2" id="menuIcon">more_vert</mat-icon>
       </span>
       <mat-menu #menu="matMenu" style="position: absolute !important;">
-        <!--<span mat-menu-item class="menu-item" [matMenuTriggerFor]="subMenu"><mat-icon>folder_open</mat-icon>Start Editing</span>-->
+        <span mat-menu-item class="menu-item" (click)="duplicate(collection)"><mat-icon>content_copy</mat-icon>Duplicate</span>
         <span mat-menu-item class="menu-item" (click)="startEditing(collection)"><mat-icon>edit</mat-icon>Rename</span>
         <span mat-menu-item class="menu-item" (click)="deleteCollection(collection)"><mat-icon>clear</mat-icon>Delete</span>
       </mat-menu>

@@ -41,6 +41,8 @@ namespace Portfolio.Models.Yugioh
 
             Sections = CardIds.Select(c => c.Section).Distinct().ToList();
         }
+
+        public CardCollection GetCopy() => new CardCollection { UserId = UserId, User = User, Name = $"{Name} - Copy", CardIds = CardIds, Cards = Cards, Sections = Sections };
     }
 
     public class Card

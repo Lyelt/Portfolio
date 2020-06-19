@@ -54,6 +54,12 @@ export class CollectionsComponent implements OnInit {
         });
     }
 
+    duplicate(collection: CardCollection) {
+        this.yugiohService.duplicate(collection).subscribe(data => {
+            this.refreshCollections();
+        });
+    }
+
     updateCollection() {
         this.yugiohService.updateCollection(this.editingCollection).subscribe(data => {
             this.resetSelection();
