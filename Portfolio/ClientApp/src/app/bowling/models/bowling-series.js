@@ -12,4 +12,10 @@ var SeriesEntry = /** @class */ (function () {
     return SeriesEntry;
 }());
 exports.SeriesEntry = SeriesEntry;
+var SingleSeriesEntry = /** @class */ (function () {
+    function SingleSeriesEntry() {
+    }
+    return SingleSeriesEntry;
+}());
+exports.SingleSeriesEntry = SingleSeriesEntry;
 //# sourceMappingURL=bowling-series.js.map

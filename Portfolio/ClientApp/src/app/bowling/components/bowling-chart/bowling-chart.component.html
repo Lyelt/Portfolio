@@ -1,6 +1,6 @@
 <div class="chart-container">
   <ngx-charts-line-chart #chart
-                         *ngIf="!dataLoading"
+                         *ngIf="!dataLoading && category.chartType == 'line'"
                          [scheme]="colorScheme"
                          schemeType="ordinal"
                          [results]="bowlingData"
@@ -20,6 +20,22 @@
                          [curve]="curve"
                          (select)="select($event)">
   </ngx-charts-line-chart>
+  <ngx-charts-bar-horizontal #barChart
+                             *ngIf="!dataLoading && category.chartType == 'horizontalBar'"
+                             [scheme]="colorScheme"
+                             schemeType="ordinal"
+                             [results]="barChartData"
+                             xAxis="true"
+                             yAxis="true"
+                             legend="false"
+                             autoScale="true"
+                             showGridLines="true"
+                             showXAxisLabel="true"
+                             showYAxisLabel="true"
+                             [yAxisLabel]="yAxisLabel"
+                             [legend]="false">
+
+  </ngx-charts-bar-horizontal>
 </div>
 <div class="flex flex-col justify-center" *ngIf="dataLoading">
   <mat-progress-spinner class="self-center my-6" color="accent" mode="indeterminate"></mat-progress-spinner>

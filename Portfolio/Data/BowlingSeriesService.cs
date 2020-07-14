@@ -159,6 +159,5 @@ namespace Portfolio.Data
             }
             return series;
         }
-
     }
 }

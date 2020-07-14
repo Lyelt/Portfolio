@@ -4,49 +4,53 @@ import { User } from '../../auth/user';
 import { BowlingSession } from '../models/bowling-session';
 import { BowlingGame } from '../models/bowling-game';
 import { BowlingStat, StatCategory } from '../models/bowling-stat';
-import { BowlingSeries } from '../models/bowling-series';
+import { BowlingSeries, SingleSeriesEntry } from '../models/bowling-series';
 import { SeriesCategoryEnum } from '../models/series-category';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class BowlingService {
 
-  constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) { }
 
-  getBowlers() {
-    return this.http.get<User[]>("Bowling/GetUsers");
-  }
+    getBowlers() {
+        return this.http.get<User[]>("Bowling/GetUsers");
+    }
 
-  getSessions() {
-    return this.http.get<BowlingSession[]>("Bowling/GetSessions");
-  }
+    getSessions() {
+        return this.http.get<BowlingSession[]>("Bowling/GetSessions");
+    }
 
-  getSeries(seriesCategory: SeriesCategoryEnum) {
-    return this.http.get<BowlingSeries[]>("Bowling/GetSeries/" + seriesCategory);
-  }
+    getSingleSeries(seriesCategory: SeriesCategoryEnum, userId: string) {
+        return this.http.get<SingleSeriesEntry[]>("Bowling/GetSingleSeries/" + seriesCategory + "/" + userId);
+    }
 
-  getSeriesWithRange(seriesCategory: SeriesCategoryEnum, startTime: Date, endTime: Date) {
-      return this.http.get<BowlingSeries[]>("Bowling/GetSeries/" + seriesCategory + "/" + startTime.getTime() + "/" + endTime.getTime());
-  }
+    getSeries(seriesCategory: SeriesCategoryEnum, userId: string) {
+        return this.http.get<BowlingSeries[]>("Bowling/GetSeries/" + seriesCategory + "/" + userId);
+    }
 
-  getStats(userId: string, statCategory: StatCategory, startTime: Date, endTime: Date) {
-    let url = "Bowling/GetStats/" + statCategory + "/" + userId;
-    if (startTime && endTime)
-      url += '/' + startTime.getTime() + '/' + endTime.getTime();
+    getSeriesWithRange(seriesCategory: SeriesCategoryEnum, userId: string, startTime: Date, endTime: Date) {
+        return this.http.get<BowlingSeries[]>("Bowling/GetSeries/" + seriesCategory + "/" + userId + "/" + startTime.getTime() + "/" + endTime.getTime());
+    }
 
-    return this.http.get<BowlingStat[]>(url);
-  }
+    getStats(userId: string, statCategory: StatCategory, startTime: Date, endTime: Date) {
+        let url = "Bowling/GetStats/" + statCategory + "/" + userId;
+        if (startTime && endTime)
+            url += '/' + startTime.getTime() + '/' + endTime.getTime();
 
-  startNewSession(session: BowlingSession) {
-    return this.http.post<BowlingSession>("Bowling/StartNewSession", session);
-  }
+        return this.http.get<BowlingStat[]>(url);
+    }
 
-  addGameToSession(game: BowlingGame) {
-    return this.http.post<BowlingGame>("Bowling/AddGameToSession", game);
-  }
+    startNewSession(session: BowlingSession) {
+        return this.http.post<BowlingSession>("Bowling/StartNewSession", session);
+    }
 
-  deleteGame(game: BowlingGame) {
-    return this.http.delete('Bowling/DeleteGame/' + game.id);
-  }
+    addGameToSession(game: BowlingGame) {
+        return this.http.post<BowlingGame>("Bowling/AddGameToSession", game);
+    }
+
+    deleteGame(game: BowlingGame) {
+        return this.http.delete('Bowling/DeleteGame/' + game.id);
+    }
 }

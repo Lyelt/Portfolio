@@ -3,12 +3,13 @@ import { BowlingFrame } from './bowling-frame';
 import { SeriesCategory, SeriesCategoryEnum } from './series-category';
 
 export abstract class BowlingUtilities {
-  public static lineSeriesCategories: SeriesCategory[] = [
-    { category: SeriesCategoryEnum.SessionAverage, display: "Session Average Score", description: "Displays the average session score for each session of bowling. Each session is standalone, so this can be very up-and-down." },
-    { category: SeriesCategoryEnum.OverallAverage, display: "Overall Average Score", description: "Shows how the bowler's overall average has changed over time. Should be relatively steady and easy to see consistent improvements or declines in overall average." },
-    { category: SeriesCategoryEnum.Game, display: "Individual Game Score", description: "Each data point is an individual game's score. This graph will contain a lot of data that is very scattered." },
-    { category: SeriesCategoryEnum.StrikePct, display: "Overall Strike Percentage", description: "Shows how the bowler's overall strike percentage has changed over time. Should be relatively steady and easy to see improvements or declines in strike consistency." },
-    { category: SeriesCategoryEnum.SinglePinSparePct, display: "Overall Single Pin Spare Percentage", description: "Shows how the bowler's overall single-pin spare percentage has changed over time. Should be relatively steady and easy to see improvements or declines in single-pin spare consistency." }
+  public static allSeriesCategories: SeriesCategory[] = [
+      { category: SeriesCategoryEnum.SessionAverage, display: "Session Average Score", chartType: "line", description: "Displays the average session score for each session of bowling. Each session is standalone, so this can be very up-and-down." },
+      { category: SeriesCategoryEnum.OverallAverage, display: "Overall Average Score", chartType: "line", description: "Shows how the bowler's overall average has changed over time. Should be relatively steady and easy to see consistent improvements or declines in overall average." },
+      { category: SeriesCategoryEnum.Game, display: "Individual Game Score", chartType: "line", description: "Each data point is an individual game's score. This graph will contain a lot of data that is very scattered." },
+      { category: SeriesCategoryEnum.StrikePct, display: "Overall Strike Percentage", chartType: "line", description: "Shows how the bowler's overall strike percentage has changed over time. Should be relatively steady and easy to see improvements or declines in strike consistency." },
+      { category: SeriesCategoryEnum.SinglePinSparePct, display: "Overall Single Pin Spare Percentage", chartType: "line", description: "Shows how the bowler's overall single-pin spare percentage has changed over time. Should be relatively steady and easy to see improvements or declines in single-pin spare consistency." },
+      { category: SeriesCategoryEnum.NumberOfGamesByScore, display: "Number of Games By Score", chartType: "horizontalBar", description: "Shows the number of times the bowler has achieved each possible score." }
   ];
 
   public static newGame(sessionId: number, gameNumber: number, userId: string): BowlingGame {

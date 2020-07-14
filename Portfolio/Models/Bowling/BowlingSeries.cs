@@ -19,12 +19,20 @@ namespace Portfolio.Models.Bowling
         public double Value { get; set; }
     }
 
+    public class SingleSeriesEntry
+    {
+        public int Name { get; set; }
+
+        public int Value { get; set; }
+    }
+
     public enum SeriesCategory
     {
         SessionAverage,
         OverallAverage,
         Game,
         StrikePct,
-        SinglePinSparePct
+        SinglePinSparePct,
+        NumberOfGamesByScore
     }
 }

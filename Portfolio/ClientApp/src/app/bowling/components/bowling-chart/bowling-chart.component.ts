@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, ViewChild, SimpleChanges, OnChanges, Output, EventEmitter } from '@angular/core';
 import { colorSets as ngxChartsColorsets } from '@swimlane/ngx-charts/release/utils/color-sets';
 import * as d3 from 'd3';
-import { BowlingSeries } from '../../models/bowling-series';
+import { BowlingSeries, SingleSeriesEntry } from '../../models/bowling-series';
 import { SeriesCategory } from '../../models/series-category';
-import { LineChartComponent } from '@swimlane/ngx-charts';
+import { LineChartComponent, BarHorizontalComponent } from '@swimlane/ngx-charts';
 import { BowlingService } from '../../services/bowling.service';
 
 @Component({
@@ -14,11 +14,13 @@ import { BowlingService } from '../../services/bowling.service';
 export class BowlingChartComponent implements OnInit, OnChanges {
     @Input() category: SeriesCategory;
     @ViewChild('chart') chart: LineChartComponent;
+    @ViewChild('barChart') barChart: BarHorizontalComponent;
     @Output() dataPointClicked: EventEmitter<any> = new EventEmitter();
 
     initialized: boolean = false;
 
     bowlingData: BowlingSeries[];
+    barChartData: SingleSeriesEntry[];
     yAxisLabel: string;
 
     dataLoading = true;
@@ -32,29 +34,34 @@ export class BowlingChartComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
-        this.loadSeriesData();
+        this.loadSeriesData(null);
         this.initialized = true;
     }
 
     ngOnChanges(changes: SimpleChanges) {
         if (this.initialized) {
-            this.loadSeriesData();
+            this.loadSeriesData(null);
         }
     }
 
-    loadSeriesData() {
+    loadSeriesData(userId) {
         this.dataLoading = true;
         this.yAxisLabel = this.category.display;
 
-        this.bowlingService.getSeries(this.category.category).subscribe(data => {
+        this.bowlingService.getSeries(this.category.category, userId).subscribe(data => {
             data.forEach(d => d.series.forEach(s => s.name = new Date(s.name)));
             this.bowlingData = data;
             this.dataLoading = false;
         });
+
+        this.bowlingService.getSingleSeries(this.category.category, userId).subscribe(data => {
+            this.barChartData = data;
+            this.dataLoading = false;
+        });
     }
 
-    loadSeriesDataWithTimeRange() {
-        this.bowlingService.getSeriesWithRange(this.category.category, this.getStartTime(), this.getEndTime()).subscribe(data => {
+    loadSeriesDataWithTimeRange(userId) {
+        this.bowlingService.getSeriesWithRange(this.category.category, userId, this.getStartTime(), this.getEndTime()).subscribe(data => {
             data.forEach(d => d.series.forEach(s => s.name = new Date(s.name)));
             this.bowlingData = data;
         });

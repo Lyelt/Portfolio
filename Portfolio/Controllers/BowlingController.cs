@@ -67,16 +67,48 @@ namespace Portfolio.Controllers
         }
 
         [HttpGet]
-        [Route("Bowling/GetSeries/{seriesCategory}/{startTime?}/{endTime?}")]
-        public IActionResult GetSeries(SeriesCategory seriesCategory, long? startTime = null, long? endTime = null)
+        [Route("Bowling/GetSeries/{seriesCategory}/{userId?}/{startTime?}/{endTime?}")]
+        public IActionResult GetSeries(SeriesCategory seriesCategory, string userId = null, long? startTime = null, long? endTime = null)
         {
             try
             {
                 var sessions = GetSessionList(startTime, endTime);
-                var bowlers = _userContext.GetValidUsersForRoles(VALID_ROLES);
+                var bowlers = _userContext.GetValidUsersForRoles(VALID_ROLES);//.Where(u => userId == null || u.Id == userId).ToList();
                 List<BowlingSeries> series = new BowlingSeriesService(sessions, bowlers).GetSeries(seriesCategory);
                 _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
                 return Ok(series);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return NotFound($"Error while obtaining bowling series information.");
+            }
+        }
+
+        [HttpGet]
+        [Route("Bowling/GetSingleSeries/{seriesCategory}/{userId}")]
+        public IActionResult GetSingleSeries(SeriesCategory seriesCategory, string userId)
+        {
+            try
+            {
+                var games = GetGames(userId, null, null);
+
+                // TODO: Use service for new category types and refactor to use a more elegant approach.
+                var series = new List<SingleSeriesEntry>();
+                var numberOfGamesPerScore = new Dictionary<int, int>();
+                foreach (var game in games)
+                {
+                    if (numberOfGamesPerScore.ContainsKey(game.TotalScore))
+                        numberOfGamesPerScore[game.TotalScore]++;
+                    else
+                        numberOfGamesPerScore[game.TotalScore] = 1;
+                }
+
+                foreach (var kvp in numberOfGamesPerScore)
+                    series.Add(new SingleSeriesEntry { Name = kvp.Key, Value = kvp.Value });
+
+                _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
+                return Ok(series.OrderByDescending(g => g.Name));
             }
             catch (Exception ex)
             {

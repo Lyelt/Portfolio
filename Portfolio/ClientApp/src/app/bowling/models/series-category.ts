@@ -1,16 +1,19 @@
 export enum SeriesCategoryEnum {
-  SessionAverage,
-  OverallAverage,
-  Game,
-  StrikePct,
-  SinglePinSparePct
+    SessionAverage,
+    OverallAverage,
+    Game,
+    StrikePct,
+    SinglePinSparePct,
+    NumberOfGamesByScore
 }
 
 export class SeriesCategory {
-  category: SeriesCategoryEnum;
+    category: SeriesCategoryEnum;
 
-  display: string;
+    display: string;
 
-  description: string;
+    description: string;
+
+    chartType: string;
 }
 
