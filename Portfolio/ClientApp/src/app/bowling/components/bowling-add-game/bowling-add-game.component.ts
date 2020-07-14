@@ -50,8 +50,12 @@ export class BowlingAddGameComponent implements OnInit {
     }
 
     saveGame(game: BowlingGame) {
+        if (!this.session.games)
+            this.session.games = [];
+
         this.bowlingService.addGameToSession(game).subscribe(data => {
             this.newGame = null;
+            this.session.games.push(data);
             this.filteredGames.push(data);
         });
     }
