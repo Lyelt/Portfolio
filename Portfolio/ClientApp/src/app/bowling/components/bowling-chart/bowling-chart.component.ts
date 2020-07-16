@@ -13,6 +13,7 @@ import { BowlingService } from '../../services/bowling.service';
 })
 export class BowlingChartComponent implements OnInit, OnChanges {
     @Input() category: SeriesCategory;
+    @Input() initialUserId: string;
     @ViewChild('chart') chart: LineChartComponent;
     @ViewChild('barChart') barChart: BarHorizontalComponent;
     @Output() dataPointClicked: EventEmitter<any> = new EventEmitter();
@@ -34,13 +35,13 @@ export class BowlingChartComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
-        this.loadSeriesData(null);
+        this.loadSeriesData(this.initialUserId);
         this.initialized = true;
     }
 
     ngOnChanges(changes: SimpleChanges) {
         if (this.initialized) {
-            this.loadSeriesData(null);
+            this.loadSeriesData(this.initialUserId);
         }
     }
 

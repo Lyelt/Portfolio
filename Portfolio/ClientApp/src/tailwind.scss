@@ -124,6 +124,15 @@
   display: inline-block;
 }
 
+/*
+  For some reason the horizontal bar chart refuses to be responsive unless there is a legend present.
+  But I don't actually want a legend in this case... So I'm enabling it and then hiding it. Wonderful!
+*/
+.chart-container .chart-horizontal .chart-legend {
+  opacity: 0 !important;
+}
+
+
 /* Some manual overriding of dialog window responsive sizing */
 @media only screen and (min-width: 640px) {
   .mat-dialog-container {

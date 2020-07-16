@@ -27,14 +27,12 @@
                              [results]="barChartData"
                              xAxis="true"
                              yAxis="true"
-                             legend="false"
-                             autoScale="true"
-                             showGridLines="true"
+                             [legend]="true"
                              showXAxisLabel="true"
                              showYAxisLabel="true"
-                             [yAxisLabel]="yAxisLabel"
-                             [legend]="false">
-
+                             yAxisLabel="Score"
+                             xAxisLabel="Number of games"
+                             class="chart-horizontal">
   </ngx-charts-bar-horizontal>
 </div>
 <div class="flex flex-col justify-center" *ngIf="dataLoading">

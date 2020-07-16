@@ -8,7 +8,7 @@
     <span class="link" (click)="openDialog()">Add / View Scores</span>
   </div>
   <div>
-    <app-bowling-chart [category]="currentSeriesCategory" (dataPointClicked)="openDialog($event)" #chart></app-bowling-chart>
+    <app-bowling-chart [category]="currentSeriesCategory" [initialUserId]="currentUserId" (dataPointClicked)="openDialog($event)" #chart></app-bowling-chart>
     </div>
   <div class="mt-24 flex flex-col">
     <p class="text-gray-500 px-8 pb-8 text-center text-xs">Click a name in the legend to remove it from the chart. Use the above refresh button to reset the chart. You can also click a data point on the chart to open the corresponding session.</p>
