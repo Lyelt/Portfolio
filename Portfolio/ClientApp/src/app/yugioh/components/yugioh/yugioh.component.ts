@@ -11,10 +11,10 @@ import { Card, CardCollection } from '../../models/card-collections';
 export class YugiohComponent implements OnInit {
     currentUserId: string;
     selectedSection: string;
+    searchParam: string;
 
     selectedCard: YugiohCard;
     selectedCollection: CardCollection;
-    //openedCollection: CardCollection;
 
     selectedTabIndex: number = 0;
 
@@ -28,27 +28,24 @@ export class YugiohComponent implements OnInit {
 
     }
 
+    openedCollection() {
+        return this.yugiohService.getCurrentCollection();
+    }
+
     cardSelected(card) {
+        this.searchParam = null;
         this.selectedCard = card;
     }
 
     searchCleared() {
         this.selectedCard = null;
+        this.searchParam = null;
     }
 
-    openedCollection() {
-        return this.yugiohService.getCurrentCollection();
+    cardSearched(searchParam: string) {
+        this.selectedCard = null;
+        this.searchParam = searchParam;
     }
-
-    //openCollection(collection: CardCollection) {
-    //    this.yugiohService.setCurrentCollection(collection);
-    //    //this.openedCollection = collection;
-    //}
-
-    //closeCollection() {
-    //    this.yugiohService.setCurrentCollection(null);
-    //    //this.openedCollection = null;
-    //}
 
     selectCollection(event: any) {
         this.selectedCollection = event.collection;

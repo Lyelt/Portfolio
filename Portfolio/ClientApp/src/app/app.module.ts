@@ -58,6 +58,8 @@ import { CustomErrorHandler } from './error-handling/error-handler';
 import { HttpErrorInterceptor } from './error-handling/http-error-interceptor';
 import { AlertService } from './error-handling/alert.service';
 import { SpeedrunUpdateArticleComponent } from './blog/components/articles/speedrun-update-article/speedrun-update-article.component';
+import { SelectedCardComponent } from './yugioh/components/selected-card/selected-card.component';
+import { SearchResultsComponent } from './yugioh/components/search-results/search-results.component';
 
 const routes: Routes = [
     {
@@ -177,7 +179,9 @@ const routes: Routes = [
         ViewCollectionComponent,
         AddCardComponent,
         AlertComponent,
-        SpeedrunUpdateArticleComponent
+        SpeedrunUpdateArticleComponent,
+        SelectedCardComponent,
+        SearchResultsComponent
     ],
     imports: [
         BrowserModule,

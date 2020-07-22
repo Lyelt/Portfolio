@@ -11,6 +11,7 @@ import { CardCollection, Card } from '../../models/card-collections';
 export class CardSearchComponent implements OnInit {
     keyword: string = "name";
     @Output() cardSelected = new EventEmitter<YugiohCard>();
+    @Output() cardSearched = new EventEmitter<string>();
     @Output() searchCleared = new EventEmitter<any>();
     @Output() cardAdded = new EventEmitter<Card>();
     @Output() cardRemoved = new EventEmitter<Card>();
@@ -39,6 +40,7 @@ export class CardSearchComponent implements OnInit {
     }
 
     onSearch(e) {
+        this.currentFilter = e;
         this.yugiohService.getCardsWithFilter(e).subscribe(data => {
             this.filteredCards = data;
         });
@@ -82,7 +84,7 @@ export class CardSearchComponent implements OnInit {
         });
     }
 
-    searchSubmitted(e) {
-        //console.log("Search: ", e);
+    searchSubmitted() {
+        this.cardSearched.emit(this.currentFilter);
     }
 }
