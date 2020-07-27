@@ -1,7 +1,6 @@
-<input class="opacity-0" [value]="getCardLink()" #output />
 <div class="flex flex-col items-center xl:flex-row xl:items-start">
   <div class="grid grid-cols-6 gap-6 sm:gap-4 mb-24 xl:mb-0 xl:mr-24">
-    <div class="col-span-2 sm:col-span-1 sm:text-right font-bold">Name:</div><div class="col-span-4 sm:col-span-5 flex items-center justify-between"><p>{{card.name}}</p><mat-icon class="link" (click)="copyLinkToClipboard()" title="Copy this card's link to clipboard">file_copy</mat-icon></div>
+    <div class="col-span-2 sm:col-span-1 sm:text-right font-bold">Name:</div><div class="col-span-4 sm:col-span-5">{{card.name}}</div>
     <div class="col-span-2 sm:col-span-1 sm:text-right font-bold">Type:</div><div class="col-span-4 sm:col-span-5">{{card.race}}</div>
     <div class="col-span-2 sm:col-span-1 sm:text-right font-bold">Attribute:</div><div class="col-span-4 sm:col-span-5">{{card.attribute || "N/A"}}</div>
     <div class="col-span-2 sm:col-span-1 sm:text-right font-bold">{{getLevelLabel(card)}}:</div><div class="col-span-4 sm:col-span-5">{{getLevelDisplay(card)}}</div>

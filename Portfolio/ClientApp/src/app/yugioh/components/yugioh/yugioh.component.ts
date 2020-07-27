@@ -39,16 +39,19 @@ export class YugiohComponent implements OnInit {
     cardSelected(card) {
         this.searchFilter = null;
         this.selectedCard = card;
+        window.history.pushState(card, card.name, "/yugioh/" + card.id);
     }
 
     searchCleared() {
         this.selectedCard = null;
         this.searchFilter = null;
+        window.history.pushState("No card selected", "Yu-Gi-Oh", "/yugioh");
     }
 
     cardSearched(filter: YugiohCardFilter) {
         this.selectedCard = null;
         this.searchFilter = filter;
+        window.history.pushState("No card selected", "Yu-Gi-Oh", "/yugioh");
     }
 
     selectCollection(event: any) {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { YugiohCard, YugiohUtilities, CardTypeEnum, CardSet } from '../../models/yugioh.model';
 
 @Component({
@@ -9,8 +9,6 @@ import { YugiohCard, YugiohUtilities, CardTypeEnum, CardSet } from '../../models
 export class SelectedCardComponent implements OnInit {
 
     @Input() card: YugiohCard;
-    @ViewChild('output') output: ElementRef;
-    copying: boolean = false;
 
     constructor() { }
 
@@ -19,13 +17,6 @@ export class SelectedCardComponent implements OnInit {
 
     getCardLink() {
         return YugiohUtilities.getCardLink(this.card);
-    }
-
-    copyLinkToClipboard() {
-        this.copying = true;
-        this.output.nativeElement.select();
-        document.execCommand("copy");
-        this.copying = false;
     }
 
     getTcgLink(card: YugiohCard) {
