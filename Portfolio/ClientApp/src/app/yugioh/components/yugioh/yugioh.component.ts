@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { YugiohService } from '../../services/yugioh.service';
-import { YugiohCard } from '../../models/yugioh.model';
+import { YugiohCard, YugiohCardFilter } from '../../models/yugioh.model';
 import { Card, CardCollection } from '../../models/card-collections';
+import { ActivatedRoute } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-yugioh',
@@ -11,21 +13,23 @@ import { Card, CardCollection } from '../../models/card-collections';
 export class YugiohComponent implements OnInit {
     currentUserId: string;
     selectedSection: string;
-    searchParam: string;
+    searchFilter: YugiohCardFilter;
 
     selectedCard: YugiohCard;
     selectedCollection: CardCollection;
 
     selectedTabIndex: number = 0;
 
-    constructor(private yugiohService: YugiohService) { }
+    constructor(private yugiohService: YugiohService, private route: ActivatedRoute) { }
     
     ngOnInit() {
         this.currentUserId = localStorage.getItem("userId");
-    }
-
-    selectUser(user) {
-
+        this.route.params.subscribe(params => {
+            const id = +params['cardId'];
+            this.yugiohService.getCardById(id).subscribe(data => {
+                this.selectedCard = data;
+            });
+        });
     }
 
     openedCollection() {
@@ -33,18 +37,18 @@ export class YugiohComponent implements OnInit {
     }
 
     cardSelected(card) {
-        this.searchParam = null;
+        this.searchFilter = null;
         this.selectedCard = card;
     }
 
     searchCleared() {
         this.selectedCard = null;
-        this.searchParam = null;
+        this.searchFilter = null;
     }
 
-    cardSearched(searchParam: string) {
+    cardSearched(filter: YugiohCardFilter) {
         this.selectedCard = null;
-        this.searchParam = searchParam;
+        this.searchFilter = filter;
     }
 
     selectCollection(event: any) {

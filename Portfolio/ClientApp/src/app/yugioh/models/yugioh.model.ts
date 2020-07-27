@@ -1,3 +1,17 @@
+export class PropertyFilter {
+    name: string;
+    value?: string;
+    highValue?: number;
+    lowValue?: number;
+}
+
+export class YugiohCardFilter {
+    filters: PropertyFilter[];
+
+    pageNumber: number;
+
+    count: number;
+}
 
 export class YugiohCard {
     id: number;
@@ -61,6 +75,10 @@ export class CardType {
 }
 
 export abstract class YugiohUtilities {
+    public static getCardLink(card: YugiohCard): string {
+        return window.location.hostname + "/yugioh/" + card.id;
+    }
+
     public static getCardType(card: YugiohCard): CardTypeEnum {
         if (card.type.includes('Trap'))
             return CardTypeEnum.Trap;

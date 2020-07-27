@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, EventEmitter, Input, Output } from '@angular/core';
-import { YugiohCard, YugiohUtilities } from '../../models/yugioh.model';
+import { YugiohCard, YugiohUtilities, YugiohCardFilter, PropertyFilter } from '../../models/yugioh.model';
 import { YugiohService } from '../../services/yugioh.service';
 import { CardCollection, Card } from '../../models/card-collections';
 
@@ -11,7 +11,7 @@ import { CardCollection, Card } from '../../models/card-collections';
 export class CardSearchComponent implements OnInit {
     keyword: string = "name";
     @Output() cardSelected = new EventEmitter<YugiohCard>();
-    @Output() cardSearched = new EventEmitter<string>();
+    @Output() cardSearched = new EventEmitter<YugiohCardFilter>();
     @Output() searchCleared = new EventEmitter<any>();
     @Output() cardAdded = new EventEmitter<Card>();
     @Output() cardRemoved = new EventEmitter<Card>();
@@ -21,7 +21,7 @@ export class CardSearchComponent implements OnInit {
     @Input() section: string;
 
     filteredCards: YugiohCard[];
-    currentFilter: string;
+    currentFilter: YugiohCardFilter;
 
     @ViewChild('auto') auto;
     constructor(private yugiohService: YugiohService) { }
@@ -40,8 +40,15 @@ export class CardSearchComponent implements OnInit {
     }
 
     onSearch(e) {
-        this.currentFilter = e;
-        this.yugiohService.getCardsWithFilter(e).subscribe(data => {
+        let filters: PropertyFilter[] = [{ name: "name", value: e }];
+        let filter: YugiohCardFilter = {
+            pageNumber: 1,
+            count: 20,
+            filters: filters
+        };
+
+        this.currentFilter = filter;
+        this.yugiohService.getCardsWithFilter(filter).subscribe(data => {
             this.filteredCards = data;
         });
     }
@@ -86,5 +93,6 @@ export class CardSearchComponent implements OnInit {
 
     searchSubmitted() {
         this.cardSearched.emit(this.currentFilter);
+        this.auto.close();
     }
 }

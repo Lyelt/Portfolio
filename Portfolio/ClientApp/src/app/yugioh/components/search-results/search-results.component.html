@@ -1,3 +1,5 @@
-<p>
-  searched for {{searchParam}}
-</p>
+<div class="flex flex-col">
+  <div *ngFor="let card of searchResults" class="flex mb-2">
+    <a class="link w-1/2" href="yugioh/{{card.id}}">{{card.name}}</a>
+  </div>
+</div>

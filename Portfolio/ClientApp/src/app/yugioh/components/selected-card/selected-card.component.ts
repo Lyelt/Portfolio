@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { YugiohCard, YugiohUtilities, CardTypeEnum } from '../../models/yugioh.model';
+import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { YugiohCard, YugiohUtilities, CardTypeEnum, CardSet } from '../../models/yugioh.model';
 
 @Component({
     selector: 'app-selected-card',
@@ -9,18 +9,42 @@ import { YugiohCard, YugiohUtilities, CardTypeEnum } from '../../models/yugioh.m
 export class SelectedCardComponent implements OnInit {
 
     @Input() card: YugiohCard;
+    @ViewChild('output') output: ElementRef;
+    copying: boolean = false;
 
     constructor() { }
 
     ngOnInit() {
     }
 
+    getCardLink() {
+        return YugiohUtilities.getCardLink(this.card);
+    }
+
+    copyLinkToClipboard() {
+        this.copying = true;
+        this.output.nativeElement.select();
+        document.execCommand("copy");
+        this.copying = false;
+    }
+
     getTcgLink(card: YugiohCard) {
         return YugiohUtilities.getTcgLink(card);
     }
 
+    getTcgSetLink(set: CardSet) {
+        return "https://shop.tcgplayer.com/price-guide/yugioh/" + encodeURIComponent(set.set_Name.replace(/[^a-zA-Z0-9 ]/g, "").replace(/[ ]/g, "-").toLowerCase());
+    }
+
     getSortedCardSets(card: YugiohCard) {
-        return card.card_Sets.sort((a, b) => parseFloat(b.set_Price) - parseFloat(a.set_Price));
+        if (card.card_Sets)
+            return card.card_Sets.sort((a, b) => parseFloat(b.set_Price) - parseFloat(a.set_Price));
+        else
+            return [];
+    }
+
+    getPriceDisplay(set: CardSet) {
+        return "$" + parseFloat(set.set_Price).toFixed(2).toString();
     }
 
     getAtkDefDisplay(card: YugiohCard) {

@@ -16,6 +16,7 @@ using Portfolio.Models.Yugioh;
 using System.Net.Http;
 using MoreLinq;
 using Microsoft.AspNetCore.Authorization;
+using Portfolio.Extensions;
 
 namespace Portfolio.Controllers
 {
@@ -49,13 +50,47 @@ namespace Portfolio.Controllers
         {
             try
             {
-                var cards = await GetCardsAsync(nameFilter);
+                var cards = await GetCardsAsync();
                 return Ok(cards.Skip((pageNumber - 1) * count).Take(count).ToList());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
                 return NotFound($"Error while obtaining {count} cards containing the string \"{nameFilter}\"");
+            }
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("Yugioh/GetCardById/{cardId}")]
+        public async Task<IActionResult> GetCardById(int cardId)
+        {
+            try
+            {
+                var cards = await GetCardsAsync();
+                return Ok(cards.FirstOrDefault(c => c.Id == cardId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return NotFound($"Error while obtaining card with ID {cardId}");
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("Yugioh/GetCardsWithFilter")]
+        public async Task<IActionResult> GetCardsWithFilter([FromBody]YugiohCardFilter filter)
+        {
+            try
+            {
+                var cards = await GetCardsAsync(filter);
+                return Ok(cards.Skip(((filter?.PageNumber ?? 1) - 1) * filter?.Count ?? 20).Take(filter?.Count ?? 20).ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return NotFound($"Error while obtaining cards");
             }
         }
 
@@ -243,7 +278,7 @@ namespace Portfolio.Controllers
             }
         }
 
-        private async Task<IEnumerable<YugiohCard>> GetCardsAsync(string nameFilter = null)
+        private async Task<IEnumerable<YugiohCard>> GetCardsAsync(YugiohCardFilter filter = null)
         {
             IEnumerable<YugiohCard> cards;
 
@@ -253,8 +288,9 @@ namespace Portfolio.Controllers
                 _cardCache.Set(CACHE_KEY, cards, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5)));
             }
 
-            if (!string.IsNullOrWhiteSpace(nameFilter))
-                cards = cards.Where(c => c.Name.Contains(nameFilter, StringComparison.OrdinalIgnoreCase));
+            var nameFilter = filter?.Filters?.FirstOrDefault(f => f.Name.EqualsIgnoreCase("name"));
+            if (!string.IsNullOrWhiteSpace(nameFilter?.Value))
+                cards = cards.Where(c => c.Name.ContainsIgnoreCase(nameFilter.Value));
 
             return cards;
         }
@@ -267,8 +303,6 @@ namespace Portfolio.Controllers
                 (itemUserId == currentUser.Id && 
                 await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Duelist.ToString()));
         }
-
-        private async Task<YugiohCard> GetCardByIdAsync(int cardId) => (await GetCardsAsync()).First(c => c.Id == cardId);
 
         private async Task<ApplicationUser> GetCurrentUserAsync()
         {

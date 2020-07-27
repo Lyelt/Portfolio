@@ -51,7 +51,7 @@ import { YugiohSelectUserComponent } from './yugioh/components/yugioh-select-use
 import { CardSearchComponent } from './yugioh/components/card-search/card-search.component';
 import { HashComponent } from './auth/components/hash/hash.component';
 import { YugiohArticleComponent } from './blog/components/articles/yugioh-article/yugioh-article.component';
-import { ViewCollectionComponent } from './view-collection/view-collection.component';
+import { ViewCollectionComponent } from './yugioh/components/view-collection/view-collection.component';
 import { AddCardComponent } from './yugioh/components/add-card/add-card.component';
 import { AlertComponent } from './error-handling/components/alert/alert.component';
 import { CustomErrorHandler } from './error-handling/error-handler';
@@ -121,6 +121,9 @@ const routes: Routes = [
     },
     {
         path: 'yugioh', component: YugiohComponent
+    },
+    {
+        path: 'yugioh/:cardId', component: YugiohComponent
     },
     {
         path: 'yugioh/collections', component: CollectionsComponent, canActivate: [AuthGuard]

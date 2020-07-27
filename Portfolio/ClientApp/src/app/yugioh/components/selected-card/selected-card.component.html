@@ -1,6 +1,6 @@
 <div class="flex flex-col items-center xl:flex-row xl:items-start">
   <div class="grid grid-cols-6 gap-6 sm:gap-4 mb-24 xl:mb-0 xl:mr-24">
-    <div class="col-span-2 sm:col-span-1 sm:text-right font-bold">Name:</div><div class="col-span-4 sm:col-span-5"><a class="link" [href]="getTcgLink(card)" target="_blank">{{card.name}}</a></div>
+    <div class="col-span-2 sm:col-span-1 sm:text-right font-bold">Name:</div><div class="col-span-4 sm:col-span-5 flex items-center justify-between"><p>{{card.name}}</p><mat-icon class="link" (click)="copyLinkToClipboard()" title="Copy this card's link to clipboard">file_copy</mat-icon></div>
     <div class="col-span-2 sm:col-span-1 sm:text-right font-bold">Type:</div><div class="col-span-4 sm:col-span-5">{{card.race}}</div>
     <div class="col-span-2 sm:col-span-1 sm:text-right font-bold">Attribute:</div><div class="col-span-4 sm:col-span-5">{{card.attribute || "N/A"}}</div>
     <div class="col-span-2 sm:col-span-1 sm:text-right font-bold">{{getLevelLabel(card)}}:</div><div class="col-span-4 sm:col-span-5">{{getLevelDisplay(card)}}</div>
@@ -8,10 +8,14 @@
     <div class="col-span-2 sm:col-span-1 sm:text-right font-bold">Desc:</div><div class="col-span-5 whitespace-pre-line">{{card.desc}}</div>
     <div class="col-span-2 sm:col-span-1 sm:text-right font-bold">Sets:</div>
     <div class="col-span-5 flex flex-col">
+      <div class="flex mb-1 pb-1 border-b">
+        <p class="w-2/3">TCGPlayer Market Price:</p>
+        <a class="w-1/3 text-right link" [href]="getTcgLink(card)" target="_blank">${{card.card_Prices.tcgplayer_Price.toFixed(2)}}</a>
+      </div>
       <div *ngFor="let set of getSortedCardSets(card)" class="flex mb-1">
-        <p class="w-1/3">{{set.set_Code}}</p>
+        <a class="w-1/3 link" title="View {{set.set_Name}} on TCGPlayer" [href]="getTcgSetLink(set)" target="_blank">{{set.set_Code}}</a>
         <p class="w-1/3">{{set.set_Rarity}}</p>
-        <p class="w-1/3 text-right">${{set.set_Price}}</p>
+        <p class="w-1/3 text-right">{{getPriceDisplay(set)}}</p>
       </div>
     </div>
   </div>
@@ -19,3 +23,4 @@
     <img class="sm:max-w-xl" [src]="card.card_Images[0].image_Url" />
   </div>
 </div>
+<input class="opacity-0" [value]="getCardLink()" #output />

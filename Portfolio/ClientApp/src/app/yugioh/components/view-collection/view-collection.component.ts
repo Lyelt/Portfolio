@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { CardCollection, Card } from '../yugioh/models/card-collections';
-import { YugiohCard, YugiohUtilities, CardTypeEnum } from '../yugioh/models/yugioh.model';
-import { YugiohService } from '../yugioh/services/yugioh.service';
+import { CardCollection, Card } from '../../models/card-collections';
+import { YugiohCard, YugiohUtilities, CardTypeEnum } from '../../models/yugioh.model';
+import { YugiohService } from '../../services/yugioh.service';
 
 @Component({
     selector: 'app-view-collection',

@@ -13,7 +13,7 @@
   </ng-autocomplete>
   <ng-template #itemTemplate let-item>
     <div class="flex flex-col border-b">
-      <div class="flex flex-col">
+      <div class="flex flex-col justify-center">
         <a [innerHtml]="getCardDisplay(item)"></a>
         <span *ngIf="!collection" class="absolute right-0 mr-8 cursor-pointer text-indigo-400 hover:text-indigo-600" title="View on TCGPlayer" (click)="redirectToTcgPlayer($event, item)"><mat-icon>open_in_new</mat-icon></span>
         <app-add-card *ngIf="collection" [card]="item" [setCard]="getSetCard(item)" (cardAdded)="addCard($event)" (cardRemoved)="removeCard($event)"></app-add-card>
