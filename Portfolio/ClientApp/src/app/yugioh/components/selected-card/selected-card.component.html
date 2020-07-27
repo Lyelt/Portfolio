@@ -1,3 +1,4 @@
+<input class="opacity-0" [value]="getCardLink()" #output />
 <div class="flex flex-col items-center xl:flex-row xl:items-start">
   <div class="grid grid-cols-6 gap-6 sm:gap-4 mb-24 xl:mb-0 xl:mr-24">
     <div class="col-span-2 sm:col-span-1 sm:text-right font-bold">Name:</div><div class="col-span-4 sm:col-span-5 flex items-center justify-between"><p>{{card.name}}</p><mat-icon class="link" (click)="copyLinkToClipboard()" title="Copy this card's link to clipboard">file_copy</mat-icon></div>
@@ -23,4 +24,3 @@
     <img class="sm:max-w-xl" [src]="card.card_Images[0].image_Url" />
   </div>
 </div>
-<input class="opacity-0" [value]="getCardLink()" #output />
