@@ -36,8 +36,11 @@ export class YugiohComponent implements OnInit {
         return this.yugiohService.getCurrentCollection();
     }
 
+    showSearchResults() {
+        this.selectedCard = null; 
+    }
+
     cardSelected(card) {
-        this.searchFilter = null;
         this.selectedCard = card;
         window.history.pushState(card, card.name, "/yugioh/" + card.id);
     }

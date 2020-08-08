@@ -23,9 +23,9 @@
               <p class="pt-6 text-sm font-semibold tracking-wide text-indigo-400">Search for a card to see it here</p>
             </div>
             <div class="mt-12" *ngIf="selectedCard">
-              <app-selected-card [card]="selectedCard"></app-selected-card>
+              <app-selected-card [card]="selectedCard" (onBack)="showSearchResults()"></app-selected-card>
             </div>
-            <div class="w-full" *ngIf="searchFilter">
+            <div class="w-full" *ngIf="searchFilter && !selectedCard">
               <app-search-results [searchFilter]="searchFilter"></app-search-results>
             </div>
           </div>

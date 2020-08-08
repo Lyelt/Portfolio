@@ -114,7 +114,7 @@ export class ViewCollectionComponent implements OnInit {
         return Math.round(amount * 100) / 100;
     }
 
-    getTcgLink(card: YugiohCard) {
-        return YugiohUtilities.getTcgLink(card);
+    getCardLink(card: YugiohCard) {
+        return "/yugioh/" + card.id;
     }
 }
