@@ -60,6 +60,7 @@ import { AlertService } from './error-handling/alert.service';
 import { SpeedrunUpdateArticleComponent } from './blog/components/articles/speedrun-update-article/speedrun-update-article.component';
 import { SelectedCardComponent } from './yugioh/components/selected-card/selected-card.component';
 import { SearchResultsComponent } from './yugioh/components/search-results/search-results.component';
+import { Recap2020Component } from './blog/components/articles/recap2020/recap2020.component';
 
 const routes: Routes = [
     {
@@ -94,6 +95,9 @@ const routes: Routes = [
     },
     {
         path: 'blog/yugioh', component: YugiohArticleComponent
+    },
+    {
+        path: 'blog/recap', component: Recap2020Component
     },
     {
         path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
@@ -184,7 +188,8 @@ const routes: Routes = [
         AlertComponent,
         SpeedrunUpdateArticleComponent,
         SelectedCardComponent,
-        SearchResultsComponent
+        SearchResultsComponent,
+        Recap2020Component
     ],
     imports: [
         BrowserModule,
