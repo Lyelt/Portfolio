@@ -5,7 +5,7 @@ RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
 RUN apt-get install -y nodejs
 
 # copy csproj and restore as distinct layers
-COPY Portfolio/*.sln .
+COPY *.sln .
 COPY Portfolio/*.csproj ./Portfolio/
 RUN dotnet restore
 
