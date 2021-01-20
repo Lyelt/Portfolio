@@ -51,7 +51,7 @@ export class BowlingAddGameComponent implements OnInit {
   }
 
   addGame() {
-    this.newGame = BowlingUtilities.newGame(this.session.id, this.filteredGames.length + 1, this.user);
+    this.newGame = BowlingUtilities.newGame(this.session.id, this.filteredGames.length + 1, this.userId);
   }
 
   saveGame(game: BowlingGame) {
