@@ -1,11 +1,11 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /app
 
 RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
 RUN apt-get install -y nodejs
 
 # copy csproj and restore as distinct layers
-COPY *.sln .
+COPY Portfolio/*.sln .
 COPY Portfolio/*.csproj ./Portfolio/
 RUN dotnet restore
 
@@ -15,7 +15,7 @@ WORKDIR /app/Portfolio
 RUN dotnet publish -c Release -o out
 
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.1 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
 ENV ASPNETCORE_URLS http://*:5000
 WORKDIR /app
 ADD /Portfolio/nginx.conf.sigil /app/nginx.conf.sigil
