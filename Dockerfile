@@ -13,7 +13,7 @@ RUN dotnet restore
 COPY Portfolio/. ./Portfolio/
 WORKDIR /app/Portfolio
 RUN dotnet publish -c Release -o out
-
+RUN sed -i 's/TLSv1.2/TLSv1.0/g' /etc/ssl/openssl.cnf
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
 ENV ASPNETCORE_URLS http://*:5000
