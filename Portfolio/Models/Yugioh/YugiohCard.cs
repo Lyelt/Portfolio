@@ -15,9 +15,9 @@ namespace Portfolio.Models.Yugioh
         public string Name { get; set; }
         public string Type { get; set; }
         public string Desc { get; set; }
-        public string Atk { get; set; }
-        public string Def { get; set; }
-        public string Level { get; set; }
+        public int? Atk { get; set; }
+        public int? Def { get; set; }
+        public int? Level { get; set; }
         public string Race { get; set; }
         public string Attribute { get; set; }
         public int? Scale { get; set; }
@@ -25,7 +25,7 @@ namespace Portfolio.Models.Yugioh
         public List<string> LinkMarkers { get; set; }
         public IEnumerable<CardSet> Card_Sets { get; set; }
         public IEnumerable<CardImage> Card_Images { get; set; }
-        public CardPrices Card_Prices { get; set; }
+        public IEnumerable<CardPrices> Card_Prices { get; set; }
         public BanlistInfo Banlist_Info { get; set; }
         public string Archetype { get; set; }
     }
@@ -36,6 +36,7 @@ namespace Portfolio.Models.Yugioh
         public string Set_Name { get; set; }
         public string Set_Code { get; set; }
         public string Set_Rarity { get; set; }
+        public string Set_Rarity_Code { get; set; }
         public string Set_Price { get; set; }
     }
 
@@ -54,6 +55,7 @@ namespace Portfolio.Models.Yugioh
         public decimal? Tcgplayer_Price { get; set; }
         public decimal? Ebay_Price { get; set; }
         public decimal? Amazon_Price { get; set; }
+        public decimal? Coolstuffinc_Price { get; set; }
     }
 
     public class BanlistInfo
@@ -61,6 +63,5 @@ namespace Portfolio.Models.Yugioh
         public BanlistInfo() { }
         public string Ban_Tcg { get; set; }
         public string Ban_Ocg { get; set; }
-        public string Ban_Goat { get; set; }
     }
 }

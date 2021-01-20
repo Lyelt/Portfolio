@@ -40,8 +40,8 @@ export class CardSearchComponent implements OnInit {
     }
 
     onSearch(e) {
-        let filters: PropertyFilter[] = [{ name: "name", value: e }];
-        let filter: YugiohCardFilter = {
+        const filters: PropertyFilter[] = [{ name: "name", value: e }];
+      const filter: YugiohCardFilter = {
             pageNumber: 1,
             count: 20,
             filters: filters
@@ -59,11 +59,11 @@ export class CardSearchComponent implements OnInit {
     }
 
     getSetCard(card: YugiohCard) {
-        return this.collection.cardIds.find(c => c.id == card.id);
+        return this.collection.cardIds.find(c => c.id === card.id);
     }
 
     getCardDisplay(card: YugiohCard) {
-        return "$" + card.card_Prices.tcgplayer_Price + " - " + card.name;
+        return "$" + card.card_Prices[0].tcgplayer_Price + " - " + card.name;
     }
 
     redirectToTcgPlayer(event, card) {

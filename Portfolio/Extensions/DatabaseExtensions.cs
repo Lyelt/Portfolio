@@ -17,10 +17,10 @@ namespace Portfolio.Extensions
             string connStr = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
             services
-                .AddDbContext<PortfolioContext>(options => options.UseMySql(connStr))
-                .AddDbContext<SpeedrunContext>(options => options.UseMySql(connStr))
-                .AddDbContext<BowlingContext>(options => options.UseMySql(connStr))
-                .AddDbContext<YugiohContext>(options => options.UseMySql(connStr));
+                .AddDbContext<PortfolioContext>(options => options.UseMySql(connStr, ServerVersion.AutoDetect(connStr)))
+                .AddDbContext<SpeedrunContext>(options => options.UseMySql(connStr, ServerVersion.AutoDetect(connStr)))
+                .AddDbContext<BowlingContext>(options => options.UseMySql(connStr, ServerVersion.AutoDetect(connStr)))
+                .AddDbContext<YugiohContext>(options => options.UseMySql(connStr, ServerVersion.AutoDetect(connStr)));
 
             return services;
         }

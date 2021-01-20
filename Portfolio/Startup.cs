@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Portfolio.Extensions;
 using System;
 using Portfolio.Data;
+using Microsoft.Extensions.Hosting;
 
 namespace Portfolio
 {
@@ -32,7 +33,7 @@ namespace Portfolio
 
             services.AddHttpClient<YugiohApiClient>(client =>
             {
-                client.BaseAddress = new Uri(Configuration.GetValue("Api:Yugioh:CardEndpoint", "https://db.ygoprodeck.com/api/v5/cardinfo.php"));
+                client.BaseAddress = new Uri(Configuration.GetValue("Api:Yugioh:CardEndpoint", "https://db.ygoprodeck.com/api/v7/cardinfo.php"));
             });
 
             services.AddMvc(config =>
@@ -42,8 +43,8 @@ namespace Portfolio
                                 .Build();
                 config.Filters.Add(new AuthorizeFilter(policy));
             })
-            .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
+            .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -55,12 +56,12 @@ namespace Portfolio
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                //app.UseDatabaseErrorPage();
             }
 
             app.UseStaticFiles();
@@ -72,19 +73,18 @@ namespace Portfolio
             });
 
             app.UseAuthentication();
-
-            app.UseMvc(routes =>
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                //endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllerRoute("default", "{controller}/{action=Index}/{id?}");
+                //routes.MapRoute(
+                //    name: "default",
+                //    template: "{controller}/{action=Index}/{id?}");
             });
 
             app.UseSpa(spa =>
             {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
-
                 spa.Options.SourcePath = "ClientApp";
 
                 if (env.IsDevelopment())

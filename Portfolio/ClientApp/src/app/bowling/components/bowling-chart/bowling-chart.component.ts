@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, SimpleChanges, OnChanges, Output, EventEmitter } from '@angular/core';
-import { colorSets as ngxChartsColorsets } from '@swimlane/ngx-charts/release/utils/color-sets';
+import { colorSets as ngxChartsColorsets } from '@swimlane/ngx-charts';
 import * as d3 from 'd3';
 import { BowlingSeries, SingleSeriesEntry } from '../../models/bowling-series';
 import { SeriesCategory } from '../../models/series-category';
@@ -18,7 +18,7 @@ export class BowlingChartComponent implements OnInit, OnChanges {
     @ViewChild('barChart') barChart: BarHorizontalComponent;
     @Output() dataPointClicked: EventEmitter<any> = new EventEmitter();
 
-    initialized: boolean = false;
+    initialized = false;
 
     bowlingData: BowlingSeries[];
     barChartData: SingleSeriesEntry[];
@@ -26,7 +26,7 @@ export class BowlingChartComponent implements OnInit, OnChanges {
 
     dataLoading = true;
     colorScheme: any;
-    schemeType: string = 'ordinal';
+    schemeType = 'ordinal';
     selectedColorScheme: string;
     curve = d3.curveMonotoneX;
 
@@ -77,8 +77,8 @@ export class BowlingChartComponent implements OnInit, OnChanges {
     }
 
     select(data) {
-        if (data.name == null) {
-            this.bowlingData = this.bowlingData.filter(s => s.name != data);
+        if (data.name === null) {
+            this.bowlingData = this.bowlingData.filter(s => s.name !== data);
             console.log("Data for user" + data + " filtered out");
         }
         else {

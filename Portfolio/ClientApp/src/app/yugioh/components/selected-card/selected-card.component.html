@@ -11,7 +11,7 @@
     <div class="col-span-5 flex flex-col">
       <div class="flex mb-1 pb-1 border-b">
         <p class="w-2/3">TCGPlayer Market Price:</p>
-        <a class="w-1/3 text-right link" [href]="getTcgLink(card)" target="_blank">${{card.card_Prices.tcgplayer_Price.toFixed(2)}}</a>
+        <a class="w-1/3 text-right link" [href]="getTcgLink(card)" target="_blank">${{card.card_Prices[0].tcgplayer_Price.toFixed(2)}}</a>
       </div>
       <div *ngFor="let set of getSortedCardSets(card)" class="flex mb-1">
         <a class="w-1/3 link" title="View {{set.set_Name}} on TCGPlayer" [href]="getTcgSetLink(set)" target="_blank">{{set.set_Code}}</a>

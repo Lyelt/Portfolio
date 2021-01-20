@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialogConfig, MatDialog } from '@angular/material';
+import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
 import { BowlingStartSessionComponent } from '../bowling-start-session/bowling-start-session.component';
 import { BowlingChartComponent } from '../bowling-chart/bowling-chart.component';
 import { SeriesCategory, SeriesCategoryEnum } from '../../models/series-category';

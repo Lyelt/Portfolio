@@ -1,7 +1,7 @@
 <div class="flex flex-col">
   <h2 class="font-semibold text-center my-6">Session (ID #{{session.id}}) on {{session.date | date: 'mediumDate'}}</h2>
   <div class="flex items-center justify-around flex-wrap">
-    <app-bowling-select-user [initialUserId]="currentUserId"
+    <app-bowling-select-user [initialUserId]="userId"
                              [label]="'View games for user...'"
                              (selectionChange)="selectUser($event)" #userSelect></app-bowling-select-user>
     <button type="button" class="btn btn-primary" (click)="addGame()">Add Game</button>

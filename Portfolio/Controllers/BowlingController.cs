@@ -221,6 +221,7 @@ namespace Portfolio.Controllers
                     .Sessions
                     .Include(s => s.Games)
                     .ThenInclude(g => g.Frames)
+                    .AsEnumerable()
                     .Where(s => s.Date > DateTimeOffset.FromUnixTimeMilliseconds(startTime ?? 0) && 
                                 s.Date < DateTimeOffset.FromUnixTimeMilliseconds(endTime ?? new DateTimeOffset(DateTime.Now.AddYears(999)).ToUnixTimeMilliseconds()))
                     .ToList();

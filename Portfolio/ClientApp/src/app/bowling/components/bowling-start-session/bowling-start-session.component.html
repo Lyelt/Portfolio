@@ -1,38 +1,40 @@
 <mat-dialog-content class="flex flex-col">
-  <mat-tab-group (selectedTabChange)="onTabChange($event)" [selectedIndex]="selectedTabIndex" dynamicHeight  mat-align-tabs="center">
-    <mat-tab label="Choose Session">
-      <div class="flex flex-col py-6">
+  <div *ngIf="selectedTabIndex === 0">
+    <div class="flex flex-col py-6">
+      <mat-form-field>
+        <mat-label>Choose a session</mat-label>
+        <mat-select [(ngModel)]="selectedSession" [formControl]="sessionForm.controls['existingSession']">
+          <mat-option></mat-option>
+          <mat-option *ngFor="let session of sessions" [value]="session">{{session.id}}. {{session.date | date: 'mediumDate'}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <span class="font-bold my-1 text-indigo-400 text-center">OR</span>
+      <div class="flex flex-col">
         <mat-form-field>
-          <mat-label>Choose a session</mat-label>
-          <mat-select [(ngModel)]="selectedSession" [formControl]="sessionForm.controls['existingSession']">
-            <mat-option></mat-option>
-            <mat-option *ngFor="let session of sessions" [value]="session">{{session.id}}. {{session.date | date: 'mediumDate'}}</mat-option>
-          </mat-select>
+          <input matInput [matDatepicker]="picker"
+                 [(ngModel)]="selectedDate"
+                 [formControl]="sessionForm.controls['newSession']"
+                 placeholder="Add a new session">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
-        <span class="font-bold my-1 text-indigo-400 text-center">OR</span>
-        <div class="flex flex-col">
-          <mat-form-field>
-            <input matInput [matDatepicker]="picker"
-                   [(ngModel)]="selectedDate"
-                   [formControl]="sessionForm.controls['newSession']"
-                   placeholder="Add a new session">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
-        </div>
-        <div class="flex items-center justify-end">
-          <button type="button" class="btn btn-primary px-8" (click)="startAddingGames()" [disabled]="this.sessionForm.hasError('missingNewOrExisting')">
-            Go
-          </button>
-        </div>
       </div>
-    </mat-tab>
-    <mat-tab label="View Games" [disabled]="this.sessionForm.hasError('missingNewOrExisting')">
-      <app-bowling-add-game *ngIf="selectedSession" [session]="selectedSession" #addGames></app-bowling-add-game>
+      <div class="flex items-center justify-end">
+        <button type="button" class="btn btn-primary px-8" (click)="startAddingGames()" [disabled]="this.sessionForm.hasError('missingNewOrExisting')">
+          Go
+        </button>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="selectedTabIndex === 1">
+    <div class="flex flex-col">
+      <app-bowling-add-game *ngIf="selectedSession" [session]="selectedSession" [userName]="selectedSessionUser"></app-bowling-add-game>
       <div class="flex justify-between mt-6">
         <button type="button" class="btn btn-secondary" (click)="changeTab(0)">Back</button>
         <button type="button" class="btn btn-primary" (click)="close()">Done</button>
       </div>
-    </mat-tab>
-  </mat-tab-group>
+    </div>
+  </div>
+    <!--<mat-tab label="View Games" [disabled]="this.sessionForm.hasError('missingNewOrExisting')">-->
+      
 </mat-dialog-content>

@@ -20,9 +20,17 @@ namespace Portfolio.Data
         {
             var response = await _client.GetAsync("");
             if (response.IsSuccessStatusCode)
-                return await response.Content.ReadAsAsync<IEnumerable<YugiohCard>>();
+            {
+                var wrapper = await response.Content.ReadAsAsync<YugiohCardApiWrapper>();
+                return wrapper.Data;
+            }
 
             return new List<YugiohCard>();
+        }
+
+        private class YugiohCardApiWrapper
+        {
+            public IEnumerable<YugiohCard> Data { get; set; }
         }
     }
 }

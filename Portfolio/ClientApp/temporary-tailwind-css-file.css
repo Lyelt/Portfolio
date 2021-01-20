@@ -1,0 +1,164 @@
+/* use this file exclusively for global styling */
+@import url("https://fonts.googleapis.com/css?family=Raleway:300,700|Material+Icons");
+@import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
+@tailwind base;
+@tailwind components;
+.btn {
+  @apply font-semibold py-2 px-4 rounded;
+}
+
+.btn:disabled {
+  @apply opacity-75 pointer-events-none;
+}
+
+.btn-primary {
+  @apply bg-indigo-500 text-indigo-100;
+}
+
+.btn-secondary {
+  @apply bg-pink-500 text-pink-100;
+}
+
+.btn:hover {
+  @apply bg-gray-200;
+}
+
+.btn-primary:hover {
+  @apply bg-indigo-600;
+}
+
+.btn-secondary:hover {
+  @apply bg-pink-600;
+}
+
+.link {
+  @apply text-indigo-400 font-semibold underline cursor-pointer;
+}
+
+.link:hover {
+  @apply text-indigo-500;
+}
+
+.blog-date {
+  @apply text-gray-500 text-xs font-medium uppercase tracking-wider mb-1;
+}
+
+.blog-h3 {
+  @apply font-semibold text-lg mt-6;
+}
+
+.blog-card {
+  @apply rounded shadow-xl p-2 bg-white;
+}
+
+.nav-link {
+  @apply mx-2 uppercase tracking-wide cursor-pointer;
+}
+
+.nav-link-hover:hover {
+  @apply border-b;
+}
+
+.nav-link:focus {
+  @apply outline-none border-b border-indigo-500;
+}
+
+@screen sm {
+  .nav-link {
+    @apply mx-4;
+  }
+}
+.last-menu-item {
+  @apply font-bold uppercase tracking-wide border-solid border-0 border-t border-gray-400 -mb-2 !important;
+}
+
+.last-menu-item:hover {
+  @apply bg-indigo-200 !important;
+}
+
+.menu-item:hover {
+  @apply bg-indigo-100 !important;
+}
+
+.bg-wave {
+  stroke-dasharray: 2100;
+  stroke-dashoffset: 2100;
+}
+
+.bg-wave.wave-1 {
+  animation: line-anim 1s ease forwards;
+}
+
+.bg-wave.wave-2 {
+  animation: line-anim 2s ease forwards;
+}
+
+.bg-wave.wave-3 {
+  animation: line-anim 3s ease forwards;
+}
+
+.bg-wave.wave-4 {
+  animation: line-anim 4s ease forwards;
+}
+
+@keyframes line-anim {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@tailwind utilities;
+/* purgecss start ignore */
+/* Make the legend labels flow horizontally and wrap instead of one-per-line. */
+.chart-legend .legend-labels {
+  white-space: inherit !important;
+  background: inherit !important;
+  text-align: center !important;
+}
+
+.chart-legend ul, .chart-legend li {
+  display: inline-block;
+}
+
+/*
+  For some reason the horizontal bar chart refuses to be responsive unless there is a legend present.
+  But I don't actually want a legend in this case... So I'm enabling it and then hiding it. Wonderful!
+*/
+.chart-container .chart-horizontal .chart-legend {
+  opacity: 0 !important;
+}
+
+/* Some manual overriding of dialog window responsive sizing */
+@media only screen and (min-width: 640px) {
+  .mat-dialog-container {
+    min-width: 560px;
+    max-width: 560px;
+  }
+}
+@media only screen and (min-width: 900px) {
+  .mat-dialog-container {
+    min-width: 800px;
+    max-width: 800px;
+  }
+}
+@media only screen and (min-width: 1250px) {
+  .mat-dialog-container {
+    min-width: 1080px;
+    max-width: 1080px;
+  }
+}
+.ng-autocomplete, .autocomplete-container {
+  @apply rounded-l-full rounded-r-none w-auto mb-2 !important;
+}
+
+.autocomplete-container {
+  @apply shadow-md !important;
+}
+
+.autocomplete-container .input-container input {
+  @apply rounded-l-full rounded-r-none bg-gray-300 !important;
+}
+.autocomplete-container .input-container input:focus {
+  @apply bg-white !important;
+}
+
+/* purgecss end ignore */

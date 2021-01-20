@@ -8,29 +8,30 @@ import { User } from '../../../auth/user';
   styleUrls: ['./yugioh-select-user.component.scss']
 })
 export class YugiohSelectUserComponent implements OnInit {
-    @Input() label: string;
-    @Input() initialUserId: string;
+  @Input() label: string;
+  @Input() initialUserId: string;
 
-    duelists: User[] = [];
-    currentUserId: string = this.initialUserId;
+  duelists: User[] = [];
+  currentUserId: string;
 
-    @Output() selectionChange = new EventEmitter();
+  @Output() selectionChange = new EventEmitter();
 
-    constructor(private yugiohService: YugiohService) { }
+  constructor(private yugiohService: YugiohService) { }
 
-    ngOnInit() {
-        this.yugiohService.getDuelists().subscribe(data => {
-            this.duelists = data;
-            this.currentUserId = this.initialUserId;
-        });
-    }
+  ngOnInit() {
+    this.currentUserId = this.initialUserId;
+    this.yugiohService.getDuelists().subscribe(data => {
+      this.duelists = data;
+      this.currentUserId = this.initialUserId;
+    });
+  }
 
-    changeUser(userId: string) {
-        this.currentUserId = userId;
-    }
+  changeUser(userId: string) {
+    this.currentUserId = userId;
+  }
 
-    selectUser() {
-        this.selectionChange.emit(this.currentUserId);
-    }
+  selectUser() {
+    this.selectionChange.emit(this.currentUserId);
+  }
 
 }
