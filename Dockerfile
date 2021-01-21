@@ -4,9 +4,6 @@ WORKDIR /app
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y nodejs
 
-RUN sed -i 's/TLSv1.2/TLSv1.0/g' /etc/ssl/openssl.cnf
-RUN sed -i "s|DEFAULT@SECLEVEL=2|DEFAULT@SECLEVEL=1|g" /etc/ssl/openssl.cnf
-
 # copy csproj and restore as distinct layers
 COPY *.sln .
 COPY Portfolio/*.csproj ./Portfolio/
@@ -23,4 +20,8 @@ WORKDIR /app
 ADD /Portfolio/nginx.conf.sigil /app/nginx.conf.sigil
 COPY /Portfolio/appsettings.json /app/
 COPY --from=build /app/Portfolio/out ./
+
+RUN sed -i 's/TLSv1.2/TLSv1.0/g' /etc/ssl/openssl.cnf
+RUN sed -i "s|DEFAULT@SECLEVEL=2|DEFAULT@SECLEVEL=1|g" /etc/ssl/openssl.cnf
+
 ENTRYPOINT ["dotnet", "Portfolio.dll"]
