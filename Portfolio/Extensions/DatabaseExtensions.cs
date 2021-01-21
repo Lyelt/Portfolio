@@ -26,7 +26,7 @@ namespace Portfolio.Extensions
         private static DbContextOptionsBuilder GetOptions(DbContextOptionsBuilder options)
         {
             var connStr = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-            var version = ServerVersion.AutoDetect(connStr);
+            var version = new MySqlServerVersion(new Version(5, 7, 28));// ServerVersion.AutoDetect(connStr);
 
             return options
                 .UseMySql(connStr, version)
