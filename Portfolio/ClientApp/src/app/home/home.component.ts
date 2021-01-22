@@ -22,6 +22,24 @@ export class HomeComponent implements OnInit {
   portfolioBlog = "/blog/portfolio";
   portfolioGit = "https://github.com/Lyelt/Portfolio";
 
+  ygoName = "YGO Collection Keeper";
+  ygoDesc = "A collection keeper and card lookup for a deck building trading card game called Yu-Gi-Oh!";
+  ygoBlog = "/blog/yugioh";
+  ygoDemo = "/yugioh";
+
+  turnName = "Turn Tracker";
+  turnDesc = "A basic tracker for turn order in board games or tabletop games.";
+  turnBlog = "/blog/initiative";
+  turnDemo = "/initiative";
+
+  programmingTitle = "Programming & Back-End";
+  programmingSkills = ["C# and the .NET ecosystem", "SQL Server / MySQL Databases", "Java"];
+
+  frontendTitle = "Front-End";
+  frontendSkills = ["HTML, CSS, Javascript, & jQuery", "Typescript / Angular", "Material, Bootstrap, & TailwindCSS"];
+
+  ciTitle = "Continuous Integration & Deployment";
+  ciSkills = ["Docker / dokku", "Jenkins", "Azure DevOps"];
 
   constructor(private router: Router) {
 

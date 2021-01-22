@@ -1,1 +1,20 @@
-<p>demo works!</p>
+<div class="text-center rounded shadow-md mb-6">
+  <div class="p-4 bg-gray-200 dark:bg-gray-900 border-b border-gray-300">
+    <p class="font-medium">
+      {{name}}
+    </p>
+    <p class="text-sm">
+      {{description}}
+    </p>
+  </div>
+  <div class="flex justify-center py-1 bg-white dark:bg-pink-700">
+    <a [href]="blogUrl" target="_blank" class="flex items-center px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-pink-900">
+      <mat-icon class="mr-1">menu_book</mat-icon>
+      <p>Read More</p>
+    </a>
+    <a [href]="demoUrl" class="flex items-center px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-pink-900">
+      <mat-icon class="mr-1">visibility</mat-icon>
+      <p>View in Action</p>
+    </a>
+  </div>
+</div>

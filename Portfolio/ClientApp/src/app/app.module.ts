@@ -66,6 +66,8 @@ import { DemoComponent } from './home/components/demo/demo.component';
 import { SectionComponent } from './home/components/section/section.component';
 import { SkillsComponent } from './home/components/skills/skills.component';
 import { SectionTitleComponent } from './home/components/section-title/section-title.component';
+import { SkillsSectionComponent } from './home/components/skills-section/skills-section.component';
+import { ThemeToggleComponent } from './shared/components/theme-toggle/theme-toggle.component';
 
 const routes: Routes = [
     {
@@ -199,7 +201,9 @@ const routes: Routes = [
         DemoComponent,
         SectionComponent,
         SkillsComponent,
-        SectionTitleComponent
+        SectionTitleComponent,
+        SkillsSectionComponent,
+        ThemeToggleComponent
     ],
     imports: [
         BrowserModule,

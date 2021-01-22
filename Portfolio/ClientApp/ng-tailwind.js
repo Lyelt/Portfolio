@@ -6,13 +6,14 @@ module.exports = {
   // Sass
   sass: true,
   // PurgeCSS Settings
-  purge: false,
+  purge: true,
   keyframes: false,
   fontFace: false,
   rejected: false,
-  whitelist: [],
+  whitelist: ['p-0.5'],
   whitelistPatterns: [],
   whitelistPatternsChildren: [],
+  watchRelatedFiles: [],
   extensions: [
     '.ts',
     '.html',

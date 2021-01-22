@@ -1,5 +1,5 @@
 <form (ngSubmit)="emitPlayerEndedTurn()">
-  <div class="bg-gray-300 rounded-full px-4 py-2 mt-4 flex justify-between items-center" [class.animate-border]="player.isActive">
+  <div class="bg-gray-300 dark:bg-gray-500 rounded-full px-4 py-2 mt-4 flex justify-between items-center" [class.animate-border]="player.isActive">
     <mat-icon *ngIf="!player.isActive" title="Remove {{player.name}}"
               class="cursor-pointer h-6"
               (click)="emitPlayerRemoved()" [@fade]>clear</mat-icon>

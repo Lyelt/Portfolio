@@ -13,21 +13,6 @@ export class HeaderComponent implements OnInit {
 
   }
 
-  toggleDarkMode() {
-    if (!("theme" in localStorage)) {
-      localStorage.theme = "light";
-    }
-
-    localStorage.theme = localStorage.theme === "light" ? "dark" : "light";
-    if (localStorage.theme === "dark") {
-      document.querySelector("html").classList.add("dark");
-    }
-    else {
-      document.querySelector("html").classList.remove("dark");
-    }
-
-  }
-
   scrollToElement(elementId: string) {
     const el = document.querySelector("#" + elementId);
     if (el) {

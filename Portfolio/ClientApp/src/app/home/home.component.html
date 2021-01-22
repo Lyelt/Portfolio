@@ -14,11 +14,9 @@
 </div>
 
 <div class="container mx-auto px-4 max-w-sm max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-
   <!-- Projects -->
   <app-section id="projects">
     <app-section-title>Personal Projects</app-section-title>
-
     <app-project [name]="dndName"
                  [description]="dndDesc"
                  [blogUrl]="dndBlog"
@@ -34,123 +32,34 @@
                  [blogUrl]="portfolioBlog"
                  [githubUrl]="portfolioGit"></app-project>
 
-
-    <div class="flex flex-col border-b-2 border-pink-400 py-4 my-8 mx-2 leading-tight text-left text-gray-600">
+    <div class="flex flex-col border-b-2 border-pink-400 dark:border-pink-700 py-4 my-8 mx-2 leading-tight text-left text-gray-600 dark:text-gray-200">
       <h2 class="font-semibold text-md">Live Demos</h2>
       <p class="text-sm py-2">You can see these particular projects in action and try them out yourself!</p>
     </div>
+    <app-demo [name]="ygoName"
+              [description]="ygoDesc"
+              [blogUrl]="ygoBlog"
+              [demoUrl]="ygoDemo"></app-demo>
 
-    <div class="text-center bg-white rounded shadow-md mb-6">
-      <div class="p-4 bg-gray-200 border-b border-gray-300">
-        <p class="font-medium">
-          YGO Collection Keeper
-        </p>
-        <p class="text-sm">
-          A collection keeper and card lookup for a deck building trading card game called Yu-Gi-Oh!
-        </p>
-      </div>
-      <div class="flex justify-center py-1">
-        <a href="/blog/yugioh" target="_blank" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
-          <mat-icon class="mr-1">menu_book</mat-icon>
-          <p>Read More</p>
-        </a>
-        <a href="/yugioh" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
-          <mat-icon class="mr-1">visibility</mat-icon>
-          <p>View in Action</p>
-        </a>
-      </div>
-    </div>
-
-    <div class="text-center bg-white rounded shadow-md">
-      <div class="p-4 bg-gray-200 border-b border-gray-300">
-        <p class="font-medium">
-          Turn Tracker
-        </p>
-        <p class="text-sm">
-          A basic tracker for turn order in board games or tabletop games.
-        </p>
-      </div>
-      <div class="flex justify-center py-1">
-        <a href="/blog/initiative" target="_blank" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
-          <mat-icon class="mr-1">menu_book</mat-icon>
-          <p>Read More</p>
-        </a>
-        <a href="/initiative" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
-          <mat-icon class="mr-1">visibility</mat-icon>
-          <p>View in Action</p>
-        </a>
-      </div>
-    </div>
+    <app-demo [name]="turnName"
+              [description]="turnDesc"
+              [blogUrl]="turnBlog"
+              [demoUrl]="turnDemo"></app-demo>
   </app-section>
 
   <!-- Skills and Experience -->
-  <section class="pt-32 flex flex-col" id="skills">
-    <div class="flex justify-start border-l-4 border-pink-400 px-2 py-2 mb-6 font-semibold leading-tight">
-      <h2 class="text-gray-600 text-lg text-left">Skills and Experience</h2>
-    </div>
-
-    <div class="text-left p-2 mt-1">
-      <h3 class="text-gray-600 text-md mb-2">Programming & Back-End</h3>
-      <div class="font-medium">
-        <div class="flex items-center py-2 px-1 rounded bg-gray-200">
-          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
-          <span class="inline-block px-2">C# and the .NET ecosystem</span>
-        </div>
-        <div class="flex items-center py-2 px-1 rounded">
-          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
-          <span class="inline-block px-2">SQL Server / MySQL Databases</span>
-        </div>
-        <div class="flex items-center py-2 px-1 bg-gray-200 rounded">
-          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
-          <span class="inline-block px-2">Java</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="text-left p-2 mt-4">
-      <h3 class="text-gray-600 text-md mb-2">Front-End</h3>
-      <div class="font-medium">
-        <div class="flex items-center py-2 px-1 rounded bg-gray-200">
-          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
-          <span class="inline-block px-2">HTML, CSS, Javascript, & jQuery</span>
-        </div>
-        <div class="flex items-center py-2 px-1 rounded">
-          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
-          <span class="inline-block px-2">Typescript / Angular</span>
-        </div>
-        <div class="flex items-center py-2 px-1 rounded bg-gray-200">
-          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
-          <span class="inline-block px-2">Material, Bootstrap, & TailwindCSS</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="text-left p-2 mt-4">
-      <h3 class="text-gray-600 text-md mb-2">Continuous Integration & Deployment</h3>
-      <div class="font-medium">
-        <div class="flex items-center py-2 px-1 rounded bg-gray-200">
-          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
-          <span class="inline-block px-2">Docker</span>
-        </div>
-        <div class="flex items-center py-2 px-1 rounded">
-          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
-          <span class="inline-block px-2">Jenkins</span>
-        </div>
-        <div class="flex items-center py-2 px-1 rounded bg-gray-200">
-          <mat-icon class="text-indigo-400">check_circle_outline</mat-icon>
-          <span class="inline-block px-2">Dokku</span>
-        </div>
-      </div>
-    </div>
-
-  </section>
+  <app-section id="skills">
+    <app-section-title>Skills and Experience</app-section-title>
+    <app-skills>
+      <app-skills-section [title]="programmingTitle" [skills]="programmingSkills"></app-skills-section>
+      <div class="mt-4"><app-skills-section [title]="frontendTitle" [skills]="frontendSkills"></app-skills-section></div>
+      <div class="mt-4"><app-skills-section class="mt-4" [title]="ciTitle" [skills]="ciSkills"></app-skills-section></div>
+    </app-skills>
+  </app-section>
 
   <!-- About -->
-  <section class="pt-32 flex flex-col" id="about">
-    <div class="flex justify-start border-l-4 border-pink-400 px-2 py-2 mb-6 font-semibold leading-tight">
-      <h2 class="text-gray-600 text-lg text-left">About Me</h2>
-    </div>
-
+  <app-section id="about">
+    <app-section-title>About Me</app-section-title>
     <p>
       In 2014, I graduated high school with absolutely no clue what I wanted to do in life. I knew I liked video games, though, so I decided to try my hand at a computer science degree.
     </p>
@@ -160,18 +69,15 @@
     <p class="mt-4">
       Aside from my aforementioned love of video games, I also enjoy board games, tennis, bowling, playing guitar, and cooking. Check out <a class="link" href="#" routerLink="blog/portfolio">my portfolio blog post</a> for a look at some of the software I've built around my hobbies.
     </p>
-  </section>
+  </app-section>
 
   <!-- Contact -->
-  <section class="pt-32 flex flex-col" id="contact">
-    <div class="flex justify-start border-l-4 border-pink-400 px-2 py-2 mb-6 font-semibold leading-tight">
-      <h2 class="text-gray-600 text-lg text-left">Contact Me</h2>
-    </div>
-
+  <app-section id="contact">
+    <app-section-title>Contact Me</app-section-title>
     <div class="flex flex-col">
       <div class="flex flex-row align-center justify-start py-3"><mat-icon class="text-indigo-400">email</mat-icon><span class="ml-16">nicholas.ghobrial@gmail.com</span></div>
       <div class="flex flex-row align-center justify-start py-3"><mat-icon class="text-indigo-400">call</mat-icon><span class="ml-16">(203) 318-4094</span></div>
       <div class="flex flex-row align-center justify-start py-3"><mat-icon class="text-indigo-400">location_on</mat-icon><span class="ml-16"><span class="text-xs font-light mr-1">near</span><a class="link text-gray-600" href="https://www.google.com/maps/place/New+Haven,+CT">New Haven, CT</a></span></div>
     </div>
-  </section>
+  </app-section>
 </div>

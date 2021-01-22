@@ -3,7 +3,7 @@
     <h1 class="font-bold text-2xl mb-4">
       This is my <span class="text-indigo-400">blog</span>.
     </h1>
-    <p class="max-w-xl text-gray-600">
+    <p class="max-w-xl text-gray-600 dark:text-gray-300">
       At least, it sort of resembles a blog. I'll be recording some thoughts about things I've created and learned as a developer.
     </p>
   </section>
@@ -14,48 +14,8 @@
 </div>
 
 <div class="container mx-auto px-4 mt-8 max-w-sm max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-  <div class="flex flex-col items-start mb-10">
-    <div class="blog-date">December 18, 2020</div>
-    <h2 routerLink="recap" class="link font-bold">A look back at 2020 &rarr;</h2>
-  </div>
-
-  <div class="flex flex-col items-start mb-10">
-    <div class="blog-date">June 14, 2020</div>
-    <h2 routerLink="speedrun-update" class="link font-bold">Overhauling the SM64 time tracker &rarr;</h2>
-  </div>
-
-  <div class="flex flex-col items-start mb-10">
-    <div class="blog-date">March 10, 2020</div>
-    <h2 routerLink="yugioh" class="link font-bold">Another hobby, another project (Yu-Gi-Oh!) &rarr;</h2>
-  </div>
-
-  <div class="flex flex-col items-start mb-10">
-    <div class="blog-date">November 24, 2019</div>
-    <h2 routerLink="initiative" class="link font-bold">Migrating the core features of the original encounter simulator &rarr;</h2>
-  </div>
-
-  <div class="flex flex-col items-start mb-10">
-    <div class="blog-date">October 2, 2019</div>
-    <h2 routerLink="bowling" class="link font-bold">Tracking bowling scores and visualizing interesting statistics &rarr;</h2>
-  </div>
-
-  <div class="flex flex-col items-start mb-10">
-    <div class="blog-date">October 1, 2019</div>
-    <h2 routerLink="speedrun" class="link font-bold">Uploading and comparing Super Mario 64 speedrun times &rarr;</h2>
-  </div>
-
-  <div class="flex flex-col items-start mb-10">
-    <div class="blog-date">October 1, 2019</div>
-    <h2 routerLink="portfolio" class="link font-bold">Building my portfolio website &rarr;</h2>
-  </div>
-
-  <!--<div class="flex flex-col items-start mb-10">
-    <div class="blog-date">October 1, 2019</div>
-    <h2 routerLink="typing" class="link font-bold">Analyzing typing speed, patterns, and statistics &rarr;</h2>
-  </div>-->
-
-  <div class="flex flex-col items-start">
-    <div class="blog-date">September 30, 2019</div>
-    <h2 routerLink="encounter" class="link font-bold">A Dungeons and Dragons encounter tracker &rarr;</h2>
+  <div class="flex flex-col items-start mb-10" *ngFor="let blog of blogs">
+    <app-blog-date>{{blog.date}}</app-blog-date>
+    <h2 [routerLink]="blog.link" class="link font-bold">{{blog.title}} &rarr;</h2>
   </div>
 </div>
