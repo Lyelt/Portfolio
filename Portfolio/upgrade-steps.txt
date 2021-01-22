@@ -1,0 +1,27 @@
+# Steps for upgrading .NET, dokku:mysql, and backing up/restoring portfolioDB
+
+wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+
+sudo apt-get update; \
+sudo apt-get install -y apt-transport-https && \
+sudo apt-get update && \
+sudo apt-get install -y aspnetcore-runtime-5.0
+
+dokku mysql:export portfolioDB > dump.sql
+
+sudo dokku plugin:uninstall mysql
+sudo dokku plugin:install https://github.com/dokku/dokku-mysql.git mysql
+
+dokku mysql:clone portfolioDB portfolioDB-backup
+dokku mysql:unlink portfolioDB portfolio
+dokku mysql:destroy portfolioDB
+dokku mysql:create portfolioDB
+dokku mysql:link portfolioDB portfolio
+dokku mysql:promote portfolioDB portfolio
+dokku mysql:import portfolioDB < dump.sql
+
+cat /var/lib/dokku/services/mysql/portfolioDB/PASSWORD
+dokku config:set portfolio CONNECTION_STRING="Server=***********;Database=portfolioDB;Uid=mysql;Pwd=*************"
+
+
