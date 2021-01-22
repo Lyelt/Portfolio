@@ -5,8 +5,7 @@
     </h1>
     <p class="max-w-xl">
       I'm a software engineer from Connecticut working for
-      <a class="link" href="https://capsuletech.com/capsule-clinical-surveillance">Capsule Technologies</a>
-      (formerly Bernoulli Health), a medical device software company.
+      <a class="link" href="https://capsuletech.com/capsule-clinical-surveillance">Capsule Technologies</a>, a medical device software company.
     </p>
   </section>
   <div class="w-full opacity-75 -mt-8 md:-mt-12 xl:-mt-18">
@@ -17,73 +16,24 @@
 <div class="container mx-auto px-4 max-w-sm max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
 
   <!-- Projects -->
-  <section class="pt-32 flex flex-col" id="projects">
-    <div class="flex justify-between border-l-4 border-pink-400 px-2 py-2 mb-6 font-semibold leading-tight">
-      <h2 class="text-gray-600 text-lg text-left">Personal Projects</h2>
-    </div>
+  <app-section id="projects">
+    <app-section-title>Personal Projects</app-section-title>
 
-    <div class="text-center bg-white rounded shadow-md mb-6">
-      <div class="p-4 bg-gray-200">
-        <p class="font-medium">
-          D&D Encounter Simulator
-        </p>
-        <p class="text-sm">
-          A tool used for tracking initiatives and statistics during a D&D encounter.
-        </p>
-      </div>
-      <div class="flex justify-center py-1 border-t border-gray-300">
-        <a href="/blog/encounter" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
-          <mat-icon class="mr-1">menu_book</mat-icon>
-          <p>Read More</p>
-        </a>
-        <a href="https://github.com/Lyelt/EncounterSimulator" target="_blank" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
-          <mat-icon class="mr-1">open_in_new</mat-icon>
-          <p>View on GitHub</p>
-        </a>
-      </div>
-    </div>
+    <app-project [name]="dndName"
+                 [description]="dndDesc"
+                 [blogUrl]="dndBlog"
+                 [githubUrl]="dndGit"></app-project>
 
-    <div class="text-center bg-white rounded shadow-md mb-6">
-      <div class="p-4 bg-gray-200 border-b border-gray-300">
-        <p class="font-medium">
-          Typing Analyzer
-        </p>
-        <p class="text-sm">
-          Gather interesting and useful stats about your typing patterns.
-        </p>
-      </div>
-      <div class="flex justify-center py-1">
-        <a href="/blog/typing" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
-          <mat-icon class="mr-1">menu_book</mat-icon>
-          <p>Read More</p>
-        </a>
-        <a href="https://github.com/Lyelt/TypingAnalyzer" target="_blank" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
-          <mat-icon class="mr-1">open_in_new</mat-icon>
-          <p>View on GitHub</p>
-        </a>
-      </div>
-    </div>
+    <app-project [name]="typingName"
+                 [description]="typingDesc"
+                 [blogUrl]="typingBlog"
+                 [githubUrl]="typingGit"></app-project>
 
-    <div class="text-center bg-white rounded shadow-md mb-6">
-      <div class="p-4 bg-gray-200 border-b border-gray-300">
-        <p class="font-medium">
-          My Portfolio
-        </p>
-        <p class="text-sm">
-          This website! Includes neat web applications for some of my hobbies including bowling and speedrunning.
-        </p>
-      </div>
-      <div class="flex justify-center py-1">
-        <a href="/blog/portfolio" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
-          <mat-icon class="mr-1">menu_book</mat-icon>
-          <p>Read More</p>
-        </a>
-        <a href="https://github.com/Lyelt/Portfolio" target="_blank" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
-          <mat-icon class="mr-1">open_in_new</mat-icon>
-          <p>View on GitHub</p>
-        </a>
-      </div>
-    </div>
+    <app-project [name]="portfolioName"
+                 [description]="portfolioDesc"
+                 [blogUrl]="portfolioBlog"
+                 [githubUrl]="portfolioGit"></app-project>
+
 
     <div class="flex flex-col border-b-2 border-pink-400 py-4 my-8 mx-2 leading-tight text-left text-gray-600">
       <h2 class="font-semibold text-md">Live Demos</h2>
@@ -131,7 +81,7 @@
         </a>
       </div>
     </div>
-  </section>
+  </app-section>
 
   <!-- Skills and Experience -->
   <section class="pt-32 flex flex-col" id="skills">

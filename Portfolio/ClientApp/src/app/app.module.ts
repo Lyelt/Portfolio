@@ -61,6 +61,11 @@ import { SpeedrunUpdateArticleComponent } from './blog/components/articles/speed
 import { SelectedCardComponent } from './yugioh/components/selected-card/selected-card.component';
 import { SearchResultsComponent } from './yugioh/components/search-results/search-results.component';
 import { Recap2020Component } from './blog/components/articles/recap2020/recap2020.component';
+import { ProjectComponent } from './home/components/project/project.component';
+import { DemoComponent } from './home/components/demo/demo.component';
+import { SectionComponent } from './home/components/section/section.component';
+import { SkillsComponent } from './home/components/skills/skills.component';
+import { SectionTitleComponent } from './home/components/section-title/section-title.component';
 
 const routes: Routes = [
     {
@@ -189,7 +194,12 @@ const routes: Routes = [
         SpeedrunUpdateArticleComponent,
         SelectedCardComponent,
         SearchResultsComponent,
-        Recap2020Component
+        Recap2020Component,
+        ProjectComponent,
+        DemoComponent,
+        SectionComponent,
+        SkillsComponent,
+        SectionTitleComponent
     ],
     imports: [
         BrowserModule,

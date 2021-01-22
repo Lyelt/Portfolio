@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -6,25 +6,36 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-    @Output() toggleSidenavEvent = new EventEmitter();
-    constructor() { }
 
-    ngOnInit() {
-    
+  constructor() { }
+
+  ngOnInit() {
+
+  }
+
+  toggleDarkMode() {
+    if (!("theme" in localStorage)) {
+      localStorage.theme = "light";
     }
 
-    toggleSidenav() {
-        this.toggleSidenavEvent.emit();
+    localStorage.theme = localStorage.theme === "light" ? "dark" : "light";
+    if (localStorage.theme === "dark") {
+      document.querySelector("html").classList.add("dark");
+    }
+    else {
+      document.querySelector("html").classList.remove("dark");
     }
 
-    scrollToElement(elementId: string) {
-      const el = document.querySelector("#" + elementId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
-    }
+  }
 
-    isLoggedIn() {
-        return localStorage.getItem("jwt");
+  scrollToElement(elementId: string) {
+    const el = document.querySelector("#" + elementId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
+  }
+
+  isLoggedIn() {
+    return localStorage.getItem("jwt");
+  }
 }

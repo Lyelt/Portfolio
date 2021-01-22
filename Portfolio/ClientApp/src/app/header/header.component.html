@@ -1,4 +1,4 @@
-<header class="fixed top-0 z-999 w-full bg-white shadow-lg py-4 px-2 text-xs sm:text-base overflow-x-auto">
+<header class="fixed top-0 z-999 w-full bg-white dark:bg-gray-900 shadow-lg py-4 px-2 text-xs sm:text-base overflow-x-auto">
   <nav class="flex items-center">
     <a href="#" class="nav-link"><mat-icon routerLink="">home</mat-icon></a>
     <span class="flex-shrink flex-auto"></span>
@@ -21,6 +21,7 @@
       <span mat-menu-item routerLink="login" class="last-menu-item" *ngIf="isLoggedIn()"><mat-icon>exit_to_app</mat-icon>Logout</span>
     </mat-menu>
     <span class="flex-shrink flex-auto"></span>
+    <span class="hidden sm:inline px-4 cursor-pointer dark:text-white" (click)="toggleDarkMode()"><mat-icon>dark_mode</mat-icon></span>
     <a class="hidden md:inline px-4 cursor-pointer" href="https://github.com/Lyelt" title="Github"><img src="assets/github-logo.png" /></a>
     <a class="hidden md:inline px-4 cursor-pointer" href="https://www.linkedin.com/in/nicholasghobrial/" title="LinkedIn"><img src="assets/linkedin-logo.png" /></a>
   </nav>
