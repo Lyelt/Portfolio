@@ -590,6 +590,11 @@ video {
   background-color: rgba(15, 23, 42, var(--tw-bg-opacity));
 }
 
+.dark .dark\:even\:bg-gray-900:nth-child(even){
+  --tw-bg-opacity: 1;
+  background-color: rgba(15, 23, 42, var(--tw-bg-opacity));
+}
+
 .border-gray-300{
   --tw-border-opacity: 1;
   border-color: rgba(203, 213, 225, var(--tw-border-opacity));
