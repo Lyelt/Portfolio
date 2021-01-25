@@ -3,11 +3,11 @@
 <mat-dialog-content [formGroup]="form" class="flex flex-col" [ngClass]="{'h-screen': starTime.videoUrl}">
 
   <mat-form-field class="w-full">
-    <input matInput placeholder="Time (hh:mm:ss.ff)" formControlName="time" value="{{starTime.timeDisplay}}" />
+    <input type="text" matInput placeholder="Time (hh:mm:ss.ff)" formControlName="time" value="{{starTime.timeDisplay}}" />
   </mat-form-field>
 
   <mat-form-field class="w-full">
-    <input matInput placeholder="Youtube Watch Code" formControlName="videoUrl" value="{{starTime.videoUrl}}" />
+    <input type="text" matInput placeholder="Youtube Watch Code" formControlName="videoUrl" value="{{starTime.videoUrl}}" />
   </mat-form-field>
 
   <div *ngIf="starTime.videoUrl" class="h-full">

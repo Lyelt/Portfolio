@@ -32,14 +32,14 @@
         <mat-icon>add</mat-icon>
       </button>
       <form (submit)="updateCollection()" class="flex justify-between mt-4" name="collection" [class.hidden]="!addingCollection">
-        <input class="form-input flex-grow sm:mr-6" type="text" placeholder="Enter collection name"
+        <input class="flex-grow sm:mr-6" type="text" placeholder="Enter collection name"
                [(ngModel)]="editingCollection.name" name="name" required />
         <button type="submit" class="btn btn-secondary">Save</button>
       </form>
     </li>
     <li class="w-full mt-2" *ngIf="addingSectionsTo">
       <form (submit)="addSectionToCollection()" class="flex justify-between mt-4" name="section">
-        <input class="form-input flex-grow sm:mr-6" type="text" placeholder="Enter section name"
+        <input class="flex-grow sm:mr-6" type="text" placeholder="Enter section name"
                [(ngModel)]="newSectionName" name="sectionName" required />
         <button type="submit" class="btn btn-secondary">Add</button>
       </form>

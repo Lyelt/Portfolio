@@ -7,7 +7,7 @@
         <h5 class="text-xs">{{getCardQuantity(null)}} cards, ${{getSectionPrice(null).toFixed(2)}}</h5>
       </div>
     </div>
-    <div class="grid grid-cols-1 row-gap-24 lg:grid-cols-2 lg:gap-24 xl:gap-32">
+    <div class="grid grid-cols-1 gap-x-24 lg:grid-cols-2 lg:gap-24 xl:gap-32">
       <div *ngFor="let section of this.collection.sections" class="w-full mb-12 flex flex-col lg:w-auto lg:flex-grow">
         <app-card-search *ngIf="editingSection && editingSection == section"
                          placeholder="Editing contents of {{editingSection}}"
@@ -39,7 +39,7 @@
       <form (submit)="addSectionToCollection()"
             class="flex justify-between"
             name="section">
-        <input class="form-input flex-grow mr-4 sm:mr-6" type="text" placeholder="Add a section"
+        <input class="flex-grow mr-4 sm:mr-6" type="text" placeholder="Add a section"
                [(ngModel)]="newSectionName" name="sectionName" required />
         <button type="submit" class="btn btn-secondary">Add</button>
       </form>

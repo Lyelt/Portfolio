@@ -1,6 +1,8 @@
-<mat-form-field>
-  <mat-label>{{label}}</mat-label>
-  <mat-select [(ngModel)]="currentUserId" (selectionChange)="selectUser()">
-    <mat-option *ngFor="let bowler of bowlers" [value]="bowler.id">{{bowler.userName}}</mat-option>
-  </mat-select>
-</mat-form-field>
+<div>
+  <label class="flex flex-col">
+    <span class="pb-1">{{label}}</span>
+    <select [(ngModel)]="currentUserId" (change)="selectUser()">
+      <option *ngFor="let bowler of bowlers" [ngValue]="bowler.id">{{bowler.userName}}</option>
+    </select>
+  </label>
+</div>
