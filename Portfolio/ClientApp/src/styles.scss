@@ -2,6 +2,10 @@
 @tailwind base;
 @tailwind components;
 
+.btn {
+  @apply font-semibold py-2 px-4 rounded disabled:opacity-75 disabled:pointer-events-none hover:bg-gray-200;
+}
+
 .btn-primary {
   @apply bg-indigo-500 text-indigo-100 hover:bg-indigo-600;
 }
@@ -10,27 +14,20 @@
   @apply bg-pink-500 text-pink-100 hover:bg-pink-600;
 }
 
-.btn {
-  @apply font-semibold py-2 px-4 rounded disabled:opacity-75 disabled:pointer-events-none hover:bg-gray-200;
-}
-
-/*@variants dark {
-  .ngx-charts text {
-    fill: #fff;
-  }
-}*/
-/*
 .ngx-charts text {
-  @apply dark:text-white;
+  @apply fill-current #{!important};
 }
-*/
 
 select {
   @apply dark:bg-gray-900 rounded;
 }
 
-input {
+input, input[type="date"] {
   @apply dark:bg-gray-900 rounded;
+}
+
+::-webkit-calendar-picker-indicator {
+  filter: invert(70%);
 }
 
 .nav-link-hover {
@@ -135,19 +132,35 @@ input {
   }
 }
 
+.mat-dialog-container {
+  @apply dark:bg-gray-800 dark:text-gray-200;
+}
+
+.mat-tab-label, .mat-tab-link {
+  @apply dark:text-white #{!important};
+}
+
 .ng-autocomplete, .autocomplete-container {
-  @apply rounded-l-full rounded-r-none w-auto mb-2 #{!important};
+  @apply rounded-l-full rounded-r-none w-auto mb-2  #{!important};
 }
 
 .autocomplete-container {
   @apply shadow-md #{!important};
 }
 
+.autocomplete-container .suggestions-container, .autocomplete-container .not-found {
+  @apply dark:bg-gray-900 #{!important};
+}
+
+.autocomplete-container .suggestions-container ul li a {
+  @apply dark:text-white #{!important};
+}
+
 .autocomplete-container .input-container input {
   @apply rounded-l-full rounded-r-none bg-gray-300 dark:bg-gray-900 dark:text-white #{!important};
 
   &:focus {
-    @apply bg-white dark:bg-gray-500 #{!important};
+    @apply bg-white dark:bg-gray-700 #{!important};
   }
 }
 

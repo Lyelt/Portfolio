@@ -13,17 +13,14 @@ export class ThemeToggleComponent implements OnInit {
   }
 
   toggleDarkMode() {
-    if (!("theme" in localStorage)) {
-      localStorage.theme = "light";
-    }
-
-    localStorage.theme = localStorage.theme === "light" ? "dark" : "light";
-    if (localStorage.theme === "dark") {
-      document.querySelector("html").classList.add("dark");
+    if (!('theme' in localStorage)) {
+      localStorage.theme = window.matchMedia('(prefers-color-scheme: dark)') ? 'dark' : 'light';
     }
     else {
-      document.querySelector("html").classList.remove("dark");
+      localStorage.theme = localStorage.theme === 'light' ? 'dark' : 'light';
     }
 
+    document.querySelector('html').classList.remove('light', 'dark');
+    document.querySelector('html').classList.add(localStorage.theme);
   }
 }

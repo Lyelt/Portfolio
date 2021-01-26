@@ -1,7 +1,7 @@
 <div class="flex flex-col items-center lg:flex-row lg:justify-around lg:items-start">
   <div class="flex flex-col justify-center p-4 w-full lg:w-1/2">
     <h2 class="font-semibold text-center">Courses</h2>
-    <div class="mb-2 bg-white rounded shadow px-2 py-4" *ngFor="let course of courses">
+    <div class="mb-2 bg-white dark:bg-gray-900 rounded shadow px-2 py-4" *ngFor="let course of courses">
       <div class="flex justify-between items-center">
         <span class="w-12">{{course.name}}</span>
         <div class="flex">
@@ -24,7 +24,7 @@
   </div>
   <div class="flex flex-col justify-center p-4 w-full lg:w-1/2">
     <h2 class="font-semibold text-center">Castle Secrets</h2>
-    <div class="mb-1 bg-white rounded shadow px-2 py-4" *ngFor="let category of secrets">
+    <div class="mb-1 bg-white dark:bg-gray-900 rounded shadow px-2 py-4" *ngFor="let category of secrets">
       <div class="flex justify-between items-center">
         <span>{{category.name}}</span>
         <div class="flex justify-end">
@@ -40,7 +40,7 @@
       </div>
     </div>
     <h2 class="font-semibold text-center mt-8">Miscellaneous</h2>
-    <div class="mb-1 bg-white rounded shadow px-2 py-4">
+    <div class="mb-1 bg-white dark:bg-gray-900 rounded shadow px-2 py-4">
       <div class="flex justify-between items-center">
         <span>Bosses</span>
         <div class="flex justify-end">
@@ -51,7 +51,7 @@
         </div>
       </div>
     </div>
-    <div class="mb-1 bg-white rounded shadow px-2 py-4">
+    <div class="mb-1 bg-white dark:bg-gray-900 rounded shadow px-2 py-4">
       <div class="flex justify-between items-center">
         <span>Races</span>
         <div class="flex justify-end">
