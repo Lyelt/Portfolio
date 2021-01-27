@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-blog-date',
+  selector: 'blog-date',
   templateUrl: './blog-date.component.html',
   styleUrls: ['./blog-date.component.scss']
 })

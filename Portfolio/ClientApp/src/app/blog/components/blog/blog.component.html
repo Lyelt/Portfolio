@@ -14,8 +14,8 @@
 </div>
 
 <div class="container mx-auto px-4 mt-8 max-w-sm max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-  <div class="flex flex-col items-start mb-10" *ngFor="let blog of blogs">
-    <app-blog-date>{{blog.date}}</app-blog-date>
-    <h2 [routerLink]="blog.link" class="link font-bold">{{blog.title}} &rarr;</h2>
+  <div class="flex flex-col items-start mb-10 xl:mb-12" *ngFor="let blog of blogs">
+    <p class="text-sm uppercase tracking-wider mb-1">{{blog.date}}</p>
+    <h2 [routerLink]="blog.link" class="link font-bold lg:text-xl">{{blog.title}} &rarr;</h2>
   </div>
 </div>

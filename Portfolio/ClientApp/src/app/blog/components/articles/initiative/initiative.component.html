@@ -1,61 +1,61 @@
-<app-blog-article>
-  <app-blog-header>
-    <app-blog-title>Migrating the Core Features of the Original Encounter Simulator</app-blog-title>
-    <app-blog-date>November 24, 2019</app-blog-date>
-    <app-blog-subtitle>A very simple tracker for turns or initiative order in board games, D&D, and more.</app-blog-subtitle>
-  </app-blog-header>
+<blog-article>
+  <blog-header>
+    <blog-title>Migrating the Core Features of the Original Encounter Simulator</blog-title>
+    <blog-date>November 24, 2019</blog-date>
+    <blog-subtitle>A very simple tracker for turns or initiative order in board games, D&D, and more.</blog-subtitle>
+  </blog-header>
 
-  <app-blog-section>
-    <app-blog-section-title>Complexity Regrets</app-blog-section-title>
-    <p>
+  <blog-section>
+    <blog-section-title>Complexity Regrets</blog-section-title>
+    <blog-p>
       As I wrote about in my <span class="link" routerLink="/blog/encounter">encounter simulator blog post</span>, I somewhat overcomplicated and overengineered my first attempt at the encounter simulator.
       The idea was to be able to track all sorts of stats and information about the encounter,
       but in practice I just didn’t have enough time to focus on all the extra information I had to provide.
       The solution in my mind was to take the core idea and just keep it simple. So I did.
-    </p>
-  </app-blog-section>
+    </blog-p>
+  </blog-section>
 
-  <app-blog-section>
-    <app-blog-section-title>Features</app-blog-section-title>
-    <p>
+  <blog-section>
+    <blog-section-title>Features</blog-section-title>
+    <blog-p>
       The core of this little utility is to simply show a list of characters or players and rotate through them in turn order.
       The original idea, of course, was for this to be used during D&D encounters, but I wanted to make sure it was generic enough to be used for anything.
       Namely, board games with long turns that may be difficult to keep track of (I’m looking at you, Twilight Imperium).
-    </p>
-  </app-blog-section>
+    </blog-p>
+  </blog-section>
 
-  <app-blog-section>
+  <blog-section>
     <div class="blog-card">
       <img src="assets/initiative/1.png" alt="Initiative Tracker image" />
-      <p class="italic text-sm p-2">Initiative tracker in action</p>
+      <figcaption class="italic text-sm p-2">Initiative tracker in action</figcaption>
     </div>
-  </app-blog-section>
+  </blog-section>
 
-  <app-blog-section>
-    <app-blog-section-title>Future Work</app-blog-section-title>
-    <p>
+  <blog-section>
+    <blog-section-title>Future Work</blog-section-title>
+    <blog-p>
       The current implementation handles the characters completely client-side, and there is no server interaction whatsoever. 
       Initially I had the idea (as I always do) to allow people to log in to the site and have their characters saved, to be reused in future initiative tracking.
       That, however, is probably not the best use of time nor resources. I mean, how hard is it to retype a few character names once a week?
-    </p>
-    <h3 class="blog-h3">What more is there to do then?!</h3>
-    <p class="mt-6">
+    </blog-p>
+    <blog-h3>What more is there to do then?!</blog-h3>
+    <blog-p>
       SignalR! Or something. 
       My <i>brilliant</i> idea is to give users the ability to join an existing session, where everything updates live on everyone's screen.
       The leader (or perhaps anyone) can create the players/characters, put them in order, and begin tracking.
       Once started, anyone can end a turn, and each person who has joined the session can see whose turn it now is.
       I mostly envision this being useful in board games where players find themselves asking "whose turn is it?" every two minutes (still looking, TI).
-    </p>
-    <p class="mt-6">
+    </blog-p>
+    <blog-p>
       Now, whether people will actually stay on the webpage long enough to really <i>use</i> this feature is another question.
-    </p>
-  </app-blog-section>
+    </blog-p>
+  </blog-section>
 
-  <app-blog-section>
-    <app-blog-section-title>In Conclusion</app-blog-section-title>
-    <p class="mt-6">
+  <blog-section>
+    <blog-section-title>In Conclusion</blog-section-title>
+    <blog-p>
       Outstanding tasks can be found on <a class="link" href="https://trello.com/b/hpTp1H0B/portfolio-tasks">my public Trello board</a> where I organize and track all of my tasks and projects.
       Also, feel free to check out the <a class="link" href="https://github.com/Lyelt/EncounterSimulator">entire project on GitHub</a> if you're interested!
-    </p>
-  </app-blog-section>
-</app-blog-article>
+    </blog-p>
+  </blog-section>
+</blog-article>

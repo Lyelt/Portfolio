@@ -4,8 +4,7 @@ require('dotenv').config();
 
 module.exports = (config) => {
   const purgeEnv = process.env.ENABLE_PURGE;
-  const enablePurge = (purgeEnv && purgeEnv === 'true') || false;
-  tailwindConfig.purge = enablePurge;
+  tailwindConfig.purge = !purgeEnv || purgeEnv === 'true';
   patchPostCSS(config, tailwindConfig);
   return config;
 };

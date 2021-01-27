@@ -14,10 +14,6 @@
   @apply bg-pink-500 text-pink-100 hover:bg-pink-600 dark:bg-pink-700 dark:hover:bg-pink-800;
 }
 
-.ngx-charts text {
-  @apply fill-current #{!important};
-}
-
 select {
   @apply dark:bg-gray-900 rounded;
 }
@@ -36,10 +32,6 @@ input, input[type="date"], input[type="number"] {
 
 .link {
   @apply text-indigo-400 font-semibold underline cursor-pointer hover:text-indigo-500;
-}
-
-.blog-h3 {
-  @apply font-semibold text-lg mt-6;
 }
 
 .blog-card {
@@ -109,6 +101,9 @@ input, input[type="date"], input[type="number"] {
   opacity: 0 #{!important};
 }
 
+.ngx-charts text {
+  @apply fill-current #{!important};
+}
 
 /* Some manual overriding of dialog window responsive sizing */
 @media only screen and (min-width: 640px) {

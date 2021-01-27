@@ -33,7 +33,8 @@ module.exports = {
           '2xs': '.5rem',
           '3xs': '.25rem'
         }
-      }
+      },
+     
     },
     variants: {
       borderWidth: ['responsive', 'hover', 'focus', 'active', 'group-hover', 'last', 'first'],
@@ -44,5 +45,7 @@ module.exports = {
       opacity: ({after})=>after(['disabled']),
       pointerEvents: ({after}) => after(['disabled'])
     },
-    plugins: [require('@tailwindcss/forms')],
+  plugins: [
+    require('@tailwindcss/forms')
+  ],
 };

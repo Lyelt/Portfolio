@@ -68,6 +68,8 @@ import { SkillsComponent } from './home/components/skills/skills.component';
 import { SectionTitleComponent } from './home/components/section-title/section-title.component';
 import { SkillsSectionComponent } from './home/components/skills-section/skills-section.component';
 import { ThemeToggleComponent } from './shared/components/theme-toggle/theme-toggle.component';
+import { BlogPComponent } from './blog/components/blog-template/blog-p/blog-p.component';
+import { BlogH3Component } from './blog/components/blog-template/blog-h3/blog-h3.component';
 
 const routes: Routes = [
     {
@@ -203,7 +205,9 @@ const routes: Routes = [
         SkillsComponent,
         SectionTitleComponent,
         SkillsSectionComponent,
-        ThemeToggleComponent
+        ThemeToggleComponent,
+        BlogPComponent,
+        BlogH3Component
     ],
     imports: [
         BrowserModule,
