@@ -19,9 +19,9 @@ export class BowlingGameComponent implements OnInit {
   @Output() gameSaved: EventEmitter<BowlingGame> = new EventEmitter();
   @Output() gameDeleted: EventEmitter<BowlingGame> = new EventEmitter();
 
-  currentFrame: number = 1; 
-  currentRoll: number = 1;
-  isSplit: boolean = false;
+  currentFrame = 1; 
+  currentRoll = 1;
+  isSplit = false;
 
   possibleScores: BowlingScore[] = [
     { display: "-", value: 0, show: true },
@@ -52,41 +52,41 @@ export class BowlingGameComponent implements OnInit {
     }
 
     this.possibleScores.forEach(s => s.show = true);
-    if (this.possibleScores.find(s => s.display == "/")) {
+    if (this.possibleScores.find(s => s.display === "/")) {
       this.possibleScores.pop();
     }
   }
 
   addScore(score: number) {
-    let frame = BowlingUtilities.getFrame(this.game, this.currentFrame);
+    const frame = BowlingUtilities.getFrame(this.game, this.currentFrame);
     frame.isSplit = this.isSplit;
 
-    this.possibleScores.forEach(s => s.show = (score == 10 || s.value < (10 - score)) || (this.currentRoll == 2));
-    if (score != 10 && (this.currentRoll == 1 || this.currentFrame == 10)) {
+    this.possibleScores.forEach(s => s.show = (score === 10 || s.value < (10 - score)) || (this.currentRoll === 2));
+    if (score !== 10 && (this.currentRoll === 1 || this.currentFrame === 10) && !this.possibleScores.find(s => s.display === "/")) {
       this.possibleScores.push({ display: "/", value: (10 - score), show: true });
     }
-    else if (this.possibleScores.find(s => s.display == "/")) {
+    else if (this.possibleScores.find(s => s.display === "/")) {
       this.possibleScores.pop();
     }
 
-    if (this.currentRoll == 1) {
+    if (this.currentRoll === 1) {
       frame.roll1Score = score;
 
-      if (score != 10 || this.currentFrame == 10) {
+      if (score !== 10 || this.currentFrame === 10) {
         this.currentRoll++;
       }
-      else if (this.currentFrame != 10) {
+      else if (this.currentFrame !== 10) {
         this.currentFrame++;
       }
     }
-    else if (this.currentRoll == 2) {
+    else if (this.currentRoll === 2) {
       frame.roll2Score = score;
 
-      if (this.currentFrame != 10) {
+      if (this.currentFrame !== 10) {
         this.currentFrame++;
         this.currentRoll = 1;
       }
-      else if (score == 10 || frame.roll1Score + score == 10 || frame.roll1Score == 10) {
+      else if (score === 10 || frame.roll1Score + score === 10 || frame.roll1Score === 10) {
         this.currentRoll++;
       }
     }
@@ -94,12 +94,12 @@ export class BowlingGameComponent implements OnInit {
       frame.roll3Score = score;
     }
 
-    let scoreSoFar = this.getScoreSoFar(this.game, frame);
-    this.game.totalScore = scoreSoFar == "" ? 0 : scoreSoFar as number;
+    const scoreSoFar = this.getScoreSoFar(this.game, frame);
+    this.game.totalScore = scoreSoFar === "" ? 0 : scoreSoFar as number;
   }
 
   back() {
-    let frame = BowlingUtilities.getFrame(this.game, this.currentFrame);
+    const frame = BowlingUtilities.getFrame(this.game, this.currentFrame);
     frame.roll1Score = null;
     frame.roll2Score = null;
     frame.roll3Score = null;
@@ -108,7 +108,7 @@ export class BowlingGameComponent implements OnInit {
   }
 
   handleKey(event: KeyboardEvent) {
-    if (this.game.id != 0)
+    if (this.game.id !== 0)
       return; // Only handle score input for new games.
 
     let value: number;
@@ -117,27 +117,27 @@ export class BowlingGameComponent implements OnInit {
       value = event.keyCode - 48;
     }
     // X
-    else if (event.keyCode == 88) {
+    else if (event.keyCode === 88) {
       value = 10;
     }
     // Slash (/)
-    else if (event.keyCode == 191) {
-      value = this.possibleScores.find(s => s.display == "/").value;
+    else if (event.keyCode === 191) {
+      value = this.possibleScores.find(s => s.display === "/").value;
     }
     // Hyphen (-)
-    else if (event.keyCode == 189) {
+    else if (event.keyCode === 189) {
       value = 0;
     }
     // Left arrow key
-    else if (event.keyCode == 37) {
+    else if (event.keyCode === 37) {
       this.back();
     }
     // Right arrow key
-    else if (event.keyCode == 39) {
+    else if (event.keyCode === 39) {
       this.selectFrame(this.currentFrame + 1);
     }
 
-    if (value != null && this.possibleScores.filter(s => s.value == value).some(s => s.show)) {
+    if (value !== null && this.possibleScores.filter(s => s.value === value).some(s => s.show)) {
       this.isSplit = event.shiftKey;
       this.addScore(value);
     }
@@ -152,35 +152,35 @@ export class BowlingGameComponent implements OnInit {
   }
 
   getScoreSoFar(game: BowlingGame, frame: BowlingFrame) {
-    let score = BowlingUtilities.getScoreSoFar(game, frame);
+    const score = BowlingUtilities.getScoreSoFar(game, frame);
     return score ? score : "";
   }
 
   getRoll1Display(frame: BowlingFrame) {
-    return frame.roll1Score == 10 ? "X" :
-        frame.roll1Score == 0 ? "-" :
+    return frame.roll1Score === 10 ? "X" :
+        frame.roll1Score === 0 ? "-" :
         frame.roll1Score;
   }
 
   getRoll2Display(frame: BowlingFrame) {
     // If this is the 10th frame and we have just stricken, we may have X X
-    if (frame.frameNumber == 10 && frame.roll2Score == 10 && frame.roll1Score == 10)
+    if (frame.frameNumber === 10 && frame.roll2Score === 10 && frame.roll1Score === 10)
       return "X";
 
     // If the first roll was a strike and this is not the 10th, we can safely assume there was no second roll.
-    if (frame.frameNumber != 10 && frame.roll1Score == 10)
+    if (frame.frameNumber !== 10 && frame.roll1Score === 10)
       return null;
 
     // Otherwise, we're either a / or just the score itself.
-    return frame.roll2Score + frame.roll1Score == 10 ? "/" :
-      frame.roll2Score == 0 ? "-" :
+    return frame.roll2Score + frame.roll1Score === 10 ? "/" :
+      frame.roll2Score === 0 ? "-" :
       frame.roll2Score;
   }
 
   getRoll3Display(frame: BowlingFrame) {
-    return frame.roll3Score == 10 ? "X" :
-      frame.roll3Score + frame.roll2Score == 10 ? "/" :
-      frame.roll3Score == 0 ? "-" :
+    return frame.roll3Score === 10 ? "X" :
+      (frame.roll3Score + frame.roll2Score === 10 && this.getRoll2Display(frame) !== "/") ? "/" :
+      frame.roll3Score === 0 ? "-" :
       frame.roll3Score;
   }
 }

@@ -3,7 +3,6 @@ const colors = require('tailwindcss/colors')
 module.exports = {
     prefix: '',
     purge: {
-      enabled: true,
       content: [
         './src/**/*.{html,ts}',
       ]
@@ -37,15 +36,13 @@ module.exports = {
       }
     },
     variants: {
-      extend: {
-        opacity: ['disabled'],
-        pointerEvents: ['disabled']
-      },
       borderWidth: ['responsive', 'hover', 'focus', 'active', 'group-hover', 'last', 'first'],
       borderStyle: ['responsive', 'hover', 'focus', 'active', 'group-hover', 'last', 'first'],
       borderColor: ['responsive', 'hover', 'focus', 'active', 'group-hover', 'last', 'first', 'dark'],
       backgroundColor: ['responsive', 'hover', 'focus', 'odd', 'even', 'dark'],
       margin: ['responsive', 'first', 'last'],
+      opacity: ({after})=>after(['disabled']),
+      pointerEvents: ({after}) => after(['disabled'])
     },
     plugins: [require('@tailwindcss/forms')],
 };

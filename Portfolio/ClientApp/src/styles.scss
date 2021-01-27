@@ -3,15 +3,15 @@
 @tailwind components;
 
 .btn {
-  @apply font-semibold py-2 px-4 rounded disabled:opacity-75 disabled:pointer-events-none hover:bg-gray-200;
+  @apply font-semibold py-2 px-4 rounded disabled:opacity-50 disabled:pointer-events-none hover:bg-gray-200;
 }
 
 .btn-primary {
-  @apply bg-indigo-500 text-indigo-100 hover:bg-indigo-600;
+  @apply bg-indigo-500 text-indigo-100 hover:bg-indigo-600 dark:bg-indigo-700 dark:hover:bg-indigo-800;
 }
 
 .btn-secondary {
-  @apply bg-pink-500 text-pink-100 hover:bg-pink-600;
+  @apply bg-pink-500 text-pink-100 hover:bg-pink-600 dark:bg-pink-700 dark:hover:bg-pink-800;
 }
 
 .ngx-charts text {
@@ -22,7 +22,7 @@ select {
   @apply dark:bg-gray-900 rounded;
 }
 
-input, input[type="date"] {
+input, input[type="date"], input[type="number"] {
   @apply dark:bg-gray-900 rounded;
 }
 

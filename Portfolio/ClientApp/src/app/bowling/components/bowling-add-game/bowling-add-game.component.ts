@@ -75,4 +75,12 @@ export class BowlingAddGameComponent implements OnInit {
       });
     }
   }
+
+  getSessionTotal(): number {
+    if (this.filteredGames) {
+      return this.filteredGames.reduce((sum, current) => sum + current.totalScore, 0);
+    }
+
+    return null;
+  }
 }

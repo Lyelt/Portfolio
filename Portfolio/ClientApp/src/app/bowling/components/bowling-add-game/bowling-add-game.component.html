@@ -8,4 +8,5 @@
   </div>
   <app-bowling-game class="mt-8" *ngIf="newGame" [game]="newGame" (gameSaved)="saveGame($event)" (gameDeleted)="deleteGame($event)"></app-bowling-game>
   <app-bowling-game class="mt-8" *ngFor="let game of filteredGames" [game]="game" (gameDeleted)="deleteGame($event)"></app-bowling-game>
+  <span class="self-end font-semibold text-xl mt-6 pr-2">Total: {{getSessionTotal()}}</span>
 </div>

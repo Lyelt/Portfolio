@@ -2,7 +2,6 @@ import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BowlingService } from '../../services/bowling.service';
 import { BowlingSession } from '../../models/bowling-session';
-import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-bowling-start-session',
@@ -16,19 +15,13 @@ export class BowlingStartSessionComponent implements OnInit {
   selectedSessionUser: string;
   selectedDate: Date;
 
-  sessionForm: FormGroup;
   selectedTabIndex = 0;
 
   constructor(private ref: ChangeDetectorRef,
     private bowlingService: BowlingService,
     private dialogRef: MatDialogRef<BowlingStartSessionComponent>,
-    private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) private data: any) {
 
-    this.sessionForm = this.formBuilder.group({
-      existingSession: [''],
-      newSession: ['']
-    }, { validator: this.validateHasExactlyOne });
   }
 
   ngOnInit() {
@@ -45,14 +38,6 @@ export class BowlingStartSessionComponent implements OnInit {
         this.ref.detectChanges();
       }
     });
-  }
-
-  validateHasExactlyOne(formGroup: FormGroup): any {
-    const existingSession = formGroup.controls['existingSession'].value?.date;
-    const newSession = formGroup.controls['newSession'].value?.date;
-    // This form is only valid if exactly ONE of these fields is filled out
-    const valid = (existingSession || newSession) && !(existingSession && newSession);
-    return valid ? null : { missingNewOrExisting: true };
   }
 
   startAddingGames() {
@@ -72,11 +57,7 @@ export class BowlingStartSessionComponent implements OnInit {
   }
 
   changeTab(index: number) {
-    const oldIndex = index;
     this.selectedTabIndex = index;
-    if (this.selectedTabIndex === 1 && oldIndex !== index) {
-      this.startAddingGames();
-    }
   }
 
   close() {

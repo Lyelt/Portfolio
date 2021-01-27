@@ -1,39 +1,36 @@
 <mat-dialog-content class="flex flex-col">
   <div *ngIf="selectedTabIndex === 0">
-    <form class="flex flex-col py-6" #sessionForm="ngForm">
-      <div>
-        <label class="flex flex-col">
-          <span class="pb-2">Choose a session</span>
-          <select [(ngModel)]="selectedSession" name="selectedSessionDate">
-            <option></option>
-            <option *ngFor="let session of sessions" [value]="session">{{session.id}}. {{session.date | date: 'mediumDate'}}</option>
-          </select>
-        </label>
+    <div class="flex flex-col py-6 px-8 items-center">
+      <h2 class="mb-12 font-bold text-lg">Choose Action</h2>
+      <div class="flex justify-between w-full p-4">
+        <div class="flex flex-col flex-grow m-4">
+          <label class="flex flex-col">
+            <span class="pb-2">Choose a session</span>
+            <select [(ngModel)]="selectedSession">
+              <option></option>
+              <option *ngFor="let session of sessions" [ngValue]="session">{{session.id}}. {{session.date | date: 'mediumDate'}}</option>
+            </select>
+          </label>
+          <button type="button" class="btn btn-primary mt-4" (click)="startAddingGames()" [disabled]="!selectedSession">View Existing Session</button>
+        </div>
+
+        <div class="flex flex-col flex-grow m-4">
+          <label class="flex flex-col">
+            <span class="pb-2">Add a new session</span>
+            <input type="date" [(ngModel)]="selectedDate" placeholder="Add a new session">
+          </label>
+          <button type="button" class="btn btn-secondary mt-4" (click)="startAddingGames()" [disabled]="!selectedDate">Start New Session</button>
+        </div>
       </div>
-      <span class="font-bold my-1 text-indigo-400 text-center">OR</span>
-      <div class="flex flex-col">
-        <label class="flex flex-col">
-          <span class="pb-2">Add a new session</span>
-          <input type="date"
-                 [(ngModel)]="selectedDate"
-                 placeholder="Add a new session"
-                 name="sessionDate">
-        </label>
-      </div>
-      <div class="flex items-center justify-end">
-        <button type="submit" class="btn btn-primary px-8" (click)="startAddingGames()" [disabled]="this.sessionForm.hasError('missingNewOrExisting')">Go</button>
-      </div>
-    </form>
+    </div>
   </div>
   <div *ngIf="selectedTabIndex === 1">
     <div class="flex flex-col">
       <app-bowling-add-game *ngIf="selectedSession" [session]="selectedSession" [userName]="selectedSessionUser"></app-bowling-add-game>
-      <div class="flex justify-between mt-6">
+      <div class="flex justify-between mt-10">
         <button type="button" class="btn btn-secondary" (click)="changeTab(0)">Back</button>
         <button type="button" class="btn btn-primary" (click)="close()">Done</button>
       </div>
     </div>
   </div>
-    <!--<mat-tab label="View Games" [disabled]="this.sessionForm.hasError('missingNewOrExisting')">-->
-      
 </mat-dialog-content>
