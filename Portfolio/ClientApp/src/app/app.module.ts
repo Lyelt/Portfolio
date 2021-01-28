@@ -7,7 +7,7 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { MaterialModule } from './material/material.module';
 import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './auth/components/login/login.component';
 import { AuthGuard } from './auth/auth-guard.service';
 import { JwtHelperService, JwtModule, JwtInterceptor } from '@auth0/angular-jwt';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -29,7 +29,7 @@ import { BowlingGameComponent } from './bowling/components/bowling-game/bowling-
 import { BowlingStatComponent } from './bowling/components/bowling-stat/bowling-stat.component';
 import { BowlingSelectSeriesCategoryComponent } from './bowling/components/bowling-select-series-category/bowling-select-series-category.component';
 import { BlogComponent } from './blog/components/blog/blog.component';
-import { BackgroundIconComponent } from './background-icon/background-icon.component';
+import { BackgroundIconComponent } from './shared/components/background-icon/background-icon.component';
 import { BlogArticleComponent } from './blog/components/blog-template/blog-article/blog-article.component';
 import { BlogHeaderComponent } from './blog/components/blog-template/blog-header/blog-header.component';
 import { BlogTitleComponent } from './blog/components/blog-template/blog-title/blog-title.component';

@@ -50,18 +50,7 @@ namespace Portfolio.Controllers
 
                     if (passwordResult != PasswordVerificationResult.Failed)
                     {
-                        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECURITY_KEY")));
-                        var signingCreds = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-
-                        var tokenOptions = new JwtSecurityToken(
-                            issuer: IdentityHelpers.ValidIssuer,
-                            audience: IdentityHelpers.ValidAudience,
-                            claims: new List<Claim> { new Claim(IdentityHelpers.UserIdClaim, user.Id) },
-                            expires: DateTime.Now.AddDays(180),
-                            signingCredentials: signingCreds
-                        );
-
-                        var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+                        var tokenString = GetTokenString(user, DateTime.Now.AddDays(180));
                         return Ok(new { Token = tokenString, UserId = user.Id });
                     }
                 }
@@ -77,6 +66,33 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [Route("Auth/GuestLogin")]
+        public IActionResult GuestLogin([FromBody]Credentials credentials)
+        {
+            if (credentials?.Username == null)
+                return BadRequest("Invalid client request");
+
+            try
+            {
+                var user = _context.Users.FirstOrDefault(u => u.UserName.Equals(credentials.Username, StringComparison.OrdinalIgnoreCase));
+                if (user != null)
+                {
+                    var tokenString = GetTokenString(user, DateTime.Now.AddDays(7));
+                    return Ok(new { Token = tokenString, UserId = user.Id });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"Error while retrieving guest login token");
+            }
+
+            return Unauthorized();
+        }
+
+
+        [HttpPost]
+        [AllowAnonymous]
         [Route("Auth/Hash")]
         public IActionResult Hash([FromBody]Credentials input)
         {
@@ -89,6 +105,23 @@ namespace Portfolio.Controllers
                 _logger.LogError(ex.ToString());
                 return StatusCode((int)HttpStatusCode.InternalServerError, $"Error while hashing string: {ex.Message}");
             }
+        }
+
+        private static string GetTokenString(ApplicationUser user, DateTime expirationTime)
+        {
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECURITY_KEY")));
+            var signingCreds = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+
+            var tokenOptions = new JwtSecurityToken(
+                issuer: IdentityHelpers.ValidIssuer,
+                audience: IdentityHelpers.ValidAudience,
+                claims: new List<Claim> { new Claim(IdentityHelpers.UserIdClaim, user.Id) },
+                expires: expirationTime,
+                signingCredentials: signingCreds
+            );
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+            return tokenString;
         }
     }
 }

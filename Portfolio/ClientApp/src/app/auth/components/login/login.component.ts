@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../auth.service';
 
 
 @Component({
@@ -50,9 +50,19 @@ export class LoginComponent implements OnInit {
             .subscribe(data => {
                 this.router.navigate([this.returnUrl]);
             },
-                error => {
-                    this.loading = false;
-                });
+            error => {
+                this.loading = false;
+            });
+    }
+
+    guestLogin() {
+        this.loading = true;
+        this.authenticationService.guestLogin().subscribe(data => {
+            this.router.navigate([this.returnUrl]);
+        }),
+        error => {
+            this.loading = false;
+        };
     }
 
     navigatingToSpeedrun(): boolean {

@@ -27,6 +27,7 @@ namespace Portfolio.Identity
         Administrator,
         Speedrunner,
         Bowler,
-        Duelist
+        Duelist,
+        Guest
     }
 }

@@ -1,3 +1,15 @@
-<p>
-  alert works!
-</p>
+<div id="modal" class="fixed z-999 inset-0 w-full h-full overflow-auto bg-gray-700 bg-opacity-50" *ngIf="alertService.isVisible">
+    <div class="bg-red-300 dark:bg-red-900 text-red-900 dark:text-red-200 mx-auto my-8 w-4/5 rounded text-sm md:text-base">
+        <div class="flex flex-col p-6 mb-2">
+            <div class="flex justify-start items-center font-bold mb-4 text-lg space-x-4">
+                <mat-icon>error_outline</mat-icon>
+                <span>{{alertService.alertTitle}}</span>
+            </div>
+            <span>{{alertService.alertMessage}}</span>
+        </div>
+        <div class="flex justify-between bg-red-400 dark:bg-red-800 border-t border-gray-50 px-4 py-2">
+            <a class="btn" href="https://github.com/Lyelt/Portfolio/issues/new">Report Issue</a>
+            <button type="button" class="btn">OK</button>
+        </div>
+    </div>
+</div>

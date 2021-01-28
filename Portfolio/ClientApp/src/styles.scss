@@ -18,7 +18,7 @@ select {
   @apply dark:bg-gray-900 rounded;
 }
 
-input, input[type="date"], input[type="number"] {
+input[type] {
   @apply dark:bg-gray-900 rounded;
 }
 

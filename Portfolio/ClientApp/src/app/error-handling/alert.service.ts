@@ -6,14 +6,23 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class AlertService {
 
+    public alertTitle: string;
+    public alertMessage: string;
+    public isVisible: boolean;
+
     constructor() { }
 
     public showError(message: string, title: string): void {
-        // TODO - display error popup
-        alert(title + "\r\n" + message);
+        this.alertTitle = title;
+        this.alertMessage = message;
+        this.isVisible = true;
     }
 
     public showHttpError(error: HttpErrorResponse, title: string): void {
         this.showError(error.message, title);
+    }
+
+    public hideError() {
+        this.isVisible = false;
     }
 }
