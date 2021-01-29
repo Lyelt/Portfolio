@@ -1,15 +1,18 @@
-<div id="modal" class="fixed z-999 inset-0 w-full h-full overflow-auto bg-gray-700 bg-opacity-50" *ngIf="alertService.isVisible">
-    <div class="bg-red-300 dark:bg-red-900 text-red-900 dark:text-red-200 mx-auto my-8 w-4/5 rounded text-sm md:text-base">
-        <div class="flex flex-col p-6 mb-2">
+<div class="fixed z-999 inset-0 w-full h-full overflow-auto bg-black bg-opacity-50" *ngIf="alertService.isVisible">
+    <div #modal class="bg-red-300 dark:bg-red-900 text-red-900 dark:text-red-200 mx-auto my-8 w-4/5 rounded-lg text-sm md:text-base relative">
+        <button type="button" 
+                        class="absolute top-0 right-4 cursor-pointer text-2xl text-red-800 hover:text-red-900 dark:text-red-200 dark:hover:text-red-300 focus:outline-none" 
+                        (click)="closeModal()">&times;</button>
+        <div class="flex flex-col pb-12 pt-6 px-6">
             <div class="flex justify-start items-center font-bold mb-4 text-lg space-x-4">
                 <mat-icon>error_outline</mat-icon>
                 <span>{{alertService.alertTitle}}</span>
             </div>
             <span>{{alertService.alertMessage}}</span>
         </div>
-        <div class="flex justify-between bg-red-400 dark:bg-red-800 border-t border-gray-50 px-4 py-2">
-            <a class="btn" href="https://github.com/Lyelt/Portfolio/issues/new">Report Issue</a>
-            <button type="button" class="btn">OK</button>
+        <div class="flex justify-between rounded-b-lg bg-red-800 dark:bg-red-300 px-4 py-3">
+            <a class="btn border border-red-300 text-red-200 hover:bg-red dark:border-red-900 dark:text-red-900 font-bold" target="_blank" [href]="getGithubIssueUrl()">Report Issue</a>
+            <button type="button" class="btn border border-red-300 text-red-200 hover:bg-red dark:border-red-900 dark:text-red-900 font-bold" (click)="closeModal()">OK</button>
         </div>
     </div>
 </div>
