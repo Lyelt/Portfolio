@@ -1,7 +1,7 @@
 <div>
   <section class="flex flex-col items-center text-center px-4 pb-8">
     <h1 class="font-bold text-2xl mb-4">
-      Hi, I'm <span class="text-indigo-400">Nicholas Ghobrial</span>.
+      Hi, I'm <span class="text-indigo-500 dark:text-indigo-400">Nicholas Ghobrial</span>.
     </h1>
     <p class="max-w-xl">
       I'm a software engineer from Connecticut working for
@@ -13,15 +13,15 @@
   </div>
 </div>
 
-<div class="container mx-auto px-4 max-w-sm max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
+<div class="container mx-auto px-4 max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
   <!-- Projects -->
   <app-section id="projects">
     <app-section-title>Personal Projects</app-section-title>
     <app-project *ngFor="let project of projects" [name]="project.name" [description]="project.description" [blogUrl]="project.blogUrl" [githubUrl]="project.viewUrl"></app-project>
     
-    <div class="flex flex-col border-b-2 border-pink-400 dark:border-pink-700 py-4 my-8 mx-2 leading-tight text-left text-gray-600 dark:text-gray-200">
+    <div class="flex flex-col border-b-2 border-pink-400 dark:border-pink-700 py-4 my-8 leading-tight text-left text-gray-600 dark:text-gray-200">
       <h2 class="font-semibold text-md">Live Demos</h2>
-      <p class="text-sm py-2">You can see these particular projects in action and try them out yourself!</p>
+      <p class="text-sm pt-2">You can see these particular projects in action and try them out yourself!</p>
     </div>
     <app-demo *ngFor="let demo of demos" [name]="demo.name" [description]="demo.description" [blogUrl]="demo.blogUrl" [demoUrl]="demo.viewUrl"></app-demo>
   </app-section>
@@ -37,24 +37,24 @@
   <!-- About -->
   <app-section id="about">
     <app-section-title>About Me</app-section-title>
-    <p>
+    <blog-p>
       In 2014, I graduated high school with absolutely no clue what I wanted to do in life. I knew I liked video games, though, so I decided to try my hand at a computer science degree.
-    </p>
-    <p class="mt-4">
+    </blog-p>
+    <blog-p>
       In 2018, I graduated from the <a class="link" href="https://www.newhaven.edu/">University of New Haven</a> with said degree and a passion for programming that I discovered along the way.
-    </p>
-    <p class="mt-4">
+    </blog-p>
+    <blog-p>
       Aside from my aforementioned love of video games, I also enjoy board games, tennis, bowling, playing guitar, and cooking. Check out <a class="link" href="/blog/portfolio">my portfolio blog post</a> for a look at some of the software I've built around my hobbies.
-    </p>
+    </blog-p>
   </app-section>
 
   <!-- Contact -->
   <app-section id="contact">
     <app-section-title>Contact Me</app-section-title>
     <div class="flex flex-col">
-      <div class="flex flex-row align-center justify-start py-3"><mat-icon class="text-indigo-400">email</mat-icon><span class="ml-16">nicholas.ghobrial@gmail.com</span></div>
-      <div class="flex flex-row align-center justify-start py-3"><mat-icon class="text-indigo-400">call</mat-icon><span class="ml-16">(203) 318-4094</span></div>
-      <div class="flex flex-row align-center justify-start py-3"><mat-icon class="text-indigo-400">location_on</mat-icon><span class="ml-16"><span class="text-xs font-light mr-1">near</span><a class="link text-gray-600" href="https://www.google.com/maps/place/New+Haven,+CT">New Haven, CT</a></span></div>
+      <div class="flex flex-row align-center justify-start py-3"><mat-icon class="text-indigo-500 dark:text-indigo-400">email</mat-icon><span class="ml-12">nicholas.ghobrial@gmail.com</span></div>
+      <div class="flex flex-row align-center justify-start py-3"><mat-icon class="text-indigo-500 dark:text-indigo-400">call</mat-icon><span class="ml-12">(203) 318-4094</span></div>
+      <div class="flex flex-row align-center justify-start py-3"><mat-icon class="text-indigo-500 dark:text-indigo-400">location_on</mat-icon><span class="ml-12"><span class="text-xs font-light mr-1">near</span><a class="link text-gray-600" href="https://www.google.com/maps/place/New+Haven,+CT">New Haven, CT</a></span></div>
     </div>
   </app-section>
 </div>

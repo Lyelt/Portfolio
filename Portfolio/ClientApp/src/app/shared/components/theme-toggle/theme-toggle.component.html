@@ -1,4 +1,4 @@
 <span class="px-4 cursor-pointer dark:text-white" (click)="toggleDarkMode()">
-  <mat-icon *ngIf="!theme || theme === 'light'">dark_mode</mat-icon>
-  <mat-icon *ngIf="theme === 'dark'">light_mode</mat-icon>
+  <mat-icon *ngIf="!theme || theme === 'light'" class="hover:text-blue-600 transition duration-500">dark_mode</mat-icon>
+  <mat-icon *ngIf="theme === 'dark'" class="hover:text-yellow-300 transition duration-500">light_mode</mat-icon>
 </span>

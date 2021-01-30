@@ -3,7 +3,7 @@
 @tailwind components;
 
 .btn {
-  @apply font-semibold py-2 px-4 rounded disabled:opacity-50 disabled:pointer-events-none;
+  @apply font-semibold py-2 px-4 rounded transition-bg ease-in-out duration-200 disabled:opacity-50 disabled:pointer-events-none;
 }
 
 .btn-primary {
@@ -27,11 +27,20 @@ input[type] {
 }
 
 .nav-link-hover {
-  @apply hover:border-b;
+  @apply relative;
+}
+.nav-link-hover:before {
+  @apply absolute left-1/2 right-1/2 bottom-0 bg-indigo-500 h-0.5 transition-center duration-300 ease-out dark:bg-indigo-400; 
+  content: "";
+  position: absolute;
+  z-index: -1;
+}
+.nav-link-hover:hover:before, .nav-link-hover:focus:before, .nav-link-hover:active:before {
+  @apply left-0 right-0;
 }
 
 .link {
-  @apply text-indigo-400 font-semibold underline cursor-pointer hover:text-indigo-500;
+  @apply text-indigo-600 dark:text-indigo-400 font-semibold underline cursor-pointer hover:text-indigo-700 dark:hover:text-indigo-500;
 }
 
 .blog-card {
