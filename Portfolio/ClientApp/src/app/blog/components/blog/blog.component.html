@@ -1,7 +1,7 @@
 <div class="px-4">
   <section class="flex flex-col items-center text-center pb-8">
     <h1 class="font-bold text-2xl mb-4">
-      This is my <span class="text-indigo-400">blog</span>.
+      This is my <span class="text-indigo-500 dark:text-indigo-400">blog</span>.
     </h1>
     <p class="max-w-xl text-gray-600 dark:text-gray-300">
       At least, it sort of resembles a blog. I'll be recording some thoughts about things I've created and learned as a developer.
@@ -13,9 +13,9 @@
   </div>
 </div>
 
-<div class="container mx-auto px-4 mt-8 max-w-sm max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
+<div class="container mx-auto px-4 mt-8 max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
   <div class="flex flex-col items-start mb-10 xl:mb-12" *ngFor="let blog of blogs">
     <p class="text-sm uppercase tracking-wider mb-1">{{blog.date}}</p>
-    <h2 [routerLink]="blog.link" class="link font-bold lg:text-xl">{{blog.title}} &rarr;</h2>
+    <h2 [routerLink]="blog.link" class="link font-bold lg:text-lg">{{blog.title}} &rarr;</h2>
   </div>
 </div>

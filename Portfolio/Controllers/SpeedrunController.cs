@@ -36,17 +36,9 @@ namespace Portfolio.Controllers
         [Route("Speedrun/GetUsers")]
         public IActionResult GetUsers()
         {
-            try
-            {
-                var speedrunners = _userContext.GetValidUsersForRoles(VALID_ROLES);
-                _logger.LogDebug($"Found {speedrunners.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-                return Ok(speedrunners);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining user information.");
-            }
+            var speedrunners = _userContext.GetValidUsersForRoles(VALID_ROLES);
+            _logger.LogDebug($"Found {speedrunners.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
+            return Ok(speedrunners);
         }
 
         [HttpGet]

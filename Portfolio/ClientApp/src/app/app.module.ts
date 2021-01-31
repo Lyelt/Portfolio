@@ -232,7 +232,6 @@ const routes: Routes = [
     providers: [
         AuthGuard,
         JwtHelperService,
-        { provide: ErrorHandler, useClass: CustomErrorHandler },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
     ],

@@ -25,7 +25,8 @@ module.exports = {
       },
       extend: {
         zIndex: {
-          '999': 999
+          '999': 999,
+          'topmost': 9999
         },
         flexGrow: {
           '1/2': 1 / 2

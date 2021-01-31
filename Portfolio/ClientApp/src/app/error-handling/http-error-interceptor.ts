@@ -11,15 +11,17 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     constructor(private alertService: AlertService) { }
 
     handleError(error: HttpErrorResponse) {
-        this.alertService.showHttpError(error, "Something went wrong");
+        if (error.error)
+            this.alertService.showHttpError(error.error, `Something Went Wrong (${error.error.code})`);
+        else
+            this.alertService.showError("An unspecified server error occurred", "Something Went Wrong");
         return throwError(error);
     }
 
-    intercept(req: HttpRequest<any>, next: HttpHandler):
-        Observable<HttpEvent<any>> {
+    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(req)
             .pipe(
-                catchError(err => this.handleError(err))
-            )
+                catchError((err: HttpErrorResponse) => this.handleError(err))
+            );
     };
 }

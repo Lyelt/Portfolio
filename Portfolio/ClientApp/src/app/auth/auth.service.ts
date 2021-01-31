@@ -25,6 +25,7 @@ export class AuthService {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             localStorage.setItem("jwt", token);
             localStorage.setItem("userId", userId);
+            localStorage.setItem("userName", username);
           }
 
           return token;
@@ -40,6 +41,7 @@ export class AuthService {
       map((response) => {
         localStorage.setItem("jwt", response.token);
         localStorage.setItem("userId", response.userId);
+        localStorage.setItem("userName", creds.username);
       })
     );
   }

@@ -61,9 +61,8 @@ namespace Portfolio
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseDatabaseErrorPage();
             }
-
+            app.UseExceptionHandler("/error");
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 

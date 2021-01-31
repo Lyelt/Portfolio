@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Portfolio.Data;
 using Portfolio.Identity;
 using Portfolio.Models.Auth;
+using Portfolio.Models.Errors;
 
 namespace Portfolio.Controllers
 {
@@ -35,33 +36,25 @@ namespace Portfolio.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("Auth/Login")]
-        public IActionResult Login([FromBody]Credentials credentials)
+        public IActionResult Login([FromBody] Credentials credentials)
         {
-            if (credentials?.Username == null || credentials?.Password == null)
-                return BadRequest("Invalid client request");
+            if (string.IsNullOrWhiteSpace(credentials?.Username) || string.IsNullOrWhiteSpace(credentials?.Password))
+                throw new BadRequestException("Username and password cannot be null or empty");
 
-            try
+            var user = _context.Users.FirstOrDefault(u => u.UserName.Equals(credentials.Username, StringComparison.OrdinalIgnoreCase));
+
+            if (user != null)
             {
-                var user = _context.Users.FirstOrDefault(u => u.UserName.Equals(credentials.Username, StringComparison.OrdinalIgnoreCase));
+                var passwordResult = _hasher.VerifyHashedPassword(user, user.PasswordHash, credentials.Password);
 
-                if (user != null)
+                if (passwordResult != PasswordVerificationResult.Failed)
                 {
-                    var passwordResult = _hasher.VerifyHashedPassword(user, user.PasswordHash, credentials.Password);
-
-                    if (passwordResult != PasswordVerificationResult.Failed)
-                    {
-                        var tokenString = GetTokenString(user, DateTime.Now.AddDays(180));
-                        return Ok(new { Token = tokenString, UserId = user.Id });
-                    }
+                    var tokenString = GetTokenString(user, DateTime.Now.AddDays(180));
+                    return Ok(new { Token = tokenString, UserId = user.Id });
                 }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return StatusCode((int)HttpStatusCode.InternalServerError, $"Error while authenticating user.");
-            }
 
-            return Unauthorized();
+            throw new UnauthorizedException($"Invalid username or password");
         }
 
         [HttpPost]
@@ -69,42 +62,24 @@ namespace Portfolio.Controllers
         [Route("Auth/GuestLogin")]
         public IActionResult GuestLogin([FromBody]Credentials credentials)
         {
-            if (credentials?.Username == null)
-                return BadRequest("Invalid client request");
+            if (string.IsNullOrWhiteSpace(credentials?.Username))
+                throw new BadRequestException("Username cannot be null or empty");
 
-            try
-            {
-                var user = _context.Users.FirstOrDefault(u => u.UserName.Equals(credentials.Username, StringComparison.OrdinalIgnoreCase));
-                if (user != null)
-                {
-                    var tokenString = GetTokenString(user, DateTime.Now.AddDays(7));
-                    return Ok(new { Token = tokenString, UserId = user.Id });
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return StatusCode((int)HttpStatusCode.InternalServerError, $"Error while retrieving guest login token");
-            }
+            var user = _context.Users.FirstOrDefault(u => u.UserName.Equals(credentials.Username, StringComparison.OrdinalIgnoreCase));
+            if (user == null)
+                throw new UnauthorizedException($@"No guest user was found with username ""{credentials.Username}""");
 
-            return Unauthorized();
+            var tokenString = GetTokenString(user, DateTime.Now.AddDays(7));
+            return Ok(new { Token = tokenString, UserId = user.Id });
         }
 
 
         [HttpPost]
         [AllowAnonymous]
         [Route("Auth/Hash")]
-        public IActionResult Hash([FromBody]Credentials input)
+        public IActionResult Hash([FromBody] Credentials input)
         {
-            try
-            {
-                return Ok(new { Hash = _hasher.HashPassword(null, input?.Password ?? "") });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return StatusCode((int)HttpStatusCode.InternalServerError, $"Error while hashing string: {ex.Message}");
-            }
+            return Ok(new { Hash = _hasher.HashPassword(null, input?.Password ?? "") });
         }
 
         private static string GetTokenString(ApplicationUser user, DateTime expirationTime)

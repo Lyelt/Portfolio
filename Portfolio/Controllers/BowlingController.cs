@@ -12,6 +12,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Portfolio.Models.Bowling;
 using Portfolio.Models.Auth;
+using Portfolio.Models.Errors;
 
 namespace Portfolio.Controllers
 {
@@ -36,169 +37,112 @@ namespace Portfolio.Controllers
         [Route("Bowling/GetUsers")]
         public IActionResult GetUsers()
         {
-            try
-            {
-                List<ApplicationUser> validUsers = _userContext.GetValidUsersForRoles(VALID_ROLES);
-                _logger.LogDebug($"Found {validUsers.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-                return Ok(validUsers);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining user information.");
-            }
+            var validUsers = _userContext.GetValidUsersForRoles(VALID_ROLES);
+            _logger.LogDebug($"Found {validUsers.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
+            return Ok(validUsers);
         }
 
         [HttpGet]
         [Route("Bowling/GetSessions")]
         public IActionResult GetSessions()
         {
-            try
-            {
-                var sessions = GetSessionList(null, null);
-                _logger.LogDebug($"Found {sessions.Count} total sessions.");
-                return Ok(sessions);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining bowling session information.");
-            }
+            var sessions = GetSessionList(null, null);
+            _logger.LogDebug($"Found {sessions.Count} total sessions.");
+            return Ok(sessions);
         }
 
         [HttpGet]
         [Route("Bowling/GetSeries/{seriesCategory}/{userId?}/{startTime?}/{endTime?}")]
         public IActionResult GetSeries(SeriesCategory seriesCategory, string userId = null, long? startTime = null, long? endTime = null)
         {
-            try
-            {
-                var sessions = GetSessionList(startTime, endTime);
-                var bowlers = _userContext.GetValidUsersForRoles(VALID_ROLES);//.Where(u => userId == null || u.Id == userId).ToList();
-                List<BowlingSeries> series = new BowlingSeriesService(sessions, bowlers).GetSeries(seriesCategory);
-                _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
-                return Ok(series);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining bowling series information.");
-            }
+            var sessions = GetSessionList(startTime, endTime);
+            var bowlers = _userContext.GetValidUsersForRoles(VALID_ROLES);//.Where(u => userId == null || u.Id == userId).ToList(); // TODO
+            List<BowlingSeries> series = new BowlingSeriesService(sessions, bowlers).GetSeries(seriesCategory);
+            _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
+            return Ok(series);
         }
 
         [HttpGet]
         [Route("Bowling/GetSingleSeries/{seriesCategory}/{userId}")]
         public IActionResult GetSingleSeries(SeriesCategory seriesCategory, string userId)
         {
-            try
+            var games = GetGames(userId, null, null);
+
+            // TODO: Use service for new category types and refactor to use a more elegant approach.
+            var series = new List<SingleSeriesEntry>();
+            var numberOfGamesPerScore = new Dictionary<int, int>();
+            foreach (var game in games)
             {
-                var games = GetGames(userId, null, null);
-
-                // TODO: Use service for new category types and refactor to use a more elegant approach.
-                var series = new List<SingleSeriesEntry>();
-                var numberOfGamesPerScore = new Dictionary<int, int>();
-                foreach (var game in games)
-                {
-                    if (numberOfGamesPerScore.ContainsKey(game.TotalScore))
-                        numberOfGamesPerScore[game.TotalScore]++;
-                    else
-                        numberOfGamesPerScore[game.TotalScore] = 1;
-                }
-
-                foreach (var kvp in numberOfGamesPerScore)
-                    series.Add(new SingleSeriesEntry { Name = kvp.Key, Value = kvp.Value });
-
-                _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
-                return Ok(series.OrderByDescending(g => g.Name));
+                if (numberOfGamesPerScore.ContainsKey(game.TotalScore))
+                    numberOfGamesPerScore[game.TotalScore]++;
+                else
+                    numberOfGamesPerScore[game.TotalScore] = 1;
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining bowling series information.");
-            }
+
+            foreach (var kvp in numberOfGamesPerScore)
+                series.Add(new SingleSeriesEntry { Name = kvp.Key, Value = kvp.Value });
+
+            _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
+            return Ok(series.OrderByDescending(g => g.Name));
+
         }
 
         [HttpGet]
         [Route("Bowling/GetStats/{statCategory}/{userId}/{startTime?}/{endTime?}")]
         public IActionResult GetStats(StatCategory statCategory, string userId, long? startTime, long? endTime)
         {
-            try
-            {
-                var games = GetGames(userId, startTime, endTime);
-                var calc = new BowlingStatCalculator(games);
-                return Ok(calc.GetStats(statCategory));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while loading \"{statCategory}\" bowling stats.");
-            }
+            var games = GetGames(userId, startTime, endTime);
+            var calc = new BowlingStatCalculator(games);
+            return Ok(calc.GetStats(statCategory));
         }
 
         [HttpPost]
         [Route("Bowling/StartNewSession")]
-        public async Task<IActionResult> StartNewSession([FromBody]BowlingSession session)
+        public async Task<IActionResult> StartNewSession([FromBody] BowlingSession session)
         {
-            try
-            {
-                _logger.LogInformation($"Starting new session for {session.Date}");
-                await _bowlingContext.Sessions.AddAsync(session);
-                await _bowlingContext.SaveChangesAsync();
-                return Ok(session);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return BadRequest($"Error while initializing new bowling session.");
-            }
+            await ThrowIfUserIsGuestAsync();
+
+            _logger.LogInformation($"Starting new session for {session.Date}");
+            await _bowlingContext.Sessions.AddAsync(session);
+            await _bowlingContext.SaveChangesAsync();
+            return Ok(session);
         }
 
         [HttpPost]
         [Route("Bowling/AddGameToSession")]
-        public async Task<IActionResult> AddGameToSession([FromBody]BowlingGame game)
+        public async Task<IActionResult> AddGameToSession([FromBody] BowlingGame game)
         {
-            try
-            {
-                _logger.LogInformation($"Adding game #{game.GameNumber} to session {game.BowlingSessionId}");
-                foreach (var frame in game.Frames)
-                    await _bowlingContext.Frames.AddAsync(frame);
+            await ThrowIfUserIsGuestAsync();
 
-                await _bowlingContext.Games.AddAsync(game);
-                await _bowlingContext.SaveChangesAsync();
-                _logger.LogDebug($"Added game with ID {game.Id} for user {game.UserId} with total score {game.TotalScore}.");
-                return Ok(game);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return BadRequest($"Error while adding new game to session.");
-            }
+            _logger.LogInformation($"Adding game #{game.GameNumber} to session {game.BowlingSessionId}");
+            foreach (var frame in game.Frames)
+                await _bowlingContext.Frames.AddAsync(frame);
+
+            await _bowlingContext.Games.AddAsync(game);
+            await _bowlingContext.SaveChangesAsync();
+            _logger.LogDebug($"Added game with ID {game.Id} for user {game.UserId} with total score {game.TotalScore}.");
+            return Ok(game);
         }
 
         [HttpDelete]
         [Route("Bowling/DeleteGame/{gameId}")]
         public async Task<IActionResult> DeleteGame(int gameId)
         {
-            try
-            {
-                _logger.LogInformation($"Deleting game {gameId}.");
-                var game = await _bowlingContext.Games.FindAsync(gameId);
+            await ThrowIfUserIsGuestAsync();
 
-                var currentUser = await GetCurrentUser();
-                bool userIsAdmin = await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Administrator.ToString());
+            _logger.LogInformation($"Deleting game {gameId}.");
+            var game = await _bowlingContext.Games.FindAsync(gameId);
 
-                if (!userIsAdmin && currentUser.Id != game.UserId)
-                    return Unauthorized();
+            var currentUser = await GetCurrentUser();
+            bool userIsAdmin = await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Administrator.ToString());
 
-                _bowlingContext.Games.Remove(game);
-                await _bowlingContext.SaveChangesAsync();
-                _logger.LogDebug($"Removed game with ID {game.Id} for user {game.UserId} in session {game.BowlingSessionId}.");
-                return Ok(game);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return BadRequest($"Error while deleting bowling game.");
-            }
+            if (!userIsAdmin && currentUser.Id != game.UserId)
+                throw new UnauthorizedException("Cannot delete other users' games");
+
+            _bowlingContext.Games.Remove(game);
+            await _bowlingContext.SaveChangesAsync();
+            _logger.LogDebug($"Removed game with ID {game.Id} for user {game.UserId} in session {game.BowlingSessionId}.");
+            return Ok(game);
         }
 
         private async Task<ApplicationUser> GetCurrentUser()
@@ -222,13 +166,19 @@ namespace Portfolio.Controllers
                     .Include(s => s.Games)
                     .ThenInclude(g => g.Frames)
                     .AsEnumerable()
-                    .Where(s => s.Date > DateTimeOffset.FromUnixTimeMilliseconds(startTime ?? 0) && 
-                                s.Date < DateTimeOffset.FromUnixTimeMilliseconds(endTime ?? new DateTimeOffset(DateTime.Now.AddYears(999)).ToUnixTimeMilliseconds()))
+                    .Where(s => s.Date > DateTimeOffset.FromUnixTimeMilliseconds(startTime ?? 0) && (!endTime.HasValue || s.Date < DateTimeOffset.FromUnixTimeMilliseconds(endTime.Value)))
                     .ToList();
 
             sessions.ForEach(s => s.Games = s.Games.OrderBy(g => g.GameNumber).ToList());
 
             return sessions;
+        }
+
+        private async Task ThrowIfUserIsGuestAsync()
+        {
+            var currentUser = await GetCurrentUser();
+            if (await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Guest.ToString()))
+                throw new UnauthorizedException("Cannot make modifications as a guest");
         }
     }
 }

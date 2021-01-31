@@ -20,7 +20,9 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  isLoggedIn() {
-    return localStorage.getItem("jwt");
+  loggedInUserName() {
+    if ('jwt' in localStorage && 'userName' in localStorage) {
+      return localStorage.getItem("userName")
+    }
   }
 }

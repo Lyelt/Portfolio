@@ -17,6 +17,7 @@ using System.Net.Http;
 using MoreLinq;
 using Microsoft.AspNetCore.Authorization;
 using Portfolio.Extensions;
+using Portfolio.Models.Errors;
 
 namespace Portfolio.Controllers
 {
@@ -48,16 +49,8 @@ namespace Portfolio.Controllers
         [Route("Yugioh/GetCards/{pageNumber}/{count}/{nameFilter?}")]
         public async Task<IActionResult> GetCards(int pageNumber, int count, string nameFilter)
         {
-            try
-            {
-                var cards = await GetCardsAsync();
-                return Ok(cards.Skip((pageNumber - 1) * count).Take(count).ToList());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining {count} cards containing the string \"{nameFilter}\"");
-            }
+            var cards = await GetCardsAsync();
+            return Ok(cards.Skip((pageNumber - 1) * count).Take(count).ToList());
         }
 
         [HttpGet]
@@ -65,78 +58,43 @@ namespace Portfolio.Controllers
         [Route("Yugioh/GetCardById/{cardId}")]
         public async Task<IActionResult> GetCardById(int cardId)
         {
-            try
-            {
-                var cards = await GetCardsAsync();
-                return Ok(cards.FirstOrDefault(c => c.Id == cardId));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining card with ID {cardId}");
-            }
+            var cards = await GetCardsAsync();
+            return Ok(cards.FirstOrDefault(c => c.Id == cardId));
         }
 
         [HttpPost]
         [AllowAnonymous]
         [Route("Yugioh/GetCardsWithFilter")]
-        public async Task<IActionResult> GetCardsWithFilter([FromBody]YugiohCardFilter filter)
+        public async Task<IActionResult> GetCardsWithFilter([FromBody] YugiohCardFilter filter)
         {
-            try
-            {
-                var cards = await GetCardsAsync(filter);
-                return Ok(cards.Skip(((filter?.PageNumber ?? 1) - 1) * filter?.Count ?? 20).Take(filter?.Count ?? 20).ToList());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining cards");
-            }
+            var cards = await GetCardsAsync(filter);
+            return Ok(cards.Skip(((filter?.PageNumber ?? 1) - 1) * filter?.Count ?? 20).Take(filter?.Count ?? 20).ToList());
         }
 
         [HttpGet]
         [Route("Yugioh/GetUsers")]
         public IActionResult GetUsers()
         {
-            try
-            {
-                var duelists = _userContext.GetValidUsersForRoles(VALID_ROLES);
-                _logger.LogDebug($"Found {duelists.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-                return Ok(duelists);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining user information.");
-            }
+            var duelists = _userContext.GetValidUsersForRoles(VALID_ROLES);
+            _logger.LogDebug($"Found {duelists.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
+            return Ok(duelists);
         }
 
         [HttpGet]
         [Route("Yugioh/GetCollections/{userId}")]
-
         public async Task<IActionResult> GetCollections(string userId)
         {
-            var collections = new List<CardCollection>();
+            var collections = await _yugiohContext.Collections
+                .Where(cc => cc.UserId.Equals(userId))
+                .Include(cc => cc.CardIds)
+                .ToListAsync();
 
-            try
-            {
-                collections = await _yugiohContext.Collections
-                    .Where(cc => cc.UserId.Equals(userId))
-                    .Include(cc => cc.CardIds)
-                    .ToListAsync();
+            var allCards = await GetCardsAsync();
 
-                var allCards = await GetCardsAsync();
+            foreach (var collection in collections)
+                collection.PopulateCards(allCards);
 
-                foreach (var collection in collections)
-                    collection.PopulateCards(allCards);
-
-                _logger.LogDebug($"Found {collections.Count} collections for user ID {userId}");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return BadRequest($"Error while retrieving collections: {ex.Message}");
-            }
+            _logger.LogDebug($"Found {collections.Count} collections for user ID {userId}");
 
             return Ok(collections);
         }
@@ -145,24 +103,15 @@ namespace Portfolio.Controllers
         [Route("Yugioh/UpdateCollection")]
         public async Task<IActionResult> UpdateCollection([FromBody]CardCollection collection)
         {
-            try
-            {
-                if (!await UserCanPerformAction(collection.UserId))
-                    return Unauthorized();
+            if (!await UserCanPerformAction(collection.UserId))
+                throw new UnauthorizedException("User does not have the required permissions to update this collection");
 
-                if (await _yugiohContext.Collections.ContainsAsync(collection))
-                    _yugiohContext.Collections.Update(collection);
-                else
-                    await _yugiohContext.Collections.AddAsync(collection);
+            if (await _yugiohContext.Collections.ContainsAsync(collection))
+                _yugiohContext.Collections.Update(collection);
+            else
+                await _yugiohContext.Collections.AddAsync(collection);
 
-                await _yugiohContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return BadRequest($"Error while creating collection: {ex.Message}");
-            }
-
+            await _yugiohContext.SaveChangesAsync();
             return Ok(collection);
         }
 
@@ -170,112 +119,79 @@ namespace Portfolio.Controllers
         [Route("Yugioh/DuplicateCollection")]
         public async Task<IActionResult> DuplicateCollection([FromBody]CardCollection collection)
         {
-            try
-            {
-                if (!await UserCanPerformAction(collection.UserId))
-                    return Unauthorized();
+            if (!await UserCanPerformAction(collection.UserId))
+                throw new UnauthorizedException("User does not have the required permissions to duplicate this collection");
 
-                var newCollection = collection.GetCopy();
-                await _yugiohContext.Collections.AddAsync(newCollection);
-                await _yugiohContext.SaveChangesAsync();
-                return Ok(newCollection);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return BadRequest($"Error while duplicating collection: {ex.Message}");
-            }
-
+            var newCollection = collection.GetCopy();
+            await _yugiohContext.Collections.AddAsync(newCollection);
+            await _yugiohContext.SaveChangesAsync();
+            return Ok(newCollection);
         }
 
         [HttpPost]
         [Route("Yugioh/AddCardToCollection")]
-        public async Task<IActionResult> AddCardToCollection([FromBody]Card card)
+        public async Task<IActionResult> AddCardToCollection([FromBody] Card card)
         {
-            try
-            {
-                if (!await UserCanPerformAction(card.CardCollection.UserId))
-                    return Unauthorized();
+            if (!await UserCanPerformAction(card.CardCollection.UserId))
+                throw new UnauthorizedException("User does not have the required permissions to update this collection");
 
-                _logger.LogInformation($"Adding card #{card.Id} in set {card.SetCode} to collection {card.CardCollection.UserId}/{card.CardCollection.Name}/{card.Section}");
+            _logger.LogInformation($"Adding card #{card.Id} in set {card.SetCode} to collection {card.CardCollection.UserId}/{card.CardCollection.Name}/{card.Section}");
 
-                var collection = await _yugiohContext.Collections
-                    .Include(c => c.CardIds)
-                    .FirstOrDefaultAsync(c => c.Id == card.CardCollection.Id);
+            var collection = await _yugiohContext.Collections
+                .Include(c => c.CardIds)
+                .FirstOrDefaultAsync(c => c.Id == card.CardCollection.Id);
 
-                var existingCard = collection.CardIds.FirstOrDefault(c => c.Id == card.Id);
-                if (existingCard == null)
-                    collection.CardIds.Add(card);
-                else
-                    existingCard.Quantity++;
+            var existingCard = collection.CardIds.FirstOrDefault(c => c.Id == card.Id);
+            if (existingCard == null)
+                collection.CardIds.Add(card);
+            else
+                existingCard.Quantity++;
 
-                card.Quantity++;
-                await _yugiohContext.SaveChangesAsync();
+            card.Quantity++;
+            await _yugiohContext.SaveChangesAsync();
 
-                collection.PopulateCards(await GetCardsAsync());
-                return Ok(collection);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return BadRequest($"Error while adding card to collection: {ex.Message}");
-            }
+            collection.PopulateCards(await GetCardsAsync());
+            return Ok(collection);
         }
 
         [HttpPost]
         [Route("Yugioh/DeleteCardFromCollection")]
-        public async Task<IActionResult> DeleteCardFromCollection([FromBody]Card card)
+        public async Task<IActionResult> DeleteCardFromCollection([FromBody] Card card)
         {
-            try
+            if (!await UserCanPerformAction(card.CardCollection.UserId))
+                throw new UnauthorizedException("User does not have the required permissions to delete from this collection");
+
+            _logger.LogInformation($"Deleting card #{card.Id} in set {card.SetCode} from collection {card.CardCollection.UserId}/{card.CardCollection.Name}/{card.Section}");
+
+            var collection = await _yugiohContext.Collections
+                .Include(c => c.CardIds)
+                .FirstOrDefaultAsync(c => c.Id == card.CardCollection.Id);
+
+            var existingCard = collection.CardIds.FirstOrDefault(c => c.Id == card.Id && c.SetCode == card.SetCode && c.Section == card.Section);
+            if (existingCard != null && --existingCard.Quantity == 0)
             {
-                if (!await UserCanPerformAction(card.CardCollection.UserId))
-                    return Unauthorized();
-
-                _logger.LogInformation($"Deleting card #{card.Id} in set {card.SetCode} from collection {card.CardCollection.UserId}/{card.CardCollection.Name}/{card.Section}");
-
-                var collection = await _yugiohContext.Collections
-                    .Include(c => c.CardIds)
-                    .FirstOrDefaultAsync(c => c.Id == card.CardCollection.Id);
-
-                var existingCard = collection.CardIds.FirstOrDefault(c => c.Id == card.Id && c.SetCode == card.SetCode && c.Section == card.Section);
-                if (existingCard != null && --existingCard.Quantity == 0)
-                {
-                    collection.CardIds.RemoveAll(c => c.Id == card.Id && c.SetCode == card.SetCode && c.Section == card.Section);
-                }
-                await _yugiohContext.SaveChangesAsync();
-
-                collection.PopulateCards(await GetCardsAsync());
-                return Ok(collection);
+                collection.CardIds.RemoveAll(c => c.Id == card.Id && c.SetCode == card.SetCode && c.Section == card.Section);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return BadRequest($"Error while removing card from collection: {ex.Message}");
-            }
+            await _yugiohContext.SaveChangesAsync();
+
+            collection.PopulateCards(await GetCardsAsync());
+            return Ok(collection);
         }
 
         [HttpDelete]
         [Route("Yugioh/DeleteCollection/{collectionId}")]
         public async Task<IActionResult> DeleteCollection(int collectionId)
         {
-            try
-            {
-                var collection = await _yugiohContext.Collections.FindAsync(collectionId);
+            var collection = await _yugiohContext.Collections.FindAsync(collectionId);
 
-                if (!await UserCanPerformAction(collection.UserId))
-                    return Unauthorized();
+            if (!await UserCanPerformAction(collection.UserId))
+                throw new UnauthorizedException("User does not have the required permissions to delete this collection");
 
-                _logger.LogInformation($"Deleting collection #{collectionId}");
+            _logger.LogInformation($"Deleting collection #{collectionId}");
 
-                _yugiohContext.Collections.Remove(collection);
-                await _yugiohContext.SaveChangesAsync();
-                return Ok(collection);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return BadRequest($"Error while deleting collection: {ex.Message}");
-            }
+            _yugiohContext.Collections.Remove(collection);
+            await _yugiohContext.SaveChangesAsync();
+            return Ok(collection);
         }
 
         private async Task<IEnumerable<YugiohCard>> GetCardsAsync(YugiohCardFilter filter = null)
@@ -304,9 +220,6 @@ namespace Portfolio.Controllers
                 await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Duelist.ToString()));
         }
 
-        private async Task<ApplicationUser> GetCurrentUserAsync()
-        {
-            return await _userManager.GetUserAsync(User);
-        }
+        private async Task<ApplicationUser> GetCurrentUserAsync() => await _userManager.GetUserAsync(User);
     }
 }

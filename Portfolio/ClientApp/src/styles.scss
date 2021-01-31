@@ -19,7 +19,7 @@ select {
 }
 
 input[type] {
-  @apply dark:bg-gray-900 rounded;
+  @apply dark:bg-gray-900 dark:border-gray-400 dark:placeholder-gray-400 rounded;
 }
 
 ::-webkit-calendar-picker-indicator {
@@ -48,15 +48,15 @@ input[type] {
 }
 
 .nav-link {
-  @apply mx-2 uppercase tracking-wide cursor-pointer sm:mx-4 focus:outline-none focus:border-b focus:border-indigo-500;
+  @apply mx-2 uppercase tracking-wide cursor-pointer sm:mx-4;
 }
 
 .last-menu-item {
-  @apply font-bold uppercase tracking-wide border-solid border-0 border-t border-gray-400 -mb-2 hover:bg-indigo-200 #{!important};
+  @apply font-bold border-solid border-0 border-t border-gray-400 -mb-2 hover:bg-indigo-200 #{!important};
 }
 
 .menu-item {
-  @apply hover:bg-indigo-100;
+  @apply hover:bg-indigo-200;
 }
 
 .bg-wave {

@@ -43,7 +43,7 @@ export class BowlingStartSessionComponent implements OnInit {
   startAddingGames() {
     if (!this.selectedSession) {
       const newSession = new BowlingSession();
-      newSession.date = this.selectedDate.toDateString();
+      newSession.date = new Date(this.selectedDate).toDateString();//.toDateString();
 
       this.bowlingService.startNewSession(newSession).subscribe(data => {
         this.selectedSession = data;

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorResponse } from './models/error-response';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class AlertService {
         this.isVisible = true;
     }
 
-    public showHttpError(error: HttpErrorResponse, title: string): void {
+    public showHttpError(error: ErrorResponse, title: string): void {
         this.showError(error.message, title);
     }
 
