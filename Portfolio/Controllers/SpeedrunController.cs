@@ -12,6 +12,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Portfolio.Models.Speedrun;
 using Portfolio.Models.Auth;
+using Portfolio.Models.Errors;
 
 namespace Portfolio.Controllers
 {
@@ -45,17 +46,9 @@ namespace Portfolio.Controllers
         [Route("Speedrun/GetCourses")]
         public IActionResult GetCourses()
         {
-            try
-            {
-                List<Course> courses = _srContext.Courses.Include(c => c.Stars).ToList();
-                _logger.LogDebug($"Found {courses.Count} total courses.");
-                return Ok(courses);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return NotFound($"Error while obtaining course information.");
-            }
+            List<Course> courses = _srContext.Courses.Include(c => c.Stars).ToList();
+            _logger.LogDebug($"Found {courses.Count} total courses.");
+            return Ok(courses);
         }
 
         [HttpGet]
@@ -67,41 +60,34 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [Route("Speedrun/UpdateStarTime")]
-        public async Task<IActionResult> UpdateStarTime([FromBody]StarTime starTime)
+        public async Task<IActionResult> UpdateStarTime([FromBody] StarTime starTime)
         {
-            try
+            var currentUser = await GetCurrentUser();
+            bool userIsAdmin = await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Administrator.ToString());
+
+            if (await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Guest.ToString()))
+                throw new UnauthorizedException("Cannot make modifications as a guest");
+
+            if (!userIsAdmin && starTime.UserId != currentUser.Id)
+                throw new UnauthorizedException("Cannot modify star times for other users");
+
+
+            starTime.LastUpdated = DateTime.UtcNow;
+
+            if (await _srContext.StarTimes.ContainsAsync(starTime))
             {
-                var currentUser = await GetCurrentUser();
-                bool userIsAdmin = await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Administrator.ToString());
-
-                if (userIsAdmin || starTime.UserId == currentUser.Id)
-                {
-                    starTime.LastUpdated = DateTime.UtcNow;
-
-                    if (await _srContext.StarTimes.ContainsAsync(starTime))
-                    {
-                        if (starTime.Time == TimeSpan.Zero)
-                            _srContext.StarTimes.Remove(starTime);
-                        else
-                            _srContext.StarTimes.Update(starTime);
-                    }
-                    else
-                    {
-                        await _srContext.StarTimes.AddAsync(starTime);
-                    }
-
-                    await _srContext.SaveChangesAsync();
-                    return Ok();
-                }
-
-                // Warn the user if they tried to make unauthorized changes.
-                return Unauthorized();
+                if (starTime.Time == TimeSpan.Zero)
+                    _srContext.StarTimes.Remove(starTime);
+                else
+                    _srContext.StarTimes.Update(starTime);
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex.ToString());
-                return BadRequest($"Error while updating star time.");
+                await _srContext.StarTimes.AddAsync(starTime);
             }
+
+            await _srContext.SaveChangesAsync();
+            return Ok();
         }
 
         private async Task<ApplicationUser> GetCurrentUser()

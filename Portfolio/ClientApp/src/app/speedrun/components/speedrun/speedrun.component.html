@@ -14,21 +14,21 @@
 
     <div class="flex flex-col" *ngIf="view == 'grid'">
       <!-- Component -->
-      <div *ngIf="categories" class="mb-6">
+      <div *ngIf="categories" class="mb-12">
         <div class="grid grid-cols-3 mb-4">
           <h3 class="font-semibold">{{categories.name}}</h3>
           <h3 class="pl-2" *ngFor="let user of runners">{{user.userName}} ({{getStarCount(user, null)}})</h3>
         </div>
-        <div class="border rounded bg-white dark:bg-gray-800 mb-6">
+        <div class="border rounded bg-white dark:bg-gray-800 dark:border-gray-600 shadow">
           <div class="even:bg-gray-100 dark:even:bg-gray-900 rounded px-4" *ngFor="let star of orderStars(categories.stars)">
             <div class="grid grid-cols-3 py-2">
-              <p class="link">{{star.name}}</p>
+              <p>{{star.name}}</p>
               <div *ngFor="let user of runners"
                    class="link font-normal pl-2"
                    [ngClass]="{'font-bold': starTimeIsFastest(star.starId, user.id)}"
                    (click)="openDialog(getStarTime(star.starId, user.id), star.name)">
                 <span *ngIf="getStarTime(star.starId, user.id)?.timeDisplay">{{getStarTime(star.starId, user.id)?.timeDisplay}}</span>
-                <span *ngIf="!getStarTime(star.starId, user.id)?.timeDisplay" class="text-gray-500 dark:text-gray-300 underline uppercase tracking-wide hover:text-indigo-500">No Entry</span>
+                <span *ngIf="!getStarTime(star.starId, user.id)?.timeDisplay" class="text-gray-600 dark:text-gray-300 underline uppercase tracking-wide hover:text-indigo-500">No Entry</span>
               </div>
             </div>
           </div>
@@ -41,15 +41,15 @@
             <div class="flex cursor-pointer" (click)="toggleCourseCollapsed(course)">
               <mat-icon class="mr-1">{{courseIsCollapsed(course) ? 'keyboard_arrow_right' : 'keyboard_arrow_down'}}</mat-icon>
               <h3 class="font-semibold mr-1">{{course.name}}</h3>
-              <span *ngIf="getCompletedStars(course) as completedStars"
-                    [ngClass]="{'text-red-500': completedStars.percentage >= 0, 'text-yellow-500': completedStars.percentage > 50, 'text-green-500': completedStars.percentage > 80}">({{completedStars.completed}}/{{completedStars.total}})</span>
+              <span *ngIf="getCompletedStars(course) as completedStars" class="font-bold"
+                    [ngClass]="{'text-red-500': completedStars.percentage >= 0, 'text-orange-500': completedStars.percentage > 50, 'text-green-500': completedStars.percentage > 80}">({{completedStars.completed}}/{{completedStars.total}})</span>
             </div>
-            <h3 class="text-indigo-500 pl-2" *ngFor="let user of runners">{{getStarCount(user, course)}}</h3>
+            <h3 class="font-medium text-indigo-600 dark:text-indigo-400 pl-2" *ngFor="let user of runners">{{getStarCount(user, course)}}</h3>
           </div>
-          <div class="border rounded bg-white dark:bg-gray-800 mb-6 mt-6" [ngClass]="{'hidden': courseIsCollapsed(course)}">
+          <div class="border rounded bg-white dark:bg-gray-800 dark:border-gray-600 mb-6 mt-6 shadow" [ngClass]="{'hidden': courseIsCollapsed(course)}">
             <div class="even:bg-gray-100 dark:even:bg-gray-900 rounded px-4" *ngFor="let star of orderStars(course.stars)">
               <div class="grid grid-cols-3 py-2">
-                <p class="link">{{star.name}}</p>
+                <p>{{star.name}}</p>
                 <div *ngFor="let user of runners"
                      class="link font-normal pl-2"
                      [ngClass]="{'font-bold': starTimeIsFastest(star.starId, user.id)}"

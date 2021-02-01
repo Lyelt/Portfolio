@@ -2,13 +2,15 @@
 
 <mat-dialog-content [formGroup]="form" class="flex flex-col" [ngClass]="{'h-screen': starTime.videoUrl}">
 
-  <mat-form-field class="w-full">
-    <input type="text" matInput placeholder="Time (hh:mm:ss.ff)" formControlName="time" value="{{starTime.timeDisplay}}" />
-  </mat-form-field>
+  <div class="w-full flex flex-col mb-6">
+    <label for="time" class="pb-1">Time</label>
+    <input type="text" placeholder="Time (hh:mm:ss.ff)" formControlName="time" [(ngModel)]="starTime.timeDisplay" />
+  </div>
 
-  <mat-form-field class="w-full">
-    <input type="text" matInput placeholder="Youtube Watch Code" formControlName="videoUrl" value="{{starTime.videoUrl}}" />
-  </mat-form-field>
+  <div class="w-full flex flex-col mb-8">
+    <label for="videoUrl" class="pb-1">Youtube Watch Code</label>
+    <input type="text" placeholder="Youtube Watch Code" formControlName="videoUrl" [(ngModel)]="starTime.videoUrl" />
+  </div>
 
   <div *ngIf="starTime.videoUrl" class="h-full">
     <iframe class="w-full h-full" [src]="getYoutubeUrl(starTime.videoUrl)" frameborder="0" allowfullscreen></iframe>
@@ -17,6 +19,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions class="flex justify-between">
-  <button type="button" class="btn" (click)="close()">Cancel</button>
+  <button type="button" class="btn border border-gray-500 dark:border-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700" (click)="close()">Cancel</button>
   <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!form.valid">Save Changes</button>
 </mat-dialog-actions>

@@ -21,7 +21,8 @@ module.exports = {
         red: colors.red,
         green: colors.green,
         yellow: colors.yellow,
-        blue: colors.blue
+        blue: colors.blue,
+        orange: colors.orange
       },
       extend: {
         zIndex: {
