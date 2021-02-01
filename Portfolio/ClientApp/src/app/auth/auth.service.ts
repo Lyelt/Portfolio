@@ -57,5 +57,6 @@ export class AuthService {
     // remove user from local storage to log user out
     localStorage.removeItem("jwt");
     localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
   }
 }
