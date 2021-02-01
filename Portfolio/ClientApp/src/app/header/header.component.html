@@ -19,7 +19,7 @@
       <span mat-menu-item routerLink="recipes" class="menu-item"><mat-icon>menu_book</mat-icon>Recipes</span>
       <span mat-menu-item routerLink="speedrun" class="menu-item"><mat-icon>sports_esports</mat-icon>Speedrun</span>
       <span mat-menu-item routerLink="login" class="last-menu-item flex items-center" *ngIf="loggedInUserName(); let username">
-        <mat-icon>exit_to_app</mat-icon> Logout {{username}}
+        <mat-icon class="transform rotate-180">exit_to_app</mat-icon>Logout {{username}}
       </span>
     </mat-menu>
     <span class="flex-shrink flex-auto"></span>
