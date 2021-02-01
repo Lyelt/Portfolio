@@ -7,15 +7,15 @@
 }
 
 .btn-primary {
-  @apply bg-indigo-500 text-indigo-100 hover:bg-indigo-600 dark:bg-indigo-700 dark:hover:bg-indigo-800;
+  @apply bg-indigo-600 text-indigo-50 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-800;
 }
 
 .btn-secondary {
-  @apply bg-pink-500 text-pink-100 hover:bg-pink-600 dark:bg-pink-700 dark:hover:bg-pink-800;
+  @apply bg-pink-600 text-pink-50 hover:bg-pink-700 dark:bg-pink-700 dark:hover:bg-pink-800;
 }
 
 select {
-  @apply dark:bg-gray-900 rounded;
+  @apply dark:bg-gray-900 dark:border-gray-400 dark:placeholder-gray-400 rounded;
 }
 
 input[type] {
