@@ -1,6 +1,6 @@
 <header class="fixed top-0 z-999 w-full bg-white dark:bg-gray-900 shadow-lg py-4 px-2 text-xs sm:text-base overflow-x-auto">
   <nav class="flex items-center">
-    <a href="#" class="nav-link"><mat-icon routerLink="">home</mat-icon></a>
+    <a href="#" class="nav-link hidden sm:inline"><mat-icon routerLink="">home</mat-icon></a>
     <span class="flex-shrink flex-auto"></span>
     <a class="nav-link nav-link-hover" routerLink="" href="#projects" (click)="scrollToElement('projects')">Projects</a>
     <a class="nav-link nav-link-hover" routerLink="" href="#skills" (click)="scrollToElement('skills')">Skills</a>
@@ -14,9 +14,9 @@
     <mat-menu #menu="matMenu">
       <span mat-menu-item routerLink="bowling" class="menu-item"><mat-icon svgIcon="bowling"></mat-icon>Bowling</span>
       <span mat-menu-item routerLink="yugioh" class="menu-item"><mat-icon svgIcon="yugioh"></mat-icon>Yu-Gi-Oh</span>
-      <span mat-menu-item routerLink="tier" class="menu-item"><mat-icon>format_list_numbered</mat-icon>Tier Lists</span>
+      <!-- <span mat-menu-item routerLink="tier" class="menu-item"><mat-icon>format_list_numbered</mat-icon>Tier Lists</span> -->
       <span mat-menu-item routerLink="initiative" class="menu-item"><mat-icon>repeat_one</mat-icon>Initiative</span>
-      <span mat-menu-item routerLink="recipes" class="menu-item"><mat-icon>menu_book</mat-icon>Recipes</span>
+      <!-- <span mat-menu-item routerLink="recipes" class="menu-item"><mat-icon>menu_book</mat-icon>Recipes</span> -->
       <span mat-menu-item routerLink="speedrun" class="menu-item"><mat-icon>sports_esports</mat-icon>Speedrun</span>
       <span mat-menu-item routerLink="login" class="last-menu-item flex items-center" *ngIf="loggedInUserName(); let username">
         <mat-icon class="transform rotate-180">exit_to_app</mat-icon>Logout {{username}}
@@ -24,7 +24,5 @@
     </mat-menu>
     <span class="flex-shrink flex-auto"></span>
     <app-theme-toggle class="hidden sm:inline"></app-theme-toggle>
-    <a class="hidden md:inline px-4 cursor-pointer" href="https://github.com/Lyelt" title="Github"><img src="assets/github-logo.png" class="p-0.5 bg-white rounded" /></a>
-    <a class="hidden md:inline px-4 cursor-pointer" href="https://www.linkedin.com/in/nicholasghobrial/" title="LinkedIn"><img src="assets/linkedin-logo.png" /></a>
   </nav>
 </header>

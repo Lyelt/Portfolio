@@ -54,7 +54,6 @@ import { YugiohArticleComponent } from './blog/components/articles/yugioh-articl
 import { ViewCollectionComponent } from './yugioh/components/view-collection/view-collection.component';
 import { AddCardComponent } from './yugioh/components/add-card/add-card.component';
 import { AlertComponent } from './error-handling/components/alert/alert.component';
-import { CustomErrorHandler } from './error-handling/error-handler';
 import { HttpErrorInterceptor } from './error-handling/http-error-interceptor';
 import { AlertService } from './error-handling/alert.service';
 import { SpeedrunUpdateArticleComponent } from './blog/components/articles/speedrun-update-article/speedrun-update-article.component';
@@ -97,7 +96,7 @@ const routes: Routes = [
         path: 'blog/speedrun', component: SpeedrunArticleComponent
     },
     {
-        path: 'blog/speedrun-update', component: SpeedrunUpdateArticleComponent
+        path: 'blog/speedrun/update', component: SpeedrunUpdateArticleComponent
     },
     {
         path: 'blog/initiative', component: InitiativeComponent

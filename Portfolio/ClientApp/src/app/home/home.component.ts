@@ -14,7 +14,8 @@ export class HomeComponent implements OnInit {
   ];
 
   demos: Project[] = [
-    { name: "YGO Collection Keeper", description: "A collection keeper and card lookup for a deck building trading card game called Yu-Gi-Oh!", blogUrl: "/blog/yugioh", viewUrl: "/yugioh" },
+    { name: "Bowling Statistics", description: "Tracking bowling scores and visualizing interesting statistics.", blogUrl: "/blog/bowling", viewUrl: "/bowling" },
+    { name: "Yu-Gi-Oh! Collections", description: "A collection keeper and card lookup for a deck building trading card game called Yu-Gi-Oh!", blogUrl: "/blog/yugioh", viewUrl: "/yugioh" },
     { name: "Turn Tracker", description: "A basic tracker for turn order in board games or tabletop games.", blogUrl: "/blog/initiative", viewUrl: "/initiative" },
   ];
 

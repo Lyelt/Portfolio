@@ -4,8 +4,8 @@
       <h2 class="font-bold text-2xl mb-2">Login</h2>
       <p class="pl-2" *ngIf="navigatingToSpeedrun()">(or, <a class="link" routerLink="/speedrun/bingo">click here for the SM64 bingo tool)</a></p>
     </div>
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <div class="flex flex-col justify-center p-4">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="px-4 pb-2">
+      <div class="flex flex-col justify-center">
          <div class="flex flex-col mb-4">
             <label for="username" class="pb-1 font-medium">Username</label>
             <input type="text" formControlName="username" [ngClass]="{ 'border-0 ring-2 ring-red-600 dark:ring-pink-700': submitted && f.username.errors }" />
@@ -15,15 +15,12 @@
             <input type="password" formControlName="password" [ngClass]="{ 'border-0 ring-2 ring-red-600 dark:ring-pink-700': submitted && f.password.errors }" />
           </div>
       </div>
-      <div class="flex justify-between mt-5">
-        <button type="submit" class="btn btn-primary flex-grow mx-4" [disabled]="loading">Login</button>
-        <button type="button" (click)="guestLogin()" class="btn flex-grow mx-4 bg-gray-300 text-gray-800 hover:bg-gray-400 dark:text-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700" [disabled]="loading">
+      <div class="mt-5 flex justify-between items-center flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+        <button type="submit" class="btn btn-primary flex-grow w-full" [disabled]="loading">Login</button>
+        <button type="button" (click)="guestLogin()" class="btn flex-grow w-full bg-gray-300 text-gray-800 hover:bg-gray-400 dark:text-gray-100 dark:bg-gray-600 dark:hover:bg-gray-700" [disabled]="loading">
           Continue as guest &rarr;
         </button>
       </div>
-      <p class="mt-4 text-xs text-center">
-        Check out my <span class="link" routerLink="/blog/portfolio">blog post</span> to learn more about what's behind the login screen.
-      </p>
     </form>
   </div>
 </div>
