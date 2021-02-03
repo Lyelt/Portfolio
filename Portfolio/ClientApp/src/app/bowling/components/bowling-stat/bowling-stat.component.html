@@ -1,9 +1,11 @@
 <div class="flex flex-col justify-center">
-  <ng-container *ngIf="!statsLoading">
-    <p *ngFor="let stat of stats" class="flex justify-between rounded-lg p-4 even:bg-gray-200 dark:even:bg-gray-900">
-      <span>{{stat.name}}:</span>
-      <span class="text-right">{{stat.value}}{{stat.unit}} <span *ngIf="stat.details != ''">({{stat.details}})</span></span>
-    </p>
-  </ng-container>
+  <div *ngIf="!statsLoading" class="grid grid-cols-2 sm:grid-cols-3 gap-2 p-2">
+    <div *ngFor="let stat of stats" 
+      class="p-2 rounded-md bg-gray-200 dark:bg-gray-700 flex flex-col items-center text-center shadow-md"
+      [matTooltip]="stat.details" matTooltipPosition="above">
+      <span class="font-bold pb-2 text-xl">{{stat.value}}{{stat.unit}}</span>
+      <span class="text-xs">{{stat.name}}</span>
+    </div>
+  </div>
   <mat-progress-spinner class="self-center my-6" color="accent" mode="indeterminate" *ngIf="statsLoading"></mat-progress-spinner>
 </div>

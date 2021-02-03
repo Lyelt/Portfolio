@@ -106,7 +106,7 @@ namespace Portfolio.Data
             var allFrames = _games.SelectMany(g => g.Frames).ToList();
             var strikes = allFrames.Where(f => f.IsStrike()).ToList();
             double ratio = allFrames.Count > 0 ? ((double)strikes.Count / allFrames.Count) : 0;
-            return new BowlingStat("Strike Percentage", Math.Round(ratio * 100, 2), "%", $"{strikes.Count}/{allFrames.Count}");
+            return new BowlingStat("Strike %", Math.Round(ratio * 100, 2), "%", $"{strikes.Count}/{allFrames.Count}");
         }
 
         public BowlingStat ClearPercentage()
@@ -114,7 +114,7 @@ namespace Portfolio.Data
             var allFrames = _games.SelectMany(g => g.Frames).ToList();
             var clears = allFrames.Where(f => f.IsClear()).ToList();
             double ratio = allFrames.Count > 0 ? ((double)clears.Count / allFrames.Count) : 0;
-            return new BowlingStat("Clear Percentage", Math.Round(ratio * 100, 2), "%", $"{clears.Count}/{allFrames.Count}");
+            return new BowlingStat("Clean %", Math.Round(ratio * 100, 2), "%", $"{clears.Count}/{allFrames.Count}");
         }
 
         public BowlingStat SinglePinSpares()
@@ -125,16 +125,16 @@ namespace Portfolio.Data
             var numConvertedSinglePins = singlePinSpares.Where(frame => frame.IsConvertedSinglePinSpare()).ToList().Count;
             double ratio = singlePinSpares.Count > 0 ? ((double)numConvertedSinglePins / singlePinSpares.Count) : 0;
 
-            return new BowlingStat("Single Pin Spare Conversions", Math.Round(ratio * 100, 2), "%", $"{numConvertedSinglePins}/{singlePinSpares.Count}");
+            return new BowlingStat("Single Pin Clear %", Math.Round(ratio * 100, 2), "%", $"{numConvertedSinglePins}/{singlePinSpares.Count}");
         }
 
-        public BowlingStat TotalGamesBowled() => new BowlingStat("Total Games Bowled", _games.Count);
+        public BowlingStat TotalGamesBowled() => new BowlingStat("Games", _games.Count);
 
-        public BowlingStat OverallAverage() => new BowlingStat("Overall Average", AverageOfGames(_games));
+        public BowlingStat OverallAverage() => new BowlingStat("Average", AverageOfGames(_games));
 
-        public BowlingStat HighestScore() => new BowlingStat("Highest Score", _games.Select(g => g.TotalScore).DefaultIfEmpty(0).Max());
+        public BowlingStat HighestScore() => new BowlingStat("High Score", _games.Select(g => g.TotalScore).DefaultIfEmpty(0).Max());
 
-        public BowlingStat LowestScore() => new BowlingStat("Lowest Score", _games.Select(g => g.TotalScore).DefaultIfEmpty(0).Min());
+        public BowlingStat LowestScore() => new BowlingStat("Low Score", _games.Select(g => g.TotalScore).DefaultIfEmpty(0).Min());
 
         private double AverageOfGames(List<BowlingGame> games) => Math.Round(games.Select(g => g.TotalScore).DefaultIfEmpty(0).Average(), 2);
     }

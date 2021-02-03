@@ -4,6 +4,7 @@ import { BowlingStartSessionComponent } from '../bowling-start-session/bowling-s
 import { BowlingChartComponent } from '../bowling-chart/bowling-chart.component';
 import { SeriesCategory, SeriesCategoryEnum } from '../../models/series-category';
 import { BowlingUtilities } from '../../models/bowling-utilities';
+import { BowlingService } from '../../services/bowling.service';
 
 @Component({
     selector: 'app-bowling',
@@ -12,18 +13,24 @@ import { BowlingUtilities } from '../../models/bowling-utilities';
 })
 export class BowlingComponent implements OnInit {
     @ViewChild('chart') chart: BowlingChartComponent;
-    currentUserId: string = localStorage.getItem("userId");
+    currentUserId: string; 
     currentSeriesCategory: SeriesCategory;
     categoryLabels: SeriesCategory[] = BowlingUtilities.allSeriesCategories;
 
     selectedStartTime: Date;
     selectedEndTime: Date;
 
-    constructor(private dialog: MatDialog) {
+    constructor(private dialog: MatDialog, private bowlingService: BowlingService) {
 
     }
 
     ngOnInit() {
+        const loggedInUser = localStorage.getItem('userId');
+        this.bowlingService.getBowlers().subscribe(bowlers => {
+            if (bowlers.find(b => b.id === loggedInUser)) {
+                this.currentUserId = loggedInUser;
+            }
+        });
         this.currentSeriesCategory = this.categoryLabels.find(c => c.category == SeriesCategoryEnum.SessionAverage);
     }
 

@@ -69,6 +69,9 @@ import { SkillsSectionComponent } from './home/components/skills-section/skills-
 import { ThemeToggleComponent } from './shared/components/theme-toggle/theme-toggle.component';
 import { BlogPComponent } from './blog/components/blog-template/blog-p/blog-p.component';
 import { BlogH3Component } from './blog/components/blog-template/blog-h3/blog-h3.component';
+import { StatsComponent } from './bowling/components/stats/stats.component';
+import { FiltersComponent } from './bowling/components/filters/filters.component';
+import { RadioButtonComponent } from './shared/components/radio-button/radio-button.component';
 
 const routes: Routes = [
     {
@@ -206,7 +209,10 @@ const routes: Routes = [
         SkillsSectionComponent,
         ThemeToggleComponent,
         BlogPComponent,
-        BlogH3Component
+        BlogH3Component,
+        StatsComponent,
+        FiltersComponent,
+        RadioButtonComponent
     ],
     imports: [
         BrowserModule,

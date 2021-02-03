@@ -1,0 +1,38 @@
+<div class="flex flex-col justify-center mt-4 md:self-center">
+    <span *ngIf="startTime && endTime">Viewing stats from <span class="font-semibold">{{startTime | date: 'mediumDate'}} to {{endTime | date: 'mediumDate'}}</span>.</span>
+    <span *ngIf="!startTime || !endTime">Viewing stats from <span class="uppercase tracking-wide font-semibold">all time</span>.</span>
+    <mat-tab-group dynamicHeight mat-align-tabs="center">
+      <mat-tab label="Overview">
+        <ng-template matTabContent>
+          <app-bowling-stat statCategory="Overall"
+                            [userId]="userId"
+                            [startTime]="startTime"
+                            [endTime]="endTime"></app-bowling-stat>
+        </ng-template>
+      </mat-tab>
+      <mat-tab label="Counts">
+        <ng-template matTabContent>
+          <app-bowling-stat statCategory="Count"
+                            [userId]="userId"
+                            [startTime]="startTime"
+                            [endTime]="endTime"></app-bowling-stat>
+        </ng-template>
+      </mat-tab>
+      <mat-tab label="Splits">
+        <ng-template matTabContent>
+          <app-bowling-stat statCategory="Split"
+                            [userId]="userId"
+                            [startTime]="startTime"
+                            [endTime]="endTime"></app-bowling-stat>
+        </ng-template>
+      </mat-tab>
+      <mat-tab label="Records">
+        <ng-template matTabContent>
+          <app-bowling-stat statCategory="Record"
+                            [userId]="userId"
+                            [startTime]="startTime"
+                            [endTime]="endTime"></app-bowling-stat>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
