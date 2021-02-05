@@ -7,18 +7,17 @@
                          [legend]="true"
                          [legendTitle]=null
                          [legendPosition]=null
-                         (legendLabelClick)="onLegendLabelClick($event)"
                          gradient="false"
                          xAxis="true"
                          yAxis="true"
                          showXAxisLabel="true"
-                         showYAxisLabel="true"
                          [yAxisLabel]="yAxisLabel"
                          autoScale="true"
                          timeline="true"
                          showGridLines="true"
                          [curve]="curve"
-                         (select)="select($event)">
+                         (select)="select($event)"
+                         class="chart-line-selector">
   </ngx-charts-line-chart>
   <ngx-charts-bar-horizontal #barChart
                              *ngIf="!dataLoading && category.chartType == 'horizontalBar'"
@@ -38,3 +37,10 @@
 <div class="flex flex-col justify-center" *ngIf="dataLoading">
   <mat-progress-spinner class="self-center my-6" color="accent" mode="indeterminate"></mat-progress-spinner>
 </div>
+
+<!-- 
+  showYAxisLabel="true"
+  
+                         [legendTitle]=null
+                         [legendPosition]=null
+                         (legendLabelClick)="onLegendLabelClick($event)" -->

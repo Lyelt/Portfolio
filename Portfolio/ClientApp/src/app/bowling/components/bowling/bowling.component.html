@@ -1,14 +1,22 @@
 <div class="flex flex-col justify-center md:px-8">
   <div class="mb-10">
-    <h1 class="font-bold text-2xl mb-6 text-center">Bowling Scores<mat-icon class="float-right cursor-pointer" *ngIf="currentUserId">settings</mat-icon></h1>
-    <div class="max-w-md" *ngIf="!currentUserId">
+    <div class="flex items-center justify-between px-4 mb-6">
+      <span class="opacity-0"></span>
+      <h1 class="font-bold text-2xl">Bowling Scores</h1>
+      <span class="opacity-0" *ngIf="!currentUserId"></span>
+      <mat-icon class="cursor-pointer" *ngIf="currentUserId" [matMenuTriggerFor]="menu">settings</mat-icon>
+    </div>
+    <mat-menu #menu="matMenu">
+      <span mat-menu-item class="menu-item" (click)="currentUserId = null">Change Bowler</span>
+    </mat-menu>
+    <div class="max-w-md px-6 mx-auto" *ngIf="!currentUserId">
       <app-bowling-select-user [initialUserId]="currentUserId" [label]="'Choose bowler...'" (selectionChange)="selectUser($event)"></app-bowling-select-user>
     </div>
   </div>
-  <div *ngIf="currentUserId">
+  <div *ngIf="currentUserId" class="flex flex-col">
     <div class="max-w-xl mx-auto mb-10">
       <bowling-filters></bowling-filters>
-      <div class="px-2">
+      <div>
         <app-bowling-stat statCategory="Overall"
                                 [userId]="currentUserId"
                                 [startTime]="selectedStartTime"
@@ -21,16 +29,16 @@
         <mat-icon class="cursor-pointer pl-2 pt-2" title="Refresh chart" (click)="refreshChart()">refresh</mat-icon>
       </div>
       <span class="link" (click)="openDialog()">Add / View Scores</span>
-    </div> -->
+    </div>-->
     <div>
       <app-bowling-chart [category]="currentSeriesCategory" [initialUserId]="currentUserId" (dataPointClicked)="openDialog($event)" #chart></app-bowling-chart>
     </div>
-    <div class="mt-24 flex flex-col">
+    <!--<div class="mt-24 flex flex-col">
       <p class="text-gray-500 dark:text-gray-300 px-8 pb-8 text-center text-xs">Click a name in the legend to remove it from the chart. Use the above refresh button to reset the chart. You can also click a data point on the chart to open the corresponding session.</p>
       <div class="flex flex-wrap justify-around">
         <span class="link" (click)="updateStats()">Update based on selected time range</span>
       </div>
-    </div>
+    </div> -->
     <bowling-stats [userId]="currentUserId" [startTime]="selectedStartTime" [endTime]="selectedEndTime"></bowling-stats>
   </div>
   

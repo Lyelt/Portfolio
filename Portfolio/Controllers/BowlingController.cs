@@ -56,7 +56,7 @@ namespace Portfolio.Controllers
         public IActionResult GetSeries(SeriesCategory seriesCategory, string userId = null, long? startTime = null, long? endTime = null)
         {
             var sessions = GetSessionList(startTime, endTime);
-            var bowlers = _userContext.GetValidUsersForRoles(VALID_ROLES);//.Where(u => userId == null || u.Id == userId).ToList(); // TODO
+            var bowlers = _userContext.GetValidUsersForRoles(VALID_ROLES).Where(u => userId == null || u.Id == userId).ToList();
             List<BowlingSeries> series = new BowlingSeriesService(sessions, bowlers).GetSeries(seriesCategory);
             _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
             return Ok(series);
