@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Portfolio.Models.Speedrun;
 using Portfolio.Models.Auth;
 using Portfolio.Models.Errors;
+using Portfolio.Extensions;
 
 namespace Portfolio.Controllers
 {
@@ -71,10 +72,13 @@ namespace Portfolio.Controllers
             if (!userIsAdmin && starTime.UserId != currentUser.Id)
                 throw new UnauthorizedException("Cannot modify star times for other users");
 
-
             starTime.LastUpdated = DateTime.UtcNow;
+            var existingStarTime = _srContext.StarTimes.AsNoTracking().ToList().FirstOrDefault(st => st.StarId == starTime.StarId && st.UserId == starTime.UserId);
 
-            if (await _srContext.StarTimes.ContainsAsync(starTime))
+            if (existingStarTime == null || existingStarTime.Time.GetFrames() != starTime.Frames)
+                starTime.Time = TimeSpan.FromSeconds(starTime.Frames.Value / 29.97);
+
+            if (existingStarTime != null)
             {
                 if (starTime.Time == TimeSpan.Zero)
                     _srContext.StarTimes.Remove(starTime);

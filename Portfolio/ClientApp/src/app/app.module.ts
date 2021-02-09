@@ -72,6 +72,7 @@ import { BlogH3Component } from './blog/components/blog-template/blog-h3/blog-h3
 import { StatsComponent } from './bowling/components/stats/stats.component';
 import { FiltersComponent } from './bowling/components/filters/filters.component';
 import { RadioButtonComponent } from './shared/components/radio-button/radio-button.component';
+import { FramesPipe } from './speedrun/services/frames.pipe';
 
 const routes: Routes = [
     {
@@ -212,7 +213,8 @@ const routes: Routes = [
         BlogH3Component,
         StatsComponent,
         FiltersComponent,
-        RadioButtonComponent
+        RadioButtonComponent,
+        FramesPipe
     ],
     imports: [
         BrowserModule,
@@ -237,6 +239,7 @@ const routes: Routes = [
     providers: [
         AuthGuard,
         JwtHelperService,
+        FramesPipe,
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
     ],

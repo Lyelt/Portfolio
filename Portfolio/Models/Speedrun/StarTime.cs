@@ -1,4 +1,5 @@
-﻿using Portfolio.Models.Auth;
+﻿using Portfolio.Extensions;
+using Portfolio.Models.Auth;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -24,11 +25,14 @@ namespace Portfolio.Models.Speedrun
         public string TimeDisplay { get; set; }
         [NotMapped]
         public double TotalMilliseconds { get; set; }
+        [NotMapped]
+        public int? Frames { get; set; }
 
         public StarTime WithClientView()
         {
             TimeDisplay = Time.ToString("hh\\:mm\\:ss\\.ff");
             TotalMilliseconds = Time.TotalMilliseconds;
+            Frames = Time.GetFrames();
             return this;
         }
 

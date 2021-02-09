@@ -3,13 +3,14 @@
 <mat-dialog-content [formGroup]="form" class="flex flex-col" [ngClass]="{'h-screen': starTime.videoUrl}">
 
   <div class="w-full flex flex-col mb-6">
-    <label for="time" class="pb-1">Time</label>
-    <input type="text" placeholder="Time (hh:mm:ss.ff)" formControlName="time" [(ngModel)]="starTime.timeDisplay" />
+    <label for="time" class="pb-1">Time (<span class="link" (click)="showFrames = !showFrames">{{(showFrames ? "hide" : "show")}} frames</span>)</label>
+    <input type="text" placeholder="Time (hh:mm:ss.ff)" formControlName="time" *ngIf="!showFrames"/>
+    <input type="number" step="1" placeholder="Total Frames" formControlName="frames" *ngIf="showFrames"/>
   </div>
 
   <div class="w-full flex flex-col mb-8">
     <label for="videoUrl" class="pb-1">Youtube Watch Code</label>
-    <input type="text" placeholder="Youtube Watch Code" formControlName="videoUrl" [(ngModel)]="starTime.videoUrl" />
+    <input type="text" placeholder="Youtube Watch Code" formControlName="videoUrl" />
   </div>
 
   <div *ngIf="starTime.videoUrl" class="h-full">
