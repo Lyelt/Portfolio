@@ -10,7 +10,7 @@
     <mat-chip (click)="save()" color="accent" selected>Save</mat-chip>
   </mat-chip-list>
 </div>
-<div class="flex justify-around bg-gray-100 dark:bg-gray-900 py-2 rounded-3xl text-center text-2xs sm:text-xs md:text-sm lg:text-base" tabindex="0" (keyup)="handleKey($event)">
+<div class="flex justify-around bg-gray-200 dark:bg-gray-900 py-2 rounded-3xl text-center text-2xs sm:text-xs md:text-sm lg:text-base" tabindex="0" (keyup)="handleKey($event)">
   <div class="w-1/12 flex flex-col sm:pr-2" *ngFor="let frame of game.frames" (click)="selectFrame(frame.frameNumber)" [class.selected]="game.id == 0 && frame.frameNumber == currentFrame">
     <span class="font-semibold">{{frame.frameNumber}}</span>
     <div class="flex">

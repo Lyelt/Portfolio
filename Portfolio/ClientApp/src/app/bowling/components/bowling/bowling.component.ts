@@ -20,6 +20,8 @@ export class BowlingComponent implements OnInit {
     selectedStartTime: Date;
     selectedEndTime: Date;
 
+    view: string;
+
     constructor(private dialog: MatDialog, private bowlingService: BowlingService) {
 
     }
@@ -32,6 +34,7 @@ export class BowlingComponent implements OnInit {
             }
         });
         this.currentSeriesCategory = this.categoryLabels.find(c => c.category == SeriesCategoryEnum.SessionAverage);
+        this.view = 'overview';
     }
 
     refreshChart() {
