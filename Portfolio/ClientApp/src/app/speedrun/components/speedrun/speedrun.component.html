@@ -1,14 +1,15 @@
-<div class="flex flex-col justify-center px-8">
+<div class="flex flex-col justify-center container mx-auto max-w-6xl">
   <div class="sm:hidden bg-yellow-400 text-yellow-900 flex items-center text-sm font-bold p-2 rounded mb-6">
     <span class="mr-2"><mat-icon>error_outline</mat-icon></span>
     <span class="text-center">This page is better viewed on a larger screen. Stay tuned as I develop a mobile-friendly version!</span>
   </div>
   <h1 class="font-bold text-2xl mb-4 text-center">SM64 Speedrun Times</h1>
   <div class="flex justify-between mb-6">
-    <div class="flex cursor-pointer text-indigo-400">
-      <mat-icon class="mr-1 hover:shadow" [ngClass]="{'text-indigo-600': view == 'grid'}" (click)="toggleView('grid')" title="Grid view">view_compact</mat-icon>
-      <mat-icon class="hover:shadow" [ngClass]="{'text-indigo-600': view == 'list'}" (click)="toggleView('list')" title="List view">view_comfy</mat-icon>
-    </div>
+    <span class="link" (click)="collapseAll()">Collapse All</span>
+    <!-- <div class="flex cursor-pointer text-indigo-400">
+       <mat-icon class="mr-1 hover:shadow" [ngClass]="{'text-indigo-600 dark:text-indigo-400': view == 'grid'}" (click)="toggleView('grid')" title="Grid view">view_compact</mat-icon>
+      <mat-icon class="hover:shadow" [ngClass]="{'text-indigo-600 dark:text-indigo-400': view == 'list'}" (click)="toggleView('list')" title="List view">view_comfy</mat-icon> 
+    </div> -->
     <span class="link" routerLink="bingo">Bingo Tool &rarr;</span>
   </div>
 
@@ -38,7 +39,7 @@
           </div>
         </div>
       </div>
-
+      
       <div class="flex flex-col">
         <div *ngFor="let course of getVisibleCourses()" class="mb-4 pb-4">
           <div class="grid grid-cols-3">

@@ -42,7 +42,7 @@ export class SpeedrunComponent implements OnInit {
     });
 
     this.refreshTimes();
-    this.expanded = JSON.parse(localStorage.getItem("expandedCourses"));
+    this.expanded = JSON.parse(localStorage.getItem("expandedCourses")) || [];
     this.view = localStorage.getItem("view");
     if (!this.view) this.view = "grid";
   }
@@ -169,10 +169,6 @@ export class SpeedrunComponent implements OnInit {
   }
 
   toggleCourseCollapsed(course: Course) {
-    if (!this.expanded) {
-      this.expanded = [];
-    }
-
     if (this.courseIsCollapsed(course)) {
       this.expanded.push(course.courseId);
     } 
@@ -183,6 +179,15 @@ export class SpeedrunComponent implements OnInit {
       );
     }
 
+    this.cacheExpanded();
+  }
+
+  collapseAll() {
+      this.expanded.length = 0;
+      this.cacheExpanded();
+  }
+
+  cacheExpanded() {
     localStorage.setItem("expandedCourses", JSON.stringify(this.expanded));
   }
 }
