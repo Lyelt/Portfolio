@@ -1,14 +1,13 @@
 <mat-dialog-content class="flex flex-col">
   <div *ngIf="selectedTabIndex === 0">
     <div class="flex flex-col py-6 lg:px-8 items-center">
-      <h2 class="font-bold text-lg mb-8">Choose Action</h2>
       <div class="flex flex-col items-center w-full p-4 sm:flex-row sm:justify-between">
         <div class="flex flex-col flex-grow mb-8 sm:m-4">
           <label class="flex flex-col">
             <span class="pb-2 font-medium">Choose a session</span>
             <select [(ngModel)]="selectedSession">
               <option></option>
-              <option *ngFor="let session of sessions" [ngValue]="session">{{session.id}}. {{session.date | date: 'mediumDate'}}</option>
+              <option *ngFor="let session of sessions" [ngValue]="session">{{session.id}}. {{session.date | date: 'longDate'}}</option>
             </select>
           </label>
           <button type="button" class="btn btn-primary mt-4" (click)="startAddingGames()" [disabled]="!selectedSession">View Existing Session</button>

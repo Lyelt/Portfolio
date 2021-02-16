@@ -7,34 +7,16 @@ import { BowlingService } from '../../services/bowling.service';
   templateUrl: './bowling-stat.component.html',
   styleUrls: ['./bowling-stat.component.scss']
 })
-export class BowlingStatComponent implements OnInit, OnChanges {
-  @Input() userId: string;
-  @Input() statCategory: StatCategory;
-  @Input() startTime: Date;
-  @Input() endTime: Date;
-  initialized: boolean = false;
-
+export class BowlingStatComponent implements OnInit {
+  @Input() statCategory: string;
   stats: BowlingStat[];
-  statsLoading: boolean = true;
 
   constructor(private bowlingService: BowlingService) { }
 
   ngOnInit() {
-    this.retrieveStats();
-    this.initialized = true;
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.initialized) {
-      this.retrieveStats();
-    }
-  }
-
-  retrieveStats() {
-    this.statsLoading = true;
-    this.bowlingService.getStats(this.userId, this.statCategory, this.startTime, this.endTime).subscribe(data => {
-      this.stats = data;
-      this.statsLoading = false;
+    this.bowlingService.setStatCategory(this.statCategory);
+    this.bowlingService.stats().subscribe(stats => {
+      this.stats = stats;
     });
   }
 }

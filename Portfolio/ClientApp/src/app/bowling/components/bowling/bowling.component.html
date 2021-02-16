@@ -7,10 +7,10 @@
       <mat-icon class="cursor-pointer" *ngIf="currentUserId" [matMenuTriggerFor]="menu">menu</mat-icon>
     </div>
     <mat-menu #menu="matMenu">
-      <span mat-menu-item class="menu-item" (click)="view = 'overview'"><mat-icon>score</mat-icon>Overview</span>
-      <span mat-menu-item class="menu-item" (click)="view = 'games';"><mat-icon>view_list</mat-icon>Add / View Games</span>
-      <span mat-menu-item class="menu-item" (click)="view = 'stats';"><mat-icon>query_stats</mat-icon>Stats Report</span>
-      <span mat-menu-item class="menu-item" (click)="currentUserId = null"><mat-icon>people_alt</mat-icon>Change Bowler</span>
+      <span mat-menu-item class="menu-item" (click)="view = 'overview'" [class.bg-indigo-100]="view === 'overview'"><mat-icon>score</mat-icon>Overview</span>
+      <span mat-menu-item class="menu-item" (click)="view = 'stats';" [class.bg-indigo-100]="view === 'stats'"><mat-icon>query_stats</mat-icon>Stats Report</span>
+      <span mat-menu-item class="menu-item" (click)="view = 'games';" [class.bg-indigo-100]="view === 'games'"><mat-icon>view_list</mat-icon>Add / View Games</span>
+      <span mat-menu-item class="menu-item" (click)="currentUserId = null" [class.bg-indigo-100]="!currentUserId"><mat-icon>people_alt</mat-icon>Change Bowler</span>
     </mat-menu>
     <div class="max-w-md px-6 mx-auto" *ngIf="!currentUserId">
       <app-bowling-select-user [initialUserId]="currentUserId" [label]="'Choose bowler...'" (selectionChange)="selectUser($event)"></app-bowling-select-user>
@@ -19,22 +19,25 @@
   <div *ngIf="currentUserId" class="flex flex-col">
     <div class="container mx-auto max-w-6xl px-4">
       <bowling-filters></bowling-filters>
-      <div *ngIf="view === 'overview'">
-        <div class="mb-8">
-          <app-bowling-stat statCategory="Overall"
-            [userId]="currentUserId"
-            [startTime]="selectedStartTime"
-            [endTime]="selectedEndTime"></app-bowling-stat>
+      <div *ngIf="dataFound">
+        <div *ngIf="view === 'overview'">
+          <div class="mb-8">
+            <app-bowling-stat statCategory="Overall"></app-bowling-stat>
+          </div>
+          <app-bowling-chart [category]="currentSeriesCategory" (dataPointClicked)="showSessionDetails($event)"></app-bowling-chart>
         </div>
-        <app-bowling-chart [category]="currentSeriesCategory" 
-                           [initialUserId]="currentUserId" 
-                           (dataPointClicked)="openDialog($event)" #chart></app-bowling-chart>
+        <div *ngIf="view === 'stats'">
+          <bowling-stats></bowling-stats>
+        </div>
       </div>
       <div *ngIf="view ==='games'">
         <app-bowling-start-session></app-bowling-start-session>
       </div>
-      <div *ngIf="view === 'stats'">
-        <bowling-stats [userId]="currentUserId" [startTime]="selectedStartTime" [endTime]="selectedEndTime"></bowling-stats>
+      <div *ngIf="!dataFound && view !== 'games'" class="flex justify-center">
+        <div class="flex items-center justify-center space-x-2 rounded p-4 font-medium bg-indigo-600 text-indigo-50 dark:bg-pink-700 dark:text-pink-100 ">
+          <mat-icon>help_outline</mat-icon>
+          <p>No data found for this criteria.</p>
+        </div>
       </div>
     </div>
   </div>

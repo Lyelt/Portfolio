@@ -46,52 +46,52 @@ namespace Portfolio.Controllers
         [Route("Bowling/GetSessions")]
         public IActionResult GetSessions()
         {
-            var sessions = GetSessionList(null, null);
+            var sessions = GetSessionList(null, null, false);
             _logger.LogDebug($"Found {sessions.Count} total sessions.");
             return Ok(sessions);
         }
 
         [HttpGet]
-        [Route("Bowling/GetSeries/{seriesCategory}/{userId?}/{startTime?}/{endTime?}")]
-        public IActionResult GetSeries(SeriesCategory seriesCategory, string userId = null, long? startTime = null, long? endTime = null)
+        [Route("Bowling/GetSeries/{seriesCategory}/{userId?}/{leagueMatchesOnly?}/{startTime?}/{endTime?}")]
+        public IActionResult GetSeries(SeriesCategory seriesCategory, string userId = null, bool? leagueMatchesOnly = null, long? startTime = null, long? endTime = null)
         {
-            var sessions = GetSessionList(startTime, endTime);
+            var sessions = GetSessionList(startTime, endTime, leagueMatchesOnly ?? false);
             var bowlers = _userContext.GetValidUsersForRoles(VALID_ROLES).Where(u => userId == null || u.Id == userId).ToList();
             List<BowlingSeries> series = new BowlingSeriesService(sessions, bowlers).GetSeries(seriesCategory);
             _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
             return Ok(series);
         }
 
+        //[HttpGet]
+        //[Route("Bowling/GetSingleSeries/{seriesCategory}/{userId}")]
+        //public IActionResult GetSingleSeries(SeriesCategory seriesCategory, string userId)
+        //{
+        //    var games = GetGames(userId, null, null);
+
+        //    // TODO: Use service for new category types and refactor to use a more elegant approach.
+        //    var series = new List<SingleSeriesEntry>();
+        //    var numberOfGamesPerScore = new Dictionary<int, int>();
+        //    foreach (var game in games)
+        //    {
+        //        if (numberOfGamesPerScore.ContainsKey(game.TotalScore))
+        //            numberOfGamesPerScore[game.TotalScore]++;
+        //        else
+        //            numberOfGamesPerScore[game.TotalScore] = 1;
+        //    }
+
+        //    foreach (var kvp in numberOfGamesPerScore)
+        //        series.Add(new SingleSeriesEntry { Name = kvp.Key, Value = kvp.Value });
+
+        //    _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
+        //    return Ok(series.OrderByDescending(g => g.Name));
+
+        //}
+
         [HttpGet]
-        [Route("Bowling/GetSingleSeries/{seriesCategory}/{userId}")]
-        public IActionResult GetSingleSeries(SeriesCategory seriesCategory, string userId)
+        [Route("Bowling/GetStats/{statCategory}/{userId}/{leagueMatchesOnly?}/{startTime?}/{endTime?}")]
+        public IActionResult GetStats(StatCategory statCategory, string userId, bool? leagueMatchesOnly, long? startTime, long? endTime)
         {
-            var games = GetGames(userId, null, null);
-
-            // TODO: Use service for new category types and refactor to use a more elegant approach.
-            var series = new List<SingleSeriesEntry>();
-            var numberOfGamesPerScore = new Dictionary<int, int>();
-            foreach (var game in games)
-            {
-                if (numberOfGamesPerScore.ContainsKey(game.TotalScore))
-                    numberOfGamesPerScore[game.TotalScore]++;
-                else
-                    numberOfGamesPerScore[game.TotalScore] = 1;
-            }
-
-            foreach (var kvp in numberOfGamesPerScore)
-                series.Add(new SingleSeriesEntry { Name = kvp.Key, Value = kvp.Value });
-
-            _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
-            return Ok(series.OrderByDescending(g => g.Name));
-
-        }
-
-        [HttpGet]
-        [Route("Bowling/GetStats/{statCategory}/{userId}/{startTime?}/{endTime?}")]
-        public IActionResult GetStats(StatCategory statCategory, string userId, long? startTime, long? endTime)
-        {
-            var games = GetGames(userId, startTime, endTime);
+            var games = GetGames(userId, startTime, endTime, leagueMatchesOnly ?? false);
             var calc = new BowlingStatCalculator(games);
             return Ok(calc.GetStats(statCategory));
         }
@@ -150,23 +150,25 @@ namespace Portfolio.Controllers
             return await _userManager.GetUserAsync(User);
         }
 
-        private List<BowlingGame> GetGames(string userId, long? startTime, long? endTime)
+        private List<BowlingGame> GetGames(string userId, long? startTime, long? endTime, bool leagueMatchesOnly)
         {
-            var sessions = GetSessionList(startTime, endTime);
+            var sessions = GetSessionList(startTime, endTime, leagueMatchesOnly);
 
             return sessions
                   .SelectMany(s => s.Games.Where(g => g.UserId == userId))
                   .ToList();
         }
 
-        private List<BowlingSession> GetSessionList(long? startTime, long? endTime)
+        private List<BowlingSession> GetSessionList(long? startTime, long? endTime, bool leagueMatchesOnly)
         {
+            bool isLeagueMatch(BowlingSession s) => !leagueMatchesOnly || (s.Date.DayOfWeek == DayOfWeek.Wednesday && s.Date > new DateTime(2019, 8, 27) && s.Games.Count >= 9);
+
             var sessions = _bowlingContext
                     .Sessions
                     .Include(s => s.Games)
                     .ThenInclude(g => g.Frames)
                     .AsEnumerable()
-                    .Where(s => s.Date > DateTimeOffset.FromUnixTimeMilliseconds(startTime ?? 0) && (!endTime.HasValue || s.Date < DateTimeOffset.FromUnixTimeMilliseconds(endTime.Value)))
+                    .Where(s => isLeagueMatch(s) && s.Date > DateTimeOffset.FromUnixTimeMilliseconds(startTime ?? 0) && (!endTime.HasValue || s.Date < DateTimeOffset.FromUnixTimeMilliseconds(endTime.Value)))
                     .ToList();
 
             sessions.ForEach(s => s.Games = s.Games.OrderBy(g => g.GameNumber).ToList());

@@ -11,7 +11,7 @@
             <span>{{alertService.alertMessage}}</span>
         </div>
         <div class="flex justify-between rounded-b-lg bg-red-100 dark:bg-red-300 px-4 py-3">
-            <a class="btn border border-red-900 text-red-900 hover:bg-red-200 dark:border-red-900 focus:ring-2 focus:ring-red-900 font-bold" target="_blank" [href]="getGithubIssueUrl()">Report Issue</a>
+            <a class="btn text-red-900 hover:bg-red-200 focus:ring-2 focus:ring-red-900 font-bold" target="_blank" [href]="getGithubIssueUrl()">Report Issue</a>
             <button type="button" class="btn border border-red-900 text-red-900 hover:bg-red-200 dark:border-red-900 focus:outline-none focus:ring-2 focus:ring-red-900 font-bold" (click)="closeModal()">OK</button>
         </div>
     </div>

@@ -35,37 +35,41 @@ export class BowlingChartComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
-        this.loadSeriesData(this.initialUserId);
+        this.loadSeriesData();
         this.initialized = true;
     }
 
     ngOnChanges(changes: SimpleChanges) {
         if (this.initialized) {
-            this.loadSeriesData(this.initialUserId);
+            this.loadSeriesData();
         }
     }
 
-    loadSeriesData(userId) {
+    loadSeriesData() {
         this.dataLoading = true;
         this.yAxisLabel = this.category.display;
 
-        this.bowlingService.getSeries(this.category.category, userId).subscribe(data => {
-            data.forEach(d => d.series.forEach(s => s.name = new Date(s.name)));
-            this.bowlingData = data;
-            this.dataLoading = false;
+        this.bowlingService.series().subscribe(data => {
+            if (data) {
+                data.forEach(d => d.series.forEach(s => s.name = new Date(s.name)));
+                this.bowlingData = data;
+                this.dataLoading = false;
+            }
         });
 
-        this.bowlingService.getSingleSeries(this.category.category, userId).subscribe(data => {
-            this.barChartData = data;
-            this.dataLoading = false;
-        });
+        // this.bowlingService.getSingleSeries(this.category.category, userId).subscribe(data => {
+        //     this.barChartData = data;
+        //     this.dataLoading = false;
+        // });
     }
 
     loadSeriesDataWithTimeRange(userId) {
-        this.bowlingService.getSeriesWithRange(this.category.category, userId, this.getStartTime(), this.getEndTime()).subscribe(data => {
-            data.forEach(d => d.series.forEach(s => s.name = new Date(s.name)));
-            this.bowlingData = data;
-        });
+        this.bowlingService.setTimeRange(this.getStartTime(), this.getEndTime());
+
+        // this.bowlingService.series(this.category.category, userId, , ).subscribe(data => {
+        //     data.forEach(d => d.series.forEach(s => s.name = new Date(s.name)));
+        //     this.bowlingData = data;
+        // });
     }
 
     getStartTime() {

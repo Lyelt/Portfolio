@@ -10,7 +10,7 @@ import { BowlingSeries, SeriesEntry } from '../../models/bowling-series';
   styleUrls: ['./bowling-start-session.component.scss']
 })
 export class BowlingStartSessionComponent implements OnInit {
-  
+  @Input() userId: string;
   sessions: BowlingSession[] = [];
 
   selectedSession: BowlingSession;
