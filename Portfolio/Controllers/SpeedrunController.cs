@@ -75,7 +75,7 @@ namespace Portfolio.Controllers
             starTime.LastUpdated = DateTime.UtcNow;
             var existingStarTime = _srContext.StarTimes.AsNoTracking().ToList().FirstOrDefault(st => st.StarId == starTime.StarId && st.UserId == starTime.UserId);
 
-            if (existingStarTime == null || existingStarTime.Time.GetFrames() != starTime.Frames)
+            if (starTime.Frames.HasValue && (existingStarTime == null || existingStarTime.Time.GetFrames() != starTime.Frames))
                 starTime.Time = TimeSpan.FromSeconds(starTime.Frames.Value / 29.97);
 
             if (existingStarTime != null)
