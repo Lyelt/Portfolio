@@ -8,8 +8,9 @@
     </div>
     <mat-menu #menu="matMenu">
       <span mat-menu-item class="menu-item" (click)="view = 'overview'" [class.bg-indigo-100]="view === 'overview'"><mat-icon>score</mat-icon>Overview</span>
-      <span mat-menu-item class="menu-item" (click)="view = 'stats';" [class.bg-indigo-100]="view === 'stats'"><mat-icon>query_stats</mat-icon>Stats Report</span>
-      <span mat-menu-item class="menu-item" (click)="view = 'games';" [class.bg-indigo-100]="view === 'games'"><mat-icon>view_list</mat-icon>Add / View Games</span>
+      <span mat-menu-item class="menu-item" (click)="view = 'stats'" [class.bg-indigo-100]="view === 'stats'"><mat-icon>query_stats</mat-icon>Stats Report</span>
+      <span mat-menu-item class="menu-item" (click)="view = 'games'" [class.bg-indigo-100]="view === 'games'"><mat-icon>view_list</mat-icon>View Games</span>
+      <span mat-menu-item class="menu-item" (click)="view = 'edit'" [class.bg-indigo-100]="view === 'edit'"><mat-icon>edit</mat-icon>Add Games</span>
       <span mat-menu-item class="menu-item" (click)="currentUserId = null" [class.bg-indigo-100]="!currentUserId"><mat-icon>people_alt</mat-icon>Change Bowler</span>
     </mat-menu>
     <div class="max-w-md px-6 mx-auto" *ngIf="!currentUserId">
@@ -29,11 +30,14 @@
         <div *ngIf="view === 'stats'">
           <bowling-stats></bowling-stats>
         </div>
+        <div *ngIf="view ==='games'">
+          <app-bowling-view-games></app-bowling-view-games>
+        </div>
       </div>
-      <div *ngIf="view ==='games'">
+      <div *ngIf="view === 'edit'">
         <app-bowling-start-session></app-bowling-start-session>
       </div>
-      <div *ngIf="!dataFound && view !== 'games'" class="flex justify-center">
+      <div *ngIf="!dataFound" class="flex justify-center">
         <div class="flex items-center justify-center space-x-2 rounded p-4 font-medium bg-indigo-600 text-indigo-50 dark:bg-pink-700 dark:text-pink-100 ">
           <mat-icon>help_outline</mat-icon>
           <p>No data found for this criteria.</p>

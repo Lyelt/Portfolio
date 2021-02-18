@@ -73,6 +73,7 @@ import { StatsComponent } from './bowling/components/stats/stats.component';
 import { FiltersComponent } from './bowling/components/filters/filters.component';
 import { RadioButtonComponent } from './shared/components/radio-button/radio-button.component';
 import { FramesPipe } from './speedrun/services/frames.pipe';
+import { BowlingViewGamesComponent } from './bowling/components/bowling-view-games/bowling-view-games.component';
 
 const routes: Routes = [
     {
@@ -214,7 +215,8 @@ const routes: Routes = [
         StatsComponent,
         FiltersComponent,
         RadioButtonComponent,
-        FramesPipe
+        FramesPipe,
+        BowlingViewGamesComponent
     ],
     imports: [
         BrowserModule,

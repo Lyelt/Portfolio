@@ -7,10 +7,10 @@
             <span class="pb-2 font-medium">Choose a session</span>
             <select [(ngModel)]="selectedSession">
               <option></option>
-              <option *ngFor="let session of sessions" [ngValue]="session">{{session.id}}. {{session.date | date: 'longDate'}}</option>
+              <option *ngFor="let session of sessions" [ngValue]="session">{{session.id}}. {{session.date | date:'fullDate':'UTC'}}</option>
             </select>
           </label>
-          <button type="button" class="btn btn-primary mt-4" (click)="startAddingGames()" [disabled]="!selectedSession">View Existing Session</button>
+          <button type="button" class="btn btn-primary mt-4" (click)="startAddingGames(false)" [disabled]="!selectedSession">View Existing Session</button>
         </div>
 
         <div class="flex flex-col flex-grow m-4">
@@ -18,7 +18,7 @@
             <span class="pb-2 font-medium">Add a new session</span>
             <input type="date" [(ngModel)]="selectedDate" placeholder="Add a new session">
           </label>
-          <button type="button" class="btn btn-secondary mt-4" (click)="startAddingGames()" [disabled]="!selectedDate">Start New Session</button>
+          <button type="button" class="btn btn-secondary mt-4" (click)="startAddingGames(true)" [disabled]="!selectedDate">Start New Session</button>
         </div>
       </div>
     </div>

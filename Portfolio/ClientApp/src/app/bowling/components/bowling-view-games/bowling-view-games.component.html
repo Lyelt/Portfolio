@@ -1,0 +1,13 @@
+<div class="px-4 flex flex-col space-y-2">
+    <div *ngFor="let session of sessions" class="flex flex-col">
+        <div class="flex flex-col space-y-1">
+            <span>{{session.date | date:'fullDate':'UTC'}}</span>
+            <div class="flex space-x-2">
+                <span *ngFor="let game of session.games" class="rounded bg-gray-300 dark:bg-gray-900 p-1">
+                    {{game.totalScore}}
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</div>

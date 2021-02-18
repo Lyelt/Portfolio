@@ -1,5 +1,5 @@
 <div class="flex flex-col">
-  <h2 class="font-semibold text-center my-6">Session (ID #{{session.id}}) on {{session.date | date: 'mediumDate'}}</h2>
+  <h2 class="font-semibold text-center my-6">{{session.date | date: 'fullDate':'UTC'}}</h2>
   <div class="flex items-center justify-around flex-wrap">
     <app-bowling-select-user [initialUserId]="userId"
                              [label]="'View games for user...'"
