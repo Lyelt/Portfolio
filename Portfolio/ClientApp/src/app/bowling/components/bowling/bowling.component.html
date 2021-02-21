@@ -1,5 +1,5 @@
 <div class="flex flex-col justify-center md:px-8">
-  <div class="mb-10">
+  <div class="mb-6">
     <div class="flex items-center justify-between px-4 mb-6">
       <span class="opacity-0"></span>
       <h1 class="font-bold text-2xl">Bowling Scores</h1>
@@ -7,10 +7,10 @@
       <mat-icon class="cursor-pointer" *ngIf="currentUserId" [matMenuTriggerFor]="menu">menu</mat-icon>
     </div>
     <mat-menu #menu="matMenu">
-      <span mat-menu-item class="menu-item" (click)="view = 'overview'" [class.bg-indigo-100]="view === 'overview'"><mat-icon>score</mat-icon>Overview</span>
-      <span mat-menu-item class="menu-item" (click)="view = 'stats'" [class.bg-indigo-100]="view === 'stats'"><mat-icon>query_stats</mat-icon>Stats Report</span>
-      <span mat-menu-item class="menu-item" (click)="view = 'games'" [class.bg-indigo-100]="view === 'games'"><mat-icon>view_list</mat-icon>View Games</span>
-      <span mat-menu-item class="menu-item" (click)="view = 'edit'" [class.bg-indigo-100]="view === 'edit'"><mat-icon>edit</mat-icon>Add Games</span>
+      <span mat-menu-item class="menu-item" (click)="setView('overview')" [class.bg-indigo-100]="view === 'overview'"><mat-icon>score</mat-icon>Overview</span>
+      <span mat-menu-item class="menu-item" (click)="setView('stats')" [class.bg-indigo-100]="view === 'stats'"><mat-icon>query_stats</mat-icon>Stats Report</span>
+      <span mat-menu-item class="menu-item" (click)="setView('games')" [class.bg-indigo-100]="view === 'games'"><mat-icon>view_list</mat-icon>View Games</span>
+      <span mat-menu-item class="menu-item" (click)="setView('edit')" [class.bg-indigo-100]="view === 'edit'" *ngIf="userCanEdit()"><mat-icon>edit</mat-icon>Add Games</span>
       <span mat-menu-item class="menu-item" (click)="currentUserId = null" [class.bg-indigo-100]="!currentUserId"><mat-icon>people_alt</mat-icon>Change Bowler</span>
     </mat-menu>
     <div class="max-w-md px-6 mx-auto" *ngIf="!currentUserId">

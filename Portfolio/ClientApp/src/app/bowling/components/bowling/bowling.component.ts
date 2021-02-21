@@ -1,13 +1,8 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { MatDialogConfig, MatDialog } from "@angular/material/dialog";
-import { BowlingStartSessionComponent } from "../bowling-start-session/bowling-start-session.component";
-import { BowlingChartComponent } from "../bowling-chart/bowling-chart.component";
-import {
-  SeriesCategory,
-  SeriesCategoryEnum,
-} from "../../models/series-category";
+import { Component, OnInit } from "@angular/core";
+import { SeriesCategory, SeriesCategoryEnum } from "../../models/series-category";
 import { BowlingUtilities } from "../../models/bowling-utilities";
 import { BowlingService } from "../../services/bowling.service";
+import { AuthService } from "src/app/auth/auth.service";
 
 @Component({
   selector: "app-bowling",
@@ -25,7 +20,7 @@ export class BowlingComponent implements OnInit {
   view: string;
   dataFound: boolean;
 
-  constructor(private bowlingService: BowlingService) {/*private dialog: MatDialog, */ 
+  constructor(private bowlingService: BowlingService, private auth: AuthService) {
 
   }
 
@@ -44,7 +39,13 @@ export class BowlingComponent implements OnInit {
     this.currentSeriesCategory = this.categoryLabels.find(
       (c) => c.category == SeriesCategoryEnum.SessionAverage
     );
-    this.view = "overview";
+
+    if ('bowling-view' in localStorage) {
+      this.view = localStorage.getItem('bowling-view');
+    }
+    else {
+      this.setView('overview');
+    }
   }
   
   selectUser(userId: string) {
@@ -63,27 +64,12 @@ export class BowlingComponent implements OnInit {
 
   }
 
-//   refreshChart() {
-//     this.chart.loadSeriesData(this.currentUserId);
-//   }
+  userCanEdit(): boolean {
+    return this.auth.userIsAdmin();
+  }
 
-  // updateStats() {
-  //     if (this.currentSeriesCategory.chartType == "line") {
-  //         this.selectedStartTime = this.chart.getStartTime();
-  //         this.selectedEndTime = this.chart.getEndTime();
-  //         this.chart.loadSeriesDataWithTimeRange(this.currentUserId);
-  //     }
-  // }
-
-  // selectSeriesCategory(category: SeriesCategory) {
-  //     this.currentSeriesCategory = category;
-  // }
-
-  // openDialog(dataPoint = null) {
-  //     const dialogConfig = new MatDialogConfig();
-  //     dialogConfig.autoFocus = true;
-  //     dialogConfig.data = dataPoint;
-
-  //     this.dialog.open(BowlingStartSessionComponent, dialogConfig);
-  // }
+  setView(view: string) {
+    this.view = view;
+    localStorage.setItem('bowling-view', view);
+  }
 }

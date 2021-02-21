@@ -59,4 +59,8 @@ export class AuthService {
     localStorage.removeItem("userId");
     localStorage.removeItem("userName");
   }
+
+  userIsAdmin(): boolean {
+    return localStorage.getItem("userId") === "1";
+  }
 }

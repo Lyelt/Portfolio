@@ -43,10 +43,10 @@ namespace Portfolio.Controllers
         }
 
         [HttpGet]
-        [Route("Bowling/GetSessions")]
-        public IActionResult GetSessions()
+        [Route("Bowling/GetSessions/{userId?}/{leagueMatchesOnly?}/{startTime?}/{endTime?}")]
+        public IActionResult GetSessions(string userId = null, bool? leagueMatchesOnly = null, long? startTime = null, long? endTime = null)
         {
-            var sessions = GetSessionList(null, null, false);
+            var sessions = GetSessionList(userId, startTime, endTime, leagueMatchesOnly);
             _logger.LogDebug($"Found {sessions.Count} total sessions.");
             return Ok(sessions);
         }
@@ -55,7 +55,7 @@ namespace Portfolio.Controllers
         [Route("Bowling/GetSeries/{seriesCategory}/{userId?}/{leagueMatchesOnly?}/{startTime?}/{endTime?}")]
         public IActionResult GetSeries(SeriesCategory seriesCategory, string userId = null, bool? leagueMatchesOnly = null, long? startTime = null, long? endTime = null)
         {
-            var sessions = GetSessionList(startTime, endTime, leagueMatchesOnly ?? false);
+            var sessions = GetSessionList(userId, startTime, endTime, leagueMatchesOnly);
             var bowlers = _userContext.GetValidUsersForRoles(VALID_ROLES).Where(u => userId == null || u.Id == userId).ToList();
             List<BowlingSeries> series = new BowlingSeriesService(sessions, bowlers).GetSeries(seriesCategory);
             _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
@@ -91,7 +91,7 @@ namespace Portfolio.Controllers
         [Route("Bowling/GetStats/{statCategory}/{userId}/{leagueMatchesOnly?}/{startTime?}/{endTime?}")]
         public IActionResult GetStats(StatCategory statCategory, string userId, bool? leagueMatchesOnly, long? startTime, long? endTime)
         {
-            var games = GetGames(userId, startTime, endTime, leagueMatchesOnly ?? false);
+            var games = GetGames(userId, startTime, endTime, leagueMatchesOnly);
             var calc = new BowlingStatCalculator(games);
             return Ok(calc.GetStats(statCategory));
         }
@@ -150,25 +150,25 @@ namespace Portfolio.Controllers
             return await _userManager.GetUserAsync(User);
         }
 
-        private List<BowlingGame> GetGames(string userId, long? startTime, long? endTime, bool leagueMatchesOnly)
+        private List<BowlingGame> GetGames(string userId, long? startTime, long? endTime, bool? leagueMatchesOnly)
         {
-            var sessions = GetSessionList(startTime, endTime, leagueMatchesOnly);
+            var sessions = GetSessionList(userId, startTime, endTime, leagueMatchesOnly);
 
             return sessions
                   .SelectMany(s => s.Games.Where(g => g.UserId == userId))
                   .ToList();
         }
 
-        private List<BowlingSession> GetSessionList(long? startTime, long? endTime, bool leagueMatchesOnly)
+        private List<BowlingSession> GetSessionList(string userId, long? startTime, long? endTime, bool? leagueMatchesOnly)
         {
-            bool isLeagueMatch(BowlingSession s) => !leagueMatchesOnly || (s.Date.DayOfWeek == DayOfWeek.Wednesday && s.Date > new DateTime(2019, 8, 27) && s.Games.Count >= 9);
+            bool isLeagueMatch(BowlingSession s) => !(leagueMatchesOnly ?? false) || (s.Date.DayOfWeek == DayOfWeek.Wednesday && s.Date > new DateTime(2019, 8, 27) && s.Games.Count >= 9);
 
             var sessions = _bowlingContext
                     .Sessions
-                    .Include(s => s.Games)
+                    .Include(s => s.Games.Where(g => userId == null || g.UserId == userId).OrderBy(g => g.GameNumber))
                     .ThenInclude(g => g.Frames)
                     .AsEnumerable()
-                    .Where(s => isLeagueMatch(s) && s.Date > DateTimeOffset.FromUnixTimeMilliseconds(startTime ?? 0) && (!endTime.HasValue || s.Date < DateTimeOffset.FromUnixTimeMilliseconds(endTime.Value)))
+                    .Where(s => s.Games.Count > 0 && isLeagueMatch(s) && s.Date > DateTimeOffset.FromUnixTimeMilliseconds(startTime ?? 0) && (!endTime.HasValue || s.Date < DateTimeOffset.FromUnixTimeMilliseconds(endTime.Value)))
                     .ToList();
 
             sessions.ForEach(s => s.Games = s.Games.OrderBy(g => g.GameNumber).ToList());

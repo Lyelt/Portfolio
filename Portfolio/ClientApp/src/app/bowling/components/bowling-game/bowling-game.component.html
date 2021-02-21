@@ -1,5 +1,5 @@
 <div class="flex items-center mb-2">
-  <mat-icon class="cursor-pointer " (click)="delete()">delete_forever</mat-icon>
+  <mat-icon *ngIf="!readOnly" class="cursor-pointer " (click)="delete()">delete_forever</mat-icon>
   <span class="text-lg font-semibold ml-4">Game {{game.gameNumber}}</span>
 </div>
 <div class="mb-2">

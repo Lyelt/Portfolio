@@ -1,13 +1,30 @@
-<div class="px-4 flex flex-col space-y-2">
-    <div *ngFor="let session of sessions" class="flex flex-col">
-        <div class="flex flex-col space-y-1">
-            <span>{{session.date | date:'fullDate':'UTC'}}</span>
-            <div class="flex space-x-2">
-                <span *ngFor="let game of session.games" class="rounded bg-gray-300 dark:bg-gray-900 p-1">
+<div class="px-4 flex flex-col space-y-6 max-h-96 sm:max-h-screen overflow-y-auto" *ngIf="!openSession">
+    <div *ngFor="let session of getSessionPage()" class="flex flex-col cursor-pointer border-b border-gray-500 border-opacity-10 pb-4 last:border-0" (click)="open(session)">
+        <div class="flex flex-col">
+            <div class="flex justify-between pb-2">
+                <span class="font-bold">{{session.date | date:'fullDate':'UTC'}}</span>
+                <div class="flex">
+                    <span class="mr-1">Total</span>
+                    <span class="font-bold">{{getSessionTotal(session)}}</span>
+                    <mat-icon>keyboard_arrow_right</mat-icon>
+                </div>
+            </div>
+            <div class="flex flex-wrap space-x-2">
+                <span *ngFor="let game of session.games" class="rounded px-2 py-1 bg-indigo-600 dark:bg-pink-700 text-indigo-50 dark:text-pink-50">
                     {{game.totalScore}}
                 </span>
             </div>
         </div>
-        
     </div>
+</div>
+<div class="flex items-center justify-between pt-8 text-xs sm:text-base">
+    <span>Showing <span class="font-bold">{{start}}</span> to <span class="font-bold">{{end}}</span> of <span class="font-bold">{{sessions.length}}</span> results</span>
+    <div class="flex space-x-4">
+        <button class="btn border border-gray-800 dark:border-gray-300 focus:outline-none" (click)="setPage(pageNumber - 1)">Previous</button>
+        <button class="btn border border-gray-800 dark:border-gray-300 focus:outline-none" (click)="setPage(pageNumber + 1)">Next</button>
+    </div>
+</div>
+<div *ngIf="openSession">
+    <a class="link" (click)="back()">&larr; Back</a>
+    <app-bowling-add-game [session]="openSession" readOnly="true"></app-bowling-add-game>
 </div>

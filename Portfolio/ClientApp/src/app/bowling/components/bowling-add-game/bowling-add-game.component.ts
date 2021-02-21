@@ -13,6 +13,8 @@ import { User } from '../../../auth/user';
 export class BowlingAddGameComponent implements OnInit {
   @Input() session: BowlingSession;
   @Input() userName: string;
+  @Input() readOnly: boolean;
+
   userId: string;
   filteredGames: BowlingGame[] = [];
   newGame: BowlingGame;
@@ -25,7 +27,7 @@ export class BowlingAddGameComponent implements OnInit {
       this.selectUserByName(this.userName);
     }
     else {
-      this.userId = localStorage.getItem("userId");
+      this.userId = this.bowlingService.selectedBowlerId;
       this.filterGames();
     }
   }

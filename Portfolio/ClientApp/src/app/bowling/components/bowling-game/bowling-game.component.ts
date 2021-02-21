@@ -16,6 +16,7 @@ export class BowlingScore {
 })
 export class BowlingGameComponent implements OnInit {
   @Input() game: BowlingGame;
+  @Input() readOnly: boolean;
   @Output() gameSaved: EventEmitter<BowlingGame> = new EventEmitter();
   @Output() gameDeleted: EventEmitter<BowlingGame> = new EventEmitter();
 

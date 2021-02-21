@@ -36,7 +36,7 @@ namespace Portfolio.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("Auth/Login")]
-        public IActionResult Login([FromBody] Credentials credentials)
+        public IActionResult Login([FromBody]Credentials credentials)
         {
             if (string.IsNullOrWhiteSpace(credentials?.Username) || string.IsNullOrWhiteSpace(credentials?.Password))
                 throw new BadRequestException("Username and password cannot be null or empty");
@@ -77,7 +77,7 @@ namespace Portfolio.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("Auth/Hash")]
-        public IActionResult Hash([FromBody] Credentials input)
+        public IActionResult Hash([FromBody]Credentials input)
         {
             return Ok(new { Hash = _hasher.HashPassword(null, input?.Password ?? "") });
         }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { DateHelper } from 'src/app/shared/helpers/date-helpers';
 import { BowlingService } from '../../services/bowling.service';
 
@@ -8,6 +8,7 @@ import { BowlingService } from '../../services/bowling.service';
   styleUrls: ['./filters.component.scss']
 })
 export class FiltersComponent implements OnInit {
+  isOpen: boolean = true;
   leagueMatchesOnly = true;
   customFilter: StatFilter = { name: "Custom", selected: false, end: new Date() };
 
@@ -20,6 +21,7 @@ export class FiltersComponent implements OnInit {
   constructor(private bowlingService: BowlingService) { }
 
   ngOnInit(): void {
+    this.setDefaults();
     this.selectFilter(this.timeframeFilters.find(f => f.selected));
     this.updateLeagueMatchFilter(this.leagueMatchesOnly);
   }
@@ -30,18 +32,41 @@ export class FiltersComponent implements OnInit {
     });
 
     this.bowlingService.setTimeRange(filter.start, filter.end);
+    localStorage.setItem('selectedFilter', JSON.stringify(filter));
   }
 
   customFilterIsSelected(): boolean {
     return this.timeframeFilters.find(f => f.selected).name === this.customFilter.name;
   }
 
-  updateLeagueMatchFilter(enabled) {
+  updateLeagueMatchFilter(enabled: boolean) {
     this.bowlingService.setLeagueMatchFilter(enabled);
+    localStorage.setItem('leagueMatchFilter', JSON.stringify(enabled));
   }
 
   updateTimeRange() {
     this.bowlingService.setTimeRange(this.customFilter.start, this.customFilter.end);
+    localStorage.setItem('customFilterStart', JSON.stringify(this.customFilter.start));
+    localStorage.setItem('customFilterEnd', JSON.stringify(this.customFilter.end));
+  }
+
+  setDefaults() {
+    if ('customFilterStart' in localStorage) {
+      this.customFilter.start = JSON.parse(localStorage.getItem('customFilterStart'));
+    }
+
+    if ('customFilterEnd' in localStorage) {
+      this.customFilter.end = JSON.parse(localStorage.getItem('customFilterEnd'));
+    }
+
+    if ('selectedFilter' in localStorage) {
+      this.selectFilter(JSON.parse(localStorage.getItem('selectedFilter')));
+    }
+
+    if ('leagueMatchFilter' in localStorage) {
+      this.leagueMatchesOnly = JSON.parse(localStorage.getItem('leagueMatchFilter'));
+      this.updateLeagueMatchFilter(this.leagueMatchesOnly);
+    }
   }
 }
 
