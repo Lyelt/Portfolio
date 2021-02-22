@@ -161,7 +161,7 @@ namespace Portfolio.Controllers
 
         private List<BowlingSession> GetSessionList(string userId, long? startTime, long? endTime, bool? leagueMatchesOnly)
         {
-            bool isLeagueMatch(BowlingSession s) => !(leagueMatchesOnly ?? false) || (s.Date.DayOfWeek == DayOfWeek.Wednesday && s.Date > new DateTime(2019, 8, 27) && s.Games.Count >= 9);
+            bool isLeagueMatch(BowlingSession s) => !(leagueMatchesOnly ?? false) || (s.Date.DayOfWeek == DayOfWeek.Wednesday && s.Date > new DateTime(2019, 8, 27) && s.Games.Count == 3);
 
             var sessions = _bowlingContext
                     .Sessions
