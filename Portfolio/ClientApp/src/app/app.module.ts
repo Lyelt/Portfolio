@@ -74,6 +74,7 @@ import { FiltersComponent } from './bowling/components/filters/filters.component
 import { RadioButtonComponent } from './shared/components/radio-button/radio-button.component';
 import { FramesPipe } from './speedrun/services/frames.pipe';
 import { BowlingViewGamesComponent } from './bowling/components/bowling-view-games/bowling-view-games.component';
+import { ArchiveComponent } from './speedrun/components/archive/archive.component';
 
 const routes: Routes = [
     {
@@ -120,6 +121,9 @@ const routes: Routes = [
     },
     {
         path: 'speedrun/bingo', component: BingoComponent
+    },
+    {
+        path: 'speedrun/archive', component: ArchiveComponent, canActivate: [AuthGuard]
     },
     {
         path: 'bowling', component: BowlingComponent, canActivate: [AuthGuard]
@@ -216,7 +220,8 @@ const routes: Routes = [
         FiltersComponent,
         RadioButtonComponent,
         FramesPipe,
-        BowlingViewGamesComponent
+        BowlingViewGamesComponent,
+        ArchiveComponent
     ],
     imports: [
         BrowserModule,

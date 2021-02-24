@@ -6,13 +6,13 @@
   <h1 class="font-bold text-2xl mb-4 text-center">SM64 Speedrun Times</h1>
   <div class="flex justify-between mb-6">
     <span class="link" (click)="collapseAll()">Collapse All</span>
-    <!-- <div class="flex cursor-pointer text-indigo-400">
-       <mat-icon class="mr-1 hover:shadow" [ngClass]="{'text-indigo-600 dark:text-indigo-400': view == 'grid'}" (click)="toggleView('grid')" title="Grid view">view_compact</mat-icon>
-      <mat-icon class="hover:shadow" [ngClass]="{'text-indigo-600 dark:text-indigo-400': view == 'list'}" (click)="toggleView('list')" title="List view">view_comfy</mat-icon> 
-    </div> -->
-    <span class="link" routerLink="bingo">Bingo Tool &rarr;</span>
+    <mat-icon class="cursor-pointer" [matMenuTriggerFor]="menu">menu</mat-icon>
   </div>
 
+  <mat-menu #menu="matMenu">
+    <span mat-menu-item class="menu-item" routerLink="bingo"><mat-icon>grid_on</mat-icon>Bingo</span>
+    <span mat-menu-item class="menu-item" routerLink="archive"><mat-icon>auto_delete</mat-icon>Archive</span>
+  </mat-menu>
   <div class="flex flex-col" *ngIf="view == 'list'">
     <h5 class="text-center text-indigo-500 font-semibold">I have no idea how this view is going to look...</h5>
   </div>

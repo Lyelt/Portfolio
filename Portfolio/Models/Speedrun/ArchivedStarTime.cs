@@ -9,8 +9,11 @@ using System.Threading.Tasks;
 
 namespace Portfolio.Models.Speedrun
 {
-    public class StarTime
+    public class ArchivedStarTime
     {
+        public int Id { get; set; }
+        public DateTime Timestamp { get; set; }
+
         public Star Star { get; set; }
         public int StarId { get; set; }
 
@@ -28,24 +31,12 @@ namespace Portfolio.Models.Speedrun
         [NotMapped]
         public int? Frames { get; set; }
 
-        public StarTime WithClientView()
+        public ArchivedStarTime WithClientView()
         {
             TimeDisplay = Time.ToString("hh\\:mm\\:ss\\.ff");
             TotalMilliseconds = Time.TotalMilliseconds;
             Frames = Time.GetFrames();
             return this;
-        }
-
-        public ArchivedStarTime AsArchive()
-        {
-            return new ArchivedStarTime { Timestamp = LastUpdated, 
-                Star = Star, StarId = StarId, 
-                User = User, UserId = UserId, 
-                LastUpdated = DateTime.UtcNow, 
-                Time = Time, 
-                VideoUrl = VideoUrl, 
-                TimeDisplay = TimeDisplay, TotalMilliseconds = TotalMilliseconds, Frames = Frames 
-            };
         }
 
         public override bool Equals(object obj)

@@ -18,11 +18,11 @@ export class SpeedrunComponent implements OnInit {
   allCourses: Course[] = [];
   starTimes: StarTime[] = [];
   courses: Course[] = [];
-  runners: User[] = [];
   categories: Course;
+  runners: User[] = [];
 
   expanded: number[];
-  view: string;
+  view: string = "grid";
 
   constructor(
     private srService: SpeedrunService,
@@ -31,7 +31,7 @@ export class SpeedrunComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.srService.getSpeedrunners().subscribe((data) => {
+    this.srService.getSpeedrunners().subscribe(data => {
       this.runners = data;
     });
 
@@ -41,26 +41,19 @@ export class SpeedrunComponent implements OnInit {
       this.categories = this.allCourses.find((c) => c.name == "Categories");
     });
 
-    this.refreshTimes();
-    this.expanded = JSON.parse(localStorage.getItem("expandedCourses")) || [];
-    this.view = localStorage.getItem("view");
-    if (!this.view) this.view = "grid";
-  }
-
-  refreshTimes() {
-    this.srService.getStarTimes().subscribe((data) => {
+    this.srService.starTimes().subscribe((data) => {
       this.starTimes = data;
     });
+
+    this.expanded = JSON.parse(localStorage.getItem("expandedCourses")) || [];
   }
 
   getCompletedStars(course: Course): CompletedStars {
     let completed = 0;
     for (let star of course.stars) {
-      if (
-        this.starTimes.filter((st) => st.starId == star.starId).length ==
-        this.runners.length
-      )
+      if (this.starTimes.filter((st) => st.starId == star.starId).length == this.runners.length) {
         completed++;
+      }
     }
 
     return {
@@ -78,7 +71,6 @@ export class SpeedrunComponent implements OnInit {
 
   toggleView(view: string) {
     this.view = view;
-    localStorage.setItem("view", view);
   }
 
   getVisibleCourses() {
@@ -157,9 +149,7 @@ export class SpeedrunComponent implements OnInit {
     let starTime: StarTime = data.starTime;
     starTime.time = starTime.time || "00:00:00.00"; // If not provided, use TimeSpan.Zero
 
-    this.srService.updateStarTime(starTime).subscribe((result) => {
-      this.refreshTimes();
-    });
+    this.srService.updateStarTime(starTime);
   }
 
   courseIsCollapsed(course: Course): boolean {

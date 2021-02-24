@@ -13,3 +13,9 @@ export class StarTime {
 
   userId: string;
 }
+
+export class ArchivedStarTime extends StarTime {
+  id: number;
+
+  timestamp: Date;
+}

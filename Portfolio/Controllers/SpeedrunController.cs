@@ -59,9 +59,16 @@ namespace Portfolio.Controllers
             return Ok(_srContext.StarTimes.Select(st => st.WithClientView()).ToList());
         }
 
+        [HttpGet]
+        [Route("Speedrun/GetArchivedStarTimes")]
+        public IActionResult GetArchivedStarTimes()
+        {
+            return Ok(_srContext.ArchivedStarTimes.Select(st => st.WithClientView()).ToList());
+        }
+
         [HttpPost]
         [Route("Speedrun/UpdateStarTime")]
-        public async Task<IActionResult> UpdateStarTime([FromBody] StarTime starTime)
+        public async Task<IActionResult> UpdateStarTime([FromBody]StarTime starTime)
         {
             var currentUser = await GetCurrentUser();
             bool userIsAdmin = await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Administrator.ToString());
@@ -80,6 +87,9 @@ namespace Portfolio.Controllers
 
             if (existingStarTime != null)
             {
+                var archivedStarTime = existingStarTime.AsArchive();
+                await _srContext.ArchivedStarTimes.AddAsync(archivedStarTime);
+
                 if (starTime.Time == TimeSpan.Zero)
                     _srContext.StarTimes.Remove(starTime);
                 else

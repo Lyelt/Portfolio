@@ -14,6 +14,8 @@ namespace Portfolio.Data
     {
         public DbSet<StarTime> StarTimes { get; set; }
 
+        public DbSet<ArchivedStarTime> ArchivedStarTimes { get; set; }
+
         public DbSet<Star> Stars { get; set; }
 
         public DbSet<Course> Courses { get; set; }
@@ -46,6 +48,21 @@ namespace Portfolio.Data
                .WithMany();
 
             builder.Entity<StarTime>()
+                .Property(st => st.Time)
+                .HasConversion(new TimeSpanToTicksConverter());
+
+            builder.Entity<ArchivedStarTime>()
+                .HasKey(st => new { st.Id });
+
+            builder.Entity<ArchivedStarTime>()
+                .HasOne(st => st.Star)
+                .WithMany();
+
+            builder.Entity<ArchivedStarTime>()
+               .HasOne(st => st.User)
+               .WithMany();
+
+            builder.Entity<ArchivedStarTime>()
                 .Property(st => st.Time)
                 .HasConversion(new TimeSpanToTicksConverter());
         }

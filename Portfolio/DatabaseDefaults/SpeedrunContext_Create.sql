@@ -42,3 +42,23 @@ ALTER TABLE `StarTimes` MODIFY COLUMN `Time` bigint NOT NULL;
 INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
 VALUES ('20190715040918_TimespanTicks', '2.1.11-servicing-32099');
 
+START TRANSACTION;
+USE portfolio;
+CREATE TABLE `ArchivedStarTimes` (
+    `Timestamp` datetime(6) NOT NULL,
+    `StarId` int NOT NULL,
+    `UserId` varchar(255) NOT NULL,
+    `LastUpdated` datetime(6) NOT NULL,
+    `Time` bigint NOT NULL,
+    `VideoUrl` longtext CHARACTER SET utf8mb4 NULL,
+    CONSTRAINT `PK_ArchivedStarTimes` PRIMARY KEY (`StarId`, `UserId`, `Timestamp`),
+    CONSTRAINT `FK_ArchivedStarTimes_AspNetUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `AspNetUsers` (`Id`) ON DELETE CASCADE,
+    CONSTRAINT `FK_ArchivedStarTimes_Stars_StarId` FOREIGN KEY (`StarId`) REFERENCES `Stars` (`StarId`) ON DELETE CASCADE
+);
+
+CREATE INDEX `IX_ArchivedStarTimes_UserId` ON `ArchivedStarTimes` (`UserId`);
+
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
+VALUES ('20210223053236_Add_ArchivedStarTimes', '5.0.2');
+
+COMMIT;

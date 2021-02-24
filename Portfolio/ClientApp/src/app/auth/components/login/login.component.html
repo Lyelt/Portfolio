@@ -2,7 +2,6 @@
   <div class="flex flex-col rounded-lg shadow-lg bg-white dark:bg-gray-900 p-6">
     <div class="flex flex-col items-center mb-6">
       <h2 class="font-bold text-2xl mb-2">Login</h2>
-      <p class="pl-2" *ngIf="navigatingToSpeedrun()">(or, <a class="link" routerLink="/speedrun/bingo">click here for the SM64 bingo tool)</a></p>
     </div>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="px-4 pb-2">
       <div class="flex flex-col justify-center">
