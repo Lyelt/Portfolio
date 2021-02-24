@@ -38,7 +38,7 @@ namespace Portfolio.Models.Bowling
             if (FrameNumber == 10 && (Roll1Score == 10 || Roll2Score == 10))
                 return 10;
 
-            return Roll1Score + Roll2Score;
+            return Math.Min(10, Roll1Score + Roll2Score);
         }
 
         public bool IsSinglePinSpare()

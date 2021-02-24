@@ -29,8 +29,6 @@ export class ArchiveComponent implements OnInit {
         });
       });
     });
-
-
   }
 
   getStarById(starId: number): Star {
