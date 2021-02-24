@@ -1,4 +1,5 @@
 <div class="px-8 mx-auto max-w-6xl">
+    <span class="link" routerLink="/speedrun">&larr; Back</span>
     <div *ngFor="let archive of archivedStarTimes;">
         {{archive.id}}. 
         Star <span class="font-bold">{{getStarById(archive.starId).name}}</span> 
