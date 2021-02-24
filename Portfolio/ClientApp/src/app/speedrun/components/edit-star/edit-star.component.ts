@@ -2,9 +2,9 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { SpeedrunComponent } from '../speedrun/speedrun.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
 import { StarTime } from '../../models/star-time';
 import { FramesPipe } from '../../services/frames.pipe';
+import { SpeedrunService } from '../../services/speedrun.service';
 
 @Component({
   selector: 'app-edit-star',
@@ -18,7 +18,7 @@ export class EditStarComponent implements OnInit {
   frames: number;
   showFrames = false;
 
-  constructor(private sanitizer: DomSanitizer,
+  constructor(private speedrunService: SpeedrunService,
               private framePipe: FramesPipe,
               private fb: FormBuilder,
               private dialogRef: MatDialogRef<SpeedrunComponent>,
@@ -51,13 +51,6 @@ export class EditStarComponent implements OnInit {
   }
 
   getYoutubeUrl(watchCode: string) {
-    if (watchCode.startsWith('https://')) {
-      if (watchCode.includes('/watch?v='))
-        watchCode = watchCode.substring(watchCode.lastIndexOf('=') + 1);
-      else
-        watchCode = watchCode.substring(watchCode.lastIndexOf('/') + 1);
-    }
-    return this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + watchCode);
+    return this.speedrunService.getYoutubeUrl(watchCode);
   }
-
 }

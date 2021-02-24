@@ -40,4 +40,8 @@ export class ArchiveComponent implements OnInit {
   getUserById(userId: string): User {
     return this.runners.find(u => u.id === userId);
   }
+
+  getYoutubeUrl(watchCode: string) {
+    return this.speedrunService.getYoutubeUrl(watchCode);
+  }
 }

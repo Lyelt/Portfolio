@@ -32,18 +32,19 @@ export class SpeedrunComponent implements OnInit {
 
   ngOnInit() {
     this.srService.getSpeedrunners().subscribe(data => {
-      this.runners = data;
+      this.runners = data || [];
     });
 
     this.srService.getCourses().subscribe((data) => {
-      this.allCourses = data;
+      this.allCourses = data || [];
       this.courses = this.allCourses.filter((c) => c.name != "Categories");
       this.categories = this.allCourses.find((c) => c.name == "Categories");
+
+      this.srService.starTimes().subscribe((data) => {
+          this.starTimes = data || [];
+      });
     });
 
-    this.srService.starTimes().subscribe((data) => {
-      this.starTimes = data;
-    });
 
     this.expanded = JSON.parse(localStorage.getItem("expandedCourses")) || [];
   }
@@ -88,7 +89,8 @@ export class SpeedrunComponent implements OnInit {
           count++;
         }
       }
-    } else {
+    } 
+    else {
       for (let star of this.allCourses
         .map((c) => c.stars)
         .reduce((a, b) => a.concat(b))) {
