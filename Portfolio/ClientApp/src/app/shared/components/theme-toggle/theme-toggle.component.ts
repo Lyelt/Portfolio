@@ -11,16 +11,21 @@ export class ThemeToggleComponent implements OnInit {
 
   ngOnInit(): void {
     if (!('theme' in localStorage)) {
-      localStorage.theme = window.matchMedia('(prefers-color-scheme: dark)') ? 'dark' : 'light';
+      const media = window.matchMedia('(prefers-color-scheme: dark)');
+      localStorage.theme = media && media.matches ? 'dark' : 'light';
     }
 
     this.theme = localStorage.theme;
+    this.setClass();
   }
 
   toggleDarkMode() {
     localStorage.theme = localStorage.theme === 'light' ? 'dark' : 'light';
     this.theme = localStorage.theme;
+    this.setClass();
+  }
 
+  setClass() {
     document.querySelector('html').classList.remove('light', 'dark');
     document.querySelector('html').classList.add(localStorage.theme);
   }
