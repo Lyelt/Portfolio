@@ -41,7 +41,7 @@
         </thead>
         <tbody *ngIf="!isCollapsed">
             <tr *ngFor="let star of orderedStars" class="even:bg-gray-200 dark:even:bg-gray-900">
-                <td class="w-4/12 pl-4 pr-2 py-2 link font-normal text-gray-900 dark:text-gray-100">{{star.name}}</td>
+                <td class="w-4/12 pl-4 pr-2 py-2 link font-normal text-gray-900 dark:text-gray-100" (click)="starSelected.emit(star)">{{star.name}}</td>
                 <td class="w-3/12 py-2" *ngFor="let runner of runners">{{getStarTime(star.starId, runner.id)?.timeDisplay}}</td>
                 <td class="w-4/12 py-2">-1</td>
             </tr>

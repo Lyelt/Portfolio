@@ -77,6 +77,8 @@ import { BowlingViewGamesComponent } from './bowling/components/bowling-view-gam
 import { ArchiveComponent } from './speedrun/components/archive/archive.component';
 import { CourseComponent } from './speedrun/components/course/course.component';
 import { ProgressComponent } from './shared/components/progress/progress.component';
+import { StarDetailsComponent } from './speedrun/components/star-details/star-details.component';
+import { SafePipe } from './shared/pipes/safe.pipe';
 
 const routes: Routes = [
     {
@@ -225,7 +227,9 @@ const routes: Routes = [
         BowlingViewGamesComponent,
         ArchiveComponent,
         CourseComponent,
-        ProgressComponent
+        ProgressComponent,
+        StarDetailsComponent,
+        SafePipe
     ],
     imports: [
         BrowserModule,

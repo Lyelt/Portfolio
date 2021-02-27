@@ -7,6 +7,6 @@
         by <span class="font-bold">{{getUserById(archive.userId).userName}}</span> 
         on <span class="font-bold">{{archive.timestamp | date:'mediumDate'}}</span> 
         (archived on <span class="font-bold">{{archive.lastUpdated | date:'mediumDate'}}</span>)
-        - <a *ngIf="archive.videoUrl" class="link" [href]="getYoutubeUrl(archive.videoUrl)">View</a>
+        - <a *ngIf="archive.videoUrl" class="link" [href]="archive.videoUrl | safe">View</a>
     </div>
 </div>

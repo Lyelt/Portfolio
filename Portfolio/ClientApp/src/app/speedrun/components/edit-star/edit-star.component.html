@@ -14,7 +14,7 @@
   </div>
 
   <div *ngIf="starTime.videoUrl" class="h-full">
-    <iframe class="w-full h-full" [src]="getYoutubeUrl(starTime.videoUrl)" frameborder="0" allowfullscreen></iframe>
+    <iframe class="w-full h-full" [src]="starTime.videoUrl | safe" frameborder="0" allowfullscreen></iframe>
   </div>
 
 </mat-dialog-content>

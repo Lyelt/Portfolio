@@ -16,6 +16,7 @@ export class CourseComponent implements OnInit {
   @Input() runners: User[];
   @Input() isCollapsed: boolean = false;
   @Output() collapseToggled: EventEmitter<any> = new EventEmitter();
+  @Output() starSelected: EventEmitter<Star> = new EventEmitter();
 
   constructor() { }
 

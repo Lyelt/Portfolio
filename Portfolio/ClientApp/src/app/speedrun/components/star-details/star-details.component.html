@@ -1,0 +1,19 @@
+<div class="pt-8">
+    <div class="flex justify-between">
+        <span class="link" (click)="closed.emit()">&larr; Back</span>
+        <h3>{{star.name}}</h3>
+        <span class="opacity-0"></span>
+    </div>
+    <div>
+        <div class="grid grid-cols-2">
+            <div *ngFor="let time of getStarTimes()">
+                <div class="flex flex-col">
+                    <!-- <span>{{getUserNameById(time.userId)}}</span> -->
+                    <span>{{time.timeDisplay}}</span>
+                    <iframe *ngIf="time.videoUrl" class="w-full h-full" [src]="time.videoUrl | safe" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

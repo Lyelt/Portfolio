@@ -4,53 +4,35 @@
     <span class="text-center">This page is better viewed on a larger screen. Stay tuned as I develop a mobile-friendly version!</span>
   </div>
   <h1 class="font-bold text-2xl mb-4 text-center">SM64 Speedrun Times</h1>
-  <div class="flex justify-between mb-6">
-    <span class="link" (click)="collapseAll()">Collapse All</span>
-    <mat-icon class="cursor-pointer" [matMenuTriggerFor]="menu">menu</mat-icon>
-  </div>
-
-  <mat-menu #menu="matMenu">
-    <span mat-menu-item class="menu-item" routerLink="bingo"><mat-icon>grid_on</mat-icon>Bingo</span>
-    <span mat-menu-item class="menu-item" routerLink="archive"><mat-icon>auto_delete</mat-icon>Archive</span>
-  </mat-menu>
-
-    <div>
-      <!-- Component -->
-      <!-- <div *ngIf="categories" class="mb-12">
-        <div class="grid grid-cols-3 mb-4">
-          <h3 class="font-semibold">{{categories.name}}</h3>
-          <h3 class="pl-2" *ngFor="let user of runners">{{user.userName}} ({{getStarCount(user, null)}})</h3>
-        </div>
-        <div class="border rounded bg-white dark:bg-gray-800 dark:border-gray-600 shadow">
-          <div class="even:bg-gray-100 dark:even:bg-gray-900 rounded px-4" *ngFor="let star of orderStars(categories.stars)">
-            <div class="grid grid-cols-3 py-2">
-              <p>{{star.name}}</p>
-              <div *ngFor="let user of runners"
-                   class="link font-normal pl-2"
-                   [ngClass]="{'font-bold': starTimeIsFastest(star.starId, user.id)}"
-                   (click)="openDialog(getStarTime(star.starId, user.id), star.name)">
-                <span *ngIf="getStarTime(star.starId, user.id)?.timeDisplay">{{getStarTime(star.starId, user.id)?.timeDisplay}}</span>
-                <span *ngIf="!getStarTime(star.starId, user.id)?.timeDisplay" class="text-gray-600 dark:text-gray-300 underline uppercase tracking-wide hover:text-indigo-500">No Entry</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-      <div class="mb-12">
-        <app-course *ngIf="categories" 
-          [course]="categories" 
-          [runners]="runners" 
-          [starTimes]="starTimes" 
-          [isCollapsed]="courseIsCollapsed(categories)"
-          (collapseToggled)="toggleCourseCollapsed(categories)"></app-course>
-      </div>
-      <div class="flex flex-col space-y-8">
-        <app-course *ngFor="let course of getVisibleCourses()" 
-          [course]="course" 
-          [runners]="runners" 
-          [starTimes]="starTimes" 
-          [isCollapsed]="courseIsCollapsed(course)"
-          (collapseToggled)="toggleCourseCollapsed(course)"></app-course>
-      </div>
+  <div *ngIf="!selectedStar">
+    <div class="flex justify-between mb-6">
+      <span class="link" (click)="collapseAll()">Collapse All</span>
+      <mat-icon class="cursor-pointer" [matMenuTriggerFor]="menu">menu</mat-icon>
+    </div>
+    <mat-menu #menu="matMenu">
+      <span mat-menu-item class="menu-item" routerLink="bingo"><mat-icon>grid_on</mat-icon>Bingo</span>
+      <span mat-menu-item class="menu-item" routerLink="archive"><mat-icon>auto_delete</mat-icon>Archive</span>
+    </mat-menu>
+    <div class="mb-12">
+      <app-course *ngIf="categories" 
+        [course]="categories" 
+        [runners]="runners" 
+        [starTimes]="starTimes" 
+        [isCollapsed]="courseIsCollapsed(categories)"
+        (collapseToggled)="toggleCourseCollapsed(categories)"
+        (starSelected)="showStarDetails($event)"></app-course>
+    </div>
+    <div class="flex flex-col space-y-8">
+      <app-course *ngFor="let course of getVisibleCourses()" 
+        [course]="course" 
+        [runners]="runners" 
+        [starTimes]="starTimes" 
+        [isCollapsed]="courseIsCollapsed(course)"
+        (collapseToggled)="toggleCourseCollapsed(course)"
+        (starSelected)="showStarDetails($event)"></app-course>
     </div>
   </div>
+  <div *ngIf="selectedStar">
+    <app-star-details [star]="selectedStar" [starTimes]="starTimes" (closed)="selectedStar = null"></app-star-details>
+  </div>
+</div>

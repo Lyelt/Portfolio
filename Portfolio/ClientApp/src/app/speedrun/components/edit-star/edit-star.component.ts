@@ -49,8 +49,4 @@ export class EditStarComponent implements OnInit {
   close() {
     this.dialogRef.close();
   }
-
-  getYoutubeUrl(watchCode: string) {
-    return this.speedrunService.getYoutubeUrl(watchCode);
-  }
 }

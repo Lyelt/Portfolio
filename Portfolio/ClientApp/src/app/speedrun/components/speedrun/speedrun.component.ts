@@ -22,13 +22,11 @@ export class SpeedrunComponent implements OnInit {
   runners: User[] = [];
 
   expanded: number[];
-  view: string = "grid";
+  selectedStar: Star;
 
-  constructor(
-    private srService: SpeedrunService,
-    private dialog: MatDialog,
-    private router: Router
-  ) {}
+  constructor(private srService: SpeedrunService, private router: Router) {
+
+  }
 
   ngOnInit() {
     this.srService.getSpeedrunners().subscribe(data => {
@@ -45,14 +43,11 @@ export class SpeedrunComponent implements OnInit {
       });
     });
 
-
     this.expanded = JSON.parse(localStorage.getItem("expandedCourses")) || [];
   }
 
-
-
-  toggleView(view: string) {
-    this.view = view;
+  showStarDetails(star: Star) {
+    this.selectedStar = star;
   }
 
   getVisibleCourses() {

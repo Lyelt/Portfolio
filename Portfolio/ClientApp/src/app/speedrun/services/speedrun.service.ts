@@ -57,14 +57,4 @@ export class SpeedrunService {
   public starTimes(): Observable<StarTime[]> {
     return this.starTimesSubject.asObservable();
   }
-
-  public getYoutubeUrl(watchCode: string) {
-    if (watchCode.startsWith('https://')) {
-      if (watchCode.includes('/watch?v='))
-        watchCode = watchCode.substring(watchCode.lastIndexOf('=') + 1);
-      else
-        watchCode = watchCode.substring(watchCode.lastIndexOf('/') + 1);
-    }
-    return this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + watchCode);
-  }
 }
