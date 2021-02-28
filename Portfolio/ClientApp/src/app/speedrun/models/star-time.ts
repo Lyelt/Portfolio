@@ -1,13 +1,13 @@
 export class StarTime {
-  time: string;
+  time?: string;
 
-  timeDisplay: string;
+  timeDisplay?: string;
 
-  totalMilliseconds: number;
+  totalMilliseconds?: number;
 
-  lastUpdated: Date;
+  lastUpdated?: Date;
 
-  videoUrl: string;
+  videoUrl?: string;
 
   starId: number;
 

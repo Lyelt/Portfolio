@@ -25,6 +25,10 @@ module.exports = {
         orange: colors.orange
       },
       extend: {
+        height: {
+          112: '28rem',
+          128: '32rem'
+        },
         zIndex: {
           '999': 999,
           'topmost': 9999
@@ -57,6 +61,7 @@ module.exports = {
         transitionDuration: ['hover', 'focus'],
         opacity: ['disabled'],
         pointerEvents: ['disabled'],
+        textAlign: ['first', 'last']
       }
     },
   plugins: [

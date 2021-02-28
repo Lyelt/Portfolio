@@ -10,26 +10,31 @@ import { DomSanitizer } from '@angular/platform-browser';
   providedIn: 'root'
 })
 export class SpeedrunService {
+  private allStarTimes: StarTime[] = [];
 
   private archivedStarTimesSubject: BehaviorSubject<ArchivedStarTime[]> = new BehaviorSubject(null);
   private starTimesSubject: BehaviorSubject<StarTime[]> = new BehaviorSubject(null);
 
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) {
+    this.starTimes().subscribe(times => {
+      this.allStarTimes = times;
+    });
+    
     this.reload();
   }
 
   private reload() {
-    this.getStarTimes();
-    this.getArchivedStarTimes();
+    this.loadStarTimes();
+    this.loadArchivedStarTimes();
   }
 
-  private getStarTimes() {
+  private loadStarTimes() {
     return this.http.get<StarTime[]>('Speedrun/GetStarTimes').subscribe(data => {
       this.starTimesSubject.next(data);
     });
   }
 
-  private getArchivedStarTimes() {
+  private loadArchivedStarTimes() {
     return this.http.get<ArchivedStarTime[]>('Speedrun/GetArchivedStarTimes').subscribe(data => {
       this.archivedStarTimesSubject.next(data);
     });
@@ -44,9 +49,8 @@ export class SpeedrunService {
   }
 
   updateStarTime(starTime: StarTime) {
-    return this.http.post("Speedrun/UpdateStarTime", starTime).subscribe(result => {
-      this.getStarTimes();
-      this.getArchivedStarTimes();
+    this.http.post("Speedrun/UpdateStarTime", starTime).subscribe(result => {
+      this.reload();
     });
   }
 
@@ -56,5 +60,25 @@ export class SpeedrunService {
 
   public starTimes(): Observable<StarTime[]> {
     return this.starTimesSubject.asObservable();
+  }
+
+  public starTimeIsFastest(starTime: StarTime): boolean {
+    const timesForThisStar = this.allStarTimes.filter(st => st.starId == starTime.starId);
+    let isFastestTime = false;
+
+    if (timesForThisStar.length > 0) {
+      let minStarTime = timesForThisStar.reduce((prev, curr) => prev.totalMilliseconds < curr.totalMilliseconds ? prev : curr);
+      isFastestTime = minStarTime.totalMilliseconds == starTime.totalMilliseconds;
+    }
+
+    return isFastestTime;
+  } 
+
+  public getStarTime(starId: number, userId: string): StarTime {
+    return this.allStarTimes.find(st => st.starId === starId && st.userId === userId) || { userId: userId, starId: starId };
+  }
+
+  public getStarTimes(starId: number): StarTime[] {
+    return this.allStarTimes.filter(st => st.starId === starId);
   }
 }

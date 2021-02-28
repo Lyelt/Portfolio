@@ -1,6 +1,6 @@
-<h2 mat-dialog-title>Editing {{starName}}</h2>
 
-<mat-dialog-content [formGroup]="form" class="flex flex-col" [ngClass]="{'h-screen': starTime.videoUrl}">
+<form [formGroup]="form" class="flex flex-col">
+  <span class="uppercase font-medium tracking-wide pb-4">{{runnerName}}</span>
 
   <div class="w-full flex flex-col mb-6">
     <label for="time" class="pb-1">Time (<span class="link" (click)="showFrames = !showFrames">{{(showFrames ? "hide" : "show")}} frames</span>)</label>
@@ -13,13 +13,8 @@
     <input type="text" placeholder="Youtube Watch Code" formControlName="videoUrl" />
   </div>
 
-  <div *ngIf="starTime.videoUrl" class="h-full">
-    <iframe class="w-full h-full" [src]="starTime.videoUrl | safe" frameborder="0" allowfullscreen></iframe>
+  <div>
+    <button type="button" class="btn btn-primary md:w-1/4" (click)="save()" [disabled]="!form.valid">Save Changes</button>
+    <span *ngIf="form.dirty">Form modified</span>
   </div>
-
-</mat-dialog-content>
-
-<mat-dialog-actions class="flex justify-between">
-  <button type="button" class="btn border border-gray-500 dark:border-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700" (click)="close()">Cancel</button>
-  <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!form.valid">Save Changes</button>
-</mat-dialog-actions>
+</form>

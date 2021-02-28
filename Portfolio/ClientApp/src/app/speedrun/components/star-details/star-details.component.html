@@ -1,19 +1,52 @@
 <div class="pt-8">
-    <div class="flex justify-between">
+    <div class="flex justify-between mb-12">
         <span class="link" (click)="closed.emit()">&larr; Back</span>
-        <h3>{{star.name}}</h3>
+        <h3 class="font-bold text-2xl">{{star.name}}</h3>
         <span class="opacity-0"></span>
     </div>
     <div>
-        <div class="grid grid-cols-2">
-            <div *ngFor="let time of getStarTimes()">
-                <div class="flex flex-col">
-                    <!-- <span>{{getUserNameById(time.userId)}}</span> -->
-                    <span>{{time.timeDisplay}}</span>
-                    <iframe *ngIf="time.videoUrl" class="w-full h-full" [src]="time.videoUrl | safe" frameborder="0" allowfullscreen></iframe>
+        <!-- tab labels -->
+        <nav class="flex items-center justify-center mb-6">
+            <span class="nav-link nav-link-hover" [class.font-bold]="selectedTab === 'time'" (click)="selectedTab = 'time'">Time Comparison</span>
+            <span class="nav-link nav-link-hover" [class.font-bold]="selectedTab === 'edit'" (click)="selectedTab = 'edit'">Edit</span>
+            <span class="nav-link nav-link-hover" [class.font-bold]="selectedTab === 'archive'" (click)="selectedTab = 'archive'">Archive</span>
+            <span class="nav-link nav-link-hover" [class.font-bold]="selectedTab === 'rta'" (click)="selectedTab = 'rta'">RTA Guide</span>
+            <span class="nav-link nav-link-hover" [class.font-bold]="selectedTab === 'ss'" (click)="selectedTab = 'ss'">Single-Star Record</span>
+            <span class="nav-link nav-link-hover" [class.font-bold]="selectedTab === 'other'" (click)="selectedTab = 'other'">Other</span>
+        </nav>
+
+        <div class="grid grid-cols-2 gap-4" *ngIf="selectedTab === 'time'">
+            <div *ngFor="let runner of runners" class="first:text-right">
+                <div *ngIf="getStarTime(runner); let time" class="flex flex-col">
+                    <span class="uppercase font-medium tracking-wide pb-2">{{runner.userName}}</span>
+                    <span class="pb-2" [ngClass]="{'font-bold text-indigo-600 dark:text-pink-400' : starTimeIsFastest(time)}">{{time.timeDisplay}}</span>
+                    <div class="h-96 lg:h-112 xl:h-128">
+                        <iframe *ngIf="time.videoUrl" class="w-full h-full" [src]="time.videoUrl | safe" frameborder="0" allowfullscreen></iframe>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <div class="grid grid-cols-2 gap-4" *ngIf="selectedTab === 'edit'">
+            <div *ngFor="let runner of runners" class="first:text-right">
+                <app-edit-star [starTime]="getStarTime(runner)" [runnerName]="runner.userName"></app-edit-star>
+            </div>
+        </div>
+
+        <div *ngIf="selectedTab === 'rta'">
+
+        </div>
+
+        <div *ngIf="selectedTab === 'archive'">
+
+        </div>
+
+        <div *ngIf="selectedTab === 'ss'">
+
+        </div>
+
+        <div *ngIf="selectedTab === 'other'">
+
+        </div>
     </div>
 </div>
-

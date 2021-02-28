@@ -4,6 +4,7 @@ import { CompletedStars } from '../../models/completedStars';
 import { Course } from '../../models/course';
 import { Star } from '../../models/star';
 import { StarTime } from '../../models/star-time';
+import { SpeedrunService } from '../../services/speedrun.service';
 
 @Component({
   selector: 'app-course',
@@ -12,22 +13,24 @@ import { StarTime } from '../../models/star-time';
 })
 export class CourseComponent implements OnInit {
   @Input() course: Course;
-  @Input() starTimes: StarTime[];
-  @Input() runners: User[];
   @Input() isCollapsed: boolean = false;
   @Output() collapseToggled: EventEmitter<any> = new EventEmitter();
   @Output() starSelected: EventEmitter<Star> = new EventEmitter();
-
-  constructor() { }
+  
+  runners: User[] = [];
+  constructor(private sr: SpeedrunService) { }
 
   ngOnInit(): void {
+    this.sr.getSpeedrunners().subscribe(data => {
+      this.runners = data;
+    });
   }
 
   
   getCompletedStars(course: Course): CompletedStars {
     let completed = 0;
     for (let star of course.stars) {
-      if (this.starTimes.filter((st) => st.starId == star.starId).length == this.runners.length) {
+      if (this.sr.getStarTimes(star.starId).length == this.runners.length) {
         completed++;
       }
     }
@@ -47,63 +50,18 @@ export class CourseComponent implements OnInit {
         count++;
       }
     }
-    // else {
-    //   for (let star of this.allCourses
-    //     .map((c) => c.stars)
-    //     .reduce((a, b) => a.concat(b))) {
-    //     if (this.starTimeIsFastest(star.starId, user.id)) {
-    //       count++;
-    //     }
-    //   }
-    // }
 
     return count;
   }
 
   getStarTime(starId: number, userId: string) {
-    let foundTime = this.starTimes.find(
-      (st) => st.starId == starId && st.userId == userId
-    );
-
-    if (!foundTime) {
-      foundTime = new StarTime();
-      foundTime.userId = userId;
-      foundTime.starId = starId;
-    }
-
-    return foundTime;
+    return this.sr.getStarTime(starId, userId);
   }
 
   starTimeIsFastest(starId: number, userId: string) {
-    let isFastestTime = false;
-    let starTime = this.getStarTime(starId, userId);
-    let timesForThisStar = this.starTimes.filter((st) => st.starId == starId);
-
-    if (timesForThisStar.length > 0) {
-      let minStarTime = timesForThisStar.reduce((prev, curr) =>
-        prev.totalMilliseconds < curr.totalMilliseconds ? prev : curr
-      );
-      isFastestTime =
-        minStarTime.totalMilliseconds == starTime.totalMilliseconds;
-    }
-
-    return isFastestTime;
+    return this.sr.starTimeIsFastest(this.getStarTime(starId, userId));
   }
-
-  openDialog(starTime: StarTime, starName: string) {
-    // const dialogConfig = new MatDialogConfig();
-    // dialogConfig.autoFocus = true;
-    // dialogConfig.data = { starTime: starTime, starName: starName };
-
-    // const dialogRef = this.dialog.open(EditStarComponent, dialogConfig);
-
-    // dialogRef.afterClosed().subscribe((data) => {
-    //   if (data) {
-    //     this.saveStarTime(data);
-    //   }
-    // });
-  }
-
+  
   get orderedStars() {
     return this.course.stars
       .filter((s) => s.displayOrder >= 0)

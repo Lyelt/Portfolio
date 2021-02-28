@@ -1,6 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { SpeedrunComponent } from '../speedrun/speedrun.component';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StarTime } from '../../models/star-time';
 import { FramesPipe } from '../../services/frames.pipe';
@@ -12,19 +10,13 @@ import { SpeedrunService } from '../../services/speedrun.service';
   styleUrls: ['./edit-star.component.scss']
 })
 export class EditStarComponent implements OnInit {
+  @Input() starTime: StarTime;
+  @Input() runnerName: string;
   form: FormGroup;
-  starTime: StarTime;
-  starName: string;
   frames: number;
   showFrames = false;
 
-  constructor(private speedrunService: SpeedrunService,
-              private framePipe: FramesPipe,
-              private fb: FormBuilder,
-              private dialogRef: MatDialogRef<SpeedrunComponent>,
-              @Inject(MAT_DIALOG_DATA) data) {
-    this.starTime = data.starTime;
-    this.starName = data.starName;
+  constructor(private sr: SpeedrunService, private framePipe: FramesPipe, private fb: FormBuilder) {
   }
 
   ngOnInit() {
@@ -42,11 +34,8 @@ export class EditStarComponent implements OnInit {
   save() {
     if (this.showFrames)
       this.starTime.time = null;
-      
-    this.dialogRef.close({ starTime: this.form.value, frames: this.frames });
-  }
 
-  close() {
-    this.dialogRef.close();
+    this.starTime.time = this.starTime.time || "00:00:00.00"; // If not provided, use TimeSpan.Zero
+    this.sr.updateStarTime(this.form.value);
   }
 }

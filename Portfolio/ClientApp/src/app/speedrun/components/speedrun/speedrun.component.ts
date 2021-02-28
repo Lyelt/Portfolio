@@ -16,10 +16,8 @@ import { Star } from "../../models/star";
 })
 export class SpeedrunComponent implements OnInit {
   allCourses: Course[] = [];
-  starTimes: StarTime[] = [];
   courses: Course[] = [];
   categories: Course;
-  runners: User[] = [];
 
   expanded: number[];
   selectedStar: Star;
@@ -29,18 +27,10 @@ export class SpeedrunComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.srService.getSpeedrunners().subscribe(data => {
-      this.runners = data || [];
-    });
-
     this.srService.getCourses().subscribe((data) => {
       this.allCourses = data || [];
       this.courses = this.allCourses.filter((c) => c.name != "Categories");
       this.categories = this.allCourses.find((c) => c.name == "Categories");
-
-      this.srService.starTimes().subscribe((data) => {
-          this.starTimes = data || [];
-      });
     });
 
     this.expanded = JSON.parse(localStorage.getItem("expandedCourses")) || [];

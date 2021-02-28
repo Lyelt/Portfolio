@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { User } from 'src/app/auth/user';
 import { Star } from '../../models/star';
 import { StarTime } from '../../models/star-time';
 import { SpeedrunService } from '../../services/speedrun.service';
@@ -10,15 +11,24 @@ import { SpeedrunService } from '../../services/speedrun.service';
 })
 export class StarDetailsComponent implements OnInit {
   @Input() star: Star;
-  @Input() starTimes: StarTime[];
   @Output() closed: EventEmitter<any> = new EventEmitter();
+
+  runners: User[];
+  selectedTab: string = "time";
 
   constructor(private sr: SpeedrunService) { }
 
   ngOnInit(): void {
+    this.sr.getSpeedrunners().subscribe(data => {
+      this.runners = data;
+    });
   }
 
-  getStarTimes(): StarTime[] {
-    return this.starTimes.filter(st => st.starId === this.star.starId);
+  getStarTime(runner: User): StarTime {
+    return this.sr.getStarTime(this.star.starId, runner.id);
+  }
+
+  starTimeIsFastest(starTime: StarTime): boolean {
+    return this.sr.starTimeIsFastest(starTime);
   }
 }

@@ -1,10 +1,10 @@
-<div class="flex flex-col justify-center container mx-auto max-w-6xl px-8">
+<div>
   <div class="sm:hidden bg-yellow-400 text-yellow-900 flex items-center text-sm font-bold p-2 rounded mb-6">
     <span class="mr-2"><mat-icon>error_outline</mat-icon></span>
     <span class="text-center">This page is better viewed on a larger screen. Stay tuned as I develop a mobile-friendly version!</span>
   </div>
-  <h1 class="font-bold text-2xl mb-4 text-center">SM64 Speedrun Times</h1>
-  <div *ngIf="!selectedStar">
+  <div *ngIf="!selectedStar" class="flex flex-col justify-center container mx-auto max-w-6xl px-8">
+    <h1 class="font-bold text-2xl mb-4 text-center">SM64 Speedrun Times</h1>
     <div class="flex justify-between mb-6">
       <span class="link" (click)="collapseAll()">Collapse All</span>
       <mat-icon class="cursor-pointer" [matMenuTriggerFor]="menu">menu</mat-icon>
@@ -16,8 +16,6 @@
     <div class="mb-12">
       <app-course *ngIf="categories" 
         [course]="categories" 
-        [runners]="runners" 
-        [starTimes]="starTimes" 
         [isCollapsed]="courseIsCollapsed(categories)"
         (collapseToggled)="toggleCourseCollapsed(categories)"
         (starSelected)="showStarDetails($event)"></app-course>
@@ -25,14 +23,12 @@
     <div class="flex flex-col space-y-8">
       <app-course *ngFor="let course of getVisibleCourses()" 
         [course]="course" 
-        [runners]="runners" 
-        [starTimes]="starTimes" 
         [isCollapsed]="courseIsCollapsed(course)"
         (collapseToggled)="toggleCourseCollapsed(course)"
         (starSelected)="showStarDetails($event)"></app-course>
     </div>
   </div>
-  <div *ngIf="selectedStar">
-    <app-star-details [star]="selectedStar" [starTimes]="starTimes" (closed)="selectedStar = null"></app-star-details>
+  <div *ngIf="selectedStar" class="px-8">
+    <app-star-details [star]="selectedStar" (closed)="selectedStar = null"></app-star-details>
   </div>
 </div>
