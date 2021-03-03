@@ -1,6 +1,6 @@
-<div class="flex flex-col w-full relative">
-    <span class="text-xs text-right mb-1 tracking-wide">{{complete}}/{{total}}</span>
-    <div class="overflow-hidden h-2 rounded" [ngClass]="{'bg-red-200': percentage >= 0, 'bg-orange-200': percentage > 50, 'bg-green-200': percentage > 80}">
+<div class="flex flex-col w-full">
+    <span class="text-xs text-right mb-1.5 tracking-wide">{{complete}}/{{total}}</span>
+    <div class="overflow-hidden h-1 rounded" [ngClass]="{'bg-red-200': percentage >= 0, 'bg-orange-200': percentage > 50, 'bg-green-200': percentage > 80}">
         <div [style.width.%]="percentage" class="h-full" [ngClass]="{'bg-red-500': percentage >= 0, 'bg-orange-500': percentage > 50, 'bg-green-500': percentage > 80}"></div>
     </div>
 </div>

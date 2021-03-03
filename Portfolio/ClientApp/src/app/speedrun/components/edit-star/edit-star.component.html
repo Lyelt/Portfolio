@@ -1,20 +1,17 @@
 
-<form [formGroup]="form" class="flex flex-col">
-  <span class="uppercase font-medium tracking-wide pb-4">{{runnerName}}</span>
-
-  <div class="w-full flex flex-col mb-6">
-    <label for="time" class="pb-1">Time (<span class="link" (click)="showFrames = !showFrames">{{(showFrames ? "hide" : "show")}} frames</span>)</label>
-    <input type="text" placeholder="Time (hh:mm:ss.ff)" formControlName="time" *ngIf="!showFrames"/>
-    <input type="number" step="1" placeholder="Total Frames" formControlName="frames" *ngIf="showFrames"/>
+<form [formGroup]="form" class="flex flex-col" [class.items-end]="alignment === 'right'" [class.items-start]="alignment === 'left'">
+  <div class="md:w-1/3 flex flex-col mb-6">
+    <label for="time" class="pb-1" [class.text-right]="alignment === 'right'">Time (<span class="link" (click)="showFrames = !showFrames">{{(showFrames ? "hide" : "show")}} frames</span>)</label>
+    <input type="text" [class.text-right]="alignment === 'right'" placeholder="Time (hh:mm:ss.ff)" formControlName="time" *ngIf="!showFrames"/>
+    <input type="number" [class.text-right]="alignment === 'right'" step="1" placeholder="Total Frames" formControlName="frames" *ngIf="showFrames"/>
   </div>
 
-  <div class="w-full flex flex-col mb-8">
-    <label for="videoUrl" class="pb-1">Youtube Watch Code</label>
-    <input type="text" placeholder="Youtube Watch Code" formControlName="videoUrl" />
+  <div class="md:w-1/3 flex flex-col mb-8">
+    <label for="videoUrl" class="pb-1" [class.text-right]="alignment === 'right'">Youtube Watch Code</label>
+    <input type="text" [class.text-right]="alignment === 'right'" placeholder="Youtube Watch Code" formControlName="videoUrl" />
   </div>
 
   <div>
-    <button type="button" class="btn btn-primary md:w-1/4" (click)="save()" [disabled]="!form.valid">Save Changes</button>
-    <span *ngIf="form.dirty">Form modified</span>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!form.valid || form.pristine">Save Changes</button>
   </div>
 </form>

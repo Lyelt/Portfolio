@@ -79,6 +79,7 @@ import { CourseComponent } from './speedrun/components/course/course.component';
 import { ProgressComponent } from './shared/components/progress/progress.component';
 import { StarDetailsComponent } from './speedrun/components/star-details/star-details.component';
 import { SafePipe } from './shared/pipes/safe.pipe';
+import { ConvertMillisecondsPipe } from './shared/pipes/convert-milliseconds.pipe';
 
 const routes: Routes = [
     {
@@ -229,7 +230,8 @@ const routes: Routes = [
         CourseComponent,
         ProgressComponent,
         StarDetailsComponent,
-        SafePipe
+        SafePipe,
+        ConvertMillisecondsPipe
     ],
     imports: [
         BrowserModule,

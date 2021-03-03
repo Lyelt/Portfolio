@@ -1,23 +1,25 @@
-<div class="rounded border border-gray-200 dark:border-gray-900">
+<div class="rounded border border-gray-200 dark:border-gray-900 bg-gray-50 dark:bg-gray-700">
   <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-900">
       <thead>
-          <tr class="uppercase text-sm cursor-pointer hover:underline" (click)="collapseToggled.emit()">
-              <th class="w-4/12 text-left font-medium tracking-wide pl-4 pr-10 py-2">
+          <tr class="uppercase text-sm cursor-pointer" (click)="collapseToggled.emit()">
+              <th class="w-6/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide pl-4 pr-20 pt-3 pb-4">
                   <div>
-                      <span class="absolute pb-1">{{course.name}}</span>
-                      <app-progress *ngIf="getCompletedStars(course) as completedStars" [percentage]="completedStars.percentage" [complete]="completedStars.completed" [total]="completedStars.total"></app-progress>
+                      <span class="pb-1 hover:underline">{{course.name}}</span>
+                      <div class="-mt-5">
+                        <app-progress *ngIf="getCompletedStars(course) as completedStars" [percentage]="completedStars.percentage" [complete]="completedStars.completed" [total]="completedStars.total"></app-progress>
+                      </div>
                   </div>
               </th>
-              <th class="w-3/12 text-left font-medium tracking-wide py-2" *ngFor="let runner of runners">{{runner.userName}} ({{getStarCount(runner)}})</th>
-              <th class="w-4/12 text-left font-medium tracking-wide py-2"><mat-icon>more_time</mat-icon></th>
+              <th class="w-2/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide" *ngFor="let runner of runners">{{runner.userName}} ({{getStarCount(runner)}})</th>
+              <th class="w-4/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide"><mat-icon>more_time</mat-icon></th>
           </tr>
       </thead>
       <tbody *ngIf="!isCollapsed">
-          <tr *ngFor="let star of orderedStars" class="even:bg-gray-200 dark:even:bg-gray-900">
-              <td class="w-4/12 pl-4 pr-2 py-2 link font-normal text-gray-900 dark:text-gray-100" (click)="starSelected.emit(star)">{{star.name}}</td>
-              <td class="w-3/12 py-2" *ngFor="let runner of runners" 
-                  [ngClass]="{'font-bold text-indigo-600 dark:text-pink-400' : starTimeIsFastest(star.starId, runner.id) }">{{getStarTime(star.starId, runner.id)?.timeDisplay}}</td>
-              <td class="w-4/12 py-2">-1</td>
+          <tr *ngFor="let star of orderedStars" class="even:bg-gray-100 dark:even:bg-gray-800">
+              <td class="w-6/12 pl-4 pr-2 py-2 cursor-pointer hover:underline" (click)="starSelected.emit(star)">{{star.name}}</td>
+              <td class="w-2/12 py-2" *ngFor="let runner of runners" 
+                  [ngClass]="{'font-bold tracking-tight text-indigo-600 dark:text-pink-400' : starTimeIsFastest(star.starId, runner.id) }">{{getStarTime(star.starId, runner.id)?.timeDisplay}}</td>
+              <td class="w-4/12 py-2"><span *ngIf="calculateTimeDifference(star); let diff">{{diff | convertMilliseconds}}</span></td>
           </tr>
       </tbody>
   </table>

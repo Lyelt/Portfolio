@@ -63,4 +63,8 @@ export class AuthService {
   userIsAdmin(): boolean {
     return localStorage.getItem("userId") === "1";
   }
+
+  getLoggedInUserId(): string {
+    return localStorage.getItem("userId");
+  }
 }

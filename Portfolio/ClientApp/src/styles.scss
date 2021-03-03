@@ -1,5 +1,12 @@
 /* use this file exclusively for global styling */
 @tailwind base;
+
+@layer base {
+  th {
+    @apply font-normal;
+  }
+}
+
 @tailwind components;
 
 .btn {
@@ -30,7 +37,7 @@ input[type] {
   @apply relative;
 }
 .nav-link-hover:before {
-  @apply absolute left-1/2 right-1/2 bottom-0 bg-indigo-500 h-0.5 transition-center duration-300 ease-out dark:bg-indigo-400; 
+  @apply absolute left-1/2 right-1/2 bottom-0 bg-indigo-600 h-0.5 transition-center duration-300 ease-out dark:bg-indigo-400; 
   content: "";
   position: absolute;
   z-index: -1;

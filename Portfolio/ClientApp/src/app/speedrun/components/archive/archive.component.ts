@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { User } from 'src/app/auth/user';
 import { Course } from '../../models/course';
 import { Star } from '../../models/star';
@@ -11,31 +11,24 @@ import { SpeedrunService } from '../../services/speedrun.service';
   styleUrls: ['./archive.component.scss']
 })
 export class ArchiveComponent implements OnInit {
-  runners: User[] = [];
+  @Input() star: Star;
+  @Input() runner: User;
+
   archivedStarTimes: ArchivedStarTime[] = [];
-  courses: Course[] = [];
 
   constructor(private speedrunService: SpeedrunService) { }
 
   ngOnInit(): void {
-    this.speedrunService.getSpeedrunners().subscribe(data => {
-      this.runners = data;
-      
-      this.speedrunService.getCourses().subscribe(data => {
-        this.courses = data;
-      
-        this.speedrunService.archivedStarTimes().subscribe(data => {
-          this.archivedStarTimes = data;
-        });
-      });
+    this.speedrunService.archivedStarTimes().subscribe(data => {
+      this.archivedStarTimes = data.filter(a => a.starId === this.star.starId);
     });
   }
 
-  getStarById(starId: number): Star {
-    return this.courses.flatMap(c => c.stars).find(s => s.starId === starId);
-  }
-
-  getUserById(userId: string): User {
-    return this.runners.find(u => u.id === userId);
+  get archives(): ArchivedStarTime[] {
+    const archives = this.archivedStarTimes.filter(a => a.userId === this.runner.id);
+    if (archives.length > 0) {
+      archives.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    }
+    return archives;
   }
 }

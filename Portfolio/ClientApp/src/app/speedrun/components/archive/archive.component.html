@@ -1,12 +1,38 @@
-<div class="px-8 mx-auto max-w-6xl">
-    <span class="link" routerLink="/speedrun">&larr; Back</span>
-    <div *ngFor="let archive of archivedStarTimes;">
-        {{archive.id}}. 
-        Star <span class="font-bold">{{getStarById(archive.starId).name}}</span> 
-        in <span class="font-bold">{{archive.timeDisplay}}</span> 
-        by <span class="font-bold">{{getUserById(archive.userId).userName}}</span> 
-        on <span class="font-bold">{{archive.timestamp | date:'mediumDate'}}</span> 
-        (archived on <span class="font-bold">{{archive.lastUpdated | date:'mediumDate'}}</span>)
-        - <a *ngIf="archive.videoUrl" class="link" [href]="archive.videoUrl | safe">View</a>
+
+<div class="flex flex-col">
+    <table *ngIf="archives && archives.length > 0" class="divide-y divide-gray-200 dark:divide-gray-900">
+        <thead>
+            <tr>
+                <th class="text-left py-2 font-medium uppercase tracking-wide">Time</th>
+                <th class="text-left py-2 font-medium uppercase tracking-wide">Original Upload</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let archive of archives">
+                    <td class="pr-4 py-2 text-left w-1/3">{{archive.timeDisplay}}</td>
+                    <td class="pr-4 pt-4 text-left w-1/3">
+                        <div class="flex flex-col space-y-1">
+                            <span>{{archive.timestamp | date:'mediumDate'}}</span>
+                            <span class="text-gray-400 text-xs">Overridden on {{archive.lastUpdated | date:'mediumDate'}}</span>
+                        </div>
+                    </td>
+                    <td class="pr-4 py-2 w-1/3">
+                        <div class="flex space-x-4">
+                            <span class="text-sm text-indigo-600 dark:text-pink-700 font-medium cursor-pointer hover:underline">View</span>
+                            <span class="text-sm text-indigo-600 dark:text-pink-700 font-medium cursor-pointer hover:underline">Delete</span>
+                        </div>
+                        
+                    </td>
+                    <!-- <div>
+                        <a *ngIf="archive.videoUrl" class="link tracking-wider mr-8" [href]="archive.videoUrl | safe">{{archive.timeDisplay}}</a>
+                        <span>{{archive.timestamp | date:'mediumDate'}}</span>
+                    </div>
+                    <span class="text-gray-400">Overridden on {{archive.lastUpdated | date:'mediumDate'}}</span> -->
+            </tr>
+        </tbody>
+    </table>
+    <div *ngIf="!archives || archives.length === 0" class="p-8 font-bold">
+        No history to show
     </div>
 </div>
