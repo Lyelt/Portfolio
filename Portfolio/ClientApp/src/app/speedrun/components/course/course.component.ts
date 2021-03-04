@@ -67,31 +67,29 @@ export class CourseComponent implements OnInit {
     const currentUserId = this.auth.getLoggedInUserId();
 
     if (this.runners.find(u => u.id === currentUserId)) {
-      const opponentUserId = this.runners.find(u => u.id !== currentUserId);
+      const opponent = this.runners.find(u => u.id !== currentUserId);
 
       const starTimeForCurrentUser = this.getStarTime(star.starId, currentUserId);
-      const starTimeForOpponent = this.getStarTime(star.starId, opponentUserId.id);
+      const starTimeForOpponent = this.getStarTime(star.starId, opponent.id);
 
       let differenceMs = 0;
       
       if (starTimeForCurrentUser && starTimeForOpponent) {
         differenceMs = starTimeForCurrentUser.totalMilliseconds - starTimeForOpponent.totalMilliseconds;
-
         return differenceMs;
       }
     }
-    else {
-      // Logged in user is not a speedrunner, just show the difference plainly
-
-    }
     
-
     return null;
   }
   
-  get orderedStars() {
+  get orderedStars(): Star[] {
     return this.course.stars
       .filter((s) => s.displayOrder >= 0)
       .sort((s1, s2) => s1.displayOrder - s2.displayOrder);
   }
+
+  get userIsSpeedrunner(): boolean {
+    return this.runners.find(u => u.id === this.auth.getLoggedInUserId()) != null;
+;  }
 }

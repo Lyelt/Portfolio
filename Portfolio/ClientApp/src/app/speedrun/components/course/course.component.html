@@ -11,7 +11,7 @@
                   </div>
               </th>
               <th class="w-2/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide" *ngFor="let runner of runners">{{runner.userName}} ({{getStarCount(runner)}})</th>
-              <th class="w-4/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide"><mat-icon>more_time</mat-icon></th>
+              <th class="w-4/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide" *ngIf="userIsSpeedrunner"><mat-icon>more_time</mat-icon></th>
           </tr>
       </thead>
       <tbody *ngIf="!isCollapsed">
@@ -19,7 +19,7 @@
               <td class="w-6/12 pl-4 pr-2 py-2 cursor-pointer hover:underline" (click)="starSelected.emit(star)">{{star.name}}</td>
               <td class="w-2/12 py-2" *ngFor="let runner of runners" 
                   [ngClass]="{'font-bold tracking-tight text-indigo-600 dark:text-pink-400' : starTimeIsFastest(star.starId, runner.id) }">{{getStarTime(star.starId, runner.id)?.timeDisplay}}</td>
-              <td class="w-4/12 py-2"><span *ngIf="calculateTimeDifference(star); let diff">{{diff | convertMilliseconds}}</span></td>
+              <td *ngIf="userIsSpeedrunner" class="w-4/12 py-2"><span *ngIf="calculateTimeDifference(star); let diff" class="rounded-full px-2 pb-0.5" [ngClass]="{'bg-green-200 dark:bg-green-700':diff <= 0, 'bg-red-200 dark:bg-red-800':diff > 0}">{{diff | convertMilliseconds}}</span></td>
           </tr>
       </tbody>
   </table>
