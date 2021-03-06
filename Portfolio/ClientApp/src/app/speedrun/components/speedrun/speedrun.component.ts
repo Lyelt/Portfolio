@@ -1,12 +1,8 @@
 import { Component, OnInit } from "@angular/core";
-import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
-import { EditStarComponent } from "../edit-star/edit-star.component";
 import { Router } from "@angular/router";
 import { StarTime } from "../../models/star-time";
 import { Course } from "../../models/course";
-import { CompletedStars } from "../../models/completedStars";
 import { SpeedrunService } from "../../services/speedrun.service";
-import { User } from "../../../auth/user";
 import { Star } from "../../models/star";
 
 @Component({
@@ -16,135 +12,36 @@ import { Star } from "../../models/star";
 })
 export class SpeedrunComponent implements OnInit {
   allCourses: Course[] = [];
-  starTimes: StarTime[] = [];
   courses: Course[] = [];
   categories: Course;
-  runners: User[] = [];
 
   expanded: number[];
-  view: string = "grid";
+  selectedStar: Star;
+  compact: boolean = false;
 
-  constructor(
-    private srService: SpeedrunService,
-    private dialog: MatDialog,
-    private router: Router
-  ) {}
+  constructor(private srService: SpeedrunService) {
+
+  }
 
   ngOnInit() {
-    this.srService.getSpeedrunners().subscribe(data => {
-      this.runners = data || [];
-    });
-
     this.srService.getCourses().subscribe((data) => {
       this.allCourses = data || [];
       this.courses = this.allCourses.filter((c) => c.name != "Categories");
       this.categories = this.allCourses.find((c) => c.name == "Categories");
-
-      this.srService.starTimes().subscribe((data) => {
-          this.starTimes = data || [];
-      });
     });
 
-
     this.expanded = JSON.parse(localStorage.getItem("expandedCourses")) || [];
+    this.compact = JSON.parse(localStorage.getItem("compactView")) || false;
   }
 
-  getCompletedStars(course: Course): CompletedStars {
-    let completed = 0;
-    for (let star of course.stars) {
-      if (this.starTimes.filter((st) => st.starId == star.starId).length == this.runners.length) {
-        completed++;
-      }
-    }
-
-    return {
-      total: course.stars.length,
-      completed: completed,
-      percentage: (completed / course.stars.length) * 100,
-    };
-  }
-
-  orderStars(stars: Star[]) {
-    return stars
-      .filter((s) => s.displayOrder >= 0)
-      .sort((s1, s2) => s1.displayOrder - s2.displayOrder);
-  }
-
-  toggleView(view: string) {
-    this.view = view;
+  showStarDetails(star: Star) {
+    this.selectedStar = star;
   }
 
   getVisibleCourses() {
     return this.courses.filter(
       (c) => c.stars.find((s) => s.displayOrder >= 0) != null
     );
-  }
-
-  getStarCount(user: User, course: Course): number {
-    let count = 0;
-
-    if (course) {
-      for (let star of course.stars) {
-        if (this.starTimeIsFastest(star.starId, user.id)) {
-          count++;
-        }
-      }
-    } 
-    else {
-      for (let star of this.allCourses
-        .map((c) => c.stars)
-        .reduce((a, b) => a.concat(b))) {
-        if (this.starTimeIsFastest(star.starId, user.id)) {
-          count++;
-        }
-      }
-    }
-
-    return count;
-  }
-
-  getStarTime(starId: number, userId: string) {
-    let foundTime = this.starTimes.find(
-      (st) => st.starId == starId && st.userId == userId
-    );
-
-    if (!foundTime) {
-      foundTime = new StarTime();
-      foundTime.userId = userId;
-      foundTime.starId = starId;
-    }
-
-    return foundTime;
-  }
-
-  starTimeIsFastest(starId: number, userId: string) {
-    let isFastestTime = false;
-    let starTime = this.getStarTime(starId, userId);
-    let timesForThisStar = this.starTimes.filter((st) => st.starId == starId);
-
-    if (timesForThisStar.length > 0) {
-      let minStarTime = timesForThisStar.reduce((prev, curr) =>
-        prev.totalMilliseconds < curr.totalMilliseconds ? prev : curr
-      );
-      isFastestTime =
-        minStarTime.totalMilliseconds == starTime.totalMilliseconds;
-    }
-
-    return isFastestTime;
-  }
-
-  openDialog(starTime: StarTime, starName: string) {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.autoFocus = true;
-    dialogConfig.data = { starTime: starTime, starName: starName };
-
-    const dialogRef = this.dialog.open(EditStarComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe((data) => {
-      if (data) {
-        this.saveStarTime(data);
-      }
-    });
   }
 
   saveStarTime(data: any) {
@@ -181,5 +78,10 @@ export class SpeedrunComponent implements OnInit {
 
   cacheExpanded() {
     localStorage.setItem("expandedCourses", JSON.stringify(this.expanded));
+  }
+
+  changeView() {
+    this.compact = !this.compact;
+    localStorage.setItem("compactView", JSON.stringify(this.compact));
   }
 }

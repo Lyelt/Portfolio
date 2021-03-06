@@ -19,7 +19,7 @@ namespace Portfolio.Controllers
 {
     public class SpeedrunController : Controller
     {
-        private static string[] VALID_ROLES = new string[] { ApplicationRole.Administrator.ToString(), ApplicationRole.Speedrunner.ToString()};
+        private static string[] VALID_ROLES = new string[] { ApplicationRole.Administrator.ToString(), ApplicationRole.Speedrunner.ToString() };
 
         private readonly SpeedrunContext _srContext;
         private readonly PortfolioContext _userContext;
@@ -64,6 +64,26 @@ namespace Portfolio.Controllers
         public IActionResult GetArchivedStarTimes()
         {
             return Ok(_srContext.ArchivedStarTimes.Select(st => st.WithClientView()).ToList());
+        }
+
+        [HttpDelete]
+        [Route("Speedrun/DeleteArchivedStarTime/{id}")]
+        public async Task<IActionResult> DeleteArchivedStarTime(int id)
+        {
+            var currentUser = await GetCurrentUser();
+            bool userIsAdmin = await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Administrator.ToString());
+
+            if (await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Guest.ToString()))
+                throw new UnauthorizedException("Cannot make modifications as a guest");
+
+            var archive = await _srContext.ArchivedStarTimes.FindAsync(id);
+
+            if (!userIsAdmin && archive.UserId != currentUser.Id)
+                throw new UnauthorizedException("Cannot delete archive for other users");
+
+            _srContext.ArchivedStarTimes.Remove(archive);
+            await _srContext.SaveChangesAsync();
+            return Ok();
         }
 
         [HttpPost]

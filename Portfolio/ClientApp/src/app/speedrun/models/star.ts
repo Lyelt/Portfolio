@@ -6,4 +6,8 @@ export class Star {
     courseId: number;
 
     displayOrder: number;
+
+    rtaGuideUrl: string;
+
+    singleStarUrl: string;
 }

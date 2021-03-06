@@ -75,6 +75,12 @@ import { RadioButtonComponent } from './shared/components/radio-button/radio-but
 import { FramesPipe } from './speedrun/services/frames.pipe';
 import { BowlingViewGamesComponent } from './bowling/components/bowling-view-games/bowling-view-games.component';
 import { ArchiveComponent } from './speedrun/components/archive/archive.component';
+import { CourseComponent } from './speedrun/components/course/course.component';
+import { ProgressComponent } from './shared/components/progress/progress.component';
+import { StarDetailsComponent } from './speedrun/components/star-details/star-details.component';
+import { SafeYtPipe } from './shared/pipes/safeYt.pipe';
+import { ConvertMillisecondsPipe } from './shared/pipes/convert-milliseconds.pipe';
+import { SafePipe } from './shared/pipes/safe.pipe';
 
 const routes: Routes = [
     {
@@ -221,7 +227,13 @@ const routes: Routes = [
         RadioButtonComponent,
         FramesPipe,
         BowlingViewGamesComponent,
-        ArchiveComponent
+        ArchiveComponent,
+        CourseComponent,
+        ProgressComponent,
+        StarDetailsComponent,
+        SafeYtPipe,
+        ConvertMillisecondsPipe,
+        SafePipe
     ],
     imports: [
         BrowserModule,

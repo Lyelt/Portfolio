@@ -4,6 +4,7 @@ import { YugiohCard, YugiohCardFilter } from '../../models/yugioh.model';
 import { Card, CardCollection } from '../../models/card-collections';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
     selector: 'app-yugioh',
@@ -20,10 +21,10 @@ export class YugiohComponent implements OnInit {
 
     selectedTabIndex: number = 0;
 
-    constructor(private yugiohService: YugiohService, private route: ActivatedRoute) { }
+    constructor(private yugiohService: YugiohService, private auth: AuthService, private route: ActivatedRoute) { }
     
     ngOnInit() {
-        this.currentUserId = localStorage.getItem("userId");
+        this.currentUserId = this.auth.getLoggedInUserId();
         this.route.params.subscribe(params => {
             const id = +params['cardId'];
             this.yugiohService.getCardById(id).subscribe(data => {

@@ -1,25 +1,17 @@
-<h2 mat-dialog-title>Editing {{starName}}</h2>
 
-<mat-dialog-content [formGroup]="form" class="flex flex-col" [ngClass]="{'h-screen': starTime.videoUrl}">
-
-  <div class="w-full flex flex-col mb-6">
-    <label for="time" class="pb-1">Time (<span class="link" (click)="showFrames = !showFrames">{{(showFrames ? "hide" : "show")}} frames</span>)</label>
-    <input type="text" placeholder="Time (hh:mm:ss.ff)" formControlName="time" *ngIf="!showFrames"/>
-    <input type="number" step="1" placeholder="Total Frames" formControlName="frames" *ngIf="showFrames"/>
+<form [formGroup]="form" class="flex flex-col" [class.items-end]="alignment === 'right'" [class.items-start]="alignment === 'left'">
+  <div class="md:w-1/3 flex flex-col mb-6">
+    <label for="time" class="pb-1" [class.text-right]="alignment === 'right'">Time (<span class="link" (click)="showFrames = !showFrames">{{(showFrames ? "hide" : "show")}} frames</span>)</label>
+    <input type="text" [class.text-right]="alignment === 'right'" placeholder="Time (hh:mm:ss.ff)" formControlName="time" *ngIf="!showFrames"/>
+    <input type="number" [class.text-right]="alignment === 'right'" step="1" placeholder="Total Frames" formControlName="frames" *ngIf="showFrames"/>
   </div>
 
-  <div class="w-full flex flex-col mb-8">
-    <label for="videoUrl" class="pb-1">Youtube Watch Code</label>
-    <input type="text" placeholder="Youtube Watch Code" formControlName="videoUrl" />
+  <div class="md:w-1/3 flex flex-col mb-8">
+    <label for="videoUrl" class="pb-1" [class.text-right]="alignment === 'right'">Youtube Watch Code</label>
+    <input type="text" [class.text-right]="alignment === 'right'" placeholder="Youtube Watch Code" formControlName="videoUrl" />
   </div>
 
-  <div *ngIf="starTime.videoUrl" class="h-full">
-    <iframe class="w-full h-full" [src]="getYoutubeUrl(starTime.videoUrl)" frameborder="0" allowfullscreen></iframe>
+  <div>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!form.valid || form.pristine">Save Changes</button>
   </div>
-
-</mat-dialog-content>
-
-<mat-dialog-actions class="flex justify-between">
-  <button type="button" class="btn border border-gray-500 dark:border-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700" (click)="close()">Cancel</button>
-  <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!form.valid">Save Changes</button>
-</mat-dialog-actions>
+</form>

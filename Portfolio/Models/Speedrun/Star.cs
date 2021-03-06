@@ -17,5 +17,9 @@ namespace Portfolio.Models.Speedrun
         public int CourseId { get; set; }
         
         public int DisplayOrder { get; set; }
+
+        public string RtaGuideUrl { get; set; }
+
+        public string SingleStarUrl { get; set; }
     }
 }

@@ -25,7 +25,7 @@ export class BowlingComponent implements OnInit {
   }
 
   ngOnInit() {
-    const loggedInUser = localStorage.getItem("userId");
+    const loggedInUser = this.auth.getLoggedInUserId();
     this.bowlingService.getBowlers().subscribe((bowlers) => {
       if (bowlers.find((b) => b.id === loggedInUser)) {
         this.selectUser(loggedInUser);

@@ -65,3 +65,14 @@ INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
 VALUES ('20210223065239_Add_ArchivedStarTimes', '5.0.2');
 
 COMMIT;
+
+START TRANSACTION;
+
+ALTER TABLE `Stars` ADD `RtaGuideUrl` longtext CHARACTER SET utf8mb4 NULL;
+
+ALTER TABLE `Stars` ADD `SingleStarUrl` longtext CHARACTER SET utf8mb4 NULL;
+
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
+VALUES ('20210305043750_Add_Star_Urls', '5.0.2');
+
+COMMIT;
