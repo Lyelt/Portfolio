@@ -24,6 +24,10 @@ export class ArchiveComponent implements OnInit {
     });
   }
 
+  deleteArchive(archive: ArchivedStarTime): void {
+    this.speedrunService.deleteArchive(archive);
+  }
+
   get archives(): ArchivedStarTime[] {
     const archives = this.archivedStarTimes.filter(a => a.userId === this.runner.id);
     if (archives.length > 0) {

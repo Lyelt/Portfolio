@@ -1,4 +1,4 @@
-<div class="rounded border border-gray-200 dark:border-gray-900 bg-gray-50 dark:bg-gray-700">
+<div class="rounded shadow border border-gray-200 dark:border-gray-900 bg-gray-50 dark:bg-gray-700">
   <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-900">
       <thead>
           <tr class="uppercase text-sm cursor-pointer" (click)="collapseToggled.emit()">
@@ -11,7 +11,9 @@
                   </div>
               </th>
               <th class="w-2/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide" *ngFor="let runner of runners">{{runner.userName}} ({{getStarCount(runner)}})</th>
-              <th class="w-4/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide" *ngIf="userIsSpeedrunner"><mat-icon>more_time</mat-icon></th>
+              <th class="w-4/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide" *ngIf="userIsSpeedrunner">
+                Diff <span *ngIf="calculateTimeDifference(course); let diff" [ngClass]="{'text-green-700 dark:text-green-200':diff <= 0, 'text-red-800 dark:text-red-200':diff > 0}">({{diff | convertMilliseconds}})</span>
+              </th>
           </tr>
       </thead>
       <tbody *ngIf="!isCollapsed">

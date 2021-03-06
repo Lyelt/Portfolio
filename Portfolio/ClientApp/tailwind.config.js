@@ -27,7 +27,8 @@ module.exports = {
       extend: {
         height: {
           112: '28rem',
-          128: '32rem'
+          128: '32rem',
+          256: '64rem'
         },
         zIndex: {
           '999': 999,

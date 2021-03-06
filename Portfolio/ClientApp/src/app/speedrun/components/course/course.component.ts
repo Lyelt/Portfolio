@@ -63,23 +63,37 @@ export class CourseComponent implements OnInit {
     return this.sr.starTimeIsFastest(this.getStarTime(starId, userId));
   }
 
-  calculateTimeDifference(star: Star): number {
+  calculateTimeDifference(starOrCourse: any): number {
     const currentUserId = this.auth.getLoggedInUserId();
 
     if (this.runners.find(u => u.id === currentUserId)) {
       const opponent = this.runners.find(u => u.id !== currentUserId);
-
-      const starTimeForCurrentUser = this.getStarTime(star.starId, currentUserId);
-      const starTimeForOpponent = this.getStarTime(star.starId, opponent.id);
-
-      let differenceMs = 0;
-      
-      if (starTimeForCurrentUser && starTimeForOpponent) {
-        differenceMs = starTimeForCurrentUser.totalMilliseconds - starTimeForOpponent.totalMilliseconds;
-        return differenceMs;
+      if (starOrCourse.starId) {
+        return this.getTimeDiff(starOrCourse, currentUserId, opponent.id);
+      }
+      else if (starOrCourse.stars) {
+        let diff = 0;
+        for (let star of starOrCourse.stars) {
+          diff += this.getTimeDiff(star, currentUserId, opponent.id) || 0;
+        }
+        return diff;
       }
     }
     
+    return null;
+  }
+
+  private getTimeDiff(star: Star, currentUserId: string, opponentUserId: string): number {
+    const starTimeForCurrentUser = this.getStarTime(star.starId, currentUserId);
+    const starTimeForOpponent = this.getStarTime(star.starId, opponentUserId);
+
+    let differenceMs = 0;
+    
+    if (starTimeForCurrentUser && starTimeForOpponent) {
+      differenceMs = starTimeForCurrentUser.totalMilliseconds - starTimeForOpponent.totalMilliseconds;
+      return differenceMs;
+    }
+
     return null;
   }
   

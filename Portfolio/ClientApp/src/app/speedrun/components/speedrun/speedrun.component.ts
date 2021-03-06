@@ -1,12 +1,8 @@
 import { Component, OnInit } from "@angular/core";
-import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
-import { EditStarComponent } from "../edit-star/edit-star.component";
 import { Router } from "@angular/router";
 import { StarTime } from "../../models/star-time";
 import { Course } from "../../models/course";
-import { CompletedStars } from "../../models/completedStars";
 import { SpeedrunService } from "../../services/speedrun.service";
-import { User } from "../../../auth/user";
 import { Star } from "../../models/star";
 
 @Component({
@@ -21,8 +17,9 @@ export class SpeedrunComponent implements OnInit {
 
   expanded: number[];
   selectedStar: Star;
+  compact: boolean = false;
 
-  constructor(private srService: SpeedrunService, private router: Router) {
+  constructor(private srService: SpeedrunService) {
 
   }
 
@@ -34,6 +31,7 @@ export class SpeedrunComponent implements OnInit {
     });
 
     this.expanded = JSON.parse(localStorage.getItem("expandedCourses")) || [];
+    this.compact = JSON.parse(localStorage.getItem("compactView")) || false;
   }
 
   showStarDetails(star: Star) {
@@ -80,5 +78,10 @@ export class SpeedrunComponent implements OnInit {
 
   cacheExpanded() {
     localStorage.setItem("expandedCourses", JSON.stringify(this.expanded));
+  }
+
+  changeView() {
+    this.compact = !this.compact;
+    localStorage.setItem("compactView", JSON.stringify(this.compact));
   }
 }

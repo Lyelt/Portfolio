@@ -15,7 +15,7 @@ export class SpeedrunService {
   private archivedStarTimesSubject: BehaviorSubject<ArchivedStarTime[]> = new BehaviorSubject(null);
   private starTimesSubject: BehaviorSubject<StarTime[]> = new BehaviorSubject(null);
 
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {
+  constructor(private http: HttpClient) {
     this.starTimes().subscribe(times => {
       this.allStarTimes = times;
     });
@@ -37,6 +37,12 @@ export class SpeedrunService {
   private loadArchivedStarTimes() {
     return this.http.get<ArchivedStarTime[]>('Speedrun/GetArchivedStarTimes').subscribe(data => {
       this.archivedStarTimesSubject.next(data);
+    });
+  }
+
+  deleteArchive(archive: ArchivedStarTime) {
+    return this.http.delete(`Speedrun/DeleteArchivedStarTime/${archive.id}`).subscribe(result => {
+      this.reload();
     });
   }
 
@@ -79,6 +85,8 @@ export class SpeedrunService {
   }
 
   public getStarTimes(starId: number): StarTime[] {
-    return this.allStarTimes.filter(st => st.starId === starId);
+    if (this.allStarTimes) {
+      return this.allStarTimes.filter(st => st.starId === starId);
+    }
   }
 }

@@ -12,7 +12,7 @@
             <span class="nav-link nav-link-hover" [ngClass]="{'font-bold border-b-2 border-indigo-400': selectedTab === 'archive'}" (click)="selectedTab = 'archive'">Archive</span>
             <span class="nav-link nav-link-hover" [ngClass]="{'font-bold border-b-2 border-indigo-400': selectedTab === 'rta'}" (click)="selectedTab = 'rta'">RTA Guide</span>
             <span class="nav-link nav-link-hover" [ngClass]="{'font-bold border-b-2 border-indigo-400': selectedTab === 'ss'}" (click)="selectedTab = 'ss'">Single-Star Record</span>
-            <span class="nav-link nav-link-hover" [ngClass]="{'font-bold border-b-2 border-indigo-400': selectedTab === 'other'}" (click)="selectedTab = 'other'">Other</span>
+            <!-- <span class="nav-link nav-link-hover" [ngClass]="{'font-bold border-b-2 border-indigo-400': selectedTab === 'other'}" (click)="selectedTab = 'other'">Other</span> -->
         </nav>
 
         <div class="grid grid-cols-2 gap-6" *ngIf="selectedTab === 'time'">
@@ -21,7 +21,7 @@
                     <span class="uppercase font-medium tracking-wide pb-4">{{runner.userName}}</span>
                     <span class="pb-4" [ngClass]="{'font-bold tracking-tight text-indigo-600 dark:text-pink-400' : starTimeIsFastest(time)}">{{time.timeDisplay}}</span>
                     <div class="h-96 lg:h-112 xl:h-128">
-                        <iframe *ngIf="time.videoUrl" class="w-full h-full" [src]="time.videoUrl | safe" frameborder="0" allowfullscreen></iframe>
+                        <iframe *ngIf="time.videoUrl" class="w-full h-full" [src]="time.videoUrl | safeYt" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
             </div>
@@ -42,11 +42,15 @@
         </div>
 
         <div *ngIf="selectedTab === 'rta'">
-            
+            <div class="w-full h-256" *ngIf="star.rtaGuideUrl">
+                <iframe class="w-full h-full" [src]="star.rtaGuideUrl | safe"></iframe>
+            </div>
         </div>
 
         <div *ngIf="selectedTab === 'ss'">
-
+            <div class="w-full h-128" *ngIf="star.singleStarUrl">
+                <iframe class="w-full h-full" [src]="star.singleStarUrl | safeYt" frameborder="0" allowfullscreen></iframe>
+            </div>
         </div>
 
         <div *ngIf="selectedTab === 'other'">
