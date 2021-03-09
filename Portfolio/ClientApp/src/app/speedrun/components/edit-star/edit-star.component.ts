@@ -9,7 +9,7 @@ import { SpeedrunService } from '../../services/speedrun.service';
   templateUrl: './edit-star.component.html',
   styleUrls: ['./edit-star.component.scss']
 })
-export class EditStarComponent implements OnInit, OnChanges {
+export class EditStarComponent implements OnInit {
   @Input() starTime: StarTime;
   @Input() runnerName: string;
   @Input() alignment: string = "left";
@@ -22,12 +22,6 @@ export class EditStarComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.buildForm();
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.starTime.currentValue) {
-      this.buildForm();
-    }
   }
 
   save() {
