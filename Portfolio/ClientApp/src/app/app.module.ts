@@ -81,6 +81,7 @@ import { StarDetailsComponent } from './speedrun/components/star-details/star-de
 import { SafeYtPipe } from './shared/pipes/safeYt.pipe';
 import { ConvertMillisecondsPipe } from './shared/pipes/convert-milliseconds.pipe';
 import { SafePipe } from './shared/pipes/safe.pipe';
+import { April2021Component } from './blog/components/articles/april2021/april2021.component';
 
 const routes: Routes = [
     {
@@ -118,6 +119,9 @@ const routes: Routes = [
     },
     {
         path: 'blog/recap', component: Recap2020Component
+    },
+    {
+        path: 'blog/public', component: April2021Component
     },
     {
         path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
@@ -233,7 +237,8 @@ const routes: Routes = [
         StarDetailsComponent,
         SafeYtPipe,
         ConvertMillisecondsPipe,
-        SafePipe
+        SafePipe,
+        April2021Component
     ],
     imports: [
         BrowserModule,

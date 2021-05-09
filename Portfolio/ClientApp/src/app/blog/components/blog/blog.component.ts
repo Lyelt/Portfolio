@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class BlogComponent implements OnInit {
 
   blogs: Blog[] = [
+    { title: "Going public", date: "May 9, 2021", link: "public" },
     { title: "A look back at 2020", date: "December 18, 2020", link: "recap" },
     { title: "Overhauling the SM64 time tracker", date: "June 14, 2020", link: "speedrun/update" },
     { title: "Another hobby, another project (Yu-Gi-Oh!)", date: "March 10, 2020", link: "yugioh" },
@@ -15,7 +16,7 @@ export class BlogComponent implements OnInit {
     { title: "Tracking bowling scores and visualizing interesting statistics", date: "October 2, 2019", link: "bowling" },
     { title: "Uploading and comparing Super Mario 64 speedrun times", date: "October 1, 2019", link: "speedrun" },
     { title: "Building my portfolio website", date: "October 1, 2019", link: "portfolio" },
-    { title: "A Dungeons and Dragons encounter tracker", date: "September 30, 2019", link: "encounter" }
+    { title: "A Dungeons and Dragons encounter tracker", date: "September 30, 2019", link: "encounter" },
   ];
 
   constructor() { }

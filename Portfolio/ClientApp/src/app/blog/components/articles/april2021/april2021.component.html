@@ -1,0 +1,118 @@
+<blog-article>
+    <blog-header>
+      <blog-title>Going Public</blog-title>
+      <blog-date>May 9, 2021</blog-date>
+      <blog-subtitle>Making my portfolio an actual... portfolio.</blog-subtitle>
+    </blog-header>
+  
+    <blog-section>
+      <blog-section-title>Goals From 2020</blog-section-title>
+      <blog-p>
+        It feels natural to pick up where I left off in my <a class="link" href="https://ghobrial.dev/blog/recap">2020 recap blog post</a>. 
+        At the end of 2020, I had some reasonable goals in mind for some bowling page improvements and site updates. 
+        In the first few months of 2021, I actually accomplished that... and more!
+      </blog-p>
+  
+      <blog-h3>New Year, New Technology</blog-h3>
+      <blog-p>
+        For the first time since launching my portfolio site, I upgraded .NET Core and Angular to their latest versions. 
+        Maybe if I kept up on these updates between versions this wouldn't be worth mentioning, but given that I was going from Angular 7 to 11 and .NET Core 2.1 to .NET 5, it wasn't a walk in the park. 
+        It also prompted me to create a staging server to test these sweeping changes that I can't rely on local testing for - something I'd been meaning to do for quite a while anyway.
+      </blog-p>
+
+      <blog-h3>Bowling Image Recognition</blog-h3>
+      <blog-p>
+        In my last blog post I also mentioned that I would love to be able to simply upload an image rather than manually entering the scores. 
+        Early attempts were futile, as the images I was working with were so unpredictable - different angles, zoom level, blurriness, lighting, etc. 
+        There was some hope, though, once I discovered the app <a class="link" href="https://www.lanetalk.com/">LaneTalk</a>, an amazing bowling score tracker. 
+        Its scorecards seemed like the perfect candidate for automatic score extraction. 
+        Well, something like CSV exports would be a bit easier, but even LaneTalk has its limitations.
+      </blog-p>
+
+      <blog-p class="mt-6">
+       These images were more-or-less static in terms of where everything would be positioned, assuming I always take the same screenshots from my phone. 
+       Perfect for a true, honest attempt at an image recognition project! 
+       The .NET Tesseract OCR library seemed to be my best option, and I was off. 
+       With a few sample screenshots (like the one below) in hand, I coded for several hours each day for two weeks. 
+      </blog-p>
+      
+      <div class="blog-card mt-3">
+        <img src="assets/blog/3.jpg" alt="LaneTalk Scorecard" />
+        <figcaption class="italic text-sm p-2">Yes, it is an intentional humblebrag that I'm choosing my best series to date for this image.</figcaption>
+      </div>
+
+      <blog-p class="mt-6">
+        <a class="link" href="https://github.com/Lyelt/BowlingImageRecognition/blob/master/ImageExtraction/Test.cs">It was a mess.</a> 
+        I am not proud of this code.
+      </blog-p>
+
+      <blog-p class="mt-6"> 
+        I'm sure if I kept at it and really learned what I was doing in the image recognition space I could've gotten there, but it was truly a harder job than I anticipated. 
+        With a few dozen hours of work under my belt, I finally got a test run to succeed and correctly recognize every frame's score on the entire scorecard. 
+        And my dreams died not five minutes later when a different screenshot failed miserably.
+      </blog-p>
+
+      <blog-p class="mt-6">
+        I chalked the image recognition project up as a failure and decided I'd just wait for LaneTalk to implement some reasonable score extraction. 
+        In fact, I emailed LaneTalk support and asked if they had anything like that planned, or any public API I could access. 
+        The answer was no, but their support team was incredibly friendly and even asked some questions about my web app. 
+        Regrettably, my web app was not public, so all I had were some screenshots and bland descriptions of my intentions. 
+        The wheels began to turn in my head, and my next goal materialized in front of me.
+      </blog-p>
+    </blog-section>
+  
+    <blog-section>
+      <blog-section-title>Actually Going Public</blog-section-title>
+      <blog-h3>Bowling</blog-h3>
+      <blog-p>
+        So, if it wasn't clear from the previous couple of paragraphs, there was a small downside to LaneTalk: it does essentially exactly what <a class="link" href="https://ghobrial.dev/bowling">my bowling web app</a> does... but better. 
+        My first reaction to this was a bit of disappointment, because I felt that I had no reason to use my own work anymore. 
+        LaneTalk not only tracks a majority of the same stats, but it does so <i>automatically</i> as it is integrated with the bowling center's scoring system. 
+        Moreover, there is even more useful information in LaneTalk because it can determine which pins were knocked down each frame. 
+        No, this is not an ad for LaneTalk.
+      </blog-p>
+      <blog-p class="mt-6">
+        At some point I decided to turn this disappointment into inspiration to improve my own app and maintain it as what it should have been from the start: a showcase of my development work. 
+        What was the point of all this work if nobody could even see it? 
+        Sure, my friends can log in, but they hardly have a reason to do so anymore. 
+        I couldn't even show off my work to someone who was genuinely interested; this needed to change.
+      </blog-p>
+      <blog-p class="mt-6">
+        Where to begin? I guess the reason it wasn't public in the first place is because I didn't want just anyone messing with my scores. 
+        Looking back, that was certainly pretty naive (or lazy?) of me; there are obviously ways to prevent editing while allowing viewing. 
+        But even with these changes, I wasn't quite satisfied with what people would see when they landed on the bowling page of my website. 
+        Any screenshots from previous blog posts were carefully curated to show a decent looking chart - not something I want to rely on in reality. 
+      </blog-p>
+      <blog-p class="mt-6">
+        I took some inspiration from LaneTalk. 
+        I simplified everything about the page - from the charts to the stats to the games to the overview, everything was visually overhauled. 
+        Not to mention it looks a <i>lot</i> better on mobile now, which is how I expect many visitors (not average users) will access the page. 
+        It was tricky to determine exactly how I'd want to navigate the page if I were a visitor rather than a bowler, but I'm proud of how it's coming along. 
+      </blog-p>
+      <blog-h3>Speedrunning</blog-h3>
+      <blog-p>
+        With the infrastructure in place for a guest login, and me being in a much-longer-than-usual speedrunning phase, 
+        it was as good a time as any to go public on <a class="link" href="https://ghobrial.dev/speedrun">this page</a> as well. 
+        This one took about as much beautifying as the bowling page for me to be happy with it, but I did not spend any time making it mobile-friendly. 
+        I <i>did</i>, however, take this opportunity to implement a ton of functional enhancements that Matt and I had been discussing. 
+        Another page on my site that I am increasingly happy with!
+      </blog-p>
+      <div class="blog-card mt-3">
+        <img src="assets/blog/2.png" alt="Speedrun page" />
+        <figcaption class="italic text-sm p-2">Tables continue to stump me, especially responsive ones, but it gets the job done.</figcaption>
+      </div>
+    </blog-section>
+    <blog-section>
+      <blog-section-title>What's Next?</blog-section-title>
+      <blog-p>
+        In lieu of another blog post ending with some variation of "<i>I'm happy with my progress but there's more to come</i>", I'll just say that I'm more than willing to consider any feedback about my portfolio! 
+        Now that the major projects I started my portfolio with are public, I hope anyone who reads this (potential employer, friend, random passerby, future me) can take a moment to browse the aforementioned pages 
+        - as well as the rest of the site - and let me know what you think. 
+      </blog-p>
+      <blog-p class="mt-6">
+        Outstanding tasks can be found on <a class="link" href="https://trello.com/b/hpTp1H0B/portfolio-tasks">my public Trello board</a> where I organize and track all of my tasks and projects.
+        Also, feel free to check out the <a class="link" href="https://github.com/Lyelt/Portfolio">entire project on GitHub</a> if you're interested!
+      </blog-p>
+    </blog-section>
+  </blog-article>
+  
