@@ -9,21 +9,28 @@ export class ConvertMillisecondsPipe implements PipeTransform {
     if (ms === 0) return "0";
 
     const seconds = Math.abs(ms) / 1000;
-    let time = `${seconds.toFixed(2)}`;
+    let time = `${this.fixedAndPad(seconds)}`;
 
     if (seconds > 60) {
       const minutes = seconds / 60;
       const leftoverSeconds = seconds % 60;
-      time = `${Math.trunc(minutes)}:${leftoverSeconds.toFixed(2)}`;
+      time = `${this.truncateAndPad(minutes)}:${this.fixedAndPad(leftoverSeconds)}`;
 
       if (minutes > 60) {
         const hours = minutes / 60;
         const leftoverMinutes = minutes % 60;
-        time = `${Math.trunc(hours)}:${Math.trunc(leftoverMinutes)}:${leftoverSeconds.toFixed(2)}`
+        time = `${this.truncateAndPad(hours)}:${this.truncateAndPad(leftoverMinutes)}:${this.fixedAndPad(leftoverSeconds)}`
       }
     }
 
     return ms < 0 ? "-" + time : "+" + time; 
   }
 
+  truncateAndPad(num: number): string {
+    return Math.trunc(num).toString().padStart(2, "0");
+  }
+
+  fixedAndPad(num: number): string {
+    return num.toFixed(2).toString().padStart(5, "0");
+  }
 }
