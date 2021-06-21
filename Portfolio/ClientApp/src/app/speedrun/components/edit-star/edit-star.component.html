@@ -1,8 +1,7 @@
 <form [formGroup]="form" class="flex flex-col" [class.items-end]="alignment === 'right'" [class.items-start]="alignment === 'left'">
   <div class="md:w-1/3 flex flex-col mb-6">
-    <label for="time" class="pb-1" [class.text-right]="alignment === 'right'">Time (<span class="link" (click)="showFrames = !showFrames">{{(showFrames ? "hide" : "show")}} frames</span>)</label>
-    <input type="text" [class.text-right]="alignment === 'right'" placeholder="Time (hh:mm:ss.ff)" formControlName="time" *ngIf="!showFrames"/>
-    <input type="number" [class.text-right]="alignment === 'right'" step="1" placeholder="Total Frames" formControlName="frames" *ngIf="showFrames"/>
+    <label for="time" class="pb-1" [class.text-right]="alignment === 'right'">Time</label>
+    <input type="text" [class.text-right]="alignment === 'right'" placeholder="Time (hh:mm:ss.ff)" formControlName="time" />
   </div>
 
   <div class="md:w-1/3 flex flex-col mb-8">

@@ -62,18 +62,24 @@ export class SpeedrunComponent implements OnInit {
       this.expanded.push(course.courseId);
     } 
     else {
-      this.expanded.splice(
-        this.expanded.findIndex((c) => c == course.courseId),
-        1
-      );
+      this.expanded.splice(this.expanded.findIndex((c) => c == course.courseId), 1);
     }
 
     this.cacheExpanded();
   }
 
-  collapseAll() {
+  toggleCollapsed() {
+    if (this.expanded.length > 0) {
       this.expanded.length = 0;
-      this.cacheExpanded();
+    }
+    else {
+      this.expanded.length = 0;
+      for (let course of this.courses) {
+        this.expanded.push(course.courseId);
+      }
+    }
+      
+    this.cacheExpanded();
   }
 
   cacheExpanded() {

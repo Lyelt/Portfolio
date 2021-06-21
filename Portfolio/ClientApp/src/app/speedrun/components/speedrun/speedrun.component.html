@@ -7,7 +7,7 @@
     <h1 class="font-bold text-2xl mb-4 text-center">SM64 Speedrun Times</h1>
     <div class="flex justify-between mb-6">
       <div class="flex space-x-8">
-        <span class="link" (click)="collapseAll()">Collapse All</span>
+        <span class="link" (click)="toggleCollapsed()">{{expanded.length > 0 ? "Collapse" : "Expand"}} All</span>
         <span class="link" (click)="changeView()">{{compact ? "List" : "Compact"}} View</span>
       </div>
       <mat-icon class="cursor-pointer" [matMenuTriggerFor]="menu">menu</mat-icon>
