@@ -105,5 +105,5 @@ export class CourseComponent implements OnInit {
 
   get userIsSpeedrunner(): boolean {
     return this.runners.find(u => u.id === this.auth.getLoggedInUserId()) != null;
-;  }
+  }
 }

@@ -15,10 +15,9 @@ namespace Portfolio.Identity
 
         public static List<ApplicationUser> GetValidUsersForRoles(this PortfolioContext context, params string[] validRoleNames)
         {
-            var validRoles = context.Roles.Where(r => validRoleNames.Contains(r.Name));
-            var validUserRoles = context.UserRoles.Join(validRoles, ur => ur.RoleId, r => r.Id, (userRole, role) => userRole);
-            var validUsers = context.Users.Join(validUserRoles, u => u.Id, ur => ur.UserId, (user, userRole) => user).Distinct().ToList();
-            return validUsers;
+            var validRoleIds = context.Roles.Where(r => validRoleNames.Contains(r.Name)).Select(r => r.Id).ToList();
+            var validUserIds = context.UserRoles.Where(ur => validRoleIds.Contains(ur.RoleId)).Select(ur => ur.UserId).ToList();
+            return context.Users.Where(u => validUserIds.Contains(u.Id)).ToList();
         }
     }
 
