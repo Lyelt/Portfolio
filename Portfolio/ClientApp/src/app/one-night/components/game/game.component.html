@@ -1,0 +1,24 @@
+<div class="flex flex-col justify-center items-center px-4">
+    <h1 class="text-2xl font-mono uppercase tracking-wide mb-6 text-center">One Night Custom</h1>
+    <div class="grid grid-cols-3 gap-2" *ngIf="status === 'stopped'">
+        <div *ngFor="let role of roles" 
+            class="border border-indigo-700 dark:border-pink-700 flex items-end justify-center text-center uppercase text-xs font-medium rounded-sm p-4 h-20 cursor-pointer opacity-50 hover:opacity-100 hover:border-2 hover:shadow-xl"
+            [ngClass]="{'opacity-100 border-2 bg-gray-300 dark:bg-pink-900' : role.selected}"
+            (click)="toggleRoleSelected(role)">
+            <span class="bottom-0">{{role.name}}</span>
+        </div>
+    </div>
+    <div *ngIf="status !== 'stopped'">
+        <span>{{audioStatus}}</span>
+    </div>
+    <div *ngIf="status !== 'stopped'">
+        <app-monkey></app-monkey>
+    </div>
+    <div class="flex space-x-2 mt-6">
+        <button class="btn btn-primary" (click)="start()" *ngIf="status === 'stopped'">Start {{selectedRoleCount}}</button>
+        <button class="btn btn-primary" (click)="resume()" *ngIf="status === 'paused'">Resume</button>
+        <button class="btn btn-primary" (click)="pause()" *ngIf="status === 'started'">Pause</button>
+        <button class="btn btn-primary" (click)="stop()" *ngIf="status === 'started' || status === 'paused'">Stop</button>
+        <button class="btn btn-primary">Settings</button>
+    </div>
+</div>

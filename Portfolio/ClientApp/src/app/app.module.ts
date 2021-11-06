@@ -82,6 +82,9 @@ import { SafeYtPipe } from './shared/pipes/safeYt.pipe';
 import { ConvertMillisecondsPipe } from './shared/pipes/convert-milliseconds.pipe';
 import { SafePipe } from './shared/pipes/safe.pipe';
 import { April2021Component } from './blog/components/articles/april2021/april2021.component';
+import { GameComponent } from './one-night/components/game/game.component';
+import { MonkeyComponent } from './one-night/components/monkey/monkey.component';
+import { SmallWorldComponent } from './yugioh/components/small-world/small-world.component';
 
 const routes: Routes = [
     {
@@ -158,6 +161,9 @@ const routes: Routes = [
     },
     {
         path: 'yugioh/collections', component: CollectionsComponent, canActivate: [AuthGuard]
+    },
+    {
+        path: 'one-night', component: GameComponent, canActivate: [AuthGuard]
     },
     {
         path: '**',
@@ -238,7 +244,10 @@ const routes: Routes = [
         SafeYtPipe,
         ConvertMillisecondsPipe,
         SafePipe,
-        April2021Component
+        April2021Component,
+        GameComponent,
+        MonkeyComponent,
+        SmallWorldComponent
     ],
     imports: [
         BrowserModule,

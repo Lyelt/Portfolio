@@ -1,0 +1,22 @@
+[
+    { "id": 1, "name": "Everyone", "isActive": true, "mustIncludeAllRoles": false, "roleIds": [], "voicelines": 
+        [
+            { "id": 1, "audioFileName": "everyone-sleep", "order": -999, "pauseMultiplier": 0, "text": "Everyone, close your eyes." },
+            { "id": 2, "audioFileName": "everyone-wake", "order": 999, "pauseMultiplier": 0, "text": "Everyone, wake up!" }
+        ] },
+    { "id": 2, "name": "Monkeys", "isActive": true, "mustIncludeAllRoles": false, "roleIds": [1, 2], "voicelines": 
+        [ 
+            { "id": 3, "audioFileName": "monkeys-wake", "order": 1.05, "pauseMultiplier": 1, "text": "Monkeys, wake up!" }, 
+            { "id": 4, "audioFileName": "monkeys-sleep", "order": 1.10, "pauseMultiplier": 0, "text": "Monkeys, close your eyes." }
+        ] },
+    { "id": 3, "name": "Possums", "isActive": true, "mustIncludeAllRoles": false, "roleIds": [5, 6], "voicelines": [
+
+        ] },
+    {
+        "id": 4, "name": "Dazers", "isActive": true, "mustIncludeAllRoles": true, "roleIds": [3, 4], "voicelines": [
+            { "id": 5, "audioFileName": "dazed-thumb", "order": 4.03, "pauseMultiplier": 1, "text": "Dazed Zookeeper, show yourself!" }, 
+            { "id": 6, "audioFileName": "dazed-thumb-away", "order": 4.04, "pauseMultiplier": 0, "text": "Dazed Zookeeper, enough." }
+        ]
+    }
+
+]

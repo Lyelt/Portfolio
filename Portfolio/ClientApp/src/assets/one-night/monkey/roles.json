@@ -1,0 +1,15 @@
+[
+    { "id": 1, "name": "Chaos Monkey", "selected": false, "displayOrder": 1, "voicelines": [] },
+    { "id": 2, "name": "Vampire Monkey", "selected": false, "displayOrder": 2, "voicelines": [] },
+    { "id": 3, "name": "Sanguinus Imperator", "selected": false, "displayOrder": 3, "voicelines": 
+        [ 
+            { "id": 9, "audioFileName": "sanguinus-wake", "order": 4.01, "pauseMultiplier": 0, "text": "Sanguinus Imperator, wake up!" },
+            { "id": 10, "audioFileName": "sanguinus-sleep", "order": 4.10, "pauseMultiplier": 0, "text": "Sanguinus Imperator, close your eyes."}
+        ] 
+    },
+    { "id": 4, "name": "Dazed Zookeeper", "selected": false, "displayOrder": 4, "voicelines": [] },
+    { "id": 5, "name": "Omar the Opossum", "selected": false, "displayOrder": 5, "voicelines": [] },
+    { "id": 6, "name": "Patty the Possum", "selected": false, "displayOrder": 6, "voicelines": [] },
+    { "id": 7, "name": "Jungle Jim", "selected": false, "displayOrder": 7, "voicelines": [] },
+    { "id": 8, "name": "Momo", "selected": false, "displayOrder": 8, "voicelines": [] }
+]
