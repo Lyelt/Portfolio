@@ -65,7 +65,7 @@ export class SmallWorldComponent implements OnInit {
   }
 
   isMainDeckMonster(c: YugiohCard): boolean {
-    return c.type.includes('Monster') && !c.type.includes("Fusion") && !c.type.includes("Link") && !c.type.includes("Xyz") && !c.type.includes("Synchro");
+    return c.type.includes('Monster') && !c.type.includes("Fusion") && !c.type.includes("Link") && !c.type.includes("XYZ") && !c.type.includes("Synchro");
   }
 
   smallWorldResults(reveal: YugiohCard, target: YugiohCard): Match[] {
