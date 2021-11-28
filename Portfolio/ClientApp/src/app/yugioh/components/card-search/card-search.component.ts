@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, EventEmitter, Input, Output } from '@angular/core';
-import { YugiohCard, YugiohUtilities, YugiohCardFilter, PropertyFilter } from '../../models/yugioh.model';
+import { Component, OnInit, ViewChild, EventEmitter, Input, Output, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { YugiohCard, YugiohUtilities, YugiohCardFilter, PropertyFilter, SearchResults } from '../../models/yugioh.model';
 import { YugiohService } from '../../services/yugioh.service';
 import { CardCollection, Card } from '../../models/card-collections';
 
@@ -8,27 +8,35 @@ import { CardCollection, Card } from '../../models/card-collections';
     templateUrl: './card-search.component.html',
     styleUrls: ['./card-search.component.scss']
 })
-export class CardSearchComponent implements OnInit {
+export class CardSearchComponent implements OnInit, AfterViewInit {
     keyword: string = "name";
     @Output() cardSelected = new EventEmitter<YugiohCard>();
     @Output() cardSearched = new EventEmitter<YugiohCardFilter>();
     @Output() searchCleared = new EventEmitter<any>();
     @Output() cardAdded = new EventEmitter<Card>();
     @Output() cardRemoved = new EventEmitter<Card>();
+    @Output() searchSubmitted = new EventEmitter<YugiohCardFilter>();
 
     @Input() placeholder?: string;
     @Input() collection: CardCollection;
     @Input() section: string;
+    @Input() currentFilter?: YugiohCardFilter;
 
-    filteredCards: YugiohCard[];
-    currentFilter: YugiohCardFilter;
+    searchResults: SearchResults;
 
     @ViewChild('auto') auto;
-    constructor(private yugiohService: YugiohService) { }
+    constructor(private yugiohService: YugiohService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit() {
         if (!this.placeholder)
             this.placeholder = "Search for a card";
+    }
+
+    ngAfterViewInit() {
+        if (this.currentFilter){
+            this.auto.query = this.currentFilter.filters.find(f => f.name === "name").value;
+            this.cdr.detectChanges();
+        }
     }
 
     onFocused(e) {
@@ -40,17 +48,19 @@ export class CardSearchComponent implements OnInit {
     }
 
     onSearch(e) {
-        const filters: PropertyFilter[] = [{ name: "name", value: e }];
-      const filter: YugiohCardFilter = {
-            pageNumber: 1,
-            count: 20,
-            filters: filters
-        };
-
+        const filter = YugiohUtilities.getFilter(e);
         this.currentFilter = filter;
         this.yugiohService.getCardsWithFilter(filter).subscribe(data => {
-            this.filteredCards = data;
+            this.searchResults = data;
         });
+
+        this.cardSearched.emit(this.currentFilter);
+    }
+
+    onSearchSubmitted(e) {
+        this.currentFilter = YugiohUtilities.getFilter(this.auto.query);
+        this.searchSubmitted.emit(this.currentFilter);
+        this.auto.close();
     }
 
     onCleared(e) {
@@ -91,8 +101,4 @@ export class CardSearchComponent implements OnInit {
         });
     }
 
-    searchSubmitted() {
-        this.cardSearched.emit(this.currentFilter);
-        this.auto.close();
-    }
 }

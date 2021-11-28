@@ -1,5 +1,29 @@
-<div class="flex flex-col">
-  <div *ngFor="let card of searchResults" class="flex mb-2">
-    <a class="link w-1/2" href="yugioh/{{card.id}}">{{card.name}}</a>
+<div class="mt-6">
+  <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-4 xl:gap-x-10">
+    <div *ngFor="let card of searchResults?.results" class="bg-white rounded p-4 flex flex-row cursor-pointer h-72 shadow" (click)="goToCard(card)">
+      <img [src]="card.card_Images[0].image_Url" />
+      <div class="ml-4 flex flex-col">
+        <span class="font-bold mb-2">{{card.name}}</span>
+        <span class="text-sm" *ngIf="getCardType(card) !== CardTypeEnum.Spell && getCardType(card) !== CardTypeEnum.Trap">{{card.attribute}} / {{card.race}}</span>
+        <span class="text-sm" *ngIf="getCardType(card) !== CardTypeEnum.Spell && getCardType(card) !== CardTypeEnum.Trap">{{card.atk}}
+          <span *ngIf="getCardType(card) !== CardTypeEnum.Link"> / {{card.def}}</span>
+          <span *ngIf="getCardType(card) === CardTypeEnum.Link"> / Link {{card.linkVal}}</span>
+        </span>
+        <span class="text-sm" *ngIf="getCardType(card) === CardTypeEnum.Spell || getCardType(card) === CardTypeEnum.Trap">{{card.race}} {{card.type.slice(0, -5)}}</span>
+      </div>
+
+      <!-- <a href="yugioh/card/{{card.id}}">
+        <img [src]="card.card_Images[0].image_Url" />
+      </a> -->
+  
+    </div>
+    
+  </div>
+  <div class="flex items-center justify-between pt-8 text-xs sm:text-base">
+    <span>Showing <span class="font-bold">{{start}}</span> to <span class="font-bold">{{end}}</span> of <span class="font-bold">{{searchResults?.totalResults}}</span> results</span>
+    <div class="flex space-x-4">
+        <button class="btn border border-gray-800 dark:border-gray-300 focus:outline-none" (click)="previous()">Previous</button>
+        <button class="btn border border-gray-800 dark:border-gray-300 focus:outline-none" (click)="next()">Next</button>
+    </div>
   </div>
 </div>

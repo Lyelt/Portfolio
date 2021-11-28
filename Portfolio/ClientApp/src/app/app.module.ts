@@ -157,7 +157,10 @@ const routes: Routes = [
         path: 'yugioh', component: YugiohComponent
     },
     {
-        path: 'yugioh/:cardId', component: YugiohComponent
+        path: 'yugioh/card/:cardId', component: YugiohComponent
+    },
+    {
+        path: 'yugioh/search', component: YugiohComponent
     },
     {
         path: 'yugioh/collections', component: CollectionsComponent, canActivate: [AuthGuard]

@@ -1,16 +1,21 @@
 export class PropertyFilter {
-    name: string;
-    value?: string;
-    highValue?: number;
-    lowValue?: number;
+  name: string;
+  value?: string;
+  highValue?: number;
+  lowValue?: number;
+}
+
+export class SearchResults {
+  results: YugiohCard[];
+  totalResults: number;
 }
 
 export class YugiohCardFilter {
-    filters: PropertyFilter[];
+  filters: PropertyFilter[];
 
-    pageNumber: number;
+  pageNumber: number;
 
-    count: number;
+  count: number;
 }
 
 export class YugiohCard {
@@ -42,9 +47,9 @@ export class CardSet {
 }
 
 export class CardImage {
-    id: string;
-    image_Url: string;
-    image_Url_Small: string;
+  id: string;
+  image_Url: string;
+  image_Url_Small: string;
 }
 
 export class CardPrices {
@@ -56,44 +61,38 @@ export class CardPrices {
 }
 
 export class BanlistInfo {
-    ban_Tcg: string;
-    ban_Ocg: string;
-    ban_Goat: string;
+  ban_Tcg: string;
+  ban_Ocg: string;
+  ban_Goat: string;
 }
 
 export enum CardTypeEnum {
-    Monster,
-    Spell,
-    Trap,
-    Link,
-    XYZ,
-    Synchro,
-    Fusion
+  Monster,
+  Spell,
+  Trap,
+  Link,
+  XYZ,
+  Synchro,
+  Fusion,
 }
 
 export class CardType {
-    deckSection: string;
-    cardType: CardTypeEnum;
+  deckSection: string;
+  cardType: CardTypeEnum;
 }
 
 export abstract class YugiohUtilities {
   public static getCardLink(card: YugiohCard): string {
-    return window.location.hostname + "/yugioh/" + card.id;
+    return "/yugioh/card/" + card.id;
   }
 
   public static getCardType(card: YugiohCard): CardTypeEnum {
-    if (card.type.includes('Trap'))
-      return CardTypeEnum.Trap;
-    if (card.type.includes('Spell'))
-      return CardTypeEnum.Spell;
-    if (card.type.includes('Fusion'))
-      return CardTypeEnum.Fusion;
-    if (card.type.includes('Synchro'))
-      return CardTypeEnum.Synchro;
-    if (card.type.includes('XYZ'))
-      return CardTypeEnum.XYZ;
-    if (card.type.includes('Link'))
-      return CardTypeEnum.Link;
+    if (card.type.includes("Trap")) return CardTypeEnum.Trap;
+    if (card.type.includes("Spell")) return CardTypeEnum.Spell;
+    if (card.type.includes("Fusion")) return CardTypeEnum.Fusion;
+    if (card.type.includes("Synchro")) return CardTypeEnum.Synchro;
+    if (card.type.includes("XYZ")) return CardTypeEnum.XYZ;
+    if (card.type.includes("Link")) return CardTypeEnum.Link;
 
     return CardTypeEnum.Monster;
   }
@@ -103,18 +102,22 @@ export abstract class YugiohUtilities {
       case CardTypeEnum.Monster:
       case CardTypeEnum.Spell:
       case CardTypeEnum.Trap:
-        return CardTypeEnum[cardType] + 's';
+        return CardTypeEnum[cardType] + "s";
       default:
         return CardTypeEnum[cardType];
     }
   }
 
   public static redirectToTcgPlayer(card: YugiohCard) {
-    window.open(this.getTcgLink(card), '_blank');
+    window.open(this.getTcgLink(card), "_blank");
   }
 
   public static getTcgLink(card: YugiohCard): string {
-    return "https://shop.tcgplayer.com/yugioh/product/show?ProductName=" + encodeURIComponent(this.removeHtml(card.name)) + "&newSearch=false&ProductType=All&IsProductNameExact=true";
+    return (
+      "https://shop.tcgplayer.com/yugioh/product/show?ProductName=" +
+      encodeURIComponent(this.removeHtml(card.name)) +
+      "&newSearch=false&ProductType=All&IsProductNameExact=true"
+    );
   }
 
   private static removeHtml(str) {
@@ -123,10 +126,63 @@ export abstract class YugiohUtilities {
   }
 
   private static replaceAll(str, find, replace) {
-    return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
+    return str.replace(new RegExp(this.escapeRegExp(find), "g"), replace);
   }
 
   private static escapeRegExp(str) {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+  }
+
+  public static getAtkDefDisplay(card: YugiohCard) {
+    let type = YugiohUtilities.getCardType(card);
+    switch (type) {
+      case CardTypeEnum.Fusion:
+      case CardTypeEnum.Synchro:
+      case CardTypeEnum.XYZ:
+      case CardTypeEnum.Monster:
+        return card.atk.toString() + " / " + card.def.toString();
+      case CardTypeEnum.Link:
+        return card.atk.toString() + " /";
+      default:
+        return "N/A";
+    }
+  }
+
+  public static getLevelLabel(card: YugiohCard) {
+    let type = YugiohUtilities.getCardType(card);
+    switch (type) {
+      case CardTypeEnum.Link:
+        return "Link Rating";
+      case CardTypeEnum.XYZ:
+        return "Rank";
+      default:
+        return "Level";
+    }
+  }
+
+  public static getLevelDisplay(card: YugiohCard) {
+    let type = YugiohUtilities.getCardType(card);
+    switch (type) {
+      case CardTypeEnum.Link:
+        return card.linkVal;
+      case CardTypeEnum.Fusion:
+      case CardTypeEnum.Synchro:
+      case CardTypeEnum.XYZ:
+      case CardTypeEnum.Monster:
+        return card.level;
+      default:
+        return "N/A";
+    }
+  }
+
+  public static getFilter(name: string) {
+    const filters: PropertyFilter[] = [{ name: "name", value: name }];
+    const filter: YugiohCardFilter = {
+        pageNumber: 1,
+        count: 20,
+        filters: filters
+    };
+
+    return filter;
   }
 }

@@ -27,4 +27,11 @@ namespace Portfolio.Models.Yugioh
 
         public double? LowValue { get; set; }
     }
+
+    public class SearchResults
+    {
+        public List<YugiohCard> Results { get; set; }
+
+        public int TotalResults { get; set; }
+    }
 }

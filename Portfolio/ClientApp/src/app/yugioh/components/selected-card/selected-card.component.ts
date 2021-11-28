@@ -44,44 +44,14 @@ export class SelectedCardComponent implements OnInit {
     }
 
     getAtkDefDisplay(card: YugiohCard) {
-        let type = YugiohUtilities.getCardType(card);
-        switch (type) {
-            case CardTypeEnum.Fusion:
-            case CardTypeEnum.Synchro:
-            case CardTypeEnum.XYZ:
-            case CardTypeEnum.Monster:
-                return card.atk.toString() + " / " + card.def.toString();
-            case CardTypeEnum.Link:
-                return card.atk.toString() + " /";
-            default:
-                return "N/A";
-        }
+        return YugiohUtilities.getAtkDefDisplay(card);
     }
 
     getLevelLabel(card: YugiohCard) {
-        let type = YugiohUtilities.getCardType(card);
-        switch (type) {
-            case CardTypeEnum.Link:
-                return "Link Rating";
-            case CardTypeEnum.XYZ:
-                return "Rank";
-            default:
-                return "Level";
-        }
+        return YugiohUtilities.getLevelLabel(card);
     }
 
     getLevelDisplay(card: YugiohCard) {
-        let type = YugiohUtilities.getCardType(card);
-        switch (type) {
-            case CardTypeEnum.Link:
-                return card.linkVal;
-            case CardTypeEnum.Fusion:
-            case CardTypeEnum.Synchro:
-            case CardTypeEnum.XYZ:
-            case CardTypeEnum.Monster:
-                return card.level;
-            default:
-                return "N/A";
-        }
+        return YugiohUtilities.getLevelDisplay(card);
     }
 }

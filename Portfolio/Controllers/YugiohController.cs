@@ -68,7 +68,7 @@ namespace Portfolio.Controllers
         public async Task<IActionResult> GetCardsWithFilter([FromBody] YugiohCardFilter filter)
         {
             var cards = await GetCardsAsync(filter);
-            return Ok(cards.Skip(((filter?.PageNumber ?? 1) - 1) * filter?.Count ?? 20).Take(filter?.Count ?? 20).ToList());
+            return Ok(new SearchResults { Results = cards.Skip(((filter?.PageNumber ?? 1) - 1) * filter?.Count ?? 20).Take(filter?.Count ?? 20).ToList(), TotalResults = cards.Count() });
         }
 
         [HttpGet]

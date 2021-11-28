@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { YugiohService } from '../../services/yugioh.service';
-import { YugiohCard, YugiohCardFilter } from '../../models/yugioh.model';
+import { YugiohCard, YugiohCardFilter, YugiohUtilities } from '../../models/yugioh.model';
 import { Card, CardCollection } from '../../models/card-collections';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
@@ -26,10 +25,20 @@ export class YugiohComponent implements OnInit {
     ngOnInit() {
         this.currentUserId = this.auth.getLoggedInUserId();
         this.route.params.subscribe(params => {
-            const id = +params['cardId'];
-            this.yugiohService.getCardById(id).subscribe(data => {
-                this.selectedCard = data;
-            });
+            const route = this.route.routeConfig.path.split('/')[1];
+
+            if (route === 'card') {
+                const id = +params['cardId'];
+                this.yugiohService.getCardById(id).subscribe(data => {
+                    this.selectedCard = data;
+                });
+            }
+            else if (route === 'search') {
+                this.route.queryParams.subscribe(p => {
+                    this.searchFilter = YugiohUtilities.getFilter(p.name);
+                    this.searchSubmitted(this.searchFilter);
+                });
+            }
         });
     }
 
@@ -43,7 +52,7 @@ export class YugiohComponent implements OnInit {
 
     cardSelected(card) {
         this.selectedCard = card;
-        window.history.pushState(card, card.name, "/yugioh/" + card.id);
+        window.history.pushState(card, card.name, "/yugioh/card/" + card.id);
     }
 
     searchCleared() {
@@ -55,7 +64,12 @@ export class YugiohComponent implements OnInit {
     cardSearched(filter: YugiohCardFilter) {
         this.selectedCard = null;
         this.searchFilter = filter;
-        window.history.pushState("No card selected", "Yu-Gi-Oh", "/yugioh");
+    }
+
+    searchSubmitted(filter: YugiohCardFilter) {
+        this.selectedCard = null;
+        this.searchFilter = filter;
+        window.history.pushState("Card searched", "Yu-Gi-Oh", "/yugioh/search?name=" + filter.filters.find(f => f.name == "name").value);
     }
 
     selectCollection(event: any) {
