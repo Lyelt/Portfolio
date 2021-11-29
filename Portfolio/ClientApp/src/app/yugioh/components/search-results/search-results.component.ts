@@ -6,7 +6,10 @@ import {
   YugiohUtilities,
   SearchResults,
   CardTypeEnum,
+  CardSet,
 } from "../../models/yugioh.model";
+import { Card, CardCollection } from "../../models/card-collections";
+import { AuthService } from "src/app/auth/auth.service";
 
 @Component({
   selector: "app-search-results",
@@ -22,10 +25,15 @@ export class SearchResultsComponent implements OnInit, OnChanges {
   pageNumber: number = 1;
   entriesPerPage: number = 20;
 
-  constructor(private ygoService: YugiohService) {}
+  collections: CardCollection[];
+
+  constructor(private ygoService: YugiohService, private authService: AuthService) {}
 
   ngOnInit() {
     this.getSearchResults();
+    this.ygoService.getCollectionsForUser(this.authService.getLoggedInUserId()).subscribe(c => {
+        this.collections = c;
+    });
   }
 
   ngOnChanges() {
@@ -45,6 +53,14 @@ export class SearchResultsComponent implements OnInit, OnChanges {
 
   goToCard(card: YugiohCard) {
     window.location.href = this.getCardLink(card);
+  }
+
+  addCardToCollection(card: YugiohCard, set: CardSet, collection: CardCollection, section: string) {
+      let addedCard: Card = {id: card.id, setCode: set.set_Code, cardCollection: collection, section: section, quantity: 1};
+      this.ygoService.addCardToCollection(addedCard).subscribe(newCollection => {
+
+      });
+      console.log("added: ", card, set, collection);
   }
 
   previous() {

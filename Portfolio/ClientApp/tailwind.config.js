@@ -48,6 +48,7 @@ module.exports = {
     },
     variants: {
       extend: {
+        position: ['hover'],
         ringColor: ['hover'],
         ringWidth: ['hover'],
         borderWidth: ['responsive', 'hover', 'focus', 'active', 'group-hover', 'last', 'first'],
