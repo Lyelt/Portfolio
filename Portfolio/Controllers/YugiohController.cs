@@ -200,8 +200,15 @@ namespace Portfolio.Controllers
 
             if (!_cardCache.TryGetValue(CACHE_KEY, out cards))
             {
-                cards = await _yugiohClient.FindCardsAsync();
-                _cardCache.Set(CACHE_KEY, cards, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5)));
+                try
+                {
+                    cards = await _yugiohClient.FindCardsAsync();
+                    _cardCache.Set(CACHE_KEY, cards, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5)));
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.ToString());
+                }
             }
 
             var nameFilter = filter?.Filters?.FirstOrDefault(f => f.Name.EqualsIgnoreCase("name"));

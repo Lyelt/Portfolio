@@ -27,6 +27,9 @@ export class SearchResultsComponent implements OnInit, OnChanges {
 
   collections: CardCollection[];
 
+  hoveredCard?: YugiohCard;
+  hoveredIndex?: number;
+
   constructor(private ygoService: YugiohService, private authService: AuthService) {}
 
   ngOnInit() {
@@ -38,6 +41,16 @@ export class SearchResultsComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.getSearchResults();
+  }
+
+  hoveringCard(card: YugiohCard, index: number) {
+    this.hoveredCard = card;
+    this.hoveredIndex = index;
+  }
+
+  stopHovering() {
+    this.hoveredCard = null;
+    this.hoveredIndex = null;
   }
 
   getSearchResults() {

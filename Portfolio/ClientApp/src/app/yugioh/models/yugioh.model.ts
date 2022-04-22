@@ -31,6 +31,7 @@ export class YugiohCard {
   scale: number;
   linkVal: number;
   linkMarkers: string[];
+  misc_Info: MiscInfo[];
   card_Sets: CardSet[];
   card_Images: CardImage[];
   card_Prices: CardPrices[];
@@ -64,6 +65,16 @@ export class BanlistInfo {
   ban_Tcg: string;
   ban_Ocg: string;
   ban_Goat: string;
+}
+
+export class MiscInfo {
+  beta_Name: string;
+  question_Atk: boolean;
+  question_Def: boolean;
+  has_Effect: boolean;
+  tcg_Date: string;
+  ocg_Date: string;
+  konami_Id: number;
 }
 
 export enum CardTypeEnum {

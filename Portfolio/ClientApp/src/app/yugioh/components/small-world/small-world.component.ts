@@ -75,6 +75,11 @@ export class SmallWorldComponent implements OnInit {
     const attr: Match = { isSame: reveal.attribute == target.attribute, propertyName: "attribute", reveal: reveal, target: target };
     const type: Match = { isSame: reveal.race == target.race, propertyName: "race", reveal: reveal, target: target };
 
+    if ((reveal.misc_Info.length > 0 && reveal.misc_Info[0].question_Atk) || (target.misc_Info.length > 0 && target.misc_Info[0].question_Atk))
+      atk.isSame = false;
+    if ((reveal.misc_Info.length > 0 && reveal.misc_Info[0].question_Def) || (target.misc_Info.length > 0 && target.misc_Info[0].question_Def))
+      def.isSame = false;
+      
     let similarities = [atk, def, lvl, attr, type];
     return similarities.filter(s => s.isSame);
   }

@@ -33,7 +33,7 @@ namespace Portfolio
 
             services.AddHttpClient<YugiohApiClient>(client =>
             {
-                client.BaseAddress = new Uri(Configuration.GetValue("Api:Yugioh:CardEndpoint", "https://db.ygoprodeck.com/api/v7/cardinfo.php"));
+                client.BaseAddress = new Uri(Configuration.GetValue("Api:Yugioh:CardEndpoint", "https://db.ygoprodeck.com/api/v7/cardinfo.php?misc=yes"));
             });
 
             services.AddMvc(config =>

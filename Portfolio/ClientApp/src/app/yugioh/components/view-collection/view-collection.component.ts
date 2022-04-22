@@ -90,11 +90,12 @@ export class ViewCollectionComponent implements OnInit {
         return { ygoCard: c, setCard: this.getSetCard(c.id, section) }
       })
       .filter(c => c.setCard)
-      .reduce((sum, c) => this.round(sum + c.ygoCard.card_Prices[0].tcgplayer_Price * c.setCard.quantity), 0);
+      .reduce((sum, c) => this.round(sum + this.getCardPrice(c)), 0);
   }
 
   getCardPrice(c: { ygoCard: YugiohCard, setCard: Card }): number {
-    return this.round(c.ygoCard.card_Prices[0].tcgplayer_Price * c.setCard.quantity);
+    const setPrice = +c.ygoCard.card_Sets.find(s => s.set_Code === c.setCard.setCode).set_Price;
+    return this.round(setPrice * c.setCard.quantity);
   }
 
   startEditing(section: string) {

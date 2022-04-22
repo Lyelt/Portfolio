@@ -23,6 +23,7 @@ namespace Portfolio.Models.Yugioh
         public int? Scale { get; set; }
         public int? LinkVal { get; set; }
         public List<string> LinkMarkers { get; set; }
+        public IEnumerable<MiscInfo> Misc_Info { get; set; }
         public IEnumerable<CardSet> Card_Sets { get; set; }
         public IEnumerable<CardImage> Card_Images { get; set; }
         public IEnumerable<CardPrices> Card_Prices { get; set; }
@@ -63,5 +64,16 @@ namespace Portfolio.Models.Yugioh
         public BanlistInfo() { }
         public string Ban_Tcg { get; set; }
         public string Ban_Ocg { get; set; }
+    }
+
+    public class MiscInfo
+    {
+        public string? Beta_Name { get; set; }
+        public bool? Question_Atk { get; set; }
+        public bool? Question_Def { get; set; }
+        public bool? Has_Effect { get; set; }
+        public string Tcg_Date { get; set; }
+        public string Ocg_Date { get; set; }
+        public int? Konami_Id { get; set; }
     }
 }

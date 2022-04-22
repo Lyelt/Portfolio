@@ -1,45 +1,48 @@
 <div class="mt-6">
-  <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-4 xl:gap-x-10">
-    <div *ngFor="let card of searchResults?.results" class="bg-white rounded p-4 flex flex-row justify-between h-72 shadow">
-      <div class="flex cursor-pointer" (click)="goToCard(card)">
-        <img class="hover:absolute" [src]="card.card_Images[0].image_Url" />
-        <div class="ml-4 flex flex-col">
-          <span class="font-bold mb-2">{{card.name}}</span>
-          <span class="text-sm" *ngIf="getCardType(card) !== CardTypeEnum.Spell && getCardType(card) !== CardTypeEnum.Trap">{{card.attribute}} / {{card.race}}</span>
-          <span class="text-sm" *ngIf="getCardType(card) !== CardTypeEnum.Spell && getCardType(card) !== CardTypeEnum.Trap">{{card.atk}}
-            <span *ngIf="getCardType(card) !== CardTypeEnum.Link"> / {{card.def}}</span>
-            <span *ngIf="getCardType(card) === CardTypeEnum.Link"> / Link {{card.linkVal}}</span>
+  <div class="mr-8 hidden xl:inline fixed" [ngClass]="{'left-1/4': hoveredIndex % 3 === 0, 'right-1/4': (hoveredIndex + 2) % 3 === 0, 'right-0': (hoveredIndex + 1) % 3 === 0}" >
+    <img *ngIf="hoveredCard" [src]="hoveredCard.card_Images[0].image_Url" />
+  </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-x-4 gap-y-4 2xl:gap-x-10">
+      <div *ngFor="let card of searchResults?.results; let i = index" class="bg-white rounded p-4 flex flex-row justify-between h-72 shadow">
+        <div class="flex cursor-pointer" (click)="goToCard(card)">
+          <img (mouseover)="hoveringCard(card, i)" (mouseleave)="stopHovering()" [src]="card.card_Images[0].image_Url" />
+          <div class="ml-4 flex flex-col">
+            <span class="font-bold mb-2">{{card.name}}</span>
+            <span class="text-sm" *ngIf="getCardType(card) !== CardTypeEnum.Spell && getCardType(card) !== CardTypeEnum.Trap">{{card.attribute}} / {{card.race}}</span>
+            <span class="text-sm" *ngIf="getCardType(card) !== CardTypeEnum.Spell && getCardType(card) !== CardTypeEnum.Trap">{{card.atk}}
+              <span *ngIf="getCardType(card) !== CardTypeEnum.Link"> / {{card.def}}</span>
+              <span *ngIf="getCardType(card) === CardTypeEnum.Link"> / Link {{card.linkVal}}</span>
+            </span>
+            <span class="text-sm" *ngIf="getCardType(card) === CardTypeEnum.Spell || getCardType(card) === CardTypeEnum.Trap">{{card.race}} {{card.type.slice(0, -5)}}</span>
+          </div>
+        </div>
+        <div>
+          <span class="flex cursor-pointer" mat-icon-button [matMenuTriggerFor]="setMenu">
+            <mat-icon class="sm:ml-2">more_vert</mat-icon>
           </span>
-          <span class="text-sm" *ngIf="getCardType(card) === CardTypeEnum.Spell || getCardType(card) === CardTypeEnum.Trap">{{card.race}} {{card.type.slice(0, -5)}}</span>
+          <mat-menu #setMenu="matMenu">
+            <span mat-menu-item class="menu-item" [matMenuTriggerFor]="collectionMenu" *ngFor="let set of card.card_Sets">
+              <span class="font-bold mr-1">${{set.set_Price}}</span>
+              <span>{{set.set_Code}} - {{set.set_Rarity}}</span>
+              <mat-menu #collectionMenu="matMenu">
+                <span mat-menu-item class="menu-item" [matMenuTriggerFor]="sectionMenu" *ngFor="let collection of collections" >
+                  <span>{{collection.name}}</span>
+                  <mat-menu #sectionMenu="matMenu">
+                    <span mat-menu-item class="menu-item" *ngFor="let section of collection.sections" (click)="addCardToCollection(card, set, collection, section)">{{section}}</span>
+                  </mat-menu>
+                </span>
+              </mat-menu>
+            </span>
+          </mat-menu>
         </div>
       </div>
-      <div>
-        <span class="flex cursor-pointer" mat-icon-button [matMenuTriggerFor]="setMenu">
-          <mat-icon class="sm:ml-2">more_vert</mat-icon>
-        </span>
-        <mat-menu #setMenu="matMenu">
-          <span mat-menu-item class="menu-item" [matMenuTriggerFor]="collectionMenu" *ngFor="let set of card.card_Sets">
-            <span class="font-bold mr-1">${{set.set_Price}}</span>
-            <span>{{set.set_Code}} - {{set.set_Rarity}}</span>
-            <mat-menu #collectionMenu="matMenu">
-              <span mat-menu-item class="menu-item" [matMenuTriggerFor]="sectionMenu" *ngFor="let collection of collections" >
-                <span>{{collection.name}}</span>
-                <mat-menu #sectionMenu="matMenu">
-                  <span mat-menu-item class="menu-item" *ngFor="let section of collection.sections" (click)="addCardToCollection(card, set, collection, section)">{{section}}</span>
-                </mat-menu>
-              </span>
-            </mat-menu>
-          </span>
-        </mat-menu>
-      </div>
     </div>
-    
   </div>
+  
   <div class="flex items-center justify-between pt-8 text-xs sm:text-base">
     <span>Showing <span class="font-bold">{{start}}</span> to <span class="font-bold">{{end}}</span> of <span class="font-bold">{{searchResults?.totalResults}}</span> results</span>
     <div class="flex space-x-4">
         <button class="btn border border-gray-800 dark:border-gray-300 focus:outline-none" (click)="previous()">Previous</button>
         <button class="btn border border-gray-800 dark:border-gray-300 focus:outline-none" (click)="next()">Next</button>
     </div>
-  </div>
 </div>
