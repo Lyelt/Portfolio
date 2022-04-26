@@ -1,14 +1,10 @@
 <div>
-  <div class="sm:hidden bg-yellow-400 text-yellow-900 flex items-center text-sm font-bold p-2 rounded mb-6">
-    <span class="mr-2"><mat-icon>error_outline</mat-icon></span>
-    <span class="text-center">This page is better viewed on a larger screen. Stay tuned as I develop a mobile-friendly version!</span>
-  </div>
   <div *ngIf="!selectedStar" class="flex flex-col justify-center container mx-auto px-8" [class.max-w-6xl]="!compact">
-    <h1 class="font-bold text-2xl mb-4 text-center">SM64 Speedrun Times</h1>
+    <h1 class="font-bold text-2xl mb-4 text-center">Super Mario 64</h1>
     <div class="flex justify-between mb-6">
       <div class="flex space-x-8">
         <span class="link" (click)="toggleCollapsed()">{{expanded.length > 0 ? "Collapse" : "Expand"}} All</span>
-        <span class="link" (click)="changeView()">{{compact ? "List" : "Compact"}} View</span>
+        <span class="link hidden md:inline" (click)="changeView()">{{compact ? "List" : "Compact"}} View</span>
       </div>
       <mat-icon class="cursor-pointer" [matMenuTriggerFor]="menu">menu</mat-icon>
     </div>
@@ -26,7 +22,7 @@
         (collapseToggled)="toggleCourseCollapsed(categories)"
         (starSelected)="showStarDetails($event)"></app-course>
     </div>
-    <div [ngClass]="{'flex flex-col space-y-8': !compact, 'grid grid-cols-2 gap-x-4 gap-y-8': compact}">
+    <div [ngClass]="{'flex flex-col space-y-8': !compact, 'md:grid grid-cols-2 gap-x-4 gap-y-8': compact}">
       <app-course *ngFor="let course of getVisibleCourses()" 
         [course]="course" 
         [isCollapsed]="courseIsCollapsed(course)"

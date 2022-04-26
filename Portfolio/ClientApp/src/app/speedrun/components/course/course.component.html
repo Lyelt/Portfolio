@@ -2,26 +2,39 @@
   <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-900">
       <thead>
           <tr class="uppercase text-sm cursor-pointer" (click)="collapseToggled.emit()">
-              <th class="w-6/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide pl-4 pr-20 pt-3 pb-4">
+              <th class="w-full md:w-6/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide pl-4 pr-4 md:pr-20 pt-3 pb-4">
                   <div>
                       <span class="pb-1 hover:underline">{{course.name}}</span>
                       <div class="-mt-5">
                         <app-progress *ngIf="getCompletedStars(course) as completedStars" [percentage]="completedStars.percentage" [complete]="completedStars.completed" [total]="completedStars.total"></app-progress>
                       </div>
+                      <div class="md:hidden text-xs flex mt-4 -mb-2" *ngIf="!isCollapsed">
+                          <span class="w-1/2" *ngFor="let runner of runners">{{runner.userName}}</span>
+                      </div>
                   </div>
               </th>
-              <th class="w-2/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide" *ngFor="let runner of runners">{{runner.userName}} ({{getStarCount(runner)}})</th>
-              <th class="w-4/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide" *ngIf="userIsSpeedrunner">
+              <th class="w-2/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide hidden md:table-cell" *ngFor="let runner of runners">{{runner.userName}} ({{getStarCount(runner)}})</th>
+              <th class="w-4/12 text-left font-medium text-gray-500 dark:text-gray-300 tracking-wide hidden md:table-cell" *ngIf="userIsSpeedrunner">
                 Diff <span *ngIf="calculateTimeDifference(course); let diff" [ngClass]="{'text-green-700 dark:text-green-200':diff <= 0, 'text-red-800 dark:text-red-200':diff > 0}">({{diff | convertMilliseconds}})</span>
               </th>
           </tr>
       </thead>
       <tbody *ngIf="!isCollapsed">
           <tr *ngFor="let star of orderedStars" class="even:bg-gray-100 dark:even:bg-gray-800">
-              <td class="w-6/12 pl-4 pr-2 py-2 cursor-pointer hover:underline" (click)="starSelected.emit(star)">{{star.name}}</td>
-              <td class="w-2/12 py-2" *ngFor="let runner of runners" 
+              <td class="w-full md:w-6/12 pl-4 pr-2 py-2 cursor-pointer hover:underline" (click)="starSelected.emit(star)">
+                  <span class="hidden md:inline">{{star.name}}</span>
+                  <div class="flex md:hidden flex-col">
+                      <span class="pt-1.5 pb-0.5 text-xs">{{star.name}}</span>
+                      <div class="flex">
+                          <div *ngFor="let runner of runners" class="w-1/2">
+                            <span [ngClass]="{'font-bold tracking-tight text-indigo-600 dark:text-pink-400' : starTimeIsFastest(star.starId, runner.id) }">{{getStarTime(star.starId, runner.id)?.timeDisplay}}</span>
+                          </div>
+                      </div>
+                  </div>
+                </td>
+              <td class="w-2/12 py-2 hidden md:table-cell" *ngFor="let runner of runners" 
                   [ngClass]="{'font-bold tracking-tight text-indigo-600 dark:text-pink-400' : starTimeIsFastest(star.starId, runner.id) }">{{getStarTime(star.starId, runner.id)?.timeDisplay}}</td>
-              <td *ngIf="userIsSpeedrunner" class="w-4/12 py-2"><span *ngIf="calculateTimeDifference(star); let diff" class="rounded-full px-2 pb-0.5" [ngClass]="{'bg-green-200 dark:bg-green-700':diff <= 0, 'bg-red-200 dark:bg-red-800':diff > 0}">{{diff | convertMilliseconds}}</span></td>
+              <td *ngIf="userIsSpeedrunner" class="w-4/12 py-2 hidden md:table-cell"><span *ngIf="calculateTimeDifference(star); let diff" class="rounded-full px-2 pb-0.5" [ngClass]="{'bg-green-200 dark:bg-green-700':diff <= 0, 'bg-red-200 dark:bg-red-800':diff > 0}">{{diff | convertMilliseconds}}</span></td>
           </tr>
       </tbody>
   </table>

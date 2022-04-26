@@ -9,6 +9,7 @@ export class ProgressComponent implements OnInit {
   @Input() percentage: number;
   @Input() complete: number;
   @Input() total: number;
+  @Input() showNumbers: boolean = true;
 
   constructor() { }
 
