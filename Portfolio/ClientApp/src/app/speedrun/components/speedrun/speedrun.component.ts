@@ -29,6 +29,8 @@ export class SpeedrunComponent implements OnInit {
       this.courses = this.allCourses.filter((c) => c.name != "Categories");
       this.categories = this.allCourses.find((c) => c.name == "Categories");
 
+      this.expanded = JSON.parse(localStorage.getItem("expandedCourses")) || this.allCourses.map(c => c.courseId);
+      this.compact = JSON.parse(localStorage.getItem("compactView")) || false;
       
       this.route.params.subscribe(params => {
         const route = this.route.routeConfig.path.split('/')[1];
@@ -43,8 +45,6 @@ export class SpeedrunComponent implements OnInit {
       });
     });
 
-    this.expanded = JSON.parse(localStorage.getItem("expandedCourses")) || [];
-    this.compact = JSON.parse(localStorage.getItem("compactView")) || false;
   }
 
   showStarDetails(star: Star) {
