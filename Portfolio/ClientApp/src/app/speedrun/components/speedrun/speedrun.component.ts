@@ -37,6 +37,9 @@ export class SpeedrunComponent implements OnInit {
             const id = +params['starId'];
             this.selectedStar = this.allCourses.flatMap(c => c.stars).find(s => s.starId === id);
         }
+        else {
+          this.selectedStar = null;
+        }
       });
     });
 

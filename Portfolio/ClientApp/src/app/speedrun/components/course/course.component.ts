@@ -73,7 +73,7 @@ export class CourseComponent implements OnInit {
       }
       else if (starOrCourse.stars) {
         let diff = 0;
-        for (let star of starOrCourse.stars) {
+        for (let star of starOrCourse.stars.filter(s => s.name !== "Stage RTA")) {
           diff += this.getTimeDiff(star, currentUserId, opponent.id) || 0;
         }
         return diff;

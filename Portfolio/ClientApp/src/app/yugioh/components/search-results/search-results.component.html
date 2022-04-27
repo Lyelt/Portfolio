@@ -3,7 +3,7 @@
     <img *ngIf="hoveredCard" [src]="hoveredCard.card_Images[0].image_Url" />
   </div>
     <div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-x-4 gap-y-4 2xl:gap-x-10">
-      <div *ngFor="let card of searchResults?.results; let i = index" class="bg-white rounded p-4 flex flex-row justify-between h-72 shadow">
+      <div *ngFor="let card of searchResults?.results; let i = index" class="bg-white dark:bg-gray-900 rounded p-4 flex flex-row justify-between h-72 shadow">
         <div class="flex cursor-pointer" (click)="goToCard(card)">
           <img (mouseover)="hoveringCard(card, i)" (mouseleave)="stopHovering()" [src]="card.card_Images[0].image_Url" />
           <div class="ml-4 flex flex-col">
