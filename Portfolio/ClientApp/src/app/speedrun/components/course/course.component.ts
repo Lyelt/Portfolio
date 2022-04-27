@@ -32,16 +32,17 @@ export class CourseComponent implements OnInit {
     let completed = 0;
     for (let star of course.stars) {
       if (star.name === "Stage RTA") continue;
-      
+
       if (this.sr.getStarTimes(star.starId).length == this.runners.length) {
         completed++;
       }
     }
 
+    const total = course.stars.filter(s => s.name !== "Stage RTA").length;
     return {
-      total: course.stars.filter(s => s.name !== "Stage RTA").length,
+      total: total,
       completed: completed,
-      percentage: (completed / course.stars.length) * 100,
+      percentage: (completed / total) * 100,
     };
   }
 
