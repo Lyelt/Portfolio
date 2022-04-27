@@ -130,6 +130,9 @@ const routes: Routes = [
         path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
     },
     {
+        path: 'speedrun/star/:starId', component: SpeedrunComponent, canActivate: [AuthGuard]
+    },
+    {
         path: 'speedrun/configure', component: ConfigureSpeedrunComponent, canActivate: [AuthGuard]
     },
     {

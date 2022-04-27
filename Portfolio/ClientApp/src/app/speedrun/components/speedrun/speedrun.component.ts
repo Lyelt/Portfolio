@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { StarTime } from "../../models/star-time";
 import { Course } from "../../models/course";
 import { SpeedrunService } from "../../services/speedrun.service";
@@ -19,7 +19,7 @@ export class SpeedrunComponent implements OnInit {
   selectedStar: Star;
   compact: boolean = false;
 
-  constructor(private srService: SpeedrunService) {
+  constructor(private srService: SpeedrunService, private route: ActivatedRoute) {
 
   }
 
@@ -28,6 +28,16 @@ export class SpeedrunComponent implements OnInit {
       this.allCourses = data || [];
       this.courses = this.allCourses.filter((c) => c.name != "Categories");
       this.categories = this.allCourses.find((c) => c.name == "Categories");
+
+      
+      this.route.params.subscribe(params => {
+        const route = this.route.routeConfig.path.split('/')[1];
+
+        if (route === 'star') {
+            const id = +params['starId'];
+            this.selectedStar = this.allCourses.flatMap(c => c.stars).find(s => s.starId === id);
+        }
+      });
     });
 
     this.expanded = JSON.parse(localStorage.getItem("expandedCourses")) || [];
@@ -36,6 +46,7 @@ export class SpeedrunComponent implements OnInit {
 
   showStarDetails(star: Star) {
     this.selectedStar = star;
+    window.history.pushState("Star selected", "Super Mario 64", "/speedrun/star/" + star.starId);
   }
 
   getVisibleCourses() {
@@ -89,5 +100,10 @@ export class SpeedrunComponent implements OnInit {
   changeView() {
     this.compact = !this.compact;
     localStorage.setItem("compactView", JSON.stringify(this.compact));
+  }
+
+  closeStar() {
+    this.selectedStar = null;
+    window.history.pushState("No star selected", "Super Mario 64", "/speedrun");
   }
 }

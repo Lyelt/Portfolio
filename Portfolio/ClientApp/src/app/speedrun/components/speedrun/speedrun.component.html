@@ -13,7 +13,6 @@
       <a mat-menu-item class="menu-item" target="_blank" href="https://drive.google.com/open?authuser=0&id=1_cOIEnuKIQ-3LA_U0ygpiL87PTSBPlHmKDId0vC7alo">Single Star WRs</a>
       <a mat-menu-item class="menu-item" target="_blank" href="https://drive.google.com/open?authuser=0&id=1J20aivGnvLlAuyRIMMclIFUmrkHXUzgcDmYa31gdtCI">Ultimate Star Spreadsheet</a>
       <a mat-menu-item class="menu-item" target="_blank" href="https://docs.google.com/spreadsheets/d/1i1BYP4hv6Uy6clz3YclEVx_Z_RK1Tx1uLYjdwi4iWmE/edit#gid=0">Competition</a>
-      <!-- <span mat-menu-item class="menu-item" routerLink="archive"><mat-icon>auto_delete</mat-icon>Archive</span> -->
     </mat-menu>
     <div class="mb-12">
       <app-course *ngIf="categories" 
@@ -31,6 +30,6 @@
     </div>
   </div>
   <div *ngIf="selectedStar" class="px-8">
-    <app-star-details [star]="selectedStar" (closed)="selectedStar = null"></app-star-details>
+    <app-star-details [star]="selectedStar" (closed)="closeStar()"></app-star-details>
   </div>
 </div>
