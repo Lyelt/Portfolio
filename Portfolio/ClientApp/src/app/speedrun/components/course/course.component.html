@@ -9,7 +9,7 @@
                         <app-progress *ngIf="getCompletedStars(course) as completedStars" [percentage]="completedStars.percentage" [complete]="completedStars.completed" [total]="completedStars.total"></app-progress>
                       </div>
                       <div class="md:hidden text-xs flex mt-4 -mb-2" *ngIf="!isCollapsed">
-                          <span class="w-1/2" *ngFor="let runner of runners">{{runner.userName}}</span>
+                          <span class="w-1/2 last:text-right md:text-left" *ngFor="let runner of runners">{{runner.userName}}</span>
                       </div>
                   </div>
               </th>
@@ -26,7 +26,7 @@
                   <div class="flex md:hidden flex-col">
                       <span class="pt-1.5 pb-0.5 text-xs">{{star.name}}</span>
                       <div class="flex">
-                          <div *ngFor="let runner of runners" class="w-1/2">
+                          <div *ngFor="let runner of runners" class="w-1/2 last:text-right md:text-left">
                             <span [ngClass]="{'font-bold tracking-tight text-indigo-600 dark:text-pink-400' : starTimeIsFastest(star.starId, runner.id) }">{{getStarTime(star.starId, runner.id)?.timeDisplay}}</span>
                           </div>
                       </div>
