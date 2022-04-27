@@ -13,8 +13,8 @@ export class FiltersComponent implements OnInit {
   customFilter: StatFilter = { name: "Custom", selected: false, end: new Date() };
 
   timeframeFilters: StatFilter[] = [
-    {name: "All Time", selected: false,}, 
-    {name: "Last 6 Months", selected: true, start: DateHelper.subtractMonths(6), end: new Date()}, 
+    {name: "All Time", selected: true,}, 
+    {name: "Last 6 Months", selected: false, start: DateHelper.subtractMonths(6), end: new Date()}, 
     this.customFilter
   ];
 
