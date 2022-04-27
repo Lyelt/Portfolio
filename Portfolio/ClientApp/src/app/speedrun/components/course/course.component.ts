@@ -37,7 +37,7 @@ export class CourseComponent implements OnInit {
     }
 
     return {
-      total: course.stars.length,
+      total: course.stars.filter(s => s.name !== "Stage RTA").length,
       completed: completed,
       percentage: (completed / course.stars.length) * 100,
     };
