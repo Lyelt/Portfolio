@@ -31,6 +31,8 @@ export class CourseComponent implements OnInit {
   getCompletedStars(course: Course): CompletedStars {
     let completed = 0;
     for (let star of course.stars) {
+      if (star.name === "Stage RTA") continue;
+      
       if (this.sr.getStarTimes(star.starId).length == this.runners.length) {
         completed++;
       }

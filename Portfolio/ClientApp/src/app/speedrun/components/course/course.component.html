@@ -20,7 +20,7 @@
           </tr>
       </thead>
       <tbody *ngIf="!isCollapsed">
-          <tr *ngFor="let star of orderedStars" class="even:bg-gray-100 dark:even:bg-gray-800" [class.border-t-2]="star.name === 'Stage RTA'">
+          <tr *ngFor="let star of orderedStars" class="even:bg-gray-100 dark:even:bg-gray-800" [class.border-t]="star.name === 'Stage RTA'">
               <td class="w-full md:w-6/12 pl-4 pr-2 py-2 cursor-pointer hover:underline" (click)="starSelected.emit(star)">
                   <span class="hidden md:inline">{{star.name}}</span>
                   <div class="flex md:hidden flex-col">
