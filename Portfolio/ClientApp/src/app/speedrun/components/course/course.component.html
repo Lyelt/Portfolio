@@ -24,7 +24,7 @@
               <td class="w-full md:w-6/12 pl-4 pr-2 py-2 cursor-pointer hover:underline" (click)="starSelected.emit(star)">
                   <span class="hidden md:inline">{{star.name}}</span>
                   <div class="flex md:hidden flex-col">
-                      <span class="pt-1.5 pb-0.5 text-xs">{{star.name}}</span>
+                      <span class="pt-1.5 pb-0.5 text-xs text-center">{{star.name}}</span>
                       <div class="flex">
                           <div *ngFor="let runner of runners" class="w-1/2 last:text-right md:text-left">
                             <span [ngClass]="{'font-bold tracking-tight text-indigo-600 dark:text-pink-400' : starTimeIsFastest(star.starId, runner.id) }">{{getStarTime(star.starId, runner.id)?.timeDisplay}}</span>
