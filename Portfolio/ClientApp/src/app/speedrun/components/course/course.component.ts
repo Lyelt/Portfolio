@@ -31,14 +31,14 @@ export class CourseComponent implements OnInit {
   getCompletedStars(course: Course): CompletedStars {
     let completed = 0;
     for (let star of course.stars) {
-      if (star.name === "Stage RTA") continue;
+      if (star.name === "Stage RTA" || star.displayOrder < 0) continue;
 
       if (this.sr.getStarTimes(star.starId).length == this.runners.length) {
         completed++;
       }
     }
 
-    const total = course.stars.filter(s => s.name !== "Stage RTA").length;
+    const total = course.stars.filter(s => s.name !== "Stage RTA" && s.displayOrder >= 0).length;
     return {
       total: total,
       completed: completed,
