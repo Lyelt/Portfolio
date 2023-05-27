@@ -85,6 +85,7 @@ import { April2021Component } from './blog/components/articles/april2021/april20
 import { GameComponent } from './one-night/components/game/game.component';
 import { MonkeyComponent } from './one-night/components/monkey/monkey.component';
 import { SmallWorldComponent } from './yugioh/components/small-world/small-world.component';
+import { DogComponent } from './dog/dog.component';
 
 const routes: Routes = [
     {
@@ -172,6 +173,9 @@ const routes: Routes = [
         path: 'one-night', component: GameComponent, canActivate: [AuthGuard]
     },
     {
+        path: 'dog', component: DogComponent, canActivate: [AuthGuard], data: { toolbar: false }
+    },
+    {
         path: '**',
         redirectTo: '/'
     }
@@ -253,7 +257,8 @@ const routes: Routes = [
         April2021Component,
         GameComponent,
         MonkeyComponent,
-        SmallWorldComponent
+        SmallWorldComponent,
+        DogComponent
     ],
     imports: [
         BrowserModule,

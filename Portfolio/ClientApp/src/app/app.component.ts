@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
+import { filter, map, mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,9 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  constructor(router: Router, private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer) {
+  toolbar: boolean = true;
+
+  constructor(private router: Router, private activatedRoute: ActivatedRoute, private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer) {
     this.matIconRegistry.addSvgIcon(
       "bowling",
       this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/bowling.svg")
@@ -28,5 +31,25 @@ export class AppComponent {
     else {
       document.querySelector("html").classList.remove("dark");
     }
+
+    this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        map(() => this.activatedRoute),
+        map(route => {
+          while (route.firstChild) {
+            route = route.firstChild;
+          }
+          return route;
+        }),
+      )
+      .pipe(
+        filter(route => route.outlet === 'primary'),
+        mergeMap(route => route.data),
+      )
+      .subscribe(event => {
+        if (event != null && event.toolbar != null)
+          this.toolbar = event.toolbar;
+      });
   }
 }

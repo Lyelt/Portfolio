@@ -11,6 +11,7 @@ using Portfolio.Extensions;
 using System;
 using Portfolio.Data;
 using Microsoft.Extensions.Hosting;
+using Portfolio.Models.Dog;
 
 namespace Portfolio
 {
@@ -30,6 +31,13 @@ namespace Portfolio
                 .ConfigureDatabase(Configuration)
                 .ConfigureLogging(Configuration)
                 .ConfigureAuthentication(Configuration);
+
+            services.AddSingleton<IDogService, DogService>();
+
+            services.AddSignalR(options =>
+            {
+                options.EnableDetailedErrors = true;
+            });
 
             services.AddHttpClient<YugiohApiClient>(client =>
             {
@@ -75,11 +83,8 @@ namespace Portfolio
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllerRoute("default", "{controller}/{action=Index}/{id?}");
-                //routes.MapRoute(
-                //    name: "default",
-                //    template: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<DogHub>("/dogs");
             });
 
             app.UseSpa(spa =>

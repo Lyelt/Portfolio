@@ -27,6 +27,7 @@ namespace Portfolio.Identity
         Speedrunner,
         Bowler,
         Duelist,
+        DogOwner,
         Guest
     }
 }

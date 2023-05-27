@@ -1,8 +1,8 @@
-<app-header ></app-header>
+<app-header *ngIf="toolbar"></app-header>
 <div class="py-24">
   <app-alert></app-alert>
   <router-outlet></router-outlet>
 </div>
-<div class="absolute right-0 bottom-0 left-0">
+<div class="absolute right-0 bottom-0 left-0" *ngIf="toolbar">
   <app-footer></app-footer>
 </div>

@@ -15,6 +15,7 @@ export class HeaderComponent implements OnInit {
       this.authService.logout();
     }
   }
+  
 
   scrollToElement(elementId: string) {
     const el = document.querySelector("#" + elementId);
