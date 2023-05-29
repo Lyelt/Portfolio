@@ -25,6 +25,11 @@ namespace Portfolio.Models.Dog
             _dogService.Toggle(dog);
             await Clients.All.SendAsync("dogToggled", dog);
         }
+
+        public async Task Nudge(Dog dog)
+        {
+            await Clients.All.SendAsync("dogNudged", dog);
+        }
     }
 
     public class DogService : IDogService

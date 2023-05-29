@@ -11,6 +11,7 @@ import { Dog } from '../models/dog';
 export class DogService {
 
   private outsideDogSubject: Subject<Dog> = new ReplaySubject<Dog>();
+  private dogNudgedSubject: Subject<Dog> = new ReplaySubject<Dog>();
   private connection: signalR.HubConnection;
   
   constructor(private http: HttpClient) { }
@@ -35,14 +36,27 @@ export class DogService {
       console.log("dog toggled: " + dog);
       this.outsideDogSubject.next(dog);
     });
+
+    this.connection.on("dogNudged", (dog: Dog) => {
+      console.log("dog nudged: " + dog);
+      this.dogNudgedSubject.next(dog);
+    });
   }
 
   toggleOutsideDog(dog: Dog): void {
     this.connection.send('toggleDog', dog);
   }
 
+  nudge(dog: Dog): void {
+    this.connection.send('nudge', dog);
+  }
+
   public outsideDog(): Observable<Dog> {
     return this.outsideDogSubject.asObservable();
+  }
+
+  public onNudge(): Observable<Dog> {
+    return this.dogNudgedSubject.asObservable();
   }
   
   public getDogOwners() {

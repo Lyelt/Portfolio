@@ -222,4 +222,39 @@ input[type] {
     @apply bg-white dark:bg-gray-900;
   }
 }
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.ping-500 {
+  animation: ping .5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.ping-1000 {
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.ping-1500 {
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.ping-2000 {
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animation-delay-500 {
+  animation-delay: 500ms;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1000ms;
+}
+
+.animation-delay-1500 {
+  animation-delay: 1500ms;
+}
 /* purgecss end ignore */

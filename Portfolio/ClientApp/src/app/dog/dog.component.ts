@@ -10,6 +10,9 @@ import { DogService } from './services/dog.service';
 })
 export class DogComponent implements OnInit {
   canMakeChanges: boolean;
+  awaitingAlert: boolean = false;
+  nudgeSent: boolean = false;
+
   outsideDog: Dog;
 
   myDog: Dog = Dog.Nobody;
@@ -30,8 +33,21 @@ export class DogComponent implements OnInit {
     });
     
     this.dogService.outsideDog().subscribe(d => {
+      if (this.awaitingAlert && this.outsideDog === this.otherDog && d !== this.otherDog) {
+        console.log("playing sound to indicate that " + this.otherDog + " is no longer outside");
+        var audio = new Audio('../assets/audio/all-clear.wav');
+        audio.play();
+      }
       this.outsideDog = d;
       this.cd.detectChanges();
+    });
+
+    this.dogService.onNudge().subscribe(nudgedDog => {
+      if (this.outsideDog === this.myDog && nudgedDog === this.myDog) {
+        console.log("playing sound to indicate that " + nudgedDog + " should come inside");
+        var audio = new Audio('../assets/audio/nudge.wav');
+        audio.play();
+      }
     });
 
     this.dogService.start();
@@ -59,5 +75,17 @@ export class DogComponent implements OnInit {
     this.myDog = myDog;
     this.otherDog = otherDog;
     localStorage.setItem("dogs", JSON.stringify({ myDog: myDog, otherDog: otherDog }));
+  }
+
+  nudge() {
+    if (this.canMakeChanges) {
+      this.nudgeSent = true;
+      this.dogService.nudge(this.otherDog);
+    }
+  }
+
+  cancelAlert() {
+    this.awaitingAlert = false;
+    this.nudgeSent = false;
   }
 }
