@@ -18,6 +18,7 @@ namespace Portfolio.Extensions
                 .AddDbContext<PortfolioContext>(o => GetOptions(o))
                 .AddDbContext<SpeedrunContext>(o => GetOptions(o))
                 .AddDbContext<BowlingContext>(o => GetOptions(o))
+                .AddDbContext<DogContext>(o => GetOptions(o))
                 .AddDbContext<YugiohContext>(o => GetOptions(o));
 
             return services;

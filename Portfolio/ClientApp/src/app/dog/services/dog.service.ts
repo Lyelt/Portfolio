@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import {  Observable, ReplaySubject, Subject } from 'rxjs';
 import { User } from '../../auth/user';
-import { Dog } from '../models/dog';
+import { Dog, DogTime } from '../models/dog';
 
 @Injectable({
   providedIn: 'root'
@@ -61,5 +61,9 @@ export class DogService {
   
   public getDogOwners() {
     return this.http.get<User[]>("Dog/GetUsers");
+  }
+
+  public getRecentDogTimes(quantity: number) {
+    return this.http.get<DogTime[]>(`Dog/GetDogTimes/${quantity}`);
   }
 }

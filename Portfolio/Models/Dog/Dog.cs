@@ -1,5 +1,8 @@
 ﻿
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.DependencyInjection;
+using Portfolio.Data;
+using System;
 using System.Threading.Tasks;
 
 namespace Portfolio.Models.Dog
@@ -11,6 +14,8 @@ namespace Portfolio.Models.Dog
         Nobody
     }
 
+    public record DogTime(Dog Dog, DateTime Timestamp);
+
     public class DogHub : Hub
     {
         private readonly IDogService _dogService;
@@ -20,9 +25,14 @@ namespace Portfolio.Models.Dog
             _dogService = dogService;
         }
 
+        public override async Task OnConnectedAsync()
+        {
+            await Clients.Caller.SendAsync("dogToggled", _dogService.GetOutsideDog());
+        }
+
         public async Task ToggleDog(Dog dog)
         {
-            _dogService.Toggle(dog);
+            await _dogService.Toggle(dog);
             await Clients.All.SendAsync("dogToggled", dog);
         }
 
@@ -34,11 +44,21 @@ namespace Portfolio.Models.Dog
 
     public class DogService : IDogService
     {
+        private readonly IServiceScopeFactory _scopeFactory;
         private Dog _outsideDog = Dog.Nobody;
 
-        public void Toggle(Dog dog)
+        public DogService(IServiceScopeFactory scopeFactory)
+        {
+            _scopeFactory = scopeFactory;
+        }
+
+        public async Task Toggle(Dog dog)
         {
             _outsideDog = dog;
+            using var scope = _scopeFactory.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<DogContext>();
+            await db.DogTimes.AddAsync(new DogTime(dog, DateTime.UtcNow));
+            await db.SaveChangesAsync();
         }
 
         public Dog GetOutsideDog() => _outsideDog;
@@ -46,7 +66,7 @@ namespace Portfolio.Models.Dog
 
     public interface IDogService
     {
-        void Toggle(Dog dog);
+        Task Toggle(Dog dog);
 
         Dog GetOutsideDog();
     }

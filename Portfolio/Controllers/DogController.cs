@@ -26,14 +26,16 @@ namespace Portfolio.Controllers
         private static string[] VALID_ROLES = new string[] { ApplicationRole.Administrator.ToString(), ApplicationRole.DogOwner.ToString() };
 
         private readonly PortfolioContext _context;
+        private readonly DogContext _dogContext;
         private readonly ILogger<DogController> _logger;
         private readonly IDogService _dogService;
 
-        public DogController(PortfolioContext context, ILogger<DogController> logger, IDogService dogService)
+        public DogController(PortfolioContext context, ILogger<DogController> logger, IDogService dogService, DogContext dogContext)
         {
             _context = context;
             _logger = logger;
             _dogService = dogService;
+            _dogContext = dogContext;
         }
 
         [HttpGet]
@@ -50,6 +52,14 @@ namespace Portfolio.Controllers
             var dogOwners = _context.GetValidUsersForRoles(VALID_ROLES);
             _logger.LogDebug($"Found {dogOwners.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
             return Ok(dogOwners);
+        }
+
+        [HttpGet]
+        [Route("Dog/GetDogTimes/{quantity}")]
+        public IActionResult GetDogTimes(int quantity)
+        {
+            var dogTimes = _dogContext.DogTimes.OrderByDescending(d => d.Timestamp).Take(quantity).ToList();
+            return Ok(dogTimes);
         }
     }
 }

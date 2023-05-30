@@ -3,3 +3,8 @@ export enum Dog {
     Calvin,
     Nobody
 }
+
+export class DogTime {
+    dog: Dog;
+    timestamp: Date;
+}
