@@ -1,12 +1,12 @@
 <div class="flex flex-col justify-center px-8 -mt-12 mb-12" *ngIf="myDog !== nobody">
     
   <div class="flex flex-row justify-between items-center">
-    <h2 class="w-1/3 font-semibold text-gray-600">{{time | date: 'mediumTime'}}</h2>
-    <h1 class="w-1/3" class="font-bold text-2xl text-center">Who is Outside?</h1>
-    <div class="w-1/3 flex justify-end"><mat-icon>notifications_off</mat-icon></div>
+    <h2 class="w-1/3 font-semibold text-gray-600 text-4xl">{{time | date: 'mediumTime'}}</h2>
+    <h1 class="w-1/3" class="text-xl">Who is Outside?</h1>
+    <div class="w-1/3 flex justify-end" (click)="silence()"><mat-icon>notifications_off</mat-icon></div>
   </div>
 
-  <hr class="border-gray-400 opacity-30 mb-8 mt-2" />
+  <hr class="border-gray-300 opacity-30 mb-12 mt-4" />
 
   <div class="container mx-auto flex flex-col space-y-8">
     <div class="flex flex-row justify-between w-full space-x-8">
@@ -61,19 +61,22 @@
     </div>
     <div class="flex flex-row justify-between">
       <div>
-        <div class="text-xs italic">since {{lastUpdatedTime | date: 'shortTime'}} ({{getDurationDisplay()}})</div>
-        <!-- <div *ngFor="let dt of dogTimes">{{getDogName(dt.dog)}}: {{dt.timestamp + 'Z' | date: 'mediumTime'}}</div> -->
+        <div class="text-xs italic underline" (click)="showingOldTimes = !showingOldTimes">since {{lastUpdatedTime | date: 'shortTime'}} ({{getDurationDisplay()}})</div>
+        <div *ngIf="showingOldTimes"><div *ngFor="let dt of dogTimes" class="text-xs italic"><span>{{dt.timestamp + 'Z' | date: 'mediumTime'}}</span> - <span>{{getDogName(dt.dog)}}</span></div></div>
       </div>
       <div>
         <div class="flex flex-row justify-between bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4" *ngIf="(awaitingAlert && outsideDog === otherDog) || currentlyBeingNudged">
           <div class="flex flex-row space-x-2 pr-4 items-center">
               <mat-icon class="animate-pulse">{{awaitingAlert ? "info" : "warning"}}</mat-icon>
-              <div *ngIf="awaitingAlert">You will be alerted when {{getDogName(otherDog)}} comes inside.</div>
-              <div *ngIf="currentlyBeingNudged">Please bring {{getDogName(myDog)}} inside!</div>
+              <div *ngIf="awaitingAlert && !nudgeAcknowledged">You will be alerted when {{getDogName(otherDog)}} comes inside.</div>
+              <div *ngIf="nudgeAcknowledged && !currentlyBeingNudged">{{getDogName(otherDog)}} will be inside soon...</div>
+              <div *ngIf="currentlyBeingNudged && !nudgeAcknowledged">Please bring {{getDogName(myDog)}} inside!</div>
+              <div *ngIf="currentlyBeingNudged && nudgeAcknowledged">Thanks! Let us know when it's all clear.</div>
           </div>
           <div class="flex flex-row space-x-4">
             <button *ngIf="awaitingAlert" class="btn bg-orange-700 text-orange-100 flex flex-row space-x-2" (click)="nudge()"><mat-icon>notifications</mat-icon><span>Nudge</span></button>
             <button *ngIf="awaitingAlert" class="btn border border-orange-700" (click)="cancelAlert()">Cancel</button>
+            <button *ngIf="currentlyBeingNudged && !this.nudgeAcknowledged" class="btn bg-orange-700 text-orange-100" (click)="acknowledgeNudge()">Working on it...</button>
             <button *ngIf="currentlyBeingNudged" class="btn border border-orange-700" (click)="toggleDog(nobody)">All Clear</button>
           </div>
         </div>

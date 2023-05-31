@@ -14,6 +14,8 @@ export class DogComponent implements OnInit {
   canMakeChanges: boolean;
   dogTimes: DogTime[] = [];
 
+  nudgeAcknowledged: boolean = false;
+  showingOldTimes: boolean = false;
   awaitingAlert: boolean = false;
   nudgeSent: boolean = false;
   currentlyBeingNudged: boolean = false;
@@ -23,6 +25,9 @@ export class DogComponent implements OnInit {
   myDog: Dog = Dog.Nobody;
   otherDog: Dog = Dog.Nobody;
   nobody: Dog = Dog.Nobody;
+
+  allClearAudio: HTMLAudioElement;
+  nudgeAudio: HTMLAudioElement;
 
   constructor(private dogService: DogService, private cd: ChangeDetectorRef, private authService: AuthService) { }
 
@@ -41,20 +46,26 @@ export class DogComponent implements OnInit {
       this.canMakeChanges = owners.map(o => o.id).filter(o => o === this.authService.getLoggedInUserId()).length > 0;
     });
 
-    this.dogService.getRecentDogTimes(10).subscribe(times => {
-      this.dogTimes = times;
-    });
+    this.refreshDogTimes();
     
     this.dogService.outsideDog().subscribe(d => {
       if (this.awaitingAlert && this.outsideDog === this.otherDog && d !== this.otherDog) {
         console.log("playing sound to indicate that " + this.otherDog + " is no longer outside");
-        var audio = new Audio('../assets/audio/all-clear.wav');
-        audio.play();
-        this.awaitingAlert = false;
+        if (!this.allClearAudio) {
+          this.allClearAudio = new Audio('../assets/audio/all-clear.wav');
+          this.allClearAudio.loop = true;
+          this.allClearAudio.muted = false;
+          this.allClearAudio.play();
+        }
       }
+      else if (this.awaitingAlert && (d === this.myDog)) {
+        this.silence();
+      }
+      
+      this.refreshDogTimes();
 
       this.currentlyBeingNudged = false;
-      this.lastUpdatedTime = new Date();
+      this.nudgeAcknowledged = false;
       this.outsideDog = d;
       this.cd.detectChanges();
     });
@@ -62,9 +73,20 @@ export class DogComponent implements OnInit {
     this.dogService.onNudge().subscribe(nudgedDog => {
       if (this.outsideDog === this.myDog && nudgedDog === this.myDog) {
         console.log("playing sound to indicate that " + nudgedDog + " should come inside");
-        var audio = new Audio('../assets/audio/nudge.wav');
-        audio.play();
+        if (!this.nudgeAudio) {
+          this.nudgeAudio = new Audio('../assets/audio/nudge.wav');
+          this.nudgeAudio.loop = true;
+          this.nudgeAudio.muted = false;
+          this.nudgeAudio.play();
+        }
         this.currentlyBeingNudged = true;
+      }
+    });
+
+    this.dogService.onNudgeAcknowledged().subscribe(nudgedDog => {
+      if (nudgedDog === this.otherDog) {
+        console.log(nudgedDog + " is coming inside soon");
+        this.nudgeAcknowledged = true;
       }
     });
 
@@ -77,8 +99,29 @@ export class DogComponent implements OnInit {
     }
   }
 
+  silence() {
+    this.awaitingAlert = false;
+    if (this.allClearAudio) {
+      this.allClearAudio.pause();
+      this.allClearAudio.currentTime = 0;
+      this.allClearAudio = null;
+    }
+    if (this.nudgeAudio) {
+      this.nudgeAudio.pause();
+      this.nudgeAudio.currentTime = 0;
+      this.nudgeAudio = null;
+    }
+  }
+
   getDogName(dog: Dog): string {
     return Dog[dog];
+  }
+
+  refreshDogTimes() {
+    this.dogService.getRecentDogTimes(10).subscribe(times => {
+      this.dogTimes = times;
+      this.lastUpdatedTime = new Date(times[0].timestamp + 'Z');
+    });
   }
 
   claimPenny() { 
@@ -100,6 +143,12 @@ export class DogComponent implements OnInit {
       this.nudgeSent = true;
       this.dogService.nudge(this.otherDog);
     }
+  }
+
+  acknowledgeNudge() {
+    this.silence();
+    this.dogService.acknowledgeNudge(this.myDog);
+    this.nudgeAcknowledged = true;
   }
 
   cancelAlert() {

@@ -40,6 +40,11 @@ namespace Portfolio.Models.Dog
         {
             await Clients.All.SendAsync("dogNudged", dog);
         }
+
+        public async Task AcknowledgeNudge(Dog dog)
+        {
+            await Clients.All.SendAsync("nudgeAcknowledged", dog);
+        }
     }
 
     public class DogService : IDogService

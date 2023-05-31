@@ -12,6 +12,7 @@ export class DogService {
 
   private outsideDogSubject: Subject<Dog> = new ReplaySubject<Dog>();
   private dogNudgedSubject: Subject<Dog> = new ReplaySubject<Dog>();
+  private nudgeAcknowledgedSubject: Subject<Dog> = new ReplaySubject<Dog>();
   private connection: signalR.HubConnection;
   
   constructor(private http: HttpClient) { }
@@ -41,6 +42,11 @@ export class DogService {
       console.log("dog nudged: " + dog);
       this.dogNudgedSubject.next(dog);
     });
+
+    this.connection.on("nudgeAcknowledged", (dog: Dog) => {
+      console.log("nudge acknowledged: " + dog);
+      this.nudgeAcknowledgedSubject.next(dog);
+    });
   }
 
   toggleOutsideDog(dog: Dog): void {
@@ -51,12 +57,20 @@ export class DogService {
     this.connection.send('nudge', dog);
   }
 
+  acknowledgeNudge(dog: Dog): void {
+    this.connection.send('acknowledgeNudge', dog);
+  }
+
   public outsideDog(): Observable<Dog> {
     return this.outsideDogSubject.asObservable();
   }
 
   public onNudge(): Observable<Dog> {
     return this.dogNudgedSubject.asObservable();
+  }
+
+  public onNudgeAcknowledged(): Observable<Dog> {
+    return this.nudgeAcknowledgedSubject.asObservable();
   }
   
   public getDogOwners() {
