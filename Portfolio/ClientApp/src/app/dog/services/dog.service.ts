@@ -10,6 +10,7 @@ import { Dog, DogTime } from '../models/dog';
 })
 export class DogService {
 
+  private connectionSubject: Subject<boolean> = new ReplaySubject<boolean>();
   private outsideDogSubject: Subject<Dog> = new ReplaySubject<Dog>();
   private dogNudgedSubject: Subject<Dog> = new ReplaySubject<Dog>();
   private nudgeAcknowledgedSubject: Subject<Dog> = new ReplaySubject<Dog>();
@@ -27,10 +28,15 @@ export class DogService {
       .withUrl("/dogs")
       .build();
 
-    this.connection.start().then(function(){
-      console.log('SignalR Connected!');
-    }).catch(function(err) {
-      return console.error(err.toString());
+    this.startConnection();
+
+    this.connection.onclose((err) => {
+      this.connectionSubject.next(false);
+      this.startConnection();
+    });
+
+    this.connection.onreconnected(() => {
+      this.connectionSubject.next(true);
     });
 
     this.connection.on("dogToggled", (dog: Dog) => {
@@ -49,6 +55,16 @@ export class DogService {
     });
   }
 
+  startConnection() {
+    this.connection.start().then(() => {
+      console.log('SignalR Connected!');
+      this.connectionSubject.next(true);
+    }).catch((err) => {
+      this.connectionSubject.next(false);
+      console.error(err.toString());
+    });
+  }
+  
   toggleOutsideDog(dog: Dog): void {
     this.connection.send('toggleDog', dog);
   }
@@ -79,5 +95,9 @@ export class DogService {
 
   public getRecentDogTimes(quantity: number) {
     return this.http.get<DogTime[]>(`Dog/GetDogTimes/${quantity}`);
+  }
+
+  public onConnectionStatusChange(): Observable<boolean> {
+    return this.connectionSubject.asObservable();
   }
 }

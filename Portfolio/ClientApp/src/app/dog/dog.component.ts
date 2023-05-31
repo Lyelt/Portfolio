@@ -14,6 +14,7 @@ export class DogComponent implements OnInit {
   canMakeChanges: boolean;
   dogTimes: DogTime[] = [];
 
+  connected: boolean = false;
   nudgeAcknowledged: boolean = false;
   showingOldTimes: boolean = false;
   awaitingAlert: boolean = false;
@@ -89,8 +90,16 @@ export class DogComponent implements OnInit {
         this.nudgeAcknowledged = true;
       }
     });
+    
+    this.dogService.onConnectionStatusChange().subscribe(connected => {
+      this.connected = connected;
+    });
 
     this.dogService.start();
+  }
+
+  refresh() {
+    window.location.reload();
   }
 
   toggleDog(dog: Dog) {
