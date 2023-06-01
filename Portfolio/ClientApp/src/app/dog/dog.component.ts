@@ -206,4 +206,12 @@ export class DogComponent implements OnInit {
   
     return interval + " " + intervalType + " ago";
   }
+
+  showingWarningBox() {
+    return (this.awaitingAlert && this.outsideDog === this.otherDog) || this.currentlyBeingNudged
+  }
+
+  showingAlertMeBox() {
+    return !this.awaitingAlert && this.outsideDog === this.otherDog;
+  }
 }

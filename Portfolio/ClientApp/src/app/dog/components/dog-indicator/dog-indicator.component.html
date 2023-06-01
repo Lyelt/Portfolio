@@ -1,0 +1,12 @@
+<div class="sm:h-24 lg:h-32 flex flex-col items-center rounded border {{borderClass}} {{textClass}} shadow text-xl lg:text-5xl md:font-semibold" 
+    [ngClass]="[isOutside ? 'font-semibold md:font-bold sm:text-5xl lg:text-7xl sm:h-48 lg:h-56 sm:pt-14 border-none justify-between ' + bgClass : 'justify-around']">
+    <div class="py-2 px-4">
+        <span>{{dogName}}</span>
+    </div>
+    <div class="flex flex-row w-full" *ngIf="isOutside">
+        <div class="border-2 {{animatedBorderClass}} ping-2000 w-1/4" ></div>
+        <div class="border-2 {{animatedBorderClass}} ping-2000 w-1/4 animation-delay-500"></div>
+        <div class="border-2 {{animatedBorderClass}} ping-2000 w-1/4 animation-delay-1000"></div>
+        <div class="border-2 {{animatedBorderClass}} ping-2000 w-1/4 animation-delay-1500"></div>
+    </div>
+</div>

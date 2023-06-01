@@ -86,6 +86,7 @@ import { GameComponent } from './one-night/components/game/game.component';
 import { MonkeyComponent } from './one-night/components/monkey/monkey.component';
 import { SmallWorldComponent } from './yugioh/components/small-world/small-world.component';
 import { DogComponent } from './dog/dog.component';
+import { DogIndicatorComponent } from './dog/components/dog-indicator/dog-indicator.component';
 
 const routes: Routes = [
     {
@@ -258,7 +259,8 @@ const routes: Routes = [
         GameComponent,
         MonkeyComponent,
         SmallWorldComponent,
-        DogComponent
+        DogComponent,
+        DogIndicatorComponent
     ],
     imports: [
         BrowserModule,
