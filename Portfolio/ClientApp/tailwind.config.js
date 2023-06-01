@@ -42,6 +42,13 @@ module.exports = {
         transitionProperty: {
           'bg': 'background-color',
           'center': 'left, right',
+        },
+        scale: {
+          200: '2',
+          250: '2.5',
+          300: '3',
+          350: '3.5',
+          400: '4'
         }
       },
      
