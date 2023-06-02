@@ -79,17 +79,18 @@
     </div>
     
   </div>
-</div>
-
-  <div class="flex flex-col justify-center px-8" *ngIf="myDog === nobody">
+  
+  <div *ngIf="!connected" (click)="refresh()" class="bg-red-200 dark:bg-red-800 rounded text-red-900 dark:text-red-100 shadow p-6 mx-auto text-4xl">
+    <span>A connection error occurred. </span>
+    <span class="font-bold underline">Click here to reconnect.</span>
+  </div>
+  
+  <div class="flex flex-col justify-center px-8" *ngIf="myDog === nobody && connected">
     <h1 class="font-bold text-2xl mb-12 text-center -mt-12">My dog is...</h1>
     <div class="flex flex-row justify-between">
         <button class="btn border border-indigo-400" (click)="claimPenny()">Penny</button>
         <button class="btn border border-indigo-400" (click)="claimCalvin()">Calvin</button>
     </div>
   </div>
+</div>
 
-  <div *ngIf="!connected" (click)="refresh()" class="bg-red-200 dark:bg-red-800 rounded text-red-900 dark:text-red-100 shadow p-6 container mx-auto flex space-x-2 justify-between">
-    <span>A connection error occurred.</span>
-    <span class="font-bold underline">Click here to reconnect.</span>
-  </div>
