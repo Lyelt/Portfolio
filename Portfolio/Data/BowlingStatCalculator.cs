@@ -1,5 +1,4 @@
-﻿using MoreLinq;
-using Portfolio.Models.Bowling;
+﻿using Portfolio.Models.Bowling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -87,17 +86,17 @@ namespace Portfolio.Data
         public BowlingStat BestSessionAverage()
         {
             var gamesBySession = _games.GroupBy(g => g.Session).Select(g => new { Session = g.Key, Games = g.ToList() });
-            var bestSession = gamesBySession.MaxBy(gs => AverageOfGames(gs.Games)).FirstOrDefault();
+            var bestSession = gamesBySession.MaxBy(gs => AverageOfGames(gs.Games)).Session;
             return bestSession != null ? 
-                new BowlingStat("Best Session Average", AverageOfGames(bestSession.Games), details: $"Session {bestSession.Session.Id} on {bestSession.Session.Date.ToShortDateString()}")
+                new BowlingStat("Best Session Average", AverageOfGames(bestSession.Games), details: $"Session {bestSession.Id} on {bestSession.Date.ToShortDateString()}")
               : new BowlingStat("Best Session Average", 0);
         }
         public BowlingStat WorstSessionAverage()
         {
             var gamesBySession = _games.GroupBy(g => g.Session).Select(g => new { Session = g.Key, Games = g.ToList() });
-            var worstSession = gamesBySession.MinBy(gs => AverageOfGames(gs.Games)).FirstOrDefault();
+            var worstSession = gamesBySession.MinBy(gs => AverageOfGames(gs.Games)).Session;
             return worstSession != null ? 
-                new BowlingStat("Worst Session Average", AverageOfGames(worstSession.Games), details: $"Session {worstSession.Session.Id} on {worstSession.Session.Date.ToShortDateString()}")
+                new BowlingStat("Worst Session Average", AverageOfGames(worstSession.Games), details: $"Session {worstSession.Id} on {worstSession.Date.ToShortDateString()}")
               : new BowlingStat("Worst Session Average", 0);
         }
 
