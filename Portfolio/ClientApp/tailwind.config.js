@@ -2,7 +2,7 @@ const colors = require('tailwindcss/colors')
 
 module.exports = {
     prefix: '',
-    purge: [
+    content: [
       './src/**/*.{html,ts}',
     ],
     darkMode: 'class',
@@ -10,7 +10,7 @@ module.exports = {
       colors: {
         transparent: 'transparent',
         current: 'currentColor',
-        gray: colors.blueGray,
+        gray: colors.slate,
         darkGray: colors.gray,
         indigo: colors.indigo,
         pink: colors.pink,
@@ -52,24 +52,6 @@ module.exports = {
         }
       },
      
-    },
-    variants: {
-      extend: {
-        position: ['hover'],
-        ringColor: ['hover'],
-        ringWidth: ['hover'],
-        borderWidth: ['responsive', 'hover', 'focus', 'active', 'group-hover', 'last', 'first'],
-        borderStyle: ['responsive', 'hover', 'focus', 'active', 'group-hover', 'last', 'first'],
-        borderColor: ['responsive', 'hover', 'focus', 'active', 'group-hover', 'last', 'first', 'dark'],
-        backgroundColor: ['responsive', 'hover', 'focus', 'odd', 'even', 'dark'],
-        margin: ['responsive', 'first', 'last'],
-        transitionProperty: ['hover', 'focus'],
-        transitionTimingFunction: ['hover', 'focus'],
-        transitionDuration: ['hover', 'focus'],
-        opacity: ['disabled'],
-        pointerEvents: ['disabled'],
-        textAlign: ['first', 'last']
-      }
     },
   plugins: [
     require('@tailwindcss/forms')
