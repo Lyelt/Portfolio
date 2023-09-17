@@ -1,7 +1,7 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0-focal AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /app
 
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install -y nodejs
 
 # copy csproj and restore as distinct layers
