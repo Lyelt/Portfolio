@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
@@ -54,7 +54,6 @@ import { ViewCollectionComponent } from './yugioh/components/view-collection/vie
 import { AddCardComponent } from './yugioh/components/add-card/add-card.component';
 import { AlertComponent } from './error-handling/components/alert/alert.component';
 import { HttpErrorInterceptor } from './error-handling/http-error-interceptor';
-import { AlertService } from './error-handling/alert.service';
 import { SpeedrunUpdateArticleComponent } from './blog/components/articles/speedrun-update-article/speedrun-update-article.component';
 import { SelectedCardComponent } from './yugioh/components/selected-card/selected-card.component';
 import { SearchResultsComponent } from './yugioh/components/search-results/search-results.component';

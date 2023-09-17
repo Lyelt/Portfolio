@@ -52,7 +52,6 @@
                 "styles": true,
                 "vendor": true
               },
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
