@@ -17,6 +17,7 @@ namespace Portfolio.Extensions
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
+                .WriteTo.File("PortfolioLog.log")
                 .MinimumLevel.Is(Enum.TryParse<LogEventLevel>(configuration.GetValue("Logging:LogLevel:Default", "Information"), out var level) ? level : LogEventLevel.Information)
                 .CreateLogger();
 
