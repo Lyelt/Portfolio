@@ -11,6 +11,6 @@ export class BingoService {
   constructor() { }
 
   public resetComponents() {
-    this.reset.next();
+    this.reset.next(null);
   }
 }

@@ -19,7 +19,7 @@ namespace Portfolio.Models.Speedrun
 
         public DateTime LastUpdated { get; set; }
         public TimeSpan Time { get; set; }
-        public string VideoUrl { get; set; }
+        public string? VideoUrl { get; set; }
 
         [NotMapped]
         public string TimeDisplay { get; set; }

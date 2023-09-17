@@ -41,7 +41,7 @@ namespace Portfolio.Controllers
             if (string.IsNullOrWhiteSpace(credentials?.Username) || string.IsNullOrWhiteSpace(credentials?.Password))
                 throw new BadRequestException("Username and password cannot be null or empty");
 
-            var user = _context.Users.FirstOrDefault(u => u.UserName.Equals(credentials.Username, StringComparison.OrdinalIgnoreCase));
+            var user = _context.Users.FirstOrDefault(u => u.UserName.Equals(credentials.Username));
 
             if (user != null)
             {
@@ -65,7 +65,7 @@ namespace Portfolio.Controllers
             if (string.IsNullOrWhiteSpace(credentials?.Username))
                 throw new BadRequestException("Username cannot be null or empty");
 
-            var user = _context.Users.FirstOrDefault(u => u.UserName.Equals(credentials.Username, StringComparison.OrdinalIgnoreCase));
+            var user = _context.Users.FirstOrDefault(u => u.UserName.Equals(credentials.Username));
             if (user == null)
                 throw new UnauthorizedException($@"No guest user was found with username ""{credentials.Username}""");
 
