@@ -1,0 +1,93 @@
+<blog-article>
+    <blog-header>
+      <blog-title>Getting with the Times</blog-title>
+      <blog-date>September 18, 2023</blog-date>
+      <blog-subtitle>Don't neglect your apps for two years, kids.</blog-subtitle>
+    </blog-header>
+  
+    <blog-section>
+      <blog-section-title>Security? I hardly know 'er</blog-section-title>
+      <blog-p>
+        It's September 2023 and my last blog post was in May 2021. Oh, how time flies. But apparently good security practices fly even faster, and so I found myself with a broken website. 
+        <i>Just rerun letsencrypt manually</i>, I thought to myself, <i>the cron job to automatically renew your certificate must be broken</i>.
+        How wrong I was... 
+      </blog-p>
+      
+      <blog-p class="mt-6">
+        As it turned out, the dokku letsencrypt plugin was out of date and upgrading it alone would not be possible without updating dokku as well. 
+        To make a long and boring story short and, well, still boring, I opted to take this opportunity to upgrade not only dokku, but .NET, Angular, Tailwind, and all of their dependencies as well. 
+        Honestly, I was a bit intimidated of my own app's framework. It had been so long since I had touched a Dockerfile, I wasn't sure I even knew how to perform the upgrade. 
+        I've never been much of a security expert. And god help me once I start calling <blog-code>npm i</blog-code> and my terminal is filled with a sea of red text...
+      </blog-p>
+
+      <blog-p class="mt-6">
+        I don't expect anybody to read this blog post. The rest of it is mostly for my future self when I inevitably neglect this poor site for two more years and have to repeat the process 
+        (WHY DIDN'T YOU JUST KEEP UP WITH IT? ARGH!). 
+        In all seriousness, the process was not as painful as I had anticipated, but as soon as things work I seem to conveniently forget everything I just did, so here's an attempt to mitigate that! 
+      </blog-p>
+    </blog-section>
+  
+    <blog-section>
+      <blog-section-title>.NET 7</blog-section-title>
+      <blog-h3>Am I going to regret not choosing a LTS version of .NET?</blog-h3>
+      <blog-p>
+        <ul class="list-disc ml-8">
+            <li>Updated project file</li>
+            <li>Updated Dockerfile</li>
+            <li>Fixed up <blog-code>MoreLinq</blog-code> references (now built-in, yay!)</li>
+            <li>Fixed up <blog-code>Serilog</blog-code> references</li>
+        </ul>
+      </blog-p>
+    </blog-section>
+    <blog-section>
+      <blog-section-title>Angular, Node, and Tailwind</blog-section-title>
+      <blog-h3>I'm actually starting to <i>not</i> loathe upgrading Angular versions</blog-h3>
+      <blog-p>
+        The first hurdle here was that every time I ran <blog-code>npm i @angular/core@latest @angular/cli@latest</blog-code> or <blog-code>@next</blog-code>, I was met with peer dependency errors. 
+        I was told I could use <blog-code>--force</blog-code> to ignore these and deal with them later, but that would be very ill-advised! 
+        Well, my middle name must be "Danger" because after several hours of futile effort, I used <blog-code>--force</blog-code>... and I'm alive to tell the tale. 
+        One version at a time, I manually updated <blog-code>@angular/core</blog-code>, <blog-code>@angular/cli</blog-code>, and <blog-code>@angular/material</blog-code> as well as all of their dependencies.
+    </blog-p>
+    <blog-p class="mt-6">
+        For Node, I updated my local version as well as the version in the Dockerfile. No big issues here.
+    </blog-p>
+    <blog-p class="mt-6">
+        TailwindCSS 3.3 was a breeze. I got to get rid of PurgeCSS and a few lines of Tailwind config. I spot-fixed the resulting errors and random environmental stuff that was broken. 
+        ProTip: Before you start ripping hair out over an absolutely nonsensical error, <blog-code>npm uninstall package</blog-code> followed by a <blog-code>npm i package</blog-code> can work wonders. 
+        Have you tried turning it off and back on again?
+    </blog-p>
+    </blog-section>
+    <blog-section>
+        <blog-section-title>Dokku and DigitalOcean environment</blog-section-title>
+        <blog-h3>...less easy</blog-h3>
+        <blog-p>
+            Oh, Dokku. How I still do not understand you so. Here's a long list of everything I can remember doing. I probably did not do them in this order, either. 
+            
+            <ul class="list-disc ml-8 my-2">
+                <li>Created a snapshot of the current (old) DigitalOcean droplet</li>
+                <li>Created a new DigitalOcean droplet from the base Ubuntu image (updated to 20.x)</li>
+                <li>Installed latest version of dokku, following setup instructions</li>
+                <li>Created portfolio app</li>
+                <li>Ran <blog-code>dokku ports:add http:80:5000</blog-code> and <blog-code>dokku ports:add https:443:5000</blog-code></li>
+                <li>Installed dokku letsencrypt and dokku mysql plugins</li>
+                <li>Ran <blog-code>dokku letsencrypt:set portfolio email [myEmail]</blog-code> and <blog-code>dokku letsencrypt:enable portfolio</blog-code></li>
+                <li>Configured dokku mysql instance to link to portfolio app (create, link, promote)</li>
+                <li>Created a new SSH key pair and added the public key to the known_hosts of the new droplet (why wouldn't the old one work? I don't remember)</li>
+                <li>Added new public key to known_hosts of the old droplet (for the following step)</li>
+                <li>Ran <blog-code>dokku mysql:export portfolioDB &gt; dump.sql</blog-code> on the old droplet</li>
+                <li>Ran <blog-code>scp dump.sql root@&lt;droplet_ip&gt;:/root</blog-code> on the old droplet to copy dump to new droplet</li>
+                <li>Ran <blog-code>dokku mysql:import portfolioDB &lt; dump.sql</blog-code></li>
+                <li>Got DB password from <blog-code>cat /var/lib/dokku/services/mysql/portfolioDB/PASSWORD</blog-code></li>
+                <li>Ran <blog-code>dokku config:set portfolio CONNECTION_STRING="Server=***********;Database=portfolioDB;Uid=mysql;Pwd=*************"</blog-code> where server is the server name part of DATABASE_URL</li>
+            </ul>
+
+            I'm sure there was more to it, but I'm hoping this little checklist might come in handy next time I need to do something like this. 
+            I might also opt to use my staging server to test these changes first, but for now keeping that server alive is not worth the extra $30 a month in usage cost (DigitalOcean can cost a pretty penny!).
+        </blog-p>
+    </blog-section>
+    <blog-section>
+        <blog-section-title>The Future</blog-section-title>
+        <blog-p>Here's to keeping up with this site! At least, until I become a father in March 2024... :)</blog-p>
+    </blog-section>
+  </blog-article>
+  
