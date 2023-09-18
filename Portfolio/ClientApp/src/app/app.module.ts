@@ -1,11 +1,10 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
-import { MaterialModule } from './material/material.module';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './auth/components/login/login.component';
 import { AuthGuard } from './auth/auth-guard.service';
@@ -55,7 +54,6 @@ import { ViewCollectionComponent } from './yugioh/components/view-collection/vie
 import { AddCardComponent } from './yugioh/components/add-card/add-card.component';
 import { AlertComponent } from './error-handling/components/alert/alert.component';
 import { HttpErrorInterceptor } from './error-handling/http-error-interceptor';
-import { AlertService } from './error-handling/alert.service';
 import { SpeedrunUpdateArticleComponent } from './blog/components/articles/speedrun-update-article/speedrun-update-article.component';
 import { SelectedCardComponent } from './yugioh/components/selected-card/selected-card.component';
 import { SearchResultsComponent } from './yugioh/components/search-results/search-results.component';
@@ -87,6 +85,7 @@ import { MonkeyComponent } from './one-night/components/monkey/monkey.component'
 import { SmallWorldComponent } from './yugioh/components/small-world/small-world.component';
 import { DogComponent } from './dog/dog.component';
 import { DogIndicatorComponent } from './dog/components/dog-indicator/dog-indicator.component';
+import { MaterialModule } from './material/material.module';
 
 const routes: Routes = [
     {
@@ -263,10 +262,10 @@ const routes: Routes = [
         DogIndicatorComponent
     ],
     imports: [
-        BrowserModule,
+        CommonModule,
         HttpClientModule,
-        RouterModule.forRoot(routes, { useHash: false, scrollPositionRestoration: 'enabled' }),
         MaterialModule,
+        RouterModule.forRoot(routes, { useHash: false, scrollPositionRestoration: 'enabled' }),
         NgxChartsModule,
         AutocompleteLibModule,
         JwtModule.forRoot({
@@ -277,10 +276,6 @@ const routes: Routes = [
     ],
     exports: [
         MaterialModule
-    ],
-    entryComponents: [
-        EditStarComponent,
-        BowlingStartSessionComponent
     ],
     providers: [
         AuthGuard,

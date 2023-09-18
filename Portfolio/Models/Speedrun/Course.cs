@@ -13,7 +13,7 @@ namespace Portfolio.Models.Speedrun
         [Required]
         public string Name { get; set; }
         [MaxLength(5)]
-        public string Abbreviation { get; set; }
+        public string? Abbreviation { get; set; }
 
         public List<Star> Stars { get; set; }
     }

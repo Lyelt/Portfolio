@@ -44,15 +44,16 @@ namespace Portfolio
                 client.BaseAddress = new Uri(Configuration.GetValue("Api:Yugioh:CardEndpoint", "https://db.ygoprodeck.com/api/v7/cardinfo.php?misc=yes"));
             });
 
-            services.AddMvc(config =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                                .RequireAuthenticatedUser()
-                                .Build();
-                config.Filters.Add(new AuthorizeFilter(policy));
-            })
-            .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
-            .SetCompatibilityVersion(CompatibilityVersion.Latest);
+            services
+                .AddMvc(config =>
+                {
+                    var policy = new AuthorizationPolicyBuilder()
+                                    .RequireAuthenticatedUser()
+                                    .Build();
+                    config.Filters.Add(new AuthorizeFilter(policy));
+                })
+                .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+                
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
