@@ -86,6 +86,8 @@ import { SmallWorldComponent } from './yugioh/components/small-world/small-world
 import { DogComponent } from './dog/dog.component';
 import { DogIndicatorComponent } from './dog/components/dog-indicator/dog-indicator.component';
 import { MaterialModule } from './material/material.module';
+import { September2023Component } from './blog/components/articles/september2023/september2023.component';
+import { BlogCodeComponent } from './blog/components/blog-template/blog-code/blog-code.component';
 
 const routes: Routes = [
     {
@@ -126,6 +128,9 @@ const routes: Routes = [
     },
     {
         path: 'blog/public', component: April2021Component
+    },
+    {
+        path: 'blog/upgrade', component: September2023Component
     },
     {
         path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
@@ -259,7 +264,9 @@ const routes: Routes = [
         MonkeyComponent,
         SmallWorldComponent,
         DogComponent,
-        DogIndicatorComponent
+        DogIndicatorComponent,
+        September2023Component,
+        BlogCodeComponent
     ],
     imports: [
         CommonModule,
