@@ -14,7 +14,6 @@ using Portfolio.Models.Auth;
 using Microsoft.Extensions.Caching.Memory;
 using Portfolio.Models.Yugioh;
 using System.Net.Http;
-using MoreLinq;
 using Microsoft.AspNetCore.Authorization;
 using Portfolio.Extensions;
 using Portfolio.Models.Errors;

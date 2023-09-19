@@ -97,7 +97,6 @@ input[type] {
 @import url('https://fonts.googleapis.com/css?family=Raleway:300,700|Material+Icons');
 @import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
 
-/* purgecss start ignore */
 /* Make the legend labels flow horizontally and wrap instead of one-per-line. */
 .chart-legend .legend-labels {
   white-space: inherit #{!important};
@@ -257,4 +256,3 @@ input[type] {
 .animation-delay-1500 {
   animation-delay: 1500ms;
 }
-/* purgecss end ignore */
