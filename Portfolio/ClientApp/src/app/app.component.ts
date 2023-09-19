@@ -22,6 +22,11 @@ export class AppComponent {
       "yugioh",
       this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/yugioh.svg")
     );
+
+    this.matIconRegistry.addSvgIcon(
+      "gameNight",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/game-night.svg")
+    );
   }
 
   ngOnInit() {

@@ -88,6 +88,7 @@ import { DogIndicatorComponent } from './dog/components/dog-indicator/dog-indica
 import { MaterialModule } from './material/material.module';
 import { September2023Component } from './blog/components/articles/september2023/september2023.component';
 import { BlogCodeComponent } from './blog/components/blog-template/blog-code/blog-code.component';
+import { GameNightComponent } from './game-night/components/game-night/game-night.component';
 
 const routes: Routes = [
     {
@@ -181,6 +182,9 @@ const routes: Routes = [
         path: 'dog', component: DogComponent, canActivate: [AuthGuard], data: { toolbar: false }
     },
     {
+        path: 'game-night', component: GameNightComponent, canActivate: [AuthGuard]
+    },
+    {
         path: '**',
         redirectTo: '/'
     }
@@ -266,7 +270,8 @@ const routes: Routes = [
         DogComponent,
         DogIndicatorComponent,
         September2023Component,
-        BlogCodeComponent
+        BlogCodeComponent,
+        GameNightComponent
     ],
     imports: [
         CommonModule,
