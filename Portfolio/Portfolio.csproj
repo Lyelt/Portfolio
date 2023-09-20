@@ -6,8 +6,6 @@
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
-    <SpaProxyServerUrl>https://localhost:44448</SpaProxyServerUrl>
-    <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
 
     <!-- Set this to true if you enable server-side prerendering -->
