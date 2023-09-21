@@ -28,6 +28,7 @@ namespace Portfolio.Identity
         Bowler,
         Duelist,
         DogOwner,
+        Gamer,
         Guest
     }
 }
