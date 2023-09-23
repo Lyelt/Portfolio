@@ -26,6 +26,7 @@ CREATE TABLE `GameNightGameGameNightPreset` (
 CREATE TABLE `GameNights` (
     `Id` int NOT NULL AUTO_INCREMENT,
     `Date` datetime(6) NOT NULL,
+    `Meal` longtext NULL,
     `UserId` varchar(255) NOT NULL,
     `GameNightPresetId` int NOT NULL,
     CONSTRAINT `PK_GameNights` PRIMARY KEY (`Id`),

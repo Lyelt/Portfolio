@@ -4,7 +4,6 @@ import { User } from '../../auth/user';
 import { Course } from '../models/course';
 import { ArchivedStarTime, StarTime } from '../models/star-time';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root'

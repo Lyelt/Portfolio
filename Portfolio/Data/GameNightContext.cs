@@ -14,7 +14,7 @@ namespace Portfolio.Data
     {
         public DbSet<GameNight> GameNights { get; set; }
 
-        public DbSet<GameNightPreset> GameNightPresets { get; set; }
+        public DbSet<GameNightMeal> GameNightPresets { get; set; }
 
         public DbSet<GameNightGame> Games { get; set; }
 
@@ -35,15 +35,11 @@ namespace Portfolio.Data
                 .WithMany();
 
             builder.Entity<GameNight>()
-                .HasOne(gn => gn.GameNightPreset)
-                .WithMany();
-
-            builder.Entity<GameNightPreset>()
                 .HasMany(gn => gn.Games)
                 .WithMany();
 
-            builder.Entity<GameNightPreset>()
-                .HasOne(gnp => gnp.User)
+            builder.Entity<GameNight>()
+                .HasOne(gn => gn.GameNightMeal)
                 .WithMany();
 
         }

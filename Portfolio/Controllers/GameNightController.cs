@@ -52,6 +52,20 @@ namespace Portfolio.Controllers
             return Ok(games);
         }
 
+        [HttpGet]
+        [Route("GameNight/GetGameNights/{startTime}/{length}")]
+        public IActionResult GetGameNights(long startTime, int length)
+        {
+            // List<GameNightGame> games = _gnContext.Games.ToList();
+            // _logger.LogDebug($"Found {games.Count} total games.");
+            var gameNights = new List<GameNight>
+           {
+               new GameNight { Id = 1, UserId = "Nick", Date = DateTime.Now },
+               new GameNight { Id = 2, UserId = "Bash", Date = DateTime.Now.AddDays(7), GameNightMealId = 1 }
+           };
+           return Ok(gameNights);
+        }
+
         private async Task<ApplicationUser> GetCurrentUser()
         {
             return await _userManager.GetUserAsync(User);

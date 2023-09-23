@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 
 namespace Portfolio.Models.GameNight
 {
-    public class GameNightPreset
+    public class GameNightMeal
     {
         [Key]
         public int Id { get; set; }
+
         public string Name { get; set; }
-        public List<GameNightGame> Games { get; set; }
-        public ApplicationUser User { get; set; }
+
+        public DateTime DateAdded { get; set; }
     }
 }

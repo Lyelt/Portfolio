@@ -16,14 +16,15 @@ namespace Portfolio.Models.GameNight
         [Required]
         public DateTime Date { get; set; }
 
+        public int? GameNightMealId { get; set; }
+
+        public virtual GameNightMeal GameNightMeal { get; set; }
+
         [ForeignKey("User")]
         public string? UserId { get; set; }
 
         public virtual ApplicationUser User { get; set; }
 
-        [ForeignKey("GameNightPreset")]
-        public int? GameNightPresetId { get; set; }
-
-        public virtual GameNightPreset GameNightPreset { get; set; }
+        public List<GameNightGame> Games { get; set; }
     }
 }

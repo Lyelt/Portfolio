@@ -1,0 +1,32 @@
+import { Component, OnInit } from '@angular/core';
+import { GameNight } from '../../models/game-night';
+import { GameNightService } from '../../services/game-night.service';
+
+@Component({
+  selector: 'app-game-night-schedule',
+  templateUrl: './game-night-schedule.component.html',
+  styleUrls: ['./game-night-schedule.component.scss']
+})
+export class GameNightScheduleComponent implements OnInit {
+  public gameNights: GameNight[] = [];
+
+  constructor(private gnService: GameNightService) {}
+
+  ngOnInit(): void {
+    // this.gameNights.push({ id: 1, date: new Date(), userId: "Nick" });
+    // this.gameNights.push({ id: 2, date: new Date(), userId: "Bash" });
+    // this.gameNights.push({ id: 3, date: new Date(), userId: "Ben" });
+    // this.gameNights.push({ id: 4, date: new Date(), userId: "Mom" });
+    this.gnService.visibleGameNights().subscribe(data => {
+      this.gameNights = data;
+    });
+  }
+
+  public gameNightIsSelected(gn: GameNight): boolean {
+    return gn.id === this.gnService.selectedGameNight.id;
+  }
+
+  public selectGameNight(gn: GameNight): void {
+    this.gnService.selectGameNight(gn);
+  }
+}

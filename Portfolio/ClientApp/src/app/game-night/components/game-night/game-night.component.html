@@ -1,1 +1,30 @@
-<p>game-night works!</p>
+
+<div class="-mt-20 -mb-48 flex flex-col select-none">
+    <div class="flex flex-col px-4 mt-2 mb-4">
+        <app-game-night-schedule></app-game-night-schedule>
+    </div>
+    <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 my-6">
+        <ul class="flex flex-flex-row justify-around -mb-px uppercase">
+            <li class="mr-2">
+                <a routerLink="/gamenight/home" 
+                class="inline-block p-4 rounded-t-lg"
+                [ngClass]="{'text-indigo-600 border-b-2 border-indigo-600': isActive('home')}">Home</a>
+            </li>
+            <li class="mr-2">
+                <a routerLink="/gamenight/games" 
+                class="inline-block p-4 rounded-t-lg"
+                [ngClass]="{'text-indigo-600 border-b-2 border-indigo-600': isActive('games')}">Games</a>
+            </li>
+            <li class="mr-2">
+                <a routerLink="/gamenight/meals" 
+                class="inline-block p-4 rounded-t-lg"
+                [ngClass]="{'text-indigo-600 border-b-2 border-indigo-600': isActive('meals')}">Meals</a>
+            </li>
+        </ul>
+    </div>
+    <div class="px-4">
+        <app-game-night-home *ngIf="isActive('home')"></app-game-night-home>
+        <div *ngIf="isActive('games')">games</div>
+        <div *ngIf="isActive('meals')">meals</div>
+    </div>
+</div>
