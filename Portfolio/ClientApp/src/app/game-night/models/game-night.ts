@@ -1,8 +1,11 @@
+import { User } from "src/app/auth/user";
+
 export class GameNight {
     id: number;
     date: Date;
     userId?: string;
     gameNightMealId?: number;
+    user: User;
 }
 
 export class GameNightMeal {

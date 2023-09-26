@@ -24,6 +24,10 @@ export class GameNightService {
     this.selectedGameNight = gn;
   }
 
+  public skipGameNight(gn: GameNight) {
+    this.http.delete(`GameNight/SkipGameNight/${gn.id}`).subscribe(() => this.reload());
+  }
+
   private reload(): void {
     this.http
       .get<GameNight[]>(`GameNight/GetGameNights/${new Date().getTime()}/4`)

@@ -14,7 +14,7 @@ export class GameNightComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(params => {
       const route = this.route.routeConfig.path.split('/')[1];
-
+      
       if (route === 'home') {
           const id = +params['cardId'];
           

@@ -25,22 +25,24 @@ namespace Portfolio.Controllers
         private readonly PortfolioContext _userContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<GameNightController> _logger;
+        private readonly IGameNightService _gnService;
 
-        public GameNightController(GameNightContext context, PortfolioContext userContext, UserManager<ApplicationUser> userManager, ILogger<GameNightController> logger)
+        public GameNightController(GameNightContext context, PortfolioContext userContext, UserManager<ApplicationUser> userManager, ILogger<GameNightController> logger, IGameNightService gnService)
         {
             _gnContext = context;
             _userContext = userContext;
             _userManager = userManager;
             _logger = logger;
+            _gnService = gnService;
         }
 
         [HttpGet]
         [Route("GameNight/GetUsers")]
         public IActionResult GetUsers()
         {
-            var speedrunners = _userContext.GetValidUsersForRoles(VALID_ROLES);
-            _logger.LogDebug($"Found {speedrunners.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-            return Ok(speedrunners);
+            var gamers = _userContext.GetValidUsersForRoles(VALID_ROLES);
+            _logger.LogDebug($"Found {gamers.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
+            return Ok(gamers);
         }
 
         [HttpGet]
@@ -54,16 +56,16 @@ namespace Portfolio.Controllers
 
         [HttpGet]
         [Route("GameNight/GetGameNights/{startTime}/{length}")]
-        public IActionResult GetGameNights(long startTime, int length)
+        public async Task<IActionResult> GetGameNights(long startTime, int length)
+        { 
+           return Ok(await _gnService.GetGameNights(DateTimeOffset.FromUnixTimeMilliseconds(startTime), length));
+        }
+
+        [HttpDelete]
+        [Route("GameNight/SkipGameNight/{gameNightId}")]
+        public async Task<IActionResult> SkipGameNight(int gameNightId)
         {
-            // List<GameNightGame> games = _gnContext.Games.ToList();
-            // _logger.LogDebug($"Found {games.Count} total games.");
-            var gameNights = new List<GameNight>
-           {
-               new GameNight { Id = 1, UserId = "Nick", Date = DateTime.Now },
-               new GameNight { Id = 2, UserId = "Bash", Date = DateTime.Now.AddDays(7), GameNightMealId = 1 }
-           };
-           return Ok(gameNights);
+            return Ok(_gnService.SkipGameNight(await _gnContext.GameNights.FindAsync(gameNightId)));
         }
 
         private async Task<ApplicationUser> GetCurrentUser()

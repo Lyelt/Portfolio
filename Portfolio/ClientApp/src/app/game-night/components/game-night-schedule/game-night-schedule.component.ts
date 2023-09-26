@@ -13,10 +13,6 @@ export class GameNightScheduleComponent implements OnInit {
   constructor(private gnService: GameNightService) {}
 
   ngOnInit(): void {
-    // this.gameNights.push({ id: 1, date: new Date(), userId: "Nick" });
-    // this.gameNights.push({ id: 2, date: new Date(), userId: "Bash" });
-    // this.gameNights.push({ id: 3, date: new Date(), userId: "Ben" });
-    // this.gameNights.push({ id: 4, date: new Date(), userId: "Mom" });
     this.gnService.visibleGameNights().subscribe(data => {
       this.gameNights = data;
     });

@@ -16,6 +16,7 @@ namespace Portfolio.Models.GameNight
         [Required]
         public DateTime Date { get; set; }
 
+        [ForeignKey("GameNightMeal")]
         public int? GameNightMealId { get; set; }
 
         public virtual GameNightMeal GameNightMeal { get; set; }

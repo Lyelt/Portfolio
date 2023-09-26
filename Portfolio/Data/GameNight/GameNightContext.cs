@@ -14,7 +14,7 @@ namespace Portfolio.Data
     {
         public DbSet<GameNight> GameNights { get; set; }
 
-        public DbSet<GameNightMeal> GameNightPresets { get; set; }
+        public DbSet<GameNightMeal> GameNightMeals { get; set; }
 
         public DbSet<GameNightGame> Games { get; set; }
 
@@ -41,6 +41,10 @@ namespace Portfolio.Data
             builder.Entity<GameNight>()
                 .HasOne(gn => gn.GameNightMeal)
                 .WithMany();
+
+            builder.Entity<GameNight>()
+                .Property(gn => gn.GameNightMealId)
+                .IsRequired(false);
 
         }
     }

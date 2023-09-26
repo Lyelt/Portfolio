@@ -30,9 +30,10 @@ namespace Portfolio
             services
                 .ConfigureDatabase(Configuration)
                 .ConfigureLogging(Configuration)
-                .ConfigureAuthentication(Configuration);
-
-            services.AddSingleton<IDogService, DogService>();
+                .ConfigureAuthentication(Configuration)
+                .AddSingleton<IDogService, DogService>()
+                .AddSingleton<IGameNightChooserFactory, GameNightChooserFactory>()
+                .AddTransient<IGameNightService, GameNightService>();
 
             services.AddSignalR(options =>
             {
