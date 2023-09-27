@@ -91,6 +91,8 @@ import { BlogCodeComponent } from './blog/components/blog-template/blog-code/blo
 import { GameNightComponent } from './game-night/components/game-night/game-night.component';
 import { GameNightHomeComponent } from './game-night/components/game-night-home/game-night-home.component';
 import { GameNightScheduleComponent } from './game-night/components/game-night-schedule/game-night-schedule.component';
+import { GamesComponent } from './game-night/components/games/games.component';
+import { MealsComponent } from './game-night/components/meals/meals.component';
 
 const routes: Routes = [
     {
@@ -284,7 +286,9 @@ const routes: Routes = [
         BlogCodeComponent,
         GameNightComponent,
         GameNightHomeComponent,
-        GameNightScheduleComponent
+        GameNightScheduleComponent,
+        GamesComponent,
+        MealsComponent
     ],
     imports: [
         CommonModule,

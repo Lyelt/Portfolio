@@ -25,10 +25,12 @@ namespace Portfolio.Data
         public async Task<IEnumerable<GameNight>> GetGameNights(DateTimeOffset startDate, int numberOfGameNights)
         {
             var gameNights = _context.GameNights
+                .Include(gn => gn.Games)
+                .Include(gn => gn.Meal)
                 .Include(gn => gn.User)
                 .AsEnumerable()
                 .OrderBy(gn => gn.Date)
-                .SkipWhile(gn => gn.Date < startDate)
+                .SkipWhile(gn => gn.Date.Date < startDate.Date)
                 .Take(numberOfGameNights)
                 .ToList();
 
@@ -65,7 +67,11 @@ namespace Portfolio.Data
             return gn;
         }
 
-        private DateTime GetNextDateFrom(DateTime startDate) => startDate.AddDays((((int)DEFAULT_GAME_NIGHT - (int)startDate.DayOfWeek + 7) % 7) + 1);
+        private DateTime GetNextDateFrom(DateTime startDate)
+        {
+            var daysUntilNextGameNight = (7 - (int)startDate.DayOfWeek + (int)DEFAULT_GAME_NIGHT) % 7;
+            return startDate.AddDays(daysUntilNextGameNight == 0 ? 7 : daysUntilNextGameNight); // 0 means same day, so add a week
+        } 
         
         private string GetNextUserIdFrom(string userId) => _gameNightChooser.GetNextGameNightChooserId(userId);
 

@@ -6,6 +6,8 @@ export class GameNight {
     userId?: string;
     gameNightMealId?: number;
     user: User;
+    meal: GameNightMeal;
+    games: GameNightGame[];
 }
 
 export class GameNightMeal {

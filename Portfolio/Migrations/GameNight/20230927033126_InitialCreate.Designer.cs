@@ -11,7 +11,7 @@ using Portfolio.Data;
 namespace Portfolio.Migrations.GameNight
 {
     [DbContext(typeof(GameNightContext))]
-    [Migration("20230926043913_InitialCreate")]
+    [Migration("20230927033126_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -99,7 +99,6 @@ namespace Portfolio.Migrations.GameNight
                         .HasColumnType("datetime(6)");
 
                     b.Property<int?>("GameNightMealId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -122,7 +121,6 @@ namespace Portfolio.Migrations.GameNight
                         .HasColumnType("int");
 
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int>("MaxPlayers")
@@ -177,9 +175,7 @@ namespace Portfolio.Migrations.GameNight
                 {
                     b.HasOne("Portfolio.Models.GameNight.GameNightMeal", "GameNightMeal")
                         .WithMany()
-                        .HasForeignKey("GameNightMealId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GameNightMealId");
 
                     b.HasOne("Portfolio.Models.Auth.ApplicationUser", "User")
                         .WithMany()

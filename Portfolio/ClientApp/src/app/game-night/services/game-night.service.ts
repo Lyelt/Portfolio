@@ -1,23 +1,26 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { GameNight, GameNightGame } from '../models/game-night';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameNightService {
-  private games: GameNightGame[] = [];
   public selectedGameNight: GameNight;
-  //private visibleGameNights: GameNight[] = [];
-  private visibleGameNightsSubject: BehaviorSubject<GameNight[]> = new BehaviorSubject(null);
-
+  private visibleGameNightsSubject: ReplaySubject<GameNight[]> = new ReplaySubject();
+  private gamesSubject: ReplaySubject<GameNightGame[]> = new ReplaySubject();
+  
   constructor(private http: HttpClient) { 
     this.reload();
   }
 
   public visibleGameNights(): Observable<GameNight[]> {
     return this.visibleGameNightsSubject.asObservable();
+  }
+
+  public games(): Observable<GameNightGame[]> {
+    return this.gamesSubject.asObservable();
   }
 
   public selectGameNight(gn: GameNight): void {
@@ -33,8 +36,14 @@ export class GameNightService {
       .get<GameNight[]>(`GameNight/GetGameNights/${new Date().getTime()}/4`)
       .subscribe(data => {
         this.visibleGameNightsSubject.next(data);
-        if (!this.selectedGameNight)
-          this.selectedGameNight = data[0];
+        if (!this.selectedGameNight && data.length > 0)
+          this.selectGameNight(data[0]);
+      });
+
+    this.http
+      .get<GameNightGame[]>(`GameNight/GetGames`)
+      .subscribe(data => {
+        this.gamesSubject.next(data);
       });
   }
 }

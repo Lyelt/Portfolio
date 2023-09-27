@@ -39,13 +39,16 @@ namespace Portfolio.Data
                 .WithMany();
 
             builder.Entity<GameNight>()
-                .HasOne(gn => gn.GameNightMeal)
+                .HasOne(gn => gn.Meal)
                 .WithMany();
 
             builder.Entity<GameNight>()
                 .Property(gn => gn.GameNightMealId)
                 .IsRequired(false);
 
+            builder.Entity<GameNightGame>()
+                .Property(g => g.Image)
+                .HasDefaultValue(null);
         }
     }
 }

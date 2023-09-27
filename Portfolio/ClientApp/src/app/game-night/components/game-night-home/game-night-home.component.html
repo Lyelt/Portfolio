@@ -1,5 +1,8 @@
-<div>
-Next game night is X! It's Y's night. We're having Z. 
-
-<button class="btn" (click)="skipSelectedNight()">Skip selected night</button>
+<div class="flex flex-col items-center space-y-2">
+    <div>{{(isSelectedGameNightNext() ? "Next" : "This")}} game night is <span>{{gnService.selectedGameNight?.date | date: 'EEEE, MMMM d'}}</span></div> 
+    <div>It's <span>{{gnService.selectedGameNight?.user?.userName}}</span>'s night</div>
+    <div *ngIf="gnService.selectedGameNight?.meal">We're having <span>{{gnService.selectedGameNight.meal.name}}</span></div>
+    <button class="btn btn-secondary" routerLink="/gamenight/meals" *ngIf="!gnService.selectedGameNight?.meal">Suggest a meal</button>
+    <div *ngIf="gnService.selectedGameNight?.games?.length > 0">We're playing</div>
+    <button class="btn btn-primary" routerLink="/gamenight/games" *ngIf="gnService.selectedGameNight?.games?.length === 0">Select games</button>
 </div>

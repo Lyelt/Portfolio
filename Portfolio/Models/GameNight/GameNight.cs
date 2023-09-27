@@ -19,7 +19,7 @@ namespace Portfolio.Models.GameNight
         [ForeignKey("GameNightMeal")]
         public int? GameNightMealId { get; set; }
 
-        public virtual GameNightMeal GameNightMeal { get; set; }
+        public virtual GameNightMeal Meal { get; set; }
 
         [ForeignKey("User")]
         public string? UserId { get; set; }

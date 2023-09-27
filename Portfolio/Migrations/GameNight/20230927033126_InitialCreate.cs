@@ -74,7 +74,7 @@ namespace Portfolio.Migrations.GameNight
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Image = table.Column<string>(type: "longtext", nullable: false)
+                    Image = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     MinPlayers = table.Column<int>(type: "int", nullable: false),
                     MaxPlayers = table.Column<int>(type: "int", nullable: false)
@@ -92,7 +92,7 @@ namespace Portfolio.Migrations.GameNight
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    GameNightMealId = table.Column<int>(type: "int", nullable: false),
+                    GameNightMealId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
@@ -109,8 +109,7 @@ namespace Portfolio.Migrations.GameNight
                         name: "FK_GameNights_GameNightMeals_GameNightMealId",
                         column: x => x.GameNightMealId,
                         principalTable: "GameNightMeals",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
