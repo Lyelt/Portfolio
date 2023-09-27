@@ -25,4 +25,8 @@ export class GameNightScheduleComponent implements OnInit {
   public selectGameNight(gn: GameNight): void {
     this.gnService.selectGameNight(gn);
   }
+
+  public loadNextGameNight(): void {
+    this.gnService.loadNextGameNight();
+  }
 }

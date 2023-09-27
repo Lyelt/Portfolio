@@ -7,12 +7,16 @@ import { Observable, ReplaySubject } from 'rxjs';
   providedIn: 'root'
 })
 export class GameNightService {
+  private startDateTime: number;
+  private gameNightsToLoad: number = 4;
+
   public selectedGameNight: GameNight;
   private visibleGameNightsSubject: ReplaySubject<GameNight[]> = new ReplaySubject();
   private gamesSubject: ReplaySubject<GameNightGame[]> = new ReplaySubject();
   
   constructor(private http: HttpClient) { 
-    this.reload();
+    this.startDateTime = new Date().getTime();
+    this.loadGameNights();
   }
 
   public visibleGameNights(): Observable<GameNight[]> {
@@ -28,12 +32,17 @@ export class GameNightService {
   }
 
   public skipGameNight(gn: GameNight) {
-    this.http.delete(`GameNight/SkipGameNight/${gn.id}`).subscribe(() => this.reload());
+    this.http.delete(`GameNight/SkipGameNight/${gn.id}`).subscribe(() => this.loadGameNights());
   }
 
-  private reload(): void {
+  public loadNextGameNight(): void {
+    this.gameNightsToLoad++;
+    this.loadGameNights();
+  }
+
+  private loadGameNights(): void {
     this.http
-      .get<GameNight[]>(`GameNight/GetGameNights/${new Date().getTime()}/4`)
+      .get<GameNight[]>(`GameNight/GetGameNights/${this.startDateTime}/${this.gameNightsToLoad}`)
       .subscribe(data => {
         this.visibleGameNightsSubject.next(data);
         if (!this.selectedGameNight && data.length > 0)
