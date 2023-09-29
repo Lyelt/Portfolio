@@ -31,8 +31,20 @@ export class GameNightService {
     this.selectedGameNight = gn;
   }
 
+  public toggleCancelGameNight(gn: GameNight, cancel: boolean) {
+    this.http.delete(`GameNight/${cancel ? "" : "Un"}CancelGameNight/${gn.id}`).subscribe(() => this.loadGameNights());
+  }
+
   public skipGameNight(gn: GameNight) {
     this.http.delete(`GameNight/SkipGameNight/${gn.id}`).subscribe(() => this.loadGameNights());
+  }
+
+  public saveGames(gn: GameNight) {
+    return this.http.post<GameNight>("GameNight/SaveGames", gn);
+  }
+
+  public saveMeal(gn: GameNight) {
+    return this.http.post<GameNight>("GameNight/SaveMeal", gn);
   }
 
   public loadNextGameNight(): void {
@@ -47,6 +59,8 @@ export class GameNightService {
         this.visibleGameNightsSubject.next(data);
         if (!this.selectedGameNight && data.length > 0)
           this.selectGameNight(data[0]);
+        else if (this.selectedGameNight)
+          this.selectedGameNight = data.find(g => g.id === this.selectedGameNight.id);
       });
 
     this.http

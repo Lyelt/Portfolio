@@ -65,7 +65,24 @@ namespace Portfolio.Controllers
         [Route("GameNight/SkipGameNight/{gameNightId}")]
         public async Task<IActionResult> SkipGameNight(int gameNightId)
         {
-            return Ok(_gnService.SkipGameNight(await _gnContext.GameNights.FindAsync(gameNightId)));
+            await _gnService.SkipGameNight(gameNightId);
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("GameNight/CancelGameNight/{gameNightId}")]
+        public async Task<IActionResult> CancelGameNight(int gameNightId)
+        {
+            await _gnService.CancelGameNight(gameNightId);
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("GameNight/UncancelGameNight/{gameNightId}")]
+        public async Task<IActionResult> UncancelGameNight(int gameNightId)
+        {
+            await _gnService.UncancelGameNight(gameNightId);
+            return Ok();
         }
 
         private async Task<ApplicationUser> GetCurrentUser()

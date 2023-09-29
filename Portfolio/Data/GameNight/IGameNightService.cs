@@ -9,6 +9,10 @@ namespace Portfolio.Data
     {
         Task<IEnumerable<GameNight>> GetGameNights(DateTimeOffset startDate, int numberOfGameNights);
 
-        Task SkipGameNight(GameNight gameNight);
+        Task SkipGameNight(int gameNightId);
+
+        Task CancelGameNight(int gameNightId);
+
+        Task UncancelGameNight(int gameNightId);
     }
 }

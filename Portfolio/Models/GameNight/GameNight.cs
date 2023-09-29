@@ -27,5 +27,7 @@ namespace Portfolio.Models.GameNight
         public virtual ApplicationUser User { get; set; }
 
         public List<GameNightGame> Games { get; set; }
+
+        public bool? IsCancelled { get; set; }
     }
 }

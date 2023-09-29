@@ -5,7 +5,7 @@
         <span class="flex flex-col items-center justify-center w-14 h-14 rounded-full lg:h-20 lg:w-20 border border-dashed border-indigo-800 shrink-0 font-semibold"
         [ngClass]="{'bg-indigo-700 text-indigo-50' : gameNightIsSelected(gn)}">
             <span class="text-xs">{{gn.date | date:'MMM d'}}</span>
-            <span class="text-sm">{{gn.user.userName}}</span>
+            <span class="text-sm">{{gn.user?.userName}}</span>
         </span>
     </li>
     <li class="flex items-center">

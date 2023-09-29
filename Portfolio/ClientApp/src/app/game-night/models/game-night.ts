@@ -5,9 +5,10 @@ export class GameNight {
     date: Date;
     userId?: string;
     gameNightMealId?: number;
-    user: User;
-    meal: GameNightMeal;
+    user?: User;
+    meal?: GameNightMeal;
     games: GameNightGame[];
+    isCancelled?: boolean;
 }
 
 export class GameNightMeal {

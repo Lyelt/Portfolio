@@ -46,6 +46,10 @@ namespace Portfolio.Data
                 .Property(gn => gn.GameNightMealId)
                 .IsRequired(false);
 
+            builder.Entity<GameNight>()
+                .Property(gn => gn.UserId)
+                .IsRequired(false);
+
             builder.Entity<GameNightGame>()
                 .Property(g => g.Image)
                 .HasDefaultValue(null);

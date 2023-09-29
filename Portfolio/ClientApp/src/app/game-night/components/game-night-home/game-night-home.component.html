@@ -5,4 +5,6 @@
     <button class="btn btn-secondary" routerLink="/gamenight/meals" *ngIf="!gnService.selectedGameNight?.meal">Suggest a meal</button>
     <div *ngIf="gnService.selectedGameNight?.games?.length > 0">We're playing</div>
     <button class="btn btn-primary" routerLink="/gamenight/games" *ngIf="gnService.selectedGameNight?.games?.length === 0">Select games</button>
+    <button class="btn btn-primary" (click)="toggleCancelSelected()">Cancel Game Night</button>
+    <button class="btn btn-primary" (click)="skipSelected()">Skip My Night</button>
 </div>

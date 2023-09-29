@@ -42,8 +42,9 @@ namespace Portfolio.Data
             return gameNights;
         }
 
-        public async Task SkipGameNight(GameNight gameNight)
+        public async Task SkipGameNight(int gameNightId)
         {
+            var gameNight = await _context.GameNights.FindAsync(gameNightId);
             var nextGameNight = GetNextGameNightFrom(gameNight); 
             nextGameNight ??= await CreateNextGameNightFrom(gameNight);
 
@@ -53,9 +54,44 @@ namespace Portfolio.Data
             if (followingGameNight == null)
                 await CreateNextGameNightFrom(nextGameNight);
 
-            // Effectively "skip" this game night by swappings its date with the next one
+            // Effectively "skip" this game night by swapping its date with the next one
             (nextGameNight.Date, gameNight.Date) = (gameNight.Date, nextGameNight.Date);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task CancelGameNight(int gameNightId)
+        {
+            var gameNight = await _context.GameNights.FindAsync(gameNightId);
+            gameNight.IsCancelled = true;
+            // Push this person's night to next week
+            var nextGameNight = GetNextGameNightFrom(gameNight) ?? await CreateNextGameNightFrom(gameNight);
+            nextGameNight.UserId = gameNight.UserId;
+            gameNight.UserId = null;
+            ReconcileAllUsersAfter(nextGameNight);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UncancelGameNight(int gameNightId)
+        {
+            var gameNight = await _context.GameNights.FindAsync(gameNightId);
+            gameNight.IsCancelled = false;
+            // Assign this night to whoever is next from the last uncancelled night
+            var lastGameNight = _context.GameNights
+                .AsEnumerable()
+                .OrderByDescending(gn => gn.Date)
+                .FirstOrDefault(gn => gn.Date < gameNight.Date && !(gn.IsCancelled ?? false));
+            gameNight.UserId = GetNextUserIdFrom(lastGameNight?.UserId);
+            ReconcileAllUsersAfter(gameNight);
+            await _context.SaveChangesAsync();
+        }
+
+        private void ReconcileAllUsersAfter(GameNight nextGameNight)
+        {
+            foreach (var gn in GetAllGameNightsFrom(nextGameNight).Where(g => !(g.IsCancelled ?? false)))
+            {
+                gn.UserId = GetNextUserIdFrom(nextGameNight.UserId);
+                nextGameNight = gn;
+            }
         }
 
         private async Task<GameNight> CreateNextGameNightFrom(GameNight previousGameNight)
@@ -75,12 +111,18 @@ namespace Portfolio.Data
         
         private string GetNextUserIdFrom(string userId) => _gameNightChooser.GetNextGameNightChooserId(userId);
 
-        private GameNight GetNextGameNightFrom(GameNight gameNight)
+        private IEnumerable<GameNight> GetAllGameNightsFrom(GameNight gameNight)
         {
             return _context.GameNights
                 .AsEnumerable()
                 .OrderBy(gn => gn.Date)
-                .FirstOrDefault(gn => gn.Date > gameNight.Date);
+                .Where(gn => gn.Date > gameNight.Date);
+        }
+
+        private GameNight GetNextGameNightFrom(GameNight gameNight)
+        {
+            return GetAllGameNightsFrom(gameNight)
+                .FirstOrDefault(gn => !(gn.IsCancelled ?? false));
         }
     }
 }

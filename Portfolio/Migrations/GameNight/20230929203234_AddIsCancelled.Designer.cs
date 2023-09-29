@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Portfolio.Data;
 
@@ -10,9 +11,11 @@ using Portfolio.Data;
 namespace Portfolio.Migrations.GameNight
 {
     [DbContext(typeof(GameNightContext))]
-    partial class GameNightContextModelSnapshot : ModelSnapshot
+    [Migration("20230929203234_AddIsCancelled")]
+    partial class AddIsCancelled
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,6 +105,7 @@ namespace Portfolio.Migrations.GameNight
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
@@ -178,7 +182,9 @@ namespace Portfolio.Migrations.GameNight
 
                     b.HasOne("Portfolio.Models.Auth.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Meal");
 
