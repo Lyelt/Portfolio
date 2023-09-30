@@ -45,7 +45,7 @@ namespace Portfolio.Data
         public async Task SkipGameNight(int gameNightId)
         {
             var gameNight = await _context.GameNights.FindAsync(gameNightId);
-            var nextGameNight = GetNextGameNightFrom(gameNight); 
+            var nextGameNight = await GetNextGameNightFrom(gameNight); 
             nextGameNight ??= await CreateNextGameNightFrom(gameNight);
 
             // Need to do this again in the case where the skipped game night doesn't have another night created after it
@@ -62,37 +62,38 @@ namespace Portfolio.Data
         public async Task CancelGameNight(int gameNightId)
         {
             var gameNight = await _context.GameNights.FindAsync(gameNightId);
-            gameNight.IsCancelled = true;
-            // Push this person's night to next week
-            var nextGameNight = GetNextGameNightFrom(gameNight) ?? await CreateNextGameNightFrom(gameNight);
-            nextGameNight.UserId = gameNight.UserId;
-            gameNight.UserId = null;
-            ReconcileAllUsersAfter(nextGameNight);
+            // "Cancel" this game night by replacing it with a cancelled game night on the same day
+            var cancelledGameNight = gameNight.GetCancelledCopy();
+            _context.GameNights.Add(cancelledGameNight);
+
+            // ...then push everything to the next available slot
+            var gameNights = GetAllGameNightsFrom(gameNight).ToList();
+            foreach (var gn in gameNights)
+            {
+                gn.Date = FindNextAvailableGameNightDate(gn.Date);
+            }
+
             await _context.SaveChangesAsync();
         }
 
         public async Task UncancelGameNight(int gameNightId)
         {
             var gameNight = await _context.GameNights.FindAsync(gameNightId);
-            gameNight.IsCancelled = false;
-            // Assign this night to whoever is next from the last uncancelled night
-            var lastGameNight = _context.GameNights
-                .AsEnumerable()
-                .OrderByDescending(gn => gn.Date)
-                .FirstOrDefault(gn => gn.Date < gameNight.Date && !(gn.IsCancelled ?? false));
-            gameNight.UserId = GetNextUserIdFrom(lastGameNight?.UserId);
-            ReconcileAllUsersAfter(gameNight);
+            var gameNights = GetAllGameNightsFrom(gameNight).SkipWhile(gn => gn.Id == gameNightId).Where(gn => !(gn.IsCancelled ?? false)).ToList();
+
+            for (var i = 1; i < gameNights.Count; i++)
+            {
+                gameNights[i].Date = gameNights[i -1].Date;
+            }
+
+            var gameNightToReinstate = gameNights.FirstOrDefault() ?? await CreateNextGameNightFrom(gameNight);
+            gameNightToReinstate.Date = gameNight.Date;
+            
+            // Delete the cancelled game night
+            _context.GameNights.Remove(gameNight);
             await _context.SaveChangesAsync();
         }
 
-        private void ReconcileAllUsersAfter(GameNight nextGameNight)
-        {
-            foreach (var gn in GetAllGameNightsFrom(nextGameNight).Where(g => !(g.IsCancelled ?? false)))
-            {
-                gn.UserId = GetNextUserIdFrom(nextGameNight.UserId);
-                nextGameNight = gn;
-            }
-        }
 
         private async Task<GameNight> CreateNextGameNightFrom(GameNight previousGameNight)
         {
@@ -101,27 +102,48 @@ namespace Portfolio.Data
             await _context.SaveChangesAsync();
             _logger.LogInformation($"Automatically added next game night: {gn.UserId}'s night on {gn.Date}");
             return gn;
-        }
 
-        private DateTime GetNextDateFrom(DateTime startDate)
-        {
-            var daysUntilNextGameNight = (7 - (int)startDate.DayOfWeek + (int)DEFAULT_GAME_NIGHT) % 7;
-            return startDate.AddDays(daysUntilNextGameNight == 0 ? 7 : daysUntilNextGameNight); // 0 means same day, so add a week
-        } 
-        
-        private string GetNextUserIdFrom(string userId) => _gameNightChooser.GetNextGameNightChooserId(userId);
+            DateTime GetNextDateFrom(DateTime startDate)
+            {
+                var daysUntilNextGameNight = (7 - (int)startDate.DayOfWeek + (int)DEFAULT_GAME_NIGHT) % 7;
+                return startDate.AddDays(daysUntilNextGameNight == 0 ? 7 : daysUntilNextGameNight); // 0 means same day, so add a week
+            }
+
+            string GetNextUserIdFrom(string userId) => _gameNightChooser.GetNextGameNightChooserId(userId);
+        }
 
         private IEnumerable<GameNight> GetAllGameNightsFrom(GameNight gameNight)
         {
             return _context.GameNights
                 .AsEnumerable()
                 .OrderBy(gn => gn.Date)
-                .Where(gn => gn.Date > gameNight.Date);
+                .Where(gn => gn.Date >= gameNight.Date);
         }
 
-        private GameNight GetNextGameNightFrom(GameNight gameNight)
+        private DateTime FindNextAvailableGameNightDate(DateTime startDate)
+        {
+            var gameNights = _context.GameNights
+                .AsEnumerable()
+                .OrderBy(gn => gn.Date);
+
+            return gameNights
+                .FirstOrDefault(gn => !(gn.IsCancelled ?? false) && gn.Date > startDate)?.Date 
+                ?? gameNights.Last().Date.AddDays(7);
+        }
+
+        private async Task<GameNight> GetNextGameNightFrom(GameNight gameNight)
         {
             return GetAllGameNightsFrom(gameNight)
+                .Skip(1)
+                .FirstOrDefault(gn => !(gn.IsCancelled ?? false)) ?? await CreateNextGameNightFrom(gameNight);
+        }
+
+        private GameNight GetPreviousGameNightFrom(GameNight gameNight)
+        {
+            return _context.GameNights
+                .AsEnumerable()
+                .OrderByDescending(gn => gn.Date)
+                .Where(gn => gn.Date < gameNight.Date)
                 .FirstOrDefault(gn => !(gn.IsCancelled ?? false));
         }
     }

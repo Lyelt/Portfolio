@@ -60,7 +60,7 @@ export class GameNightService {
         if (!this.selectedGameNight && data.length > 0)
           this.selectGameNight(data[0]);
         else if (this.selectedGameNight)
-          this.selectedGameNight = data.find(g => g.id === this.selectedGameNight.id);
+          this.selectGameNight(data.find(g => g.id === this.selectedGameNight.id) || data[0]);
       });
 
     this.http

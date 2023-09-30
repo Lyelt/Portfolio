@@ -19,7 +19,7 @@ export class GameNightScheduleComponent implements OnInit {
   }
 
   public gameNightIsSelected(gn: GameNight): boolean {
-    return gn.id === this.gnService.selectedGameNight.id;
+    return gn.id === this.gnService.selectedGameNight?.id;
   }
 
   public selectGameNight(gn: GameNight): void {
