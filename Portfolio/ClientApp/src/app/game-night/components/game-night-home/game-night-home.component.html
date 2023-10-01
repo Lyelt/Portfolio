@@ -1,10 +1,31 @@
-<div class="flex flex-col items-center space-y-2">
-    <div>{{(isSelectedGameNightNext() ? "Next" : "This")}} game night is <span>{{gnService.selectedGameNight?.date | date: 'EEEE, MMMM d'}}</span></div> 
-    <div>It's <span>{{gnService.selectedGameNight?.user?.userName}}</span>'s night</div>
-    <div *ngIf="gnService.selectedGameNight?.meal">We're having <span>{{gnService.selectedGameNight.meal.name}}</span></div>
-    <button class="btn btn-secondary" routerLink="/gamenight/meals" *ngIf="!gnService.selectedGameNight?.meal">Suggest a meal</button>
-    <div *ngIf="gnService.selectedGameNight?.games?.length > 0">We're playing</div>
-    <button class="btn btn-primary" routerLink="/gamenight/games" *ngIf="gnService.selectedGameNight?.games?.length === 0">Select games</button>
-    <button class="btn btn-primary" (click)="toggleCancelSelected()">Cancel Game Night</button>
-    <button class="btn btn-primary" (click)="skipSelected()">Skip My Night</button>
+<div class="flex flex-col space-y-6 font-medium text-xl text-center" *ngIf="getSelectedGameNight()">
+    <div class="flex flex-col">
+        <span>{{(isSelectedGameNightNext() ? "Next" : "This")}} game night is</span>
+        <span class="text-indigo-600 font-semibold text-2xl">{{getSelectedGameNight().date | date: 'EEEE, MMMM d'}}</span>
+    </div> 
+    <div>It's 
+        <span class="text-indigo-600 font-semibold text-2xl">{{getSelectedGameNight().user?.userName}}</span>'s night
+    </div>
+
+    <div>
+        <div *ngIf="getSelectedGameNight()?.meal">We're having 
+            <span class="text-indigo-600 font-semibold text-2xl">{{gnService.selectedGameNight.meal.name}}</span>
+        </div>
+        <button class="btn btn-secondary" routerLink="/gamenight/meals" *ngIf="!getSelectedGameNight().meal">Suggest a meal</button>
+    </div>
+</div>
+<div class="mt-16" *ngIf="getSelectedGameNight()">
+    <div class="flex flex-row">
+        <div class="w-1/2">
+            <div *ngFor="let g of getSelectedGameNight().games">{{g.name}}</div>
+            <div *ngIf="getSelectedGameNight().games?.length === 0"></div>
+            <button class="btn btn-primary" routerLink="/gamenight/games" *ngIf="getSelectedGameNight().games?.length === 0 && gameNightBelongsToLoggedInUser()">Select games</button>
+        </div>
+        <div class="w-1/2 flex flex-col">
+            <div>Ben check</div>
+            <div>Sky check</div>
+            <button class="btn" (click)="toggleCancelSelected()">Cancel Game Night</button>
+        </div>
+    </div>
+    <button class="btn" (click)="skipSelected()">Skip My Night</button>
 </div>
