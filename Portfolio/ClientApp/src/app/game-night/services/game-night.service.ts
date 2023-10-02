@@ -17,6 +17,7 @@ export class GameNightService {
   constructor(private http: HttpClient) { 
     this.startDateTime = new Date().getTime();
     this.loadGameNights();
+    this.loadGames();
   }
 
   public visibleGameNights(): Observable<GameNight[]> {
@@ -40,11 +41,15 @@ export class GameNightService {
   }
 
   public saveGames(gn: GameNight) {
-    return this.http.post<GameNight>("GameNight/SaveGames", gn);
+    this.http.post<GameNight>("GameNight/SaveGames", gn).subscribe(() => this.loadGameNights());
   }
 
   public saveMeal(gn: GameNight) {
-    return this.http.post<GameNight>("GameNight/SaveMeal", gn);
+    this.http.post<GameNight>("GameNight/SaveMeal", gn).subscribe(() => this.loadGameNights());
+  }
+
+  public addGame(g: GameNightGame) {
+    this.http.post<GameNightGame>("GameNight/AddGame", g).subscribe(() => this.loadGames());
   }
 
   public loadNextGameNight(): void {
@@ -62,7 +67,9 @@ export class GameNightService {
         else if (this.selectedGameNight)
           this.selectGameNight(data.find(g => g.id === this.selectedGameNight.id) || data[0]);
       });
+  }
 
+  private loadGames(): void {
     this.http
       .get<GameNightGame[]>(`GameNight/GetGames`)
       .subscribe(data => {

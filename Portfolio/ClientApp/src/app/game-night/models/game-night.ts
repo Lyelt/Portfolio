@@ -20,7 +20,6 @@ export class GameNightMeal {
 export class GameNightGame {
     id: number;
     name: string;
-    meal: string;
     image: string;
     minPlayers: number;
     maxPlayers: number;

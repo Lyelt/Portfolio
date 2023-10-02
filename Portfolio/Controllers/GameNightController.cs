@@ -54,6 +54,15 @@ namespace Portfolio.Controllers
             return Ok(games);
         }
 
+        [HttpPost]
+        [Route("GameNight/AddGame")]
+        public async Task<IActionResult> AddGame([FromBody]GameNightGame game)
+        {
+            _gnContext.Games.Add(game);
+            await _gnContext.SaveChangesAsync();
+            return Ok();
+        }
+
         [HttpGet]
         [Route("GameNight/GetGameNights/{startTime}/{length}")]
         public async Task<IActionResult> GetGameNights(long startTime, int length)
@@ -85,9 +94,33 @@ namespace Portfolio.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        [Route("GameNight/SaveGames")]
+        public async Task<IActionResult> SaveGames([FromBody]GameNight gameNight)
+        {
+            await _gnService.SaveGames(gameNight);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("GameNight/SaveMeal")]
+        public async Task<IActionResult> SaveMeal([FromBody] GameNight gameNight)
+        {
+            await _gnService.SaveMeal(gameNight);
+            return Ok();
+        }
+
+        private async Task ThrowIfGameNightDoesNotBelongToUser()
+        {
+            var currentUser = await GetCurrentUser();
+            if (await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Guest.ToString()))
+                throw new UnauthorizedException("Cannot make modifications as a guest");
+        }
+
         private async Task<ApplicationUser> GetCurrentUser()
         {
             return await _userManager.GetUserAsync(User);
         }
+
     }
 }

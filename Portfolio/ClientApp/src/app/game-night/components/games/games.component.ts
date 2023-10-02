@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { GameNightService } from '../../services/game-night.service';
-import { GameNightGame } from '../../models/game-night';
+import { GameNight, GameNightGame } from '../../models/game-night';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-games',
@@ -9,10 +11,60 @@ import { GameNightGame } from '../../models/game-night';
 })
 export class GamesComponent {
   public games: GameNightGame[] = [];
+  public form: FormGroup;
+  public addedGame: GameNightGame = new GameNightGame();
+  public addingGames: boolean = false;
 
-  constructor(private gnService: GameNightService) {
+  constructor(private gnService: GameNightService, private fb: FormBuilder, private auth: AuthService) {
     this.gnService.games().subscribe(data => {
       this.games = data;
     });
   }
+
+  ngOnInit() {
+    this.buildForm();
+  }
+
+  private buildForm() {
+    this.form = this.fb.group({
+      name: [this.addedGame.name, Validators.required],
+      minPlayers: [this.addedGame.minPlayers, Validators.required],
+      maxPlayers: [this.addedGame.maxPlayers, Validators.required]
+    });
+  }
+
+  public gameNightBelongsToLoggedInUser(): boolean {
+    return this.auth.getLoggedInUserId() === this.getSelectedGameNight()?.user?.id;
+  }
+
+  public getSelectedGameNight(): GameNight {
+    return this.gnService.selectedGameNight;
+  }
+
+  public isGameSelected(game: GameNightGame): boolean {
+    const gn = this.getSelectedGameNight();
+    return gn && gn.games.filter(g => g.id === game.id).length > 0;
+  }
+
+  public toggleGameSelected(game: GameNightGame) {
+    if (!this.gameNightBelongsToLoggedInUser()) {
+      return;
+    }
+
+    var gnGames = this.getSelectedGameNight().games;
+    if (!this.isGameSelected(game)) {
+      gnGames.push(game);
+    }
+    else {
+      gnGames.splice(gnGames.findIndex(g => g.id === game.id, 0));
+    }
+
+    this.gnService.saveGames(this.getSelectedGameNight());
+  }
+
+  public addGame() {
+    this.gnService.addGame(this.form.value);
+    this.form.reset();
+  }
+
 }

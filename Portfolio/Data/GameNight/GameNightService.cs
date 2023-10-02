@@ -42,6 +42,33 @@ namespace Portfolio.Data
             return gameNights;
         }
 
+        public async Task SaveGames(GameNight newGameNight)
+        {
+            var gn = await _context.GameNights
+                      .Include(g => g.Games)
+                      .FirstOrDefaultAsync(g => g.Id == newGameNight.Id);
+
+            gn.Games.RemoveAll(game => !newGameNight.Games.Any(newGame => newGame.Id == game.Id));
+
+            foreach (var newGame in newGameNight.Games)
+            {
+                if (!gn.Games.Any(game => game.Id == newGame.Id))
+                {
+                    gn.Games.Add(newGame);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SaveMeal(GameNight gameNight)
+        {
+
+            var gn = await _context.GameNights.FindAsync(gameNight.Id);
+            (gn.GameNightMealId, gn.Meal) = (gameNight.GameNightMealId, gameNight.Meal);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task SkipGameNight(int gameNightId)
         {
             var gameNight = await _context.GameNights.FindAsync(gameNightId);

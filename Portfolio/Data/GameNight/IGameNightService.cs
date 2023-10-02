@@ -14,5 +14,9 @@ namespace Portfolio.Data
         Task CancelGameNight(int gameNightId);
 
         Task UncancelGameNight(int gameNightId);
+
+        Task SaveGames(GameNight gameNight);
+
+        Task SaveMeal(GameNight gameNight);
     }
 }
