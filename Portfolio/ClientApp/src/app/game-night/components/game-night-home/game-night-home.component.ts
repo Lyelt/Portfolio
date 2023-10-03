@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { GameNightService } from '../../services/game-night.service';
 import { GameNight } from '../../models/game-night';
 import { first } from 'rxjs';
-import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-game-night-home',
@@ -11,7 +10,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 })
 export class GameNightHomeComponent {
   private nextGameNight: GameNight;
-  constructor(private gnService: GameNightService, private authService: AuthService) {
+  constructor(private gnService: GameNightService) {
     this.gnService.visibleGameNights().pipe(first()).subscribe(data => {
       if (data)
         this.nextGameNight = data[0];
@@ -35,6 +34,6 @@ export class GameNightHomeComponent {
   }
 
   public gameNightBelongsToLoggedInUser(): boolean {
-    return this.authService.getLoggedInUserId() === this.getSelectedGameNight()?.user?.id;
+    return this.gnService.gameNightBelongsToLoggedInUser();
   }
 }

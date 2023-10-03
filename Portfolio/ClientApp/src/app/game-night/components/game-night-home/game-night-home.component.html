@@ -9,7 +9,7 @@
 
     <div>
         <div *ngIf="getSelectedGameNight()?.meal">We're having 
-            <span class="text-indigo-600 font-semibold text-2xl">{{gnService.selectedGameNight.meal.name}}</span>
+            <span class="text-indigo-600 font-semibold text-2xl">{{gnService.selectedGameNight.meal.name | lowercase}}</span>
         </div>
         <button class="btn btn-secondary" routerLink="/gamenight/meals" *ngIf="!getSelectedGameNight().meal">Suggest a meal</button>
     </div>

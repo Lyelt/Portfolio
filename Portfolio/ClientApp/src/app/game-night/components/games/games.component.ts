@@ -2,20 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { GameNightService } from '../../services/game-night.service';
 import { GameNight, GameNightGame } from '../../models/game-night';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-games',
   templateUrl: './games.component.html',
   styleUrls: ['./games.component.scss']
 })
-export class GamesComponent {
+export class GamesComponent implements OnInit {
   public games: GameNightGame[] = [];
   public form: FormGroup;
   public addedGame: GameNightGame = new GameNightGame();
   public addingGames: boolean = false;
 
-  constructor(private gnService: GameNightService, private fb: FormBuilder, private auth: AuthService) {
+  constructor(private gnService: GameNightService, private fb: FormBuilder) {
     this.gnService.games().subscribe(data => {
       this.games = data;
     });
@@ -34,7 +33,7 @@ export class GamesComponent {
   }
 
   public gameNightBelongsToLoggedInUser(): boolean {
-    return this.auth.getLoggedInUserId() === this.getSelectedGameNight()?.user?.id;
+    return this.gnService.gameNightBelongsToLoggedInUser();
   }
 
   public getSelectedGameNight(): GameNight {

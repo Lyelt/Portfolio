@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { GameNight, GameNightGame } from '../models/game-night';
+import { GameNight, GameNightGame, GameNightMeal } from '../models/game-night';
 import { Observable, ReplaySubject } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +14,22 @@ export class GameNightService {
   public selectedGameNight: GameNight;
   private visibleGameNightsSubject: ReplaySubject<GameNight[]> = new ReplaySubject();
   private gamesSubject: ReplaySubject<GameNightGame[]> = new ReplaySubject();
-  
-  constructor(private http: HttpClient) { 
+  private mealsSubject: ReplaySubject<GameNightMeal[]> = new ReplaySubject();
+
+  constructor(private http: HttpClient, private auth: AuthService) { 
     this.startDateTime = new Date().getTime();
     this.loadGameNights();
     this.loadGames();
+    this.loadMeals();
+  }
+
+  public userCanSetMeal(): boolean {
+    const userName = this.auth.getLoggedInUserName().toLowerCase();
+    return userName === "mom" || userName === "nick";
+  }
+
+  public gameNightBelongsToLoggedInUser(): boolean {
+    return this.auth.getLoggedInUserId() === this.selectedGameNight?.user?.id;
   }
 
   public visibleGameNights(): Observable<GameNight[]> {
@@ -26,6 +38,10 @@ export class GameNightService {
 
   public games(): Observable<GameNightGame[]> {
     return this.gamesSubject.asObservable();
+  }
+
+  public meals(): Observable<GameNightMeal[]> {
+    return this.mealsSubject.asObservable();
   }
 
   public selectGameNight(gn: GameNight): void {
@@ -52,6 +68,10 @@ export class GameNightService {
     this.http.post<GameNightGame>("GameNight/AddGame", g).subscribe(() => this.loadGames());
   }
 
+  public addMeal(m: GameNightMeal) {
+    this.http.post<GameNightMeal>("GameNight/AddMeal", m).subscribe(() => this.loadMeals());
+  }
+
   public loadNextGameNight(): void {
     this.gameNightsToLoad++;
     this.loadGameNights();
@@ -74,6 +94,14 @@ export class GameNightService {
       .get<GameNightGame[]>(`GameNight/GetGames`)
       .subscribe(data => {
         this.gamesSubject.next(data);
+      });
+  }
+
+  private loadMeals(): void {
+    this.http
+      .get<GameNightMeal[]>(`GameNight/GetMeals`)
+      .subscribe(data => {
+        this.mealsSubject.next(data);
       });
   }
 }

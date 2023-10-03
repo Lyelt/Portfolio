@@ -54,11 +54,29 @@ namespace Portfolio.Controllers
             return Ok(games);
         }
 
+        [HttpGet]
+        [Route("GameNight/GetMeals")]
+        public IActionResult GetMeals()
+        {
+            List<GameNightMeal> meals = _gnContext.GameNightMeals.OrderBy(gnm => gnm.DateAdded).ToList();
+            return Ok(meals);
+        }
+
         [HttpPost]
         [Route("GameNight/AddGame")]
         public async Task<IActionResult> AddGame([FromBody]GameNightGame game)
         {
             _gnContext.Games.Add(game);
+            await _gnContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("GameNight/AddMeal")]
+        public async Task<IActionResult> AddMeal([FromBody] GameNightMeal meal)
+        {
+            meal.DateAdded = DateTime.Now;
+            _gnContext.GameNightMeals.Add(meal);
             await _gnContext.SaveChangesAsync();
             return Ok();
         }
