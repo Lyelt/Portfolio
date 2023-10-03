@@ -1,18 +1,23 @@
 <div *ngIf="getSelectedGameNight()">
     <div class="flex flex-col font-medium text-xl text-center mb-12">
         <span *ngIf="!getSelectedGameNight().meal">{{userCanSetMeal() ? "Select" : "Suggest"}} the meal for</span>
-        <span *ngIf="getSelectedGameNight().meal">We're having <span class="text-indigo-600 font-semibold text-2xl">{{getSelectedGameNight().meal.name | lowercase}}</span> on</span>
-        <span class="text-indigo-600 font-semibold text-2xl">{{getSelectedGameNight().date | date: 'EEEE, MMMM d'}}</span>
+        <span *ngIf="getSelectedGameNight().meal">We're having <span class="text-pink-600 font-semibold text-2xl">{{getSelectedGameNight().meal.name | lowercase}}</span> on</span>
+        <span class="text-pink-600 font-semibold text-2xl">{{getSelectedGameNight().date | date: 'EEEE, MMMM d'}}</span>
     </div>
-    <div class="h-96 mb-12 overflow-y-auto">
-        <div *ngFor="let meal of meals">
-            <div (click)="setMeal(meal)">{{meal.name}}</div>
+    <div class="mb-2 overflow-y-auto flex flex-col space-y-4 border-b pb-6">
+        <div *ngFor="let meal of meals"
+            (click)="setMeal(meal)">
+            <span [ngClass]="{ 'font-bold' : getSelectedGameNight().meal.id === meal.id }">{{meal.name}}</span>
         </div>
-        <button *ngIf="!addingMeal">
-            <mat-icon (click)="addingMeal = !addingMeal">add_circle</mat-icon>
-        </button>
     </div>
-    <form [formGroup]="form" class="flex flex-col space-y-4" *ngIf="addingMeal">
+    <div *ngIf="!addingMeal" class="flex flex-row space-x-2 pt-4" (click)="addingMeal = true">
+        <mat-icon>add</mat-icon>
+        <span>Add Meal</span>
+    </div>
+    <form [formGroup]="form" class="flex flex-col space-y-4 relative pt-4" *ngIf="addingMeal">
+        <span class="absolute top-0 right-0" (click)="addingMeal = false">
+            <mat-icon>highlight_remove</mat-icon>
+        </span>
         <div class="flex flex-row space-x-4">
             <input class="w-2/3" type="text" placeholder="Meal" id="name" formControlName="name" />
             <div class="w-1/3"><button type="submit" class="btn btn-primary w-full h-full" [disabled]="!form.valid" (click)="addMeal()">Add</button></div>

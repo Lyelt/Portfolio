@@ -36,4 +36,8 @@ export class GameNightHomeComponent {
   public gameNightBelongsToLoggedInUser(): boolean {
     return this.gnService.gameNightBelongsToLoggedInUser();
   }
+
+  public userCanSetMeal(): boolean {
+    return this.gnService.userCanSetMeal();
+  }
 }

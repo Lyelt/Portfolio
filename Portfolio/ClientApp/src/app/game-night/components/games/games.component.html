@@ -1,17 +1,35 @@
 <div>
-    <div class="flex flex-col font-medium text-xl text-center mb-12" *ngIf="gameNightBelongsToLoggedInUser()">
-        <span>Select your games for</span>
-        <span class="text-indigo-600 font-semibold text-2xl">{{getSelectedGameNight().date | date: 'EEEE, MMMM d'}}</span>
+    <div class="flex flex-col font-medium text-xl text-center mb-10">
+        <span>{{gameNightBelongsToLoggedInUser() ? "Select your" : "Viewing"}} games for</span>
+        <span class="text-pink-600 font-semibold text-2xl">{{getSelectedGameNight().date | date: 'EEEE, MMMM d'}}</span>
     </div>
-    <div class="h-96 mb-12 overflow-y-auto">
-        <div *ngFor="let game of games">
-            <div (click)="toggleGameSelected(game)" [ngClass]="{'bg-indigo-300': isGameSelected(game)}">{{game.name}}</div>
+    <div class="mb-2 overflow-y-auto flex flex-col space-y-5 border-b pb-6">
+        <div *ngFor="let game of games"
+            (click)="toggleGameSelected(game)" 
+            class="flex flex-row justify-between">
+                <div class="flex flex-row space-x-2">
+                    <mat-icon *ngIf="!isGameSelected(game)">check_circle_outline</mat-icon>
+                    <mat-icon *ngIf="isGameSelected(game)" class="text-pink-600">check_circle</mat-icon>
+                    <span class="overflow-ellipsis">{{game.name}}</span>
+                </div>
+                <div class="flex flex-row space-x-2 w-1/5 justify-end">
+                    <div class="flex flex-row w-1/2 justify-between">
+                        <span>{{game.minPlayers}}</span>
+                        <span>-</span>
+                        <span>{{game.maxPlayers}}</span>
+                    </div>
+                    <mat-icon>person</mat-icon>
+                </div>
         </div>
-        <button *ngIf="!addingGames">
-            <mat-icon (click)="addingGames = !addingGames">add_circle</mat-icon>
-        </button>
     </div>
-    <form [formGroup]="form" class="flex flex-col space-y-4" *ngIf="addingGames">
+    <div *ngIf="!addingGames" class="flex flex-row space-x-2 pt-4" (click)="addingGames = true">
+        <mat-icon>add</mat-icon>
+        <span>Add Game</span>
+    </div>
+    <form [formGroup]="form" class="flex flex-col space-y-4 relative pt-4" *ngIf="addingGames">
+        <span class="absolute top-0 right-0" (click)="addingGames = false">
+            <mat-icon>highlight_remove</mat-icon>
+        </span>
         <div class="flex flex-row space-x-4">
             <input class="w-full" type="text" placeholder="Game" id="name" formControlName="name" />
           </div>

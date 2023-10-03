@@ -1,17 +1,16 @@
-<ol class="flex items-center w-full overflow-x-auto">
-    <li *ngFor="let gn of gameNights"
-        (click)="selectGameNight(gn)"
-        class="flex w-full items-center after:content-[''] after:w-full after:h-0.5 after:border-b after:border-indigo-600 after:border-4 after:inline-block">
-        <span class="flex flex-col items-center justify-center w-14 h-14 rounded-full lg:h-20 lg:w-20 border border-dashed border-indigo-800 shrink-0 font-semibold"
-        [ngClass]="{'bg-indigo-700 text-indigo-50' : gameNightIsSelected(gn)}">
-            <span class="text-xs">{{gn.date | date:'MMM d'}}</span>
-            <span class="text-sm">{{gn.user?.userName}}</span>
-        </span>
-    </li>
-    <li class="flex items-center">
-        <span (click)="loadNextGameNight()" class="flex flex-col items-center justify-center w-14 h-14 rounded-full lg:h-20 lg:w-20 border border-dashed border-indigo-800 shrink-0 font-semibold">
-            <mat-icon>chevron_right</mat-icon>
-        </span>
-    </li>
-    
-</ol>
+<div class="flex flex-row items-center pl-2 py-4">
+    <ol class="flex items-center w-full overflow-x-auto">
+        <li *ngFor="let gn of gameNights"
+            (click)="selectGameNight(gn)"
+            class="flex w-full items-center after:w-full after:h-0.5 after:border-b after:border-indigo-600 after:border-dashed last:after:border-none">
+            <span class="flex flex-col items-center justify-center w-14 h-14 rounded-full lg:h-20 lg:w-20 border border-dashed border-indigo-800 shrink-0 font-semibold"
+            [ngClass]="{'bg-indigo-700 text-indigo-50' : gameNightIsSelected(gn)}">
+                <span class="text-xs">{{gn.date | date:'MMM d'}}</span>
+                <span class="text-sm">{{gn.user?.userName}}</span>
+            </span>
+        </li>
+    </ol>
+    <span (click)="loadNextGameNight()">
+        <mat-icon>chevron_right</mat-icon>
+    </span>
+</div>

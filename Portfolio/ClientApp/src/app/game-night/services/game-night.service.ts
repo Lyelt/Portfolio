@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 })
 export class GameNightService {
   private startDateTime: number;
-  private gameNightsToLoad: number = 4;
+  private gameNightsToLoad: number = 5;
 
   public selectedGameNight: GameNight;
   private visibleGameNightsSubject: ReplaySubject<GameNight[]> = new ReplaySubject();

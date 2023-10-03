@@ -30,6 +30,8 @@ namespace Portfolio.Models.GameNight
 
         public bool? IsCancelled { get; set; }
 
+        //public List<GameNightUserStatus> UserStatuses { get; set; }
+
         public GameNight GetCancelledCopy()
         {
             return new GameNight { Date = Date, IsCancelled = true };

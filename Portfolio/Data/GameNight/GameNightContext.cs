@@ -42,6 +42,12 @@ namespace Portfolio.Data
                 .HasOne(gn => gn.Meal)
                 .WithMany();
 
+            //builder.Entity<GameNight>()
+            //    .HasMany(gn => gn.UserStatuses)
+            //    .WithMany();
+
+
+
             builder.Entity<GameNight>()
                 .Property(gn => gn.GameNightMealId)
                 .IsRequired(false);
