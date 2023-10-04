@@ -42,11 +42,15 @@ namespace Portfolio.Data
                 .HasOne(gn => gn.Meal)
                 .WithMany();
 
-            //builder.Entity<GameNight>()
-            //    .HasMany(gn => gn.UserStatuses)
-            //    .WithMany();
+            builder.Entity<GameNight>()
+                .HasMany(gn => gn.UserStatuses)
+                .WithOne(us => us.GameNight)
+                .HasForeignKey(us => us.GameNightId);
 
-
+            builder.Entity<GameNightUserStatus>()
+                .HasOne(u => u.User)
+                .WithMany()
+                .HasForeignKey(u => u.UserId);
 
             builder.Entity<GameNight>()
                 .Property(gn => gn.GameNightMealId)

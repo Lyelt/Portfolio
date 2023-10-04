@@ -18,5 +18,7 @@ namespace Portfolio.Data
         Task SaveGames(GameNight gameNight);
 
         Task SaveMeal(GameNight gameNight);
+
+        Task SaveUserStatus(GameNightUserStatus status);
     }
 }

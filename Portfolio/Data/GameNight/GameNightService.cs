@@ -63,9 +63,24 @@ namespace Portfolio.Data
 
         public async Task SaveMeal(GameNight gameNight)
         {
-
             var gn = await _context.GameNights.FindAsync(gameNight.Id);
             (gn.GameNightMealId, gn.Meal) = (gameNight.GameNightMealId, gameNight.Meal);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SaveUserStatus(GameNightUserStatus status)
+        {
+            var gn = await _context.GameNights.FindAsync(status.GameNight.Id);
+            var existingStatus = gn.UserStatuses.FirstOrDefault(u => u.Id == status.Id);
+            if (existingStatus is GameNightUserStatus) 
+            {
+                existingStatus.Status = status.Status;
+            }
+            else
+            {
+                gn.UserStatuses.Add(status);
+            }
+
             await _context.SaveChangesAsync();
         }
 

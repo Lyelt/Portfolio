@@ -48,6 +48,20 @@ CREATE INDEX `IX_GameNights_GameNightMealId` ON `GameNights` (`GameNightMealId`)
 
 CREATE INDEX `IX_GameNights_UserId` ON `GameNights` (`UserId`);
 
+CREATE TABLE `GameNightUserStatus` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `GameNightId` int NOT NULL,
+    `UserId` varchar(255) NOT NULL,
+    `Status` int NOT NULL,
+    CONSTRAINT `PK_GameNightUserStatus` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_GameNightUserStatus_AspNetUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `AspNetUsers` (`Id`) ON DELETE CASCADE,
+    CONSTRAINT `FK_GameNightUserStatus_GameNights_GameNightId` FOREIGN KEY (`GameNightId`) REFERENCES `GameNights` (`Id`) ON DELETE CASCADE
+) ;
+
+CREATE INDEX `IX_GameNightUserStatus_GameNightId` ON `GameNightUserStatus` (`GameNightId`);
+
+CREATE INDEX `IX_GameNightUserStatus_UserId` ON `GameNightUserStatus` (`UserId`);
+
 INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
 VALUES ('20230927033126_InitialCreate', '7.0.11');
 

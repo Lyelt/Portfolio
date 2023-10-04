@@ -128,6 +128,14 @@ namespace Portfolio.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        [Route("GameNight/SaveUserStatus")]
+        public async Task<IActionResult> SaveUserStatus([FromBody] GameNightUserStatus status)
+        {
+            await _gnService.SaveUserStatus(status);
+            return Ok();
+        }
+
         private async Task ThrowIfGameNightDoesNotBelongToUser()
         {
             var currentUser = await GetCurrentUser();
