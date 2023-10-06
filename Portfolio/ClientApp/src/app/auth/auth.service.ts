@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { map } from "rxjs/operators";
 import { HttpClient } from "@angular/common/http";
 import { Credentials } from "./credentials";
+import { Observable } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -9,7 +10,7 @@ import { Credentials } from "./credentials";
 export class AuthService {
   constructor(private http: HttpClient) {}
 
-  login(username: string, password: string) {
+  login(username: string, password: string): Observable<string> {
     let creds = new Credentials();
     creds.username = username;
     creds.password = password;

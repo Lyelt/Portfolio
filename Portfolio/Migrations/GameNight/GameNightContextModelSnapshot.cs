@@ -177,7 +177,7 @@ namespace Portfolio.Migrations.GameNight
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("GameNightUserStatus");
+                    b.ToTable("GameNightUserStatuses");
                 });
 
             modelBuilder.Entity("GameNightGameNightGame", b =>

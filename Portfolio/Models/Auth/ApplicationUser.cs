@@ -17,5 +17,12 @@ namespace Portfolio.Models.Auth
         {
             return Id.GetHashCode();
         }
+
+        public ClientUser AsClientUser() => new ClientUser { Id = Id, UserName = UserName };
+    }
+
+    public class ClientUser : ApplicationUser
+    {
+
     }
 }

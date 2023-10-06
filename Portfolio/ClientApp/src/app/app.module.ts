@@ -93,6 +93,7 @@ import { GameNightHomeComponent } from './game-night/components/game-night-home/
 import { GameNightScheduleComponent } from './game-night/components/game-night-schedule/game-night-schedule.component';
 import { GamesComponent } from './game-night/components/games/games.component';
 import { MealsComponent } from './game-night/components/meals/meals.component';
+import { GameNightUserStatusesComponent } from './game-night/components/game-night-user-statuses/game-night-user-statuses.component';
 
 const routes: Routes = [
     {
@@ -288,7 +289,8 @@ const routes: Routes = [
         GameNightHomeComponent,
         GameNightScheduleComponent,
         GamesComponent,
-        MealsComponent
+        MealsComponent,
+        GameNightUserStatusesComponent
     ],
     imports: [
         CommonModule,

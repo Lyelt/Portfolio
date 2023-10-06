@@ -39,7 +39,7 @@ namespace Portfolio.Controllers
         {
             var validUsers = _userContext.GetValidUsersForRoles(VALID_ROLES);
             _logger.LogDebug($"Found {validUsers.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-            return Ok(validUsers);
+            return Ok(validUsers.Select(u => u.AsClientUser()));
         }
 
         [HttpGet]

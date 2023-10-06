@@ -18,6 +18,8 @@ namespace Portfolio.Data
 
         public DbSet<GameNightGame> Games { get; set; }
 
+        public DbSet<GameNightUserStatus> GameNightUserStatuses { get; set; }
+
         public GameNightContext(DbContextOptions<GameNightContext> options)
                : base(options)
         {

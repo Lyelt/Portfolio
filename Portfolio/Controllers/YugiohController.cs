@@ -76,7 +76,7 @@ namespace Portfolio.Controllers
         {
             var duelists = _userContext.GetValidUsersForRoles(VALID_ROLES);
             _logger.LogDebug($"Found {duelists.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-            return Ok(duelists);
+            return Ok(duelists.Select(u => u.AsClientUser()));
         }
 
         [HttpGet]

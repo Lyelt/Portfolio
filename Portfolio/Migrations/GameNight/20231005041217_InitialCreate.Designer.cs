@@ -11,8 +11,8 @@ using Portfolio.Data;
 namespace Portfolio.Migrations.GameNight
 {
     [DbContext(typeof(GameNightContext))]
-    [Migration("20230929203234_AddIsCancelled")]
-    partial class AddIsCancelled
+    [Migration("20231005041217_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -105,7 +105,6 @@ namespace Portfolio.Migrations.GameNight
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
@@ -159,6 +158,31 @@ namespace Portfolio.Migrations.GameNight
                     b.ToTable("GameNightMeals");
                 });
 
+            modelBuilder.Entity("Portfolio.Models.GameNight.GameNightUserStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameNightId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameNightId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("GameNightUserStatuses");
+                });
+
             modelBuilder.Entity("GameNightGameNightGame", b =>
                 {
                     b.HasOne("Portfolio.Models.GameNight.GameNight", null)
@@ -182,13 +206,35 @@ namespace Portfolio.Migrations.GameNight
 
                     b.HasOne("Portfolio.Models.Auth.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Meal");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Portfolio.Models.GameNight.GameNightUserStatus", b =>
+                {
+                    b.HasOne("Portfolio.Models.GameNight.GameNight", "GameNight")
+                        .WithMany("UserStatuses")
+                        .HasForeignKey("GameNightId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Portfolio.Models.Auth.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GameNight");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Portfolio.Models.GameNight.GameNight", b =>
+                {
+                    b.Navigation("UserStatuses");
                 });
 #pragma warning restore 612, 618
         }

@@ -26,7 +26,7 @@ namespace Portfolio.Data
             }
 
             // Default user is whoever is first
-            _userIdToNextUserId[string.Empty] = GetUserId(DEFAULT_USER_ORDER[0]);
+            _userIdToNextUserId[string.Empty] = GetUserId(Environment.GetEnvironmentVariable("GAME_NIGHT_FIRST_USER_NAME"));
 
             string GetUserId(string userName) => userContext.Users.Single(u => u.UserName.Equals(userName)).Id;
         }

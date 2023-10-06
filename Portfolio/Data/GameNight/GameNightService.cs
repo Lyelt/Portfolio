@@ -1,8 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Portfolio.Identity;
+using Portfolio.Models.Auth;
 using Portfolio.Models.GameNight;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,13 +16,15 @@ namespace Portfolio.Data
     {
         private const DayOfWeek DEFAULT_GAME_NIGHT = DayOfWeek.Monday;
         private readonly GameNightContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IGameNightChooserFactory _gameNightChooser;
         private readonly ILogger<GameNightService> _logger;
 
-        public GameNightService(ILogger<GameNightService> logger, GameNightContext gameNightContext, IGameNightChooserFactory gameNightChooser) 
+        public GameNightService(ILogger<GameNightService> logger, GameNightContext gameNightContext, UserManager<ApplicationUser> userManager, IGameNightChooserFactory gameNightChooser) 
         { 
             _logger = logger;
             _context = gameNightContext;
+            _userManager = userManager;
             _gameNightChooser = gameNightChooser;
         }
 
@@ -28,6 +34,9 @@ namespace Portfolio.Data
                 .Include(gn => gn.Games)
                 .Include(gn => gn.Meal)
                 .Include(gn => gn.User)
+                .Include(gn => gn.UserStatuses)
+                    .ThenInclude(us => us.User)
+                    .AsNoTracking()
                 .AsEnumerable()
                 .OrderBy(gn => gn.Date)
                 .SkipWhile(gn => gn.Date.Date < startDate.Date)
@@ -70,7 +79,7 @@ namespace Portfolio.Data
 
         public async Task SaveUserStatus(GameNightUserStatus status)
         {
-            var gn = await _context.GameNights.FindAsync(status.GameNight.Id);
+            var gn = _context.GameNights.Include(gn => gn.UserStatuses).FirstOrDefault(gn => gn.Id == status.GameNightId);
             var existingStatus = gn.UserStatuses.FirstOrDefault(u => u.Id == status.Id);
             if (existingStatus is GameNightUserStatus) 
             {
@@ -140,6 +149,7 @@ namespace Portfolio.Data
         private async Task<GameNight> CreateNextGameNightFrom(GameNight previousGameNight)
         {
             var gn = new GameNight { Date = GetNextDateFrom(previousGameNight?.Date ?? DateTime.UtcNow), UserId = GetNextUserIdFrom(previousGameNight?.UserId) };
+            gn.UserStatuses = await CreateDefaultUserStatuses(gn);
             await _context.GameNights.AddAsync(gn);
             await _context.SaveChangesAsync();
             _logger.LogInformation($"Automatically added next game night: {gn.UserId}'s night on {gn.Date}");
@@ -180,13 +190,14 @@ namespace Portfolio.Data
                 .FirstOrDefault(gn => !(gn.IsCancelled ?? false)) ?? await CreateNextGameNightFrom(gameNight);
         }
 
-        private GameNight GetPreviousGameNightFrom(GameNight gameNight)
+        private async Task<List<GameNightUserStatus>> CreateDefaultUserStatuses(GameNight gn)
         {
-            return _context.GameNights
-                .AsEnumerable()
-                .OrderByDescending(gn => gn.Date)
-                .Where(gn => gn.Date < gameNight.Date)
-                .FirstOrDefault(gn => !(gn.IsCancelled ?? false));
+            var userStatuses = (await _userManager.GetUsersInRoleAsync(ApplicationRole.Gamer.ToString()))
+                .Select(u => new GameNightUserStatus { UserId = u.Id, GameNight = gn, GameNightId = gn.Id, Status = UserStatus.Unknown })
+                .ToList();
+            await _context.GameNightUserStatuses.AddRangeAsync(userStatuses);
+            //await _context.SaveChangesAsync();
+            return userStatuses;
         }
     }
 }

@@ -93,8 +93,9 @@ namespace Portfolio.Migrations.GameNight
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     GameNightMealId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsCancelled = table.Column<bool>(type: "tinyint(1)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -103,8 +104,7 @@ namespace Portfolio.Migrations.GameNight
                         name: "FK_GameNights_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_GameNights_GameNightMeals_GameNightMealId",
                         column: x => x.GameNightMealId,
@@ -138,6 +138,35 @@ namespace Portfolio.Migrations.GameNight
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "GameNightUserStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    GameNightId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Status = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GameNightUserStatuses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GameNightUserStatuses_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GameNightUserStatuses_GameNights_GameNightId",
+                        column: x => x.GameNightId,
+                        principalTable: "GameNights",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateIndex(
                 name: "IX_GameNightGameNightGame_GamesId",
                 table: "GameNightGameNightGame",
@@ -152,6 +181,16 @@ namespace Portfolio.Migrations.GameNight
                 name: "IX_GameNights_UserId",
                 table: "GameNights",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GameNightUserStatuses_GameNightId",
+                table: "GameNightUserStatuses",
+                column: "GameNightId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GameNightUserStatuses_UserId",
+                table: "GameNightUserStatuses",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -161,10 +200,13 @@ namespace Portfolio.Migrations.GameNight
                 name: "GameNightGameNightGame");
 
             migrationBuilder.DropTable(
-                name: "GameNights");
+                name: "GameNightUserStatuses");
 
             migrationBuilder.DropTable(
                 name: "Games");
+
+            migrationBuilder.DropTable(
+                name: "GameNights");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

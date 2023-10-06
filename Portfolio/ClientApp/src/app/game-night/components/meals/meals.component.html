@@ -1,4 +1,4 @@
-<div *ngIf="getSelectedGameNight()">
+<div *ngIf="getSelectedGameNight()" class="px-6">
     <div class="flex flex-col font-medium text-xl text-center mb-12">
         <span *ngIf="!getSelectedGameNight().meal">{{userCanSetMeal() ? "Select" : "Suggest"}} the meal for</span>
         <span *ngIf="getSelectedGameNight().meal">We're having <span class="emphasis">{{getSelectedGameNight().meal.name | lowercase}}</span> on</span>
@@ -7,7 +7,7 @@
     <div class="mb-2 overflow-y-auto flex flex-col space-y-4 border-b pb-6">
         <div *ngFor="let meal of meals"
             (click)="setMeal(meal)">
-            <span [ngClass]="{ 'font-bold' : getSelectedGameNight().meal.id === meal.id }">{{meal.name}}</span>
+            <span [ngClass]="{ 'font-bold' : getSelectedGameNight().meal?.id === meal.id }">{{meal.name}}</span>
         </div>
     </div>
     <div *ngIf="!addingMeal" class="flex flex-row space-x-2 pt-4" (click)="addingMeal = true">

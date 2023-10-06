@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { GameNight, GameNightGame, GameNightMeal } from '../models/game-night';
+import { GameNight, GameNightGame, GameNightMeal, GameNightUserStatus } from '../models/game-night';
 import { Observable, ReplaySubject } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 
@@ -62,6 +62,10 @@ export class GameNightService {
 
   public saveMeal(gn: GameNight) {
     this.http.post<GameNight>("GameNight/SaveMeal", gn).subscribe(() => this.loadGameNights());
+  }
+
+  public saveUserStatus(status: GameNightUserStatus) {
+    this.http.post<GameNight>("GameNight/SaveUserStatus", status).subscribe(() => this.loadGameNights());
   }
 
   public addGame(g: GameNightGame) {

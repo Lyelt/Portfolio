@@ -9,6 +9,7 @@ export class GameNight {
     meal?: GameNightMeal;
     games: GameNightGame[];
     isCancelled?: boolean;
+    userStatuses: GameNightUserStatus[];
 }
 
 export class GameNightMeal {
@@ -23,4 +24,19 @@ export class GameNightGame {
     image: string;
     minPlayers: number;
     maxPlayers: number;
+}
+
+export class GameNightUserStatus {
+    id: number;
+    gameNightId: number;
+    userId: string;
+    user: User;
+    status: UserStatus;
+}
+
+export enum UserStatus {
+    Available,
+    Partial,
+    NotAvailable,
+    Unknown
 }
