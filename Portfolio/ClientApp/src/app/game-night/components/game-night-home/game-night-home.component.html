@@ -15,7 +15,7 @@
     
     <div class="w-full" >
         <div class="flex flex-col items-center space-y-12">
-            <div class="w-full mx-12 max-w-xs md:max-w-md py-4 px-8 border rounded-lg shadow-lg bg-white relative" >
+            <div class="w-full mx-12 max-w-xs md:max-w-md py-4 px-8 border rounded-lg shadow-lg bg-white dark:bg-gray-900 relative" >
                 <div class="flex flex-col space-y-2" *ngIf="getSelectedGameNight().games?.length === 0">
                     <div class="flex flex-col items-center">
                         <img class="h-36" src="assets/icons/camping.svg"/>
@@ -31,7 +31,7 @@
                 routerLink="/gamenight/games"
                 *ngIf="gameNightBelongsToLoggedInUser()"><mat-icon>edit</mat-icon></div>
             </div>
-            <div class="w-full mx-12 max-w-xs md:max-w-md border rounded-lg shadow-lg bg-white">
+            <div class="w-full mx-12 max-w-xs md:max-w-md border rounded-lg shadow-lg bg-white dark:bg-gray-900">
                 <app-game-night-user-statuses></app-game-night-user-statuses>
             </div>
         </div>
