@@ -29,8 +29,13 @@ export class GameNightUserStatusesComponent implements OnInit {
   }
 
   setUserStatus(status: UserStatus): void {
-    this.userStatus.status = status;
-    this.gnService.saveUserStatus(this.userStatus);
+    if ((status === UserStatus.NotAvailable || status === UserStatus.Partial) && this.gnService.selectedGameNight.userId === this.authService.getLoggedInUserId()) {
+      this.gnService.skippingNight = true;
+    }
+    else {
+      this.userStatus.status = status;
+      this.gnService.saveUserStatus(this.userStatus);
+    }
   }
 
 }

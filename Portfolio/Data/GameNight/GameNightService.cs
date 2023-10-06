@@ -40,15 +40,14 @@ namespace Portfolio.Data
                 .AsEnumerable()
                 .OrderBy(gn => gn.Date)
                 .SkipWhile(gn => gn.Date.Date < startDate.Date)
-                .Take(numberOfGameNights)
                 .ToList();
 
-            while (gameNights.Count < numberOfGameNights)
+            while (gameNights.Count < (numberOfGameNights * 2))
             {
                 gameNights.Add(await CreateNextGameNightFrom(gameNights.LastOrDefault()));
             }
 
-            return gameNights;
+            return gameNights.Take(numberOfGameNights);
         }
 
         public async Task SaveGames(GameNight newGameNight)
@@ -144,6 +143,7 @@ namespace Portfolio.Data
             _context.GameNights.Remove(gameNight);
             await _context.SaveChangesAsync();
         }
+
 
 
         private async Task<GameNight> CreateNextGameNightFrom(GameNight previousGameNight)

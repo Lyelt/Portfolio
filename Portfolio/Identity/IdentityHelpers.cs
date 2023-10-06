@@ -29,6 +29,7 @@ namespace Portfolio.Identity
         Duelist,
         DogOwner,
         Gamer,
+        Chef,
         Guest
     }
 }

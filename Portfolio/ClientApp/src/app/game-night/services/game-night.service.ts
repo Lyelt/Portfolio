@@ -12,6 +12,8 @@ export class GameNightService {
   private gameNightsToLoad: number = 5;
 
   public selectedGameNight: GameNight;
+  public skippingNight: boolean = false;
+  
   private visibleGameNightsSubject: ReplaySubject<GameNight[]> = new ReplaySubject();
   private gamesSubject: ReplaySubject<GameNightGame[]> = new ReplaySubject();
   private mealsSubject: ReplaySubject<GameNightMeal[]> = new ReplaySubject();

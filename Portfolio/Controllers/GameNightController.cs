@@ -14,13 +14,12 @@ using Portfolio.Models.GameNight;
 using Portfolio.Models.Auth;
 using Portfolio.Models.Errors;
 using Portfolio.Extensions;
+using System.Data;
 
 namespace Portfolio.Controllers
 {
     public class GameNightController : Controller
     {
-        private static string[] VALID_ROLES = new string[] { ApplicationRole.Administrator.ToString(), ApplicationRole.Gamer.ToString() };
-
         private readonly GameNightContext _gnContext;
         private readonly PortfolioContext _userContext;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -34,15 +33,6 @@ namespace Portfolio.Controllers
             _userManager = userManager;
             _logger = logger;
             _gnService = gnService;
-        }
-
-        [HttpGet]
-        [Route("GameNight/GetUsers")]
-        public IActionResult GetUsers()
-        {
-            var gamers = _userContext.GetValidUsersForRoles(VALID_ROLES);
-            _logger.LogDebug($"Found {gamers.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-            return Ok(gamers.Select(u => u.AsClientUser()));
         }
 
         [HttpGet]
@@ -66,6 +56,7 @@ namespace Portfolio.Controllers
         [Route("GameNight/AddGame")]
         public async Task<IActionResult> AddGame([FromBody]GameNightGame game)
         {
+            await ThrowIfUserNotInRole(ApplicationRole.Gamer);
             _gnContext.Games.Add(game);
             await _gnContext.SaveChangesAsync();
             return Ok();
@@ -75,6 +66,7 @@ namespace Portfolio.Controllers
         [Route("GameNight/AddMeal")]
         public async Task<IActionResult> AddMeal([FromBody] GameNightMeal meal)
         {
+            await ThrowIfUserNotInRole(ApplicationRole.Gamer);
             meal.DateAdded = DateTime.Now;
             _gnContext.GameNightMeals.Add(meal);
             await _gnContext.SaveChangesAsync();
@@ -92,6 +84,8 @@ namespace Portfolio.Controllers
         [Route("GameNight/SkipGameNight/{gameNightId}")]
         public async Task<IActionResult> SkipGameNight(int gameNightId)
         {
+            await ThrowIfUserNotInRole(ApplicationRole.Gamer);
+            await ThrowIfGameNightDoesNotBelongToUser(_gnContext.GameNights.Find(gameNightId));
             await _gnService.SkipGameNight(gameNightId);
             return Ok();
         }
@@ -100,6 +94,8 @@ namespace Portfolio.Controllers
         [Route("GameNight/CancelGameNight/{gameNightId}")]
         public async Task<IActionResult> CancelGameNight(int gameNightId)
         {
+            await ThrowIfUserNotInRole(ApplicationRole.Gamer);
+            await ThrowIfGameNightDoesNotBelongToUser(_gnContext.GameNights.Find(gameNightId));
             await _gnService.CancelGameNight(gameNightId);
             return Ok();
         }
@@ -108,6 +104,8 @@ namespace Portfolio.Controllers
         [Route("GameNight/UncancelGameNight/{gameNightId}")]
         public async Task<IActionResult> UncancelGameNight(int gameNightId)
         {
+            await ThrowIfUserNotInRole(ApplicationRole.Gamer);
+            await ThrowIfGameNightDoesNotBelongToUser(_gnContext.GameNights.Find(gameNightId));
             await _gnService.UncancelGameNight(gameNightId);
             return Ok();
         }
@@ -116,6 +114,7 @@ namespace Portfolio.Controllers
         [Route("GameNight/SaveGames")]
         public async Task<IActionResult> SaveGames([FromBody]GameNight gameNight)
         {
+            await ThrowIfUserNotInRole(ApplicationRole.Gamer);
             await _gnService.SaveGames(gameNight);
             return Ok();
         }
@@ -124,6 +123,7 @@ namespace Portfolio.Controllers
         [Route("GameNight/SaveMeal")]
         public async Task<IActionResult> SaveMeal([FromBody] GameNight gameNight)
         {
+            await ThrowIfUserNotInRole(ApplicationRole.Chef);
             await _gnService.SaveMeal(gameNight);
             return Ok();
         }
@@ -132,15 +132,23 @@ namespace Portfolio.Controllers
         [Route("GameNight/SaveUserStatus")]
         public async Task<IActionResult> SaveUserStatus([FromBody] GameNightUserStatus status)
         {
+            await ThrowIfUserNotInRole(ApplicationRole.Gamer);
             await _gnService.SaveUserStatus(status);
             return Ok();
         }
 
-        private async Task ThrowIfGameNightDoesNotBelongToUser()
+        private async Task ThrowIfGameNightDoesNotBelongToUser(GameNight gn)
         {
             var currentUser = await GetCurrentUser();
-            if (await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Guest.ToString()))
-                throw new UnauthorizedException("Cannot make modifications as a guest");
+            if (!(gn.UserId?.Equals(currentUser.Id) ?? true))
+                throw new UnauthorizedException("This game night does not belong to you");
+        }
+
+        private async Task ThrowIfUserNotInRole(ApplicationRole role)
+        {
+            var currentUser = await GetCurrentUser();
+            if (!(await _userManager.IsInRoleAsync(currentUser, role.ToString())))
+                throw new UnauthorizedException("You do not have the required permission to do that");
         }
 
         private async Task<ApplicationUser> GetCurrentUser()

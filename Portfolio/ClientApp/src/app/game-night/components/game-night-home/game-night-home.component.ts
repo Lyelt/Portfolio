@@ -17,12 +17,8 @@ export class GameNightHomeComponent {
     });
   }
 
-  public skipSelected(): void {
-    this.gnService.skipGameNight(this.gnService.selectedGameNight);
-  }
-
-  public toggleCancelSelected(): void {
-    this.gnService.toggleCancelGameNight(this.gnService.selectedGameNight, !this.gnService.selectedGameNight.isCancelled);
+  public uncancelGameNight(): void {
+    this.gnService.toggleCancelGameNight(this.gnService.selectedGameNight, false);
   }
 
   public isSelectedGameNightNext(): boolean {

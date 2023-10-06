@@ -1,4 +1,4 @@
-<div *ngIf="getSelectedGameNight()">
+<div *ngIf="getSelectedGameNight() && !getSelectedGameNight().isCancelled">
     <div class="flex flex-col space-y-4 text-xl md:text-2xl items-center w-full mb-12">
         <div class="flex flex-col items-center md:flex-row md:items-baseline md:space-x-2">
             <span>{{(isSelectedGameNightNext() ? "Next" : "This")}} game night is</span>
@@ -17,7 +17,7 @@
         <div class="flex flex-col items-center space-y-12">
             <div class="w-full mx-12 max-w-xs md:max-w-md py-4 px-8 border rounded-lg shadow-lg bg-white relative" >
                 <div class="flex flex-col space-y-2" *ngIf="getSelectedGameNight().games?.length === 0">
-                    <div *ngIf="!gameNightBelongsToLoggedInUser()" class="flex flex-col items-center">
+                    <div class="flex flex-col items-center">
                         <img class="h-36" src="assets/icons/camping.svg"/>
                         <span class="text-xs">No Games Selected</span>
                     </div>
@@ -28,7 +28,8 @@
                     </div>
                 </div>
                 <div class="absolute top-4 right-4 text-gray-600"
-                routerLink="/gamenight/games"><mat-icon>edit</mat-icon></div>
+                routerLink="/gamenight/games"
+                *ngIf="gameNightBelongsToLoggedInUser()"><mat-icon>edit</mat-icon></div>
             </div>
             <div class="w-full mx-12 max-w-xs md:max-w-md border rounded-lg shadow-lg bg-white">
                 <app-game-night-user-statuses></app-game-night-user-statuses>
@@ -36,3 +37,8 @@
         </div>
     </div>
 </div>
+<div *ngIf="getSelectedGameNight() && getSelectedGameNight().isCancelled" class="flex flex-col items-center space-y-24 text-xl md:text-2xl px-24 text-center">
+    <span>This game night was cancelled.</span>
+    <button class="btn btn-primary" (click)="uncancelGameNight()">Reactivate</button>
+</div>
+<app-user-status-confirmation></app-user-status-confirmation>

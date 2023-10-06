@@ -94,6 +94,7 @@ import { GameNightScheduleComponent } from './game-night/components/game-night-s
 import { GamesComponent } from './game-night/components/games/games.component';
 import { MealsComponent } from './game-night/components/meals/meals.component';
 import { GameNightUserStatusesComponent } from './game-night/components/game-night-user-statuses/game-night-user-statuses.component';
+import { UserStatusConfirmationComponent } from './game-night/components/user-status-confirmation/user-status-confirmation.component';
 
 const routes: Routes = [
     {
@@ -290,7 +291,8 @@ const routes: Routes = [
         GameNightScheduleComponent,
         GamesComponent,
         MealsComponent,
-        GameNightUserStatusesComponent
+        GameNightUserStatusesComponent,
+        UserStatusConfirmationComponent
     ],
     imports: [
         CommonModule,
