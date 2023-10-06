@@ -40,7 +40,7 @@ namespace Portfolio.Controllers
         {
             var speedrunners = _userContext.GetValidUsersForRoles(VALID_ROLES);
             _logger.LogDebug($"Found {speedrunners.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-            return Ok(speedrunners);
+            return Ok(speedrunners.Select(u => u.AsClientUser()));
         }
 
         [HttpGet]

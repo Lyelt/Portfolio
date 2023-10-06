@@ -14,7 +14,6 @@ using Portfolio.Models.Auth;
 using Microsoft.Extensions.Caching.Memory;
 using Portfolio.Models.Yugioh;
 using System.Net.Http;
-using MoreLinq;
 using Microsoft.AspNetCore.Authorization;
 using Portfolio.Extensions;
 using Portfolio.Models.Errors;
@@ -77,7 +76,7 @@ namespace Portfolio.Controllers
         {
             var duelists = _userContext.GetValidUsersForRoles(VALID_ROLES);
             _logger.LogDebug($"Found {duelists.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-            return Ok(duelists);
+            return Ok(duelists.Select(u => u.AsClientUser()));
         }
 
         [HttpGet]

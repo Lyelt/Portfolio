@@ -88,6 +88,13 @@ import { DogIndicatorComponent } from './dog/components/dog-indicator/dog-indica
 import { MaterialModule } from './material/material.module';
 import { September2023Component } from './blog/components/articles/september2023/september2023.component';
 import { BlogCodeComponent } from './blog/components/blog-template/blog-code/blog-code.component';
+import { GameNightComponent } from './game-night/components/game-night/game-night.component';
+import { GameNightHomeComponent } from './game-night/components/game-night-home/game-night-home.component';
+import { GameNightScheduleComponent } from './game-night/components/game-night-schedule/game-night-schedule.component';
+import { GamesComponent } from './game-night/components/games/games.component';
+import { MealsComponent } from './game-night/components/meals/meals.component';
+import { GameNightUserStatusesComponent } from './game-night/components/game-night-user-statuses/game-night-user-statuses.component';
+import { UserStatusConfirmationComponent } from './game-night/components/user-status-confirmation/user-status-confirmation.component';
 
 const routes: Routes = [
     {
@@ -181,6 +188,18 @@ const routes: Routes = [
         path: 'dog', component: DogComponent, canActivate: [AuthGuard], data: { toolbar: false }
     },
     {
+        path: 'gamenight', component: GameNightComponent, canActivate: [AuthGuard], data: { toolbar: false }
+    },
+    {
+        path: 'gamenight/home', component: GameNightComponent, canActivate: [AuthGuard], data: { toolbar: false }
+    },
+    {
+        path: 'gamenight/games', component: GameNightComponent, canActivate: [AuthGuard], data: { toolbar: false }
+    },
+    {
+        path: 'gamenight/meals', component: GameNightComponent, canActivate: [AuthGuard], data: { toolbar: false }
+    },
+    {
         path: '**',
         redirectTo: '/'
     }
@@ -266,7 +285,14 @@ const routes: Routes = [
         DogComponent,
         DogIndicatorComponent,
         September2023Component,
-        BlogCodeComponent
+        BlogCodeComponent,
+        GameNightComponent,
+        GameNightHomeComponent,
+        GameNightScheduleComponent,
+        GamesComponent,
+        MealsComponent,
+        GameNightUserStatusesComponent,
+        UserStatusConfirmationComponent
     ],
     imports: [
         CommonModule,

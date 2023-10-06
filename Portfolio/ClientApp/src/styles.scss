@@ -9,6 +9,14 @@
 
 @tailwind components;
 
+.emphasis {
+  @apply text-pink-600 font-semibold text-2xl md:text-4xl;
+}
+
+.action {
+  @apply text-indigo-600 font-semibold;
+}
+
 .btn {
   @apply font-semibold py-2 px-4 rounded transition-bg ease-in-out duration-200 disabled:opacity-50 disabled:pointer-events-none;
 }
@@ -20,6 +28,7 @@
 .btn-secondary {
   @apply bg-pink-600 text-pink-50 hover:bg-pink-700 dark:bg-pink-700 dark:hover:bg-pink-800;
 }
+
 
 select {
   @apply dark:bg-gray-900 dark:border-gray-400 dark:placeholder-gray-400 rounded;
@@ -97,7 +106,6 @@ input[type] {
 @import url('https://fonts.googleapis.com/css?family=Raleway:300,700|Material+Icons');
 @import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
 
-/* purgecss start ignore */
 /* Make the legend labels flow horizontally and wrap instead of one-per-line. */
 .chart-legend .legend-labels {
   white-space: inherit #{!important};
@@ -257,4 +265,3 @@ input[type] {
 .animation-delay-1500 {
   animation-delay: 1500ms;
 }
-/* purgecss end ignore */

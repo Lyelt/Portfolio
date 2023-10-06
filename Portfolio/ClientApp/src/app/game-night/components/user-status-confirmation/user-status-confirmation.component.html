@@ -1,0 +1,21 @@
+<div class="fixed z-topmost inset-0 w-full h-full overflow-auto bg-black bg-opacity-50" *ngIf="gnService.skippingNight">
+    <div #modal class="bg-white mx-auto my-8 w-4/5 xl:w-1/2 rounded-lg text-sm md:text-base relative">
+        <button type="button" 
+                        class="absolute top-0 right-4 cursor-pointer text-2xl focus:outline-none" 
+                        (click)="closeModal()">&times;</button>
+        <div class="flex flex-col pb-12 pt-6 px-6">
+            <div class="flex justify-start items-center font-bold mb-4 text-lg space-x-4">
+                <mat-icon>error_outline</mat-icon>
+                <span>You're missing your night!</span>
+            </div>
+            <span>You're going to miss some or all of your night. Would you like to skip your night?</span>
+        </div>
+        <div class="flex justify-between rounded-b-lg bg-gray-100 px-4 py-3">
+            <button type="button" class="btn" (click)="cancel()">Cancel Night</button>
+            <div class="flex space-x-4">
+                <button type="button" class="btn focus:outline-none focus:ring-2 font-medium" (click)="closeModal()">No</button>
+                <button type="button" class="btn border focus:outline-none focus:ring-2 font-medium bg-gray-600 text-gray-50" (click)="skip()">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>

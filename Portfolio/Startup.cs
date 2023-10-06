@@ -30,9 +30,10 @@ namespace Portfolio
             services
                 .ConfigureDatabase(Configuration)
                 .ConfigureLogging(Configuration)
-                .ConfigureAuthentication(Configuration);
-
-            services.AddSingleton<IDogService, DogService>();
+                .ConfigureAuthentication(Configuration)
+                .AddSingleton<IDogService, DogService>()
+                .AddSingleton<IGameNightChooserFactory, GameNightChooserFactory>()
+                .AddTransient<IGameNightService, GameNightService>();
 
             services.AddSignalR(options =>
             {
@@ -73,7 +74,9 @@ namespace Portfolio
             }
             app.UseExceptionHandler("/error");
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            // If we don't check env.IsDevelopment(), there is a styles.js error that prevents the entire page from being rendered during development
+            if (!env.IsDevelopment()) 
+                app.UseSpaStaticFiles();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
@@ -94,7 +97,8 @@ namespace Portfolio
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseAngularCliServer(npmScript: "start");
+                    //spa.UseAngularCliServer(npmScript: "start");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });
         }

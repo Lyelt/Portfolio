@@ -1,0 +1,37 @@
+<div class="py-4 px-8 relative">
+    <div *ngIf="userStatusIsUnknown()" class="flex flex-col space-y-4">
+        <div class="border rounded p-2 md:p-4 flex flex-row items-center space-x-3 font-semibold bg-green-600 text-green-50" (click)="setUserStatus(0)">
+            <mat-icon>event_available</mat-icon>
+            <span class="text-sm md:text-base">I'm available</span>
+        </div>
+        <div class="border rounded p-2 md:p-4 flex flex-row items-center space-x-3 font-semibold bg-yellow-600 text-yellow-50" (click)="setUserStatus(1)">
+            <mat-icon>access_time</mat-icon>
+            <span class="text-sm md:text-base">I'm partially busy</span>
+        </div>
+        <div class="border rounded p-2 md:p-4 flex flex-row items-center space-x-3 font-semibold bg-red-600 text-red-50" (click)="setUserStatus(2)">
+            <mat-icon>event_busy</mat-icon>
+            <span class="text-sm md:text-base">I won't be there</span>
+        </div>
+    </div>
+    <div *ngIf="!userStatusIsUnknown() || userStatus === undefined" class="w-full ">
+        <div class="grid grid-cols-2 grid-rows-3 gap-y-2 gap-x-6">
+            <div *ngFor="let us of getUserStatuses()" 
+            class="flex flex-col pb-2">
+            <div class="font-medium flex justify-between pr-8">
+                <span>{{us.user?.userName}}</span>
+                <mat-icon class="text-green-600" *ngIf="us.status === 0">event_available</mat-icon>
+                <mat-icon class="text-yellow-600" *ngIf="us.status === 1">access_time</mat-icon>
+                <mat-icon class="text-red-600" *ngIf="us.status === 2">event_busy</mat-icon>
+                <mat-icon class="text-gray-500" *ngIf="us.status === 3">help_outline</mat-icon>
+            </div>
+            <span class="text-green-600 text-xs tracking-wide leading-tight" *ngIf="us.status === 0">Available</span>
+            <span class="text-yellow-600 text-xs tracking-wide leading-tight" *ngIf="us.status === 1">Partially Busy</span>
+            <span class="text-red-600 text-xs tracking-wide leading-tight" *ngIf="us.status === 2">Not Available</span>
+            <span class="text-gray-500 text-xs tracking-wide leading-tight" *ngIf="us.status === 3">Unknown</span>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!userStatusIsUnknown()" class="absolute top-4 right-4 text-gray-600" (click)="setUserStatus(3)">
+        <mat-icon>edit</mat-icon>
+    </div>
+</div>

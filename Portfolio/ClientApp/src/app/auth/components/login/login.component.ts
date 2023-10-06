@@ -14,7 +14,6 @@ export class LoginComponent implements OnInit {
     loginForm: FormGroup;
     loading = false;
     submitted = false;
-    returnUrl: string;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -30,13 +29,14 @@ export class LoginComponent implements OnInit {
 
         // reset login status
         this.authenticationService.logout();
-
-        // get return url from route parameters or default to '/'
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
 
     // convenience getter for easy access to form fields
     get f() { return this.loginForm.controls; }
+
+    getReturnUrl() {
+        return this.route.snapshot.queryParams['returnUrl'] || '/';
+    }
 
     onSubmit() {
         this.submitted = true;
@@ -46,32 +46,24 @@ export class LoginComponent implements OnInit {
         }
 
         this.loading = true;
-        this.authenticationService.login(this.f.username.value, this.f.password.value).subscribe(data => {
-            this.router.navigate([this.returnUrl]);
-        },
-        error => {
-            this.loading = false;
-        },
-        () => {            
-            this.loading = false;
+        this.authenticationService.login(this.f.username.value, this.f.password.value).subscribe({
+            next: () => { this.router.navigate([this.getReturnUrl()])},
+            error: () => { this.loading = false; },
+            complete: () => { this.loading = false; }
         });
     }
 
     guestLogin() {
-        //this.loading = true;
-        this.authenticationService.guestLogin().subscribe(data => {
-            this.router.navigate([this.returnUrl]);
-        }),
-        error => {
-            this.loading = false;
-        },
-        () => {            
-            this.loading = false;
-        };
+        this.loading = true;
+        this.authenticationService.guestLogin().subscribe({
+            next: () => { this.router.navigate([this.getReturnUrl()])},
+            error: () => { this.loading = false; },
+            complete: () => { this.loading = false; }
+        });
     }
 
     navigatingToSpeedrun(): boolean {
-        return this.returnUrl.indexOf('speedrun') >= 0;
+        return this.getReturnUrl().indexOf('speedrun') >= 0;
     }
 }
 

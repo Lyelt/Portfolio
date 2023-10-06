@@ -51,7 +51,7 @@ namespace Portfolio.Controllers
         {
             var dogOwners = _context.GetValidUsersForRoles(VALID_ROLES);
             _logger.LogDebug($"Found {dogOwners.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-            return Ok(dogOwners);
+            return Ok(dogOwners.Select(u => u.AsClientUser()));
         }
 
         [HttpGet]
