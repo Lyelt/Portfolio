@@ -3,6 +3,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map, mergeMap } from 'rxjs/operators';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +28,9 @@ export class AppComponent {
       "gameNight",
       this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/icons/game-night.svg")
     );
+
+    // StatusBar.setOverlaysWebView({ overlay: false });
+    StatusBar.hide();
   }
 
   ngOnInit() {

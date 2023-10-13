@@ -9,6 +9,10 @@
 
 @tailwind components;
 
+body {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
 .emphasis {
   @apply text-pink-600 font-semibold text-2xl md:text-4xl dark:text-pink-300;
 }
