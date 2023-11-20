@@ -39,7 +39,7 @@ namespace Portfolio.Data
                     .AsNoTracking()
                 .AsEnumerable()
                 .OrderBy(gn => gn.Date)
-                .SkipWhile(gn => gn.Date.Date < startDate.Date.Date)
+                .SkipWhile(gn => gn.Date.Date < startDate.ToLocalTime().Date.Date)
                 .ToList();
 
             while (gameNights.Count < (numberOfGameNights * 2))
