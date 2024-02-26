@@ -1,17 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using Portfolio.Models.Auth;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 
 namespace Portfolio.Data
 {
     public class GameNightChooserFactory : IGameNightChooserFactory
     {
-        private static string[] DEFAULT_USER_ORDER = new string[] { "Nick", "Bash", "Ben", "Mom", "Sky" };
-        private static Dictionary<string, string> _userIdToNextUserId = new Dictionary<string, string>();
+        private static readonly string[] DEFAULT_USER_ORDER = new string[] { "Nick", "Bash", "Ben", "Mom", "Sky" };
+        private static readonly Dictionary<string, string> _userIdToNextUserId = new();
 
         public GameNightChooserFactory(IServiceScopeFactory scopeFactory) 
         {
@@ -26,7 +23,7 @@ namespace Portfolio.Data
             }
 
             // Default user is whoever is first
-            _userIdToNextUserId[string.Empty] = GetUserId(Environment.GetEnvironmentVariable("GAME_NIGHT_FIRST_USER_NAME"));
+            _userIdToNextUserId[string.Empty] = GetUserId(Environment.GetEnvironmentVariable("GAME_NIGHT_FIRST_USER_NAME") ?? DEFAULT_USER_ORDER.First());
 
             string GetUserId(string userName) => userContext.Users.Single(u => u.UserName.Equals(userName)).Id;
         }
