@@ -5,7 +5,11 @@ const config: CapacitorConfig = {
   appName: 'Game Night',
   webDir: 'dist',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    cleartext: true
+    // allowNavigation: [
+    //   "https://ghobrial.dev/*"
+    // ]
   }
 };
 

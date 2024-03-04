@@ -16,6 +16,7 @@ RUN dotnet publish -c Release -o out
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
 ENV ASPNETCORE_URLS http://*:5000
+ENV TZ=America/New_York
 WORKDIR /app
 ADD /Portfolio/nginx.conf.sigil /app/nginx.conf.sigil
 COPY /Portfolio/appsettings.json /app/

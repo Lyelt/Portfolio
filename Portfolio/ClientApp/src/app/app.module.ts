@@ -95,6 +95,8 @@ import { GamesComponent } from './game-night/components/games/games.component';
 import { MealsComponent } from './game-night/components/meals/meals.component';
 import { GameNightUserStatusesComponent } from './game-night/components/game-night-user-statuses/game-night-user-statuses.component';
 import { UserStatusConfirmationComponent } from './game-night/components/user-status-confirmation/user-status-confirmation.component';
+import { BaseUrlInterceptor } from './base-url-interceptor';
+import { environment } from 'src/environments/environment';
 
 const routes: Routes = [
     {
@@ -315,7 +317,9 @@ const routes: Routes = [
         JwtHelperService,
         FramesPipe,
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
+        { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: BaseUrlInterceptor, multi: true },
+        { provide: "BASE_API_URL", useValue: environment.apiUrl }
     ],
     bootstrap: [AppComponent]
 })
