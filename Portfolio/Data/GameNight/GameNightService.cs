@@ -30,14 +30,17 @@ namespace Portfolio.Data
 
         public async Task<IEnumerable<GameNight>> GetGameNights(DateTimeOffset startDate, int numberOfGameNights)
         {
-            var gameNights = _context.GameNights
+            _logger.LogInformation($"Request to GetGameNights called with startDate of {startDate} (converted to local: {startDate.ToLocalTime()} just the local date: {startDate.ToLocalTime().Date}");
+            var allGameNights = _context.GameNights
                 .Include(gn => gn.Games)
                 .Include(gn => gn.Meal)
                 .Include(gn => gn.User)
                 .Include(gn => gn.UserStatuses)
                     .ThenInclude(us => us.User)
                     .AsNoTracking()
-                .AsEnumerable()
+                .AsEnumerable();
+            _logger.LogInformation($"All game night dateTimes and dates: {string.Join(Environment.NewLine, allGameNights.Select(gn => $"DateTime={gn.Date} Date={gn.Date.Date}, IsBeforeStartDate={gn.Date.Date < startDate.ToLocalTime().Date}"))}");
+            var gameNights = allGameNights
                 .OrderBy(gn => gn.Date)
                 .SkipWhile(gn => gn.Date.Date < startDate.ToLocalTime().Date)
                 .ToList();

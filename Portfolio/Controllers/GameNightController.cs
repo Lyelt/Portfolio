@@ -76,7 +76,8 @@ namespace Portfolio.Controllers
         [HttpGet]
         [Route("GameNight/GetGameNights/{startTime}/{length}")]
         public async Task<IActionResult> GetGameNights(long startTime, int length)
-        { 
+        {
+            _logger.LogInformation($"GetGameNights controller action called with a start time of {startTime}");
            return Ok(await _gnService.GetGameNights(DateTimeOffset.FromUnixTimeMilliseconds(startTime), length));
         }
 
