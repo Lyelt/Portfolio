@@ -28,7 +28,7 @@ namespace Portfolio.Data
             _gameNightChooser = gameNightChooser;
         }
 
-        public async Task<IEnumerable<GameNight>> GetGameNights(DateTimeOffset startDate, int numberOfGameNights)
+        public Task<IEnumerable<GameNight>> GetGameNights(DateTimeOffset startDate, int numberOfGameNights)
         {
             _logger.LogInformation($"Request to GetGameNights called with startDate of {startDate} (converted to local: {startDate.ToLocalTime()} just the local date: {startDate.ToLocalTime().Date}");
             var allGameNights = _context.GameNights
@@ -45,12 +45,7 @@ namespace Portfolio.Data
                 .SkipWhile(gn => gn.Date.Date < startDate.ToLocalTime().Date)
                 .ToList();
 
-            while (gameNights.Count < (numberOfGameNights * 2))
-            {
-                gameNights.Add(await CreateNextGameNightFrom(gameNights.LastOrDefault()));
-            }
-
-            return gameNights.Take(numberOfGameNights);
+            return Task.FromResult(gameNights.Take(numberOfGameNights));
         }
 
         public async Task SaveGames(GameNight newGameNight)
