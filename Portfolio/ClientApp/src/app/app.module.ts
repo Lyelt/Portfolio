@@ -299,8 +299,8 @@ const routes: Routes = [
     imports: [
         CommonModule,
         HttpClientModule,
-        MaterialModule,
-        RouterModule.forRoot(routes, { useHash: false, scrollPositionRestoration: 'enabled' }),
+      MaterialModule,
+      RouterModule.forRoot(routes, { useHash: false, scrollPositionRestoration: 'disabled' }),
         NgxChartsModule,
         AutocompleteLibModule,
         JwtModule.forRoot({

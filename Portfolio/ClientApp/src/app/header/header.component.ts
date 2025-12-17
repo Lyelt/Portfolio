@@ -8,16 +8,17 @@ import { AuthService } from '../auth/auth.service';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, ) { }
 
   ngOnInit() {
     if (!('userName' in localStorage)) {
       this.authService.logout();
     }
   }
-  
 
   scrollToElement(elementId: string) {
+    // Update the URL hash without triggering Angular scroll restoration
+    history.replaceState(null, '', `#${elementId}`);
     const el = document.querySelector("#" + elementId);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })

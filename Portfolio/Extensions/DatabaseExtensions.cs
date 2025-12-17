@@ -2,11 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Portfolio.Data;
-using Portfolio.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Portfolio.Extensions
 {
@@ -28,10 +24,9 @@ namespace Portfolio.Extensions
         private static DbContextOptionsBuilder GetOptions(DbContextOptionsBuilder options)
         {
             var connStr = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-            var version = ServerVersion.AutoDetect(connStr);
 
             return options
-                .UseMySql(connStr, version)
+                .UseNpgsql(connStr)
                 .EnableDetailedErrors();
         }
     }
