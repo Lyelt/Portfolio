@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "dokku": {
+      "release": "dotnet /app/dbup/PortfolioDatabase.exe"
+    }
+  }
+}

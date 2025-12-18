@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30907.101
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36811.4 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portfolio", "Portfolio\Portfolio.csproj", "{BD3A5B19-C49D-4201-919C-8009F16B5453}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortfolioDatabase", "PortfolioDatabase\PortfolioDatabase.csproj", "{FC316B20-818A-4F40-9906-C6A53B42B4B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,16 @@ Global
 		{BD3A5B19-C49D-4201-919C-8009F16B5453}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD3A5B19-C49D-4201-919C-8009F16B5453}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD3A5B19-C49D-4201-919C-8009F16B5453}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC316B20-818A-4F40-9906-C6A53B42B4B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC316B20-818A-4F40-9906-C6A53B42B4B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC316B20-818A-4F40-9906-C6A53B42B4B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC316B20-818A-4F40-9906-C6A53B42B4B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FC316B20-818A-4F40-9906-C6A53B42B4B7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {168DA2BA-4A28-4A77-84EB-4D83C033D7F8}

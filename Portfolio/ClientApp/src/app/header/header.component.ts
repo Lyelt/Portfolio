@@ -15,9 +15,10 @@ export class HeaderComponent implements OnInit {
       this.authService.logout();
     }
   }
-  
 
   scrollToElement(elementId: string) {
+    // Update the URL hash without triggering Angular scroll restoration
+    history.replaceState(null, '', `#${elementId}`);
     const el = document.querySelector("#" + elementId);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })

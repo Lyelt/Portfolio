@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="scripts\1.0.0\002 - Create Bowling Tables.sql" />
+    <EmbeddedResource Include="scripts\1.0.0\003a - Add Speedrun Courses.sql" />
+    <EmbeddedResource Include="scripts\1.0.0\004 - Add Dog Tables.sql" />
+    <EmbeddedResource Include="scripts\1.0.0\006 - Add Game Night Tables.sql" />
+    <EmbeddedResource Include="scripts\1.0.0\001 - Create Users and Roles Tables.sql" />
+    <EmbeddedResource Include="scripts\1.0.0\003 - Create Speedrun Tables.sql" />
+    <EmbeddedResource Include="scripts\1.0.0\003b - Add Speedrun Stars.sql" />
+    <EmbeddedResource Include="scripts\1.0.0\005 - Add Yugioh Tables.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="dbup-postgresql" Version="6.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\launchSettings.json">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
