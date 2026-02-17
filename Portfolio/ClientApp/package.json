@@ -48,7 +48,7 @@
     "@types/jasmine": "^3.8.1",
     "@types/jasminewd2": "^2.0.10",
     "@types/node": "^14.17.5",
-    "ajv": "^8.12.0",
+    "ajv": "^8.18.0",
     "autoprefixer": "^10.4.15",
     "codelyzer": "^6.0.2",
     "glhd-tailwindcss-transitions": "^0.3.0",
