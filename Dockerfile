@@ -38,6 +38,7 @@ ENV ASPNETCORE_HTTP_PORTS=8080 \
 WORKDIR /app
 COPY --from=build /out/web/ ./
 COPY --from=build /out/dbup/ ./dbup/
+RUN chmod -R a+rX /app
 
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \

@@ -388,6 +388,9 @@ window, preferably with a UPS. Any failure blocks production cutover.
   and cloudflared has four registered connections.
 - Built the portfolio image successfully with immutable base digests, exercised
   migrations/readiness/Caddy routing, and validated staging backup/restart.
+- The first automated staging run exposed an archive `umask` permission defect;
+  it was cancelled before promotion, the bootstrap image was restored, and both
+  archive modes and non-root runtime access were regression-tested after repair.
 - Verified the staging tunnel route over HTTPS. Cloudflare nameserver migration,
   staging DNS, Universal SSL, and the HTTP redirect are active; the production
   project, volume, credentials, import marker, sentinel, and route are absent.

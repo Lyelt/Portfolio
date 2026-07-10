@@ -385,7 +385,10 @@ fi
 
 temporary_release="$(mktemp --directory "${releases_dir}/.incoming-${requested_sha}.XXXXXX")"
 git --git-dir="${REPOSITORY_DIR}" archive --format=tar "${requested_sha}" |
-  tar --extract --directory "${temporary_release}"
+  (
+    umask 022
+    tar --extract --directory "${temporary_release}"
+  )
 
 [[ -f "${temporary_release}/${COMPOSE_RELATIVE_PATH}" && ! -L "${temporary_release}/${COMPOSE_RELATIVE_PATH}" ]] ||
   fail "Commit is missing a regular ${COMPOSE_RELATIVE_PATH}."
@@ -420,6 +423,18 @@ fi
 
 log "Building application image from exact commit ${requested_sha}."
 compose_for "${release_dir}" "${requested_sha}" build --pull app
+
+log 'Validating non-root runtime access to required application files.'
+if ! docker run --rm \
+  --network none \
+  --read-only \
+  --cap-drop ALL \
+  --security-opt no-new-privileges:true \
+  --entrypoint /bin/sh \
+  "portfolio-${deployment_environment}:${requested_sha}" \
+  -ceu 'test "$(id -u)" -ne 0; test -r /app/appsettings.json; test -r /app/Portfolio.dll'; then
+  fail 'Built image failed the non-root runtime file-access validation.'
+fi
 
 log 'Starting the environment-specific PostgreSQL service.'
 compose_for "${release_dir}" "${requested_sha}" up --detach --no-build db
