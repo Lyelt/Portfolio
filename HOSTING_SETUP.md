@@ -4,9 +4,13 @@ Status recorded 2026-07-10: the Mac power settings, Multipass VM, Docker
 Engine, shared `web` network, UFW rules, `/srv` skeleton, registered GitHub
 runner service, and private Caddy edge service are installed. GitHub Actions
 automatically deploys the exact `staging` branch head as an ARM64 image with a
-separate healthy PostgreSQL volume. Public HTTPS, migrations, database-aware
-readiness, the Caddy Host route, VM restart recovery, and a custom-format
-staging backup were verified.
+separate healthy PostgreSQL volume. The authoritative DigitalOcean MySQL data
+was converted and staging now runs from
+`portfolio-staging-postgres-restored-20260710t200625z`: 24 source tables and
+30,410 rows including the legacy EF journal were content-verified before
+cutover. Public HTTPS, authenticated reads, migrations, database-aware
+readiness, the Caddy Host route, VM restart recovery, checksum-backed staging
+backups, and rollback retention were verified.
 
 Cloudflared is connected with four registered tunnel connections. Cloudflare is
 now authoritative for `ghobrial.dev`, and the proxied staging CNAME and tunnel
@@ -28,8 +32,9 @@ the production branch and has not received this deployment setup.
 - Production needs both a host sentinel and a GitHub repository variable. Keep
   both absent until approved.
 
-The old DigitalOcean service and its data remain the rollback source until the
-new host, data migration, public staging, backups, and recovery are proven.
+The old DigitalOcean service and its MySQL data remain the production source
+and rollback evidence until production migration and cutover are separately
+approved and proven.
 
 ## Architecture
 
@@ -137,11 +142,12 @@ cannot restart a registered runner in the middle of a job.
 
 Still required from the owner:
 
-- Confirmation of `staging.ghobrial.dev` and `ghobrial.dev`.
 - Production PostgreSQL password and matching connection string.
 - Existing production JWT signing key, or explicit rotation approval. HS256
   keys must contain at least 32 UTF-8 bytes.
-- A custom-format dump of the existing DigitalOcean production database.
+- A fresh authoritative MySQL backup from DigitalOcean, unless its canonical
+  checksum still exactly matches the already converted source snapshot.
+- An encrypted off-VM backup destination and failure-alert recipient.
 
 The staging database password and JWT key were generated inside the VM and are
 stored only in `/srv/secrets/portfolio/staging.env` as `root:deploy` mode `0640`.
@@ -263,16 +269,25 @@ from authorizing public production traffic or a production tunnel route.
 
 ## 7. Import and protect production data
 
-Production cannot initialize an empty database. Before its first deployment,
-export a custom-format PostgreSQL dump from DigitalOcean, transfer it without
-printing it, and install it beneath `/srv/backups/portfolio/import` as
-`root:root` mode `0600`. Confirm the production env file matches the source.
+Production cannot initialize an empty database. The linked DigitalOcean
+PostgreSQL service is empty: the December 2025 `pgloader` attempts failed MySQL
+authentication before copying data. Do not use that empty PostgreSQL service as
+the production source.
+
+Instead, take a fresh MySQL dump, restore it privately, and run the reviewed
+`migration/portfolio-etl` converter against a new PostgreSQL 17 target created
+from all DbUp scripts. The converter must report exact counts/content hashes and
+complete every invariant. Create a custom-format PostgreSQL dump with
+`--no-owner --no-acl`, checksum it, restore-test it with the exact production
+image, and install it beneath `/srv/backups/portfolio/import` as `root:root`
+mode `0600`. Confirm the production env file matches the PostgreSQL restore
+target.
 
 Only after explicit approval and creation of the host guard in section 6, run:
 
 ```bash
 sudo /usr/local/sbin/import-production-database \
-  /srv/backups/portfolio/import/digitalocean-production.dump
+  /srv/backups/portfolio/import/portfolio-mysql-to-postgres-<timestamp>.dump
 ```
 
 The helper validates the archive before creating anything, refuses any existing
@@ -362,7 +377,9 @@ Expected now: Docker and Compose report versions; Caddy, staging app, and
 staging DB are healthy; Caddy returns `healthy`; the runner service is active;
 no host port is published; UFW permits SSH only from Multipass NAT; cloudflared
 is connected; public staging returns `healthy` over HTTPS; Universal SSL is
-active; HTTP redirects to HTTPS; and production is absent.
+active; HTTP redirects to HTTPS; the protected selector and live database mount
+both name `portfolio-staging-postgres-restored-20260710t200625z`; migrated users
+and application data are present; and production is absent.
 
 After the staging-only Cloudflare hostname exists, run inside the VM:
 
@@ -397,8 +414,9 @@ off-VM. Only then prune older unused cache/images/releases/backups. The VM must
 never hold the sole production backup.
 
 Validated pre-deploy dumps and SHA-256 sidecars protect deployment events, not
-data written between deployments. Before production cutover, configure and prove a scheduled daily
-production `pg_dump`, bounded retention, encrypted off-VM copy, failure alert,
+data written between deployments. Before production cutover, configure and
+prove a scheduled daily production `pg_dump`, bounded retention, encrypted
+off-VM copy, failure alert,
 and recurring restore test. Keep production disabled until the destination,
 retention window, and alert recipient are explicitly chosen; they cannot be
 safely inferred during this setup.
@@ -436,6 +454,38 @@ window, preferably with a UPS. Any failure blocks production cutover.
   and cloudflared has four registered connections.
 - Built the portfolio image successfully with immutable base digests, exercised
   migrations/readiness/Caddy routing, and validated staging backup/restart.
+- Diagnosed the empty DigitalOcean PostgreSQL service: its December 2025
+  `pgloader` attempts failed MySQL authentication, while the original MySQL 8.1
+  data remained intact. Verified the current and December MySQL dumps have the
+  same canonical content checksum.
+- Saved and verified root-only MySQL and PostgreSQL source backups on both the
+  droplet and VM. Restored all 24 MySQL tables privately and passed MySQL table
+  integrity checks before conversion.
+- Added DbUp migrations 007/008 for the corrected `CardIds`/`DogTimes` keys,
+  claim identities, and preserved legacy tables. Added explicit
+  `timestamp(6) without time zone` application mappings so imported temporal
+  values retain their MySQL clock digits and intended UTC/wall-clock semantics.
+- Converted 30,410 rows into PostgreSQL 17 and verified content hashes, counts,
+  keys, indexes, foreign keys, identity sequences, the Guest identity, and
+  game-night users. ASP.NET Identity's derived normalization fields were
+  uppercased to preserve MySQL's former case-insensitive lookup behavior under
+  PostgreSQL.
+- Created and restore-validated
+  `/srv/backups/portfolio/import/portfolio-mysql-to-postgres-20260710T200625Z.dump`
+  (SHA-256
+  `3b914f923e5909a070e40a5a2394aaf7fa20c950a2df70b6133fbd2bef69d21c`).
+  The exact commit image passed Guest login plus authenticated bowling, dog,
+  speedrun, and game-night reads on the restored candidate.
+- Deployed commit `b1a338e53bf0f87e151ed2d1ccb79958c3601a81`, then used the guarded
+  switch helper to move staging to
+  `portfolio-staging-postgres-restored-20260710t200625z`. Public health, Guest
+  login, representative authenticated reads, 19 users, 2,421 bowling games,
+  24,210 bowling frames, and all migration/constraint checks passed after
+  cutover.
+- Retained the original `portfolio-staging-postgres-data` volume stopped after
+  cutover, plus validated pre-deployment and quiesced pre-cutover dumps with
+  SHA-256 sidecars. Future staging deploys read the protected selector and take
+  a validated checksum-backed backup before mutation.
 - The first automated staging run exposed an archive `umask` permission defect;
   it was cancelled before promotion, the bootstrap image was restored, and both
   archive modes and non-root runtime access were regression-tested after repair.
