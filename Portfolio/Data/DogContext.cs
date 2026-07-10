@@ -26,6 +26,11 @@ namespace Portfolio.Data
             builder
                 .Entity<DogTime>()
                 .HasKey(dt => new { dt.Dog, dt.Timestamp });
+
+            builder.Entity<DogTime>()
+                .Property(dogTime => dogTime.Timestamp)
+                .HasConversion(PostgresTimestampMappings.UtcStoredNaive)
+                .HasColumnType(PostgresTimestampMappings.TimestampWithoutTimeZone);
         }
     }
 }

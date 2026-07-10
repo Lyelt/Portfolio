@@ -17,11 +17,13 @@ readonly COMPOSE_RELATIVE_PATH='deploy/portfolio/compose.yml'
 readonly INSTALLED_SCRIPT='/usr/local/sbin/deploy-portfolio'
 readonly PRODUCTION_SENTINEL="${SECRETS_DIR}/production-enabled"
 readonly PRODUCTION_IMPORT_MARKER="${SECRETS_DIR}/production-import-complete"
+readonly STAGING_DATABASE_SELECTOR="${SECRETS_DIR}/staging-database-volume"
 readonly DEPLOY_HOME="${HOME:-/home/deploy}"
 readonly MINIMUM_FREE_KIB=$((12 * 1024 * 1024))
 
 temporary_release=''
 temporary_backup=''
+temporary_checksum=''
 temporary_link=''
 
 log() {
@@ -39,6 +41,9 @@ cleanup() {
   fi
   if [[ -n "${temporary_backup}" && -f "${temporary_backup}" ]]; then
     rm -f -- "${temporary_backup}"
+  fi
+  if [[ -n "${temporary_checksum}" && -f "${temporary_checksum}" ]]; then
+    rm -f -- "${temporary_checksum}"
   fi
   if [[ -n "${temporary_link}" && -L "${temporary_link}" ]]; then
     rm -f -- "${temporary_link}"
@@ -102,6 +107,20 @@ assert_sentinel() {
     fail "The production sentinel must not be writable by group or other users."
 }
 
+read_staging_database_volume() {
+  local lines=()
+  local selected_volume
+
+  assert_secret_file "${STAGING_DATABASE_SELECTOR}"
+  mapfile -t lines < "${STAGING_DATABASE_SELECTOR}"
+  [[ ${#lines[@]} -eq 1 ]] ||
+    fail "${STAGING_DATABASE_SELECTOR} must contain exactly one line."
+  selected_volume="${lines[0]%$'\r'}"
+  [[ "${selected_volume}" =~ ^portfolio-staging-postgres-(data|restored-[a-z0-9]+)$ ]] ||
+    fail "${STAGING_DATABASE_SELECTOR} contains an invalid staging volume name."
+  printf '%s\n' "${selected_volume}"
+}
+
 require_nonempty_env_key() {
   local file="$1"
   local required_key="$2"
@@ -141,6 +160,7 @@ compose_for() {
       PATH="${PATH}" \
       DEPLOY_ENV="${deployment_environment}" \
       APP_ENVIRONMENT="${app_environment}" \
+      DB_VOLUME_NAME="${database_volume}" \
       IMAGE_TAG="${image_tag}" \
       WEB_ALIAS="${web_alias}" \
       docker compose \
@@ -156,6 +176,19 @@ database_container_id() {
   local image_tag="$2"
 
   compose_for "${release}" "${image_tag}" ps --quiet db 2>/dev/null
+}
+
+assert_database_volume_mount() {
+  local release="$1"
+  local image_tag="$2"
+  local expected_volume="$3"
+  local container_id mounted_volume
+
+  container_id="$(database_container_id "${release}" "${image_tag}")"
+  [[ -n "${container_id}" ]] || fail 'Current database container is missing.'
+  mounted_volume="$(docker inspect --format '{{range .Mounts}}{{if eq .Destination "/var/lib/postgresql/data"}}{{.Name}}{{end}}{{end}}' "${container_id}")"
+  [[ "${mounted_volume}" == "${expected_volume}" ]] ||
+    fail "Current database mount does not match protected selector ${expected_volume}."
 }
 
 database_is_healthy() {
@@ -209,50 +242,58 @@ wait_for_application() {
 }
 
 read_current_release() {
-  local current_link="$1"
-  local releases_root="$2"
+  local link_path="$1"
+  local release_root="$2"
   local resolved
 
-  [[ -L "${current_link}" ]] || return 1
-  resolved="$(readlink -f -- "${current_link}")"
-  [[ -n "${resolved}" && "${resolved}" == "${releases_root}/"* ]] ||
-    fail "Current release link points outside ${releases_root}."
+  [[ -L "${link_path}" ]] || return 1
+  resolved="$(readlink -f -- "${link_path}")"
+  [[ -n "${resolved}" && "${resolved}" == "${release_root}/"* ]] ||
+    fail "Current release link points outside ${release_root}."
   [[ -f "${resolved}/.source-sha" && ! -L "${resolved}/.source-sha" ]] ||
     fail "Current release is missing its source marker."
   printf '%s\n' "${resolved}"
 }
 
-create_production_backup() {
+create_database_backup() {
   local release="$1"
   local image_tag="$2"
-  local backup_dir timestamp final_backup
+  local backup_dir timestamp final_backup final_checksum backup_hash
 
-  backup_dir="${BACKUPS_DIR}/prod"
+  backup_dir="${BACKUPS_DIR}/${deployment_environment}"
   [[ -d "${backup_dir}" && -w "${backup_dir}" ]] ||
-    fail "Production backup directory is unavailable: ${backup_dir}"
+    fail "Database backup directory is unavailable: ${backup_dir}"
 
   timestamp="$(date -u '+%Y%m%dT%H%M%S%NZ')"
   final_backup="${backup_dir}/${timestamp}-${image_tag}.dump"
   temporary_backup="$(mktemp "${backup_dir}/.${timestamp}-${image_tag}.XXXXXX.dump")"
   chmod 0600 "${temporary_backup}"
 
-  log 'Creating production PostgreSQL backup before build or service restart.'
+  log "Creating ${deployment_environment} PostgreSQL backup before build or service restart."
   if ! compose_for "${release}" "${image_tag}" exec -T db \
     sh -ceu 'exec pg_dump --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --format=custom --no-owner --no-acl' \
     > "${temporary_backup}"; then
-    fail 'Production database backup failed; deployment was not started.'
+    fail 'Database backup failed; deployment was not started.'
   fi
-  [[ -s "${temporary_backup}" ]] || fail 'Production database backup is empty.'
+  [[ -s "${temporary_backup}" ]] || fail 'Database backup is empty.'
 
   if ! compose_for "${release}" "${image_tag}" exec -T db \
     pg_restore --list < "${temporary_backup}" >/dev/null; then
-    fail 'Production backup validation failed; deployment was not started.'
+    fail 'Database backup validation failed; deployment was not started.'
   fi
 
   [[ ! -e "${final_backup}" ]] || fail "Backup destination already exists: ${final_backup}"
+  final_checksum="${final_backup}.sha256"
+  [[ ! -e "${final_checksum}" ]] || fail "Backup checksum destination already exists: ${final_checksum}"
   mv -- "${temporary_backup}" "${final_backup}"
   temporary_backup=''
-  log "Validated production backup: ${final_backup}"
+  backup_hash="$(sha256sum "${final_backup}" | awk '{ print $1 }')"
+  temporary_checksum="$(mktemp "${backup_dir}/.${timestamp}-${image_tag}.XXXXXX.sha256")"
+  chmod 0600 "${temporary_checksum}"
+  printf '%s  %s\n' "${backup_hash}" "$(basename "${final_backup}")" > "${temporary_checksum}"
+  mv -- "${temporary_checksum}" "${final_checksum}"
+  temporary_checksum=''
+  log "Validated database backup and checksum: ${final_backup}"
 }
 
 rollback_application() {
@@ -306,9 +347,9 @@ readonly environment_dir="${BASE_DIR}/${deployment_environment}"
 readonly releases_dir="${environment_dir}/releases"
 readonly current_link="${environment_dir}/current"
 readonly secrets_file="${SECRETS_DIR}/${deployment_environment}.env"
-readonly database_volume="portfolio-${deployment_environment}-postgres-data"
+database_volume=''
 
-for required_command in awk df docker flock git mktemp readlink seq stat tar; do
+for required_command in awk df docker flock git mktemp readlink seq sha256sum stat tar; do
   require_command "${required_command}"
 done
 
@@ -335,11 +376,17 @@ for required_key in \
 done
 
 if [[ "${deployment_environment}" == 'prod' ]]; then
+  database_volume='portfolio-prod-postgres-data'
   assert_sentinel
 fi
 
 exec 9>"${LOCK_FILE}"
 flock --timeout 1800 9 || fail 'Another portfolio deployment held the global lock for more than 30 minutes.'
+
+if [[ "${deployment_environment}" == 'staging' ]]; then
+  database_volume="$(read_staging_database_volume)"
+fi
+readonly database_volume
 
 available_kib="$(df --output=avail "${BASE_DIR}" | awk 'NR == 2 { print $1 }')"
 [[ "${available_kib}" =~ ^[0-9]+$ ]] || fail 'Could not determine free space for the deployment filesystem.'
@@ -355,6 +402,7 @@ current_sha=''
 if current_release="$(read_current_release "${current_link}" "${releases_dir}")"; then
   IFS= read -r current_sha < "${current_release}/.source-sha"
   [[ "${current_sha}" =~ ^[0-9a-f]{40}$ ]] || fail 'Current release has an invalid source marker.'
+  assert_database_volume_mount "${current_release}" "${current_sha}" "${database_volume}"
 fi
 
 if [[ -e "${REPOSITORY_DIR}" && ( ! -d "${REPOSITORY_DIR}" || -L "${REPOSITORY_DIR}" ) ]]; then
@@ -379,6 +427,10 @@ resolved_sha="$(git --git-dir="${REPOSITORY_DIR}" rev-parse --verify "${requeste
   fail "Requested SHA is not the exact current head of ${expected_branch}; a newer workflow should deploy the newer head."
 
 if [[ "${current_sha}" == "${requested_sha}" ]]; then
+  database_is_healthy "${current_release}" "${current_sha}" ||
+    fail 'Current release marker matches, but the selected database is not healthy.'
+  wait_for_application "${current_release}" "${current_sha}" ||
+    fail 'Current release marker matches, but the application is not healthy.'
   log "Commit ${requested_sha} is already the current ${deployment_environment} release."
   exit 0
 fi
@@ -402,23 +454,21 @@ temporary_release=''
 
 compose_for "${release_dir}" "${requested_sha}" config --quiet
 
-if [[ "${deployment_environment}" == 'prod' ]]; then
-  if [[ -n "${current_release}" ]]; then
-    database_is_healthy "${current_release}" "${current_sha}" ||
-      fail 'The current production database is not healthy; refusing to restart it before a backup.'
-    create_production_backup "${current_release}" "${current_sha}"
-  else
+if [[ -n "${current_release}" ]]; then
+  database_is_healthy "${current_release}" "${current_sha}" ||
+    fail "The current ${deployment_environment} database is not healthy; refusing to restart it before a backup."
+  create_database_backup "${current_release}" "${current_sha}"
+elif [[ "${deployment_environment}" == 'prod' ]]; then
     if docker volume inspect "${database_volume}" >/dev/null 2>&1; then
       assert_secret_file "${PRODUCTION_IMPORT_MARKER}"
       log 'A guarded production import marker and existing database volume were found; validating and backing up the imported database before migration.'
       compose_for "${release_dir}" "${requested_sha}" up --detach --no-build db
       wait_for_database "${release_dir}" "${requested_sha}" ||
         fail 'Imported production database did not become healthy.'
-      create_production_backup "${release_dir}" "${requested_sha}"
+      create_database_backup "${release_dir}" "${requested_sha}"
     else
       fail 'No production database volume exists. Production must first be restored through the guarded import helper; an empty database will not be initialized automatically.'
     fi
-  fi
 fi
 
 log "Building application image from exact commit ${requested_sha}."

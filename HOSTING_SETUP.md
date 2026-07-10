@@ -43,7 +43,10 @@ new host, data migration, public staging, backups, and recovery are proven.
 - Shared proxy network: `web`, fixed at `172.18.0.0/16`. Caddy reserves
   `172.18.0.2`; applications trust only that address for forwarded headers.
 - Staging: branch `staging`, project `portfolio-staging`, app alias
-  `portfolio-staging-web`, and volume `portfolio-staging-postgres-data`.
+  `portfolio-staging-web`, and a root-controlled database-volume selector at
+  `/srv/secrets/portfolio/staging-database-volume`. The original volume is
+  `portfolio-staging-postgres-data`; restored candidates use the allowlisted
+  `portfolio-staging-postgres-restored-*` form.
 - Production: branch `master`, project `portfolio-prod`, app alias
   `portfolio-prod-web`, and volume `portfolio-prod-postgres-data`.
 - Isolation: staging and production have different env files, credentials,
@@ -237,6 +240,9 @@ controls this VM, so protect both branches and limit repository administration.
 - Even with that variable, production fails before mutation unless
   `/srv/secrets/portfolio/production-enabled` exists as a root-owned guard.
 - Production backs up and validates PostgreSQL before build/restart.
+- Once an environment has a current release, both staging and production create
+  and validate a custom-format PostgreSQL dump plus SHA-256 sidecar before every
+  build or service restart.
 - Deployment applies migrations before replacing the app, checks readiness by
   connecting to PostgreSQL, and rolls the app image back if readiness fails.
 - Deployment refuses to begin below 12 GiB VM free space. It never silently
@@ -290,6 +296,47 @@ Before enabling automatic production deploys:
 
 App rollback can restore the previous image but cannot reverse schema changes.
 Production enablement and DNS cutover are blocked until the restore drill works.
+
+## 7a. Reversible staging database switch
+
+Staging uses a protected volume selector rather than deleting or renaming Docker
+volumes. The selector is a one-line, root-owned `0640` file. Normal deployments
+read it but cannot modify it. Production does not use a flexible selector and
+remains fixed to `portfolio-prod-postgres-data`.
+
+Before switching, restore a validated PostgreSQL 17 custom-format archive into a
+new volume initialized with the existing staging `POSTGRES_*` credentials. Give
+the volume these labels:
+
+- `com.docker.compose.project=portfolio-staging`
+- `com.docker.compose.volume=db_data`
+- `com.ghobrial.portfolio.purpose=staging-restored-candidate`
+- `com.ghobrial.portfolio.source-sha256=<archive SHA-256>`
+
+Privately test DbUp and the exact intended application image on an internal-only
+network. Stop those test containers before the switch, but retain the candidate
+volume. Then run the fixed helper with the current staging commit and approved
+archive checksum:
+
+```bash
+sudo /usr/local/sbin/switch-portfolio-staging-database \
+  portfolio-staging-postgres-restored-<safe-id> \
+  <40-character-current-staging-sha> \
+  <64-character-approved-archive-sha256>
+```
+
+The helper takes the global deployment lock, stops the app to quiesce writes,
+refuses replacement if the old staging database gained non-seed rows, creates a
+validated backup and checksum, stops the old database, atomically changes the
+selector, recreates the database and app, runs DbUp, and verifies local and
+public health. On failure it switches back to the retained original volume and
+attempts to restore the app. It never removes either volume.
+
+For a deliberate manual rollback after a successful switch, first stop the app
+and back up the active candidate, then rerun a reviewed switch procedure against
+the retained original volume. Do not edit the selector while a deployment is
+running, and never use `docker compose down -v`, `docker volume rm`, or an
+automatic prune operation.
 
 ## 8. Verification
 
@@ -349,8 +396,8 @@ preserves enough database backups for rollback, and copies encrypted backups
 off-VM. Only then prune older unused cache/images/releases/backups. The VM must
 never hold the sole production backup.
 
-Pre-deploy dumps protect the deployment event, not data written between
-deployments. Before production cutover, configure and prove a scheduled daily
+Validated pre-deploy dumps and SHA-256 sidecars protect deployment events, not
+data written between deployments. Before production cutover, configure and prove a scheduled daily
 production `pg_dump`, bounded retention, encrypted off-VM copy, failure alert,
 and recurring restore test. Keep production disabled until the destination,
 retention window, and alert recipient are explicitly chosen; they cannot be
