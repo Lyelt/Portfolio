@@ -28,7 +28,7 @@ namespace Portfolio.Extensions
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = IdentityHelpers.ValidIssuer,
                         ValidAudience = IdentityHelpers.ValidAudience,
-                        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECURITY_KEY")))
+                        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(IdentityHelpers.JwtSecurityKey))
                     };
                 });
 

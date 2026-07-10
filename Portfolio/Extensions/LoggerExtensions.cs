@@ -3,11 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
-using Serilog.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Portfolio.Extensions
 {
@@ -17,12 +13,14 @@ namespace Portfolio.Extensions
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
-                .WriteTo.File("PortfolioLog.log")
                 .MinimumLevel.Is(Enum.TryParse<LogEventLevel>(configuration.GetValue("Logging:LogLevel:Default", "Information"), out var level) ? level : LogEventLevel.Information)
                 .CreateLogger();
 
-            services.AddLogging(c => c.AddSerilog());
-            services.AddSingleton<ILoggerFactory>(s => new SerilogLoggerFactory(Log.Logger));
+            services.AddLogging(builder =>
+            {
+                builder.ClearProviders();
+                builder.AddSerilog(Log.Logger, dispose: true);
+            });
 
             return services;
         }

@@ -1,0 +1,446 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+set +x
+umask 027
+
+readonly PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+export PATH
+
+readonly REPOSITORY_URL='https://github.com/Lyelt/Portfolio.git'
+readonly BASE_DIR='/srv/apps/portfolio'
+readonly REPOSITORY_DIR="${BASE_DIR}/repository.git"
+readonly SECRETS_DIR='/srv/secrets/portfolio'
+readonly BACKUPS_DIR='/srv/backups/portfolio'
+readonly LOCK_FILE="${BASE_DIR}/.deploy.lock"
+readonly COMPOSE_RELATIVE_PATH='deploy/portfolio/compose.yml'
+readonly INSTALLED_SCRIPT='/usr/local/sbin/deploy-portfolio'
+readonly PRODUCTION_SENTINEL="${SECRETS_DIR}/production-enabled"
+readonly PRODUCTION_IMPORT_MARKER="${SECRETS_DIR}/production-import-complete"
+readonly DEPLOY_HOME="${HOME:-/home/deploy}"
+readonly MINIMUM_FREE_KIB=$((12 * 1024 * 1024))
+
+temporary_release=''
+temporary_backup=''
+temporary_link=''
+
+log() {
+  printf '[portfolio-deploy] %s\n' "$*"
+}
+
+fail() {
+  printf '[portfolio-deploy] ERROR: %s\n' "$*" >&2
+  exit 1
+}
+
+cleanup() {
+  if [[ -n "${temporary_release}" && -d "${temporary_release}" ]]; then
+    rm -rf -- "${temporary_release}"
+  fi
+  if [[ -n "${temporary_backup}" && -f "${temporary_backup}" ]]; then
+    rm -f -- "${temporary_backup}"
+  fi
+  if [[ -n "${temporary_link}" && -L "${temporary_link}" ]]; then
+    rm -f -- "${temporary_link}"
+  fi
+}
+trap cleanup EXIT
+
+usage() {
+  printf 'Usage: %s <staging|prod> <40-character-commit-sha>\n' "$0" >&2
+  exit 64
+}
+
+require_command() {
+  command -v "$1" >/dev/null 2>&1 || fail "Required command is unavailable: $1"
+}
+
+assert_fixed_host_install() {
+  local invoked_path owner group mode permissions
+
+  invoked_path="$(readlink -f -- "$0")"
+  [[ "${invoked_path}" == "${INSTALLED_SCRIPT}" ]] ||
+    fail "Run the fixed host copy at ${INSTALLED_SCRIPT}; repository scripts are not executable deployment inputs."
+
+  owner="$(stat -c '%U' -- "${INSTALLED_SCRIPT}")"
+  group="$(stat -c '%G' -- "${INSTALLED_SCRIPT}")"
+  mode="$(stat -c '%a' -- "${INSTALLED_SCRIPT}")"
+  permissions=$((8#${mode}))
+
+  [[ "${owner}:${group}" == 'root:root' ]] ||
+    fail "${INSTALLED_SCRIPT} must be owned by root:root."
+  (( (permissions & 0022) == 0 )) ||
+    fail "${INSTALLED_SCRIPT} must not be writable by group or other users."
+}
+
+assert_secret_file() {
+  local file="$1"
+  local owner group mode
+
+  [[ -f "${file}" && ! -L "${file}" ]] || fail "Missing environment file: ${file}"
+  owner="$(stat -c '%U' -- "${file}")"
+  group="$(stat -c '%G' -- "${file}")"
+  mode="$(stat -c '%a' -- "${file}")"
+
+  [[ "${owner}:${group}" == 'root:deploy' && "${mode}" == '640' ]] ||
+    fail "${file} must be a regular root:deploy file with mode 0640."
+}
+
+assert_sentinel() {
+  local owner group mode permissions
+
+  [[ -f "${PRODUCTION_SENTINEL}" && ! -L "${PRODUCTION_SENTINEL}" ]] ||
+    fail "Production is disabled on this host; ${PRODUCTION_SENTINEL} does not exist."
+  owner="$(stat -c '%U' -- "${PRODUCTION_SENTINEL}")"
+  group="$(stat -c '%G' -- "${PRODUCTION_SENTINEL}")"
+  mode="$(stat -c '%a' -- "${PRODUCTION_SENTINEL}")"
+  permissions=$((8#${mode}))
+
+  [[ "${owner}:${group}" == 'root:deploy' ]] ||
+    fail "The production sentinel must be owned by root:deploy."
+  (( (permissions & 0022) == 0 )) ||
+    fail "The production sentinel must not be writable by group or other users."
+}
+
+require_nonempty_env_key() {
+  local file="$1"
+  local required_key="$2"
+  local line key_value=''
+  local assignments=0
+
+  while IFS= read -r line || [[ -n "${line}" ]]; do
+    line="${line%$'\r'}"
+    if [[ "${line}" =~ ^[[:space:]]*${required_key}[[:space:]]*= ]]; then
+      assignments=$((assignments + 1))
+      key_value="${line#*=}"
+    fi
+  done < "${file}"
+
+  [[ ${assignments} -eq 1 ]] ||
+    fail "${file} must define ${required_key} exactly once."
+
+  key_value="${key_value#"${key_value%%[![:space:]]*}"}"
+  key_value="${key_value%"${key_value##*[![:space:]]}"}"
+  [[ -n "${key_value}" && "${key_value}" != "''" && "${key_value}" != '""' ]] ||
+    fail "${required_key} must not be empty in ${file}."
+  [[ "${key_value}" != *'replace-'* ]] ||
+    fail "${required_key} still contains an example placeholder in ${file}."
+
+  key_value=''
+}
+
+compose_for() {
+  local release="$1"
+  local image_tag="$2"
+  shift 2
+
+  (
+    cd "${BASE_DIR}"
+    env -i \
+      HOME="${DEPLOY_HOME}" \
+      PATH="${PATH}" \
+      DEPLOY_ENV="${deployment_environment}" \
+      APP_ENVIRONMENT="${app_environment}" \
+      IMAGE_TAG="${image_tag}" \
+      WEB_ALIAS="${web_alias}" \
+      docker compose \
+        --env-file "${secrets_file}" \
+        --project-name "${compose_project}" \
+        --file "${release}/${COMPOSE_RELATIVE_PATH}" \
+        "$@"
+  )
+}
+
+database_container_id() {
+  local release="$1"
+  local image_tag="$2"
+
+  compose_for "${release}" "${image_tag}" ps --quiet db 2>/dev/null
+}
+
+database_is_healthy() {
+  local release="$1"
+  local image_tag="$2"
+  local container_id health_status running
+
+  container_id="$(database_container_id "${release}" "${image_tag}")"
+  [[ -n "${container_id}" ]] || return 1
+
+  running="$(docker inspect --format '{{.State.Running}}' "${container_id}" 2>/dev/null || true)"
+  health_status="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{end}}' "${container_id}" 2>/dev/null || true)"
+  [[ "${running}" == 'true' && "${health_status}" == 'healthy' ]]
+}
+
+wait_for_database() {
+  local release="$1"
+  local image_tag="$2"
+  local attempt
+
+  for attempt in $(seq 1 60); do
+    if database_is_healthy "${release}" "${image_tag}"; then
+      return 0
+    fi
+    sleep 2
+  done
+  return 1
+}
+
+wait_for_application() {
+  local release="$1"
+  local image_tag="$2"
+  local attempt container_id health_status running
+
+  for attempt in $(seq 1 75); do
+    container_id="$(compose_for "${release}" "${image_tag}" ps --quiet app 2>/dev/null || true)"
+    if [[ -n "${container_id}" ]]; then
+      running="$(docker inspect --format '{{.State.Running}}' "${container_id}" 2>/dev/null || true)"
+      health_status="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{end}}' "${container_id}" 2>/dev/null || true)"
+    else
+      running='false'
+      health_status=''
+    fi
+
+    if [[ "${running}" == 'true' && "${health_status}" == 'healthy' ]]; then
+      return 0
+    fi
+    sleep 2
+  done
+  return 1
+}
+
+read_current_release() {
+  local current_link="$1"
+  local releases_root="$2"
+  local resolved
+
+  [[ -L "${current_link}" ]] || return 1
+  resolved="$(readlink -f -- "${current_link}")"
+  [[ -n "${resolved}" && "${resolved}" == "${releases_root}/"* ]] ||
+    fail "Current release link points outside ${releases_root}."
+  [[ -f "${resolved}/.source-sha" && ! -L "${resolved}/.source-sha" ]] ||
+    fail "Current release is missing its source marker."
+  printf '%s\n' "${resolved}"
+}
+
+create_production_backup() {
+  local release="$1"
+  local image_tag="$2"
+  local backup_dir timestamp final_backup
+
+  backup_dir="${BACKUPS_DIR}/prod"
+  [[ -d "${backup_dir}" && -w "${backup_dir}" ]] ||
+    fail "Production backup directory is unavailable: ${backup_dir}"
+
+  timestamp="$(date -u '+%Y%m%dT%H%M%S%NZ')"
+  final_backup="${backup_dir}/${timestamp}-${image_tag}.dump"
+  temporary_backup="$(mktemp "${backup_dir}/.${timestamp}-${image_tag}.XXXXXX.dump")"
+  chmod 0600 "${temporary_backup}"
+
+  log 'Creating production PostgreSQL backup before build or service restart.'
+  if ! compose_for "${release}" "${image_tag}" exec -T db \
+    sh -ceu 'exec pg_dump --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --format=custom --no-owner --no-acl' \
+    > "${temporary_backup}"; then
+    fail 'Production database backup failed; deployment was not started.'
+  fi
+  [[ -s "${temporary_backup}" ]] || fail 'Production database backup is empty.'
+
+  if ! compose_for "${release}" "${image_tag}" exec -T db \
+    pg_restore --list < "${temporary_backup}" >/dev/null; then
+    fail 'Production backup validation failed; deployment was not started.'
+  fi
+
+  [[ ! -e "${final_backup}" ]] || fail "Backup destination already exists: ${final_backup}"
+  mv -- "${temporary_backup}" "${final_backup}"
+  temporary_backup=''
+  log "Validated production backup: ${final_backup}"
+}
+
+rollback_application() {
+  local new_release="$1"
+  local new_sha="$2"
+  local previous_release="$3"
+  local previous_sha="$4"
+
+  if [[ -n "${previous_release}" ]]; then
+    log "New application failed health checks; restoring application image ${previous_sha}."
+    if compose_for "${previous_release}" "${previous_sha}" up --detach --no-deps --no-build app &&
+      wait_for_application "${previous_release}" "${previous_sha}"; then
+      fail 'Deployment failed health checks and the previous application image was restored. Database migrations were not automatically reversed.'
+    fi
+    fail 'Deployment failed health checks and the previous application image could not be restored automatically.'
+  fi
+
+  log 'Initial application deployment failed health checks; stopping the new application container.'
+  compose_for "${new_release}" "${new_sha}" stop --timeout 30 app >/dev/null 2>&1 || true
+  fail 'Initial deployment failed health checks. The database volume was retained.'
+}
+
+[[ $# -eq 2 ]] || usage
+readonly requested_environment="$1"
+readonly requested_sha="$2"
+
+[[ "${requested_sha}" =~ ^[0-9a-f]{40}$ ]] ||
+  fail 'Commit SHA must be exactly 40 lowercase hexadecimal characters.'
+
+case "${requested_environment}" in
+  staging)
+    readonly deployment_environment='staging'
+    readonly expected_branch='staging'
+    readonly compose_project='portfolio-staging'
+    readonly web_alias='portfolio-staging-web'
+    readonly app_environment='Staging'
+    ;;
+  prod)
+    readonly deployment_environment='prod'
+    readonly expected_branch='master'
+    readonly compose_project='portfolio-prod'
+    readonly web_alias='portfolio-prod-web'
+    readonly app_environment='Production'
+    ;;
+  *)
+    usage
+    ;;
+esac
+
+readonly environment_dir="${BASE_DIR}/${deployment_environment}"
+readonly releases_dir="${environment_dir}/releases"
+readonly current_link="${environment_dir}/current"
+readonly secrets_file="${SECRETS_DIR}/${deployment_environment}.env"
+readonly database_volume="portfolio-${deployment_environment}-postgres-data"
+
+for required_command in awk df docker flock git mktemp readlink seq stat tar; do
+  require_command "${required_command}"
+done
+
+[[ "$(id -un)" == 'deploy' ]] || fail 'Deployments must run as the deploy user.'
+assert_fixed_host_install
+
+[[ -d "${BASE_DIR}" && ! -L "${BASE_DIR}" ]] || fail "Missing host directory: ${BASE_DIR}"
+[[ -d "${environment_dir}" && ! -L "${environment_dir}" ]] || fail "Missing host directory: ${environment_dir}"
+[[ -d "${releases_dir}" && -w "${releases_dir}" && ! -L "${releases_dir}" ]] ||
+  fail "Release directory is unavailable: ${releases_dir}"
+[[ -S '/var/run/docker.sock' ]] || fail 'Docker socket is unavailable.'
+docker network inspect web >/dev/null 2>&1 || fail 'Required external Docker network does not exist: web'
+
+assert_secret_file "${secrets_file}"
+for required_key in \
+  POSTGRES_DB \
+  POSTGRES_PASSWORD \
+  POSTGRES_USER \
+  CONNECTION_STRING \
+  JWT_AUDIENCE \
+  JWT_ISSUER \
+  JWT_SECURITY_KEY; do
+  require_nonempty_env_key "${secrets_file}" "${required_key}"
+done
+
+if [[ "${deployment_environment}" == 'prod' ]]; then
+  assert_sentinel
+fi
+
+exec 9>"${LOCK_FILE}"
+flock --timeout 1800 9 || fail 'Another portfolio deployment held the global lock for more than 30 minutes.'
+
+available_kib="$(df --output=avail "${BASE_DIR}" | awk 'NR == 2 { print $1 }')"
+[[ "${available_kib}" =~ ^[0-9]+$ ]] || fail 'Could not determine free space for the deployment filesystem.'
+(( available_kib >= MINIMUM_FREE_KIB )) ||
+  fail 'Less than 12 GiB is free in the VM; deployment stopped before backup, build, or restart. Review retention and backup policy manually.'
+
+if [[ -e "${current_link}" && ! -L "${current_link}" ]]; then
+  fail "Current release path exists but is not a symbolic link: ${current_link}"
+fi
+
+current_release=''
+current_sha=''
+if current_release="$(read_current_release "${current_link}" "${releases_dir}")"; then
+  IFS= read -r current_sha < "${current_release}/.source-sha"
+  [[ "${current_sha}" =~ ^[0-9a-f]{40}$ ]] || fail 'Current release has an invalid source marker.'
+fi
+
+if [[ -e "${REPOSITORY_DIR}" && ( ! -d "${REPOSITORY_DIR}" || -L "${REPOSITORY_DIR}" ) ]]; then
+  fail "Repository cache is not a safe directory: ${REPOSITORY_DIR}"
+fi
+if [[ ! -d "${REPOSITORY_DIR}" ]]; then
+  git init --bare --quiet "${REPOSITORY_DIR}"
+fi
+git --git-dir="${REPOSITORY_DIR}" remote remove origin >/dev/null 2>&1 || true
+git --git-dir="${REPOSITORY_DIR}" remote add origin "${REPOSITORY_URL}"
+
+log "Fetching ${expected_branch} from the fixed GitHub repository."
+git --git-dir="${REPOSITORY_DIR}" \
+  -c protocol.file.allow=never \
+  -c protocol.ext.allow=never \
+  fetch --force --no-tags origin \
+  "refs/heads/${expected_branch}:refs/remotes/origin/${expected_branch}"
+
+remote_sha="$(git --git-dir="${REPOSITORY_DIR}" rev-parse --verify "refs/remotes/origin/${expected_branch}^{commit}")"
+resolved_sha="$(git --git-dir="${REPOSITORY_DIR}" rev-parse --verify "${requested_sha}^{commit}")"
+[[ "${remote_sha}" == "${requested_sha}" && "${resolved_sha}" == "${requested_sha}" ]] ||
+  fail "Requested SHA is not the exact current head of ${expected_branch}; a newer workflow should deploy the newer head."
+
+if [[ "${current_sha}" == "${requested_sha}" ]]; then
+  log "Commit ${requested_sha} is already the current ${deployment_environment} release."
+  exit 0
+fi
+
+temporary_release="$(mktemp --directory "${releases_dir}/.incoming-${requested_sha}.XXXXXX")"
+git --git-dir="${REPOSITORY_DIR}" archive --format=tar "${requested_sha}" |
+  tar --extract --directory "${temporary_release}"
+
+[[ -f "${temporary_release}/${COMPOSE_RELATIVE_PATH}" && ! -L "${temporary_release}/${COMPOSE_RELATIVE_PATH}" ]] ||
+  fail "Commit is missing a regular ${COMPOSE_RELATIVE_PATH}."
+printf '%s\n' "${requested_sha}" > "${temporary_release}/.source-sha"
+chmod -R go-w "${temporary_release}"
+release_suffix="${temporary_release##*.}"
+release_dir="${releases_dir}/${requested_sha}-${release_suffix}"
+[[ ! -e "${release_dir}" ]] || fail "Generated release path already exists: ${release_dir}"
+mv -- "${temporary_release}" "${release_dir}"
+temporary_release=''
+
+compose_for "${release_dir}" "${requested_sha}" config --quiet
+
+if [[ "${deployment_environment}" == 'prod' ]]; then
+  if [[ -n "${current_release}" ]]; then
+    database_is_healthy "${current_release}" "${current_sha}" ||
+      fail 'The current production database is not healthy; refusing to restart it before a backup.'
+    create_production_backup "${current_release}" "${current_sha}"
+  else
+    if docker volume inspect "${database_volume}" >/dev/null 2>&1; then
+      assert_secret_file "${PRODUCTION_IMPORT_MARKER}"
+      log 'A guarded production import marker and existing database volume were found; validating and backing up the imported database before migration.'
+      compose_for "${release_dir}" "${requested_sha}" up --detach --no-build db
+      wait_for_database "${release_dir}" "${requested_sha}" ||
+        fail 'Imported production database did not become healthy.'
+      create_production_backup "${release_dir}" "${requested_sha}"
+    else
+      fail 'No production database volume exists. Production must first be restored through the guarded import helper; an empty database will not be initialized automatically.'
+    fi
+  fi
+fi
+
+log "Building application image from exact commit ${requested_sha}."
+compose_for "${release_dir}" "${requested_sha}" build --pull app
+
+log 'Starting the environment-specific PostgreSQL service.'
+compose_for "${release_dir}" "${requested_sha}" up --detach --no-build db
+wait_for_database "${release_dir}" "${requested_sha}" || fail 'Database did not become healthy.'
+
+log 'Applying database migrations with the newly built image.'
+if ! compose_for "${release_dir}" "${requested_sha}" run --rm --no-deps migrate; then
+  fail 'Database migration failed; the application was not replaced. The database may contain partial migration changes.'
+fi
+
+log 'Replacing the application container.'
+compose_for "${release_dir}" "${requested_sha}" up --detach --no-deps --no-build app
+
+if ! wait_for_application "${release_dir}" "${requested_sha}"; then
+  rollback_application "${release_dir}" "${requested_sha}" "${current_release}" "${current_sha}"
+fi
+
+temporary_link="${environment_dir}/.current-${requested_sha}-$$"
+ln --symbolic "${release_dir}" "${temporary_link}"
+mv --no-target-directory --force "${temporary_link}" "${current_link}"
+temporary_link=''
+
+log "Successfully deployed ${deployment_environment} at ${requested_sha}."
+log "VM free space after deployment: $(df --output=avail -h "${BASE_DIR}" | awk 'NR == 2 { print $1 }'). No releases, images, caches, or backups were deleted automatically."

@@ -1,0 +1,31 @@
+{
+	admin off
+	auto_https off
+}
+
+:8080 {
+	encode zstd gzip
+
+	@health path /edge-healthz
+	handle @health {
+		respond "healthy" 200
+	}
+
+	@staging host {$STAGING_DOMAIN}
+	handle @staging {
+		reverse_proxy portfolio-staging-web:8080 {
+			header_up X-Forwarded-Proto https
+		}
+	}
+
+	@production host {$PRODUCTION_DOMAIN}
+	handle @production {
+		reverse_proxy portfolio-prod-web:8080 {
+			header_up X-Forwarded-Proto https
+		}
+	}
+
+	handle {
+		respond "unknown host" 404
+	}
+}

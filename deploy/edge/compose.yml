@@ -1,0 +1,86 @@
+name: edge
+
+services:
+  caddy:
+    image: caddy:2.11.4-alpine@sha256:5f5c8640aae01df9654968d946d8f1a56c497f1dd5c5cda4cf95ab7c14d58648
+    restart: unless-stopped
+    command:
+      - caddy
+      - run
+      - --config
+      - /etc/caddy/Caddyfile
+      - --adapter
+      - caddyfile
+    env_file:
+      - /srv/secrets/edge.env
+    volumes:
+      - ./conf:/etc/caddy:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    expose:
+      - "8080"
+    networks:
+      web:
+        aliases:
+          - edge-proxy
+        ipv4_address: 172.18.0.2
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --no-verbose --tries=1 --spider http://127.0.0.1:8080/edge-healthz || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop:
+      - ALL
+    # The official Caddy binary carries this file capability. Keeping it in
+    # the bounding set is required to execute the binary, even on port 8080.
+    cap_add:
+      - NET_BIND_SERVICE
+    logging:
+      driver: local
+      options:
+        max-size: 10m
+        max-file: "5"
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.7.1@sha256:188bb03589a32affed3cf4d0590565ffe67b78866e6b5582574afab2b705bafe
+    restart: unless-stopped
+    command:
+      - tunnel
+      - --no-autoupdate
+      - --loglevel
+      - info
+      - run
+    env_file:
+      - /srv/secrets/cloudflare-tunnel.env
+    depends_on:
+      caddy:
+        condition: service_healthy
+    networks:
+      - web
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: local
+      options:
+        max-size: 10m
+        max-file: "5"
+
+networks:
+  web:
+    name: web
+    external: true
+
+volumes:
+  caddy_data:
+  caddy_config:

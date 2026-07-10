@@ -84,7 +84,7 @@ namespace Portfolio.Controllers
 
         private static string GetTokenString(ApplicationUser user, DateTime expirationTime)
         {
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECURITY_KEY")));
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(IdentityHelpers.JwtSecurityKey));
             var signingCreds = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
             var tokenOptions = new JwtSecurityToken(

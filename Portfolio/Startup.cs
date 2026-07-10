@@ -4,20 +4,26 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Portfolio.Extensions;
 using System;
 using Portfolio.Data;
 using Microsoft.Extensions.Hosting;
 using Portfolio.Models.Dog;
+using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Portfolio
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _environment;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            _environment = environment;
         }
 
         public IConfiguration Configuration { get; }
@@ -35,7 +41,7 @@ namespace Portfolio
 
             services.AddSignalR(options =>
             {
-                options.EnableDetailedErrors = true;
+                options.EnableDetailedErrors = _environment.IsDevelopment();
             });
 
             services.AddHttpClient<YugiohApiClient>(client =>
@@ -66,6 +72,20 @@ namespace Portfolio
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var forwardedHeaders = new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            };
+            if (!env.IsDevelopment())
+            {
+                var configuredProxy = Environment.GetEnvironmentVariable("FORWARDED_HEADERS_KNOWN_PROXY");
+                if (!IPAddress.TryParse(configuredProxy, out var proxyAddress))
+                    throw new InvalidOperationException("FORWARDED_HEADERS_KNOWN_PROXY must contain Caddy's Docker IPv4 address.");
+
+                forwardedHeaders.KnownProxies.Add(proxyAddress);
+            }
+            app.UseForwardedHeaders(forwardedHeaders);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -76,15 +96,34 @@ namespace Portfolio
             if (!env.IsDevelopment()) 
                 app.UseSpaStaticFiles();
 
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
-
             app.UseAuthentication();
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGet("/livez", async context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status200OK;
+                    context.Response.ContentType = "text/plain";
+                    await context.Response.WriteAsync("alive");
+                }).WithMetadata(new AllowAnonymousAttribute());
+                endpoints.MapGet("/healthz", async context =>
+                {
+                    context.Response.ContentType = "text/plain";
+                    try
+                    {
+                        var database = context.RequestServices.GetRequiredService<PortfolioContext>();
+                        var canConnect = await database.Database.CanConnectAsync(context.RequestAborted);
+                        context.Response.StatusCode = canConnect
+                            ? StatusCodes.Status200OK
+                            : StatusCodes.Status503ServiceUnavailable;
+                        await context.Response.WriteAsync(canConnect ? "healthy" : "database unavailable");
+                    }
+                    catch (Exception)
+                    {
+                        context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+                        await context.Response.WriteAsync("database unavailable");
+                    }
+                }).WithMetadata(new AllowAnonymousAttribute());
                 endpoints.MapControllerRoute("default", "{controller}/{action=Index}/{id?}");
                 endpoints.MapHub<DogHub>("/dogs");
             });

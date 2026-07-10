@@ -1,0 +1,31 @@
+name: Deploy portfolio production
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portfolio-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy exact production commit
+    if: ${{ github.repository == 'Lyelt/Portfolio' && github.ref == 'refs/heads/master' && vars.PRODUCTION_DEPLOY_ENABLED == 'true' }}
+    runs-on:
+      - self-hosted
+      - linux
+      - ARM64
+      - portfolio-deploy
+    timeout-minutes: 60
+    steps:
+      - name: Invoke fixed host deployment entrypoint
+        env:
+          DEPLOY_SHA: ${{ github.sha }}
+        run: |
+          set -Eeuo pipefail
+          exec /usr/local/sbin/deploy-portfolio prod "${DEPLOY_SHA}"
