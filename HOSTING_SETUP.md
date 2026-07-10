@@ -2,10 +2,11 @@
 
 Status recorded 2026-07-10: the Mac power settings, Multipass VM, Docker
 Engine, shared `web` network, UFW rules, `/srv` skeleton, registered GitHub
-runner service, and private Caddy edge service are installed. A local
-ARM64 image is running as an internal-only staging app with a separate healthy
-PostgreSQL volume. Migrations, database-aware readiness, the Caddy Host route,
-VM restart recovery, and a custom-format staging backup were verified.
+runner service, and private Caddy edge service are installed. GitHub Actions
+automatically deploys the exact `staging` branch head as an ARM64 image with a
+separate healthy PostgreSQL volume. Public HTTPS, migrations, database-aware
+readiness, the Caddy Host route, VM restart recovery, and a custom-format
+staging backup were verified.
 
 Cloudflared is connected with four registered tunnel connections. Cloudflare is
 now authoritative for `ghobrial.dev`, and the proxied staging CNAME and tunnel
@@ -391,6 +392,9 @@ window, preferably with a UPS. Any failure blocks production cutover.
 - The first automated staging run exposed an archive `umask` permission defect;
   it was cancelled before promotion, the bootstrap image was restored, and both
   archive modes and non-root runtime access were regression-tested after repair.
+- The corrective automated run built the exact branch head, validated runtime
+  permissions, applied migrations, promoted the healthy app, and updated the
+  guarded `current` release link successfully.
 - Verified the staging tunnel route over HTTPS. Cloudflare nameserver migration,
   staging DNS, Universal SSL, and the HTTP redirect are active; the production
   project, volume, credentials, import marker, sentinel, and route are absent.
