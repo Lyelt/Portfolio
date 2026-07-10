@@ -21,15 +21,23 @@ namespace Portfolio.Controllers
 {
     public class AuthController : Controller
     {
+        private const string GuestUserName = "Guest";
+
         private readonly PortfolioContext _context;
         private readonly IPasswordHasher<ApplicationUser> _hasher;
         private readonly ILogger<AuthController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AuthController(PortfolioContext context, IPasswordHasher<ApplicationUser> hasher, ILogger<AuthController> logger)
+        public AuthController(
+            PortfolioContext context,
+            IPasswordHasher<ApplicationUser> hasher,
+            ILogger<AuthController> logger,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _hasher = hasher;
             _logger = logger;
+            _userManager = userManager;
         }
 
 
@@ -60,17 +68,29 @@ namespace Portfolio.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("Auth/GuestLogin")]
-        public IActionResult GuestLogin([FromBody]Credentials credentials)
+        public async Task<IActionResult> GuestLogin()
         {
-            if (string.IsNullOrWhiteSpace(credentials?.Username))
-                throw new BadRequestException("Username cannot be null or empty");
+            var user = await _userManager.FindByNameAsync(GuestUserName);
+            if (user == null ||
+                !string.Equals(user.UserName, GuestUserName, StringComparison.Ordinal) ||
+                await _userManager.IsLockedOutAsync(user))
+            {
+                return RejectGuestLogin();
+            }
 
-            var user = _context.Users.FirstOrDefault(u => u.UserName.Equals(credentials.Username));
-            if (user == null)
-                throw new UnauthorizedException($@"No guest user was found with username ""{credentials.Username}""");
+            var roles = await _userManager.GetRolesAsync(user);
+            var guestRole = ApplicationRole.Guest.ToString();
+            if (roles.Count != 1 || !string.Equals(roles[0], guestRole, StringComparison.Ordinal))
+                return RejectGuestLogin();
 
-            var tokenString = GetTokenString(user, DateTime.Now.AddDays(7));
+            var tokenString = GetTokenString(user, DateTime.UtcNow.AddDays(7));
             return Ok(new { Token = tokenString, UserId = user.Id });
+        }
+
+        private IActionResult RejectGuestLogin()
+        {
+            _logger.LogWarning("Guest login refused because the dedicated guest identity is unavailable or misconfigured.");
+            throw new UnauthorizedException("Guest login is unavailable");
         }
 
 
