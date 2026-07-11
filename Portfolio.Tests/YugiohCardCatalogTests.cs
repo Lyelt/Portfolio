@@ -39,6 +39,19 @@ public sealed class YugiohCardCatalogTests
     }
 
     [Fact]
+    public async Task NumericCardImageIdsMatchTheUpstreamCatalogShape()
+    {
+        var handler = new StubHttpMessageHandler((_, _) => Task.FromResult(JsonResponse(
+            """{"data":[{"id":80181649,"name":"Image card","card_images":[{"id":80181649,"image_url":"https://example.test/card.jpg","image_url_small":"https://example.test/card-small.jpg"}]}]}""")));
+        var catalog = CreateCatalog(handler);
+
+        var card = Assert.Single(await catalog.GetCardsAsync(CancellationToken.None));
+        var image = Assert.Single(card.Card_Images);
+
+        Assert.Equal(80181649, image.Id);
+    }
+
+    [Fact]
     public async Task FailedRefreshReturnsLastKnownGoodCatalog()
     {
         var timeProvider = new ManualTimeProvider(DateTimeOffset.Parse("2026-01-01T00:00:00Z"));
