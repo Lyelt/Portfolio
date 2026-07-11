@@ -1,0 +1,48 @@
+name: Back up portfolio production
+
+on:
+  schedule:
+    - cron: '17 08 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portfolio-deploy
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    name: Encrypt, restore-test, and upload production backup
+    if: ${{ github.repository == 'Lyelt/Portfolio' && github.ref == 'refs/heads/master' }}
+    runs-on:
+      - self-hosted
+      - linux
+      - ARM64
+      - portfolio-deploy
+    timeout-minutes: 60
+    steps:
+      - name: Create and fully restore-test encrypted backup
+        id: backup
+        run: |
+          set -Eeuo pipefail
+          backup_path="$(/usr/local/sbin/backup-portfolio-production)"
+          case "${backup_path}" in
+            /srv/backups/portfolio/daily/portfolio-production-*.dump.age) ;;
+            *) printf 'Unexpected backup path.\n' >&2; exit 1 ;;
+          esac
+          test -f "${backup_path}"
+          test -f "${backup_path}.sha256"
+          printf 'path=%s\n' "${backup_path}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload encrypted off-host backup
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: portfolio-production-backup-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ steps.backup.outputs.path }}
+            ${{ steps.backup.outputs.path }}.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
