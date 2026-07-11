@@ -35,8 +35,8 @@ describe('BowlingService', () => {
     expect(request.request.params.get('leagueMatchesOnly')).toBe('true');
     expect(request.request.params.get('seriesCategory')).toBe('SessionAverage');
     expect(request.request.params.get('statCategory')).toBe('Overall');
-    expect(request.request.params.has('startTime')).toBeFalse();
-    expect(request.request.params.has('endTime')).toBeFalse();
+    expect(request.request.params.has('startTime')).toBe(false);
+    expect(request.request.params.has('endTime')).toBe(false);
     expect(request.request.urlWithParams).not.toContain('null');
     expect(request.request.urlWithParams).not.toContain('undefined');
     expect(request.request.urlWithParams).not.toContain('NaN');
@@ -76,7 +76,7 @@ describe('BowlingService', () => {
 
     const currentRequest = http.expectOne(req =>
       req.url === 'Bowling/GetDashboard' && req.params.get('leagueMatchesOnly') === 'false');
-    expect(obsoleteRequest.cancelled).toBeTrue();
+    expect(obsoleteRequest.cancelled).toBe(true);
     currentRequest.flush({ sessions: [], series: [], stats: [] });
   }));
 

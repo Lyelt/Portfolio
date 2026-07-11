@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-yugioh-article',
   templateUrl: './yugioh-article.component.html',
   styleUrls: ['./yugioh-article.component.scss']

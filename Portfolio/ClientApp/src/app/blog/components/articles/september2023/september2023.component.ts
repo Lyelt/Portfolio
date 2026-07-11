@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-september2023',
   templateUrl: './september2023.component.html',
   styleUrls: ['./september2023.component.scss']

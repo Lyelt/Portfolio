@@ -7,6 +7,7 @@ import { LineChartComponent, BarHorizontalComponent } from '@swimlane/ngx-charts
 import { BowlingService } from '../../services/bowling.service';
 
 @Component({
+  standalone: false,
     selector: 'app-bowling-chart',
     templateUrl: './bowling-chart.component.html',
     styleUrls: ['./bowling-chart.component.scss']

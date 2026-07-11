@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { BingoService } from '../../services/bingo.service';
 
 @Component({
+  standalone: false,
   selector: 'app-bingo-goal',
   templateUrl: './bingo-goal.component.html',
   styleUrls: ['./bingo-goal.component.scss']

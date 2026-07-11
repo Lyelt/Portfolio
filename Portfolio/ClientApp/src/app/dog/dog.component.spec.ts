@@ -10,24 +10,18 @@ import { DogService } from './services/dog.service';
 describe('DogComponent', () => {
   let component: DogComponent;
   let fixture: ComponentFixture<DogComponent>;
-  let dogService: jasmine.SpyObj<DogService>;
+  let dogService: DogService;
 
   beforeEach(async () => {
-    dogService = jasmine.createSpyObj<DogService>('DogService', [
-      'getDogOwners',
-      'getRecentDogTimes',
-      'outsideDog',
-      'onNudge',
-      'onNudgeAcknowledged',
-      'onConnectionStatusChange',
-      'start'
-    ]);
-    dogService.getDogOwners.and.returnValue(of([]));
-    dogService.getRecentDogTimes.and.returnValue(of([{ dog: Dog.Penny, timestamp: new Date() } as DogTime]));
-    dogService.outsideDog.and.returnValue(of(Dog.Nobody));
-    dogService.onNudge.and.returnValue(NEVER);
-    dogService.onNudgeAcknowledged.and.returnValue(NEVER);
-    dogService.onConnectionStatusChange.and.returnValue(of(true));
+    dogService = {
+      getDogOwners: vi.fn().mockReturnValue(of([])),
+      getRecentDogTimes: vi.fn().mockReturnValue(of([{ dog: Dog.Penny, timestamp: new Date() } as DogTime])),
+      outsideDog: vi.fn().mockReturnValue(of(Dog.Nobody)),
+      onNudge: vi.fn().mockReturnValue(NEVER),
+      onNudgeAcknowledged: vi.fn().mockReturnValue(NEVER),
+      onConnectionStatusChange: vi.fn().mockReturnValue(of(true)),
+      start: vi.fn()
+    } as unknown as DogService;
 
     await TestBed.configureTestingModule({
       declarations: [ DogComponent ],

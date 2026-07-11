@@ -4,6 +4,7 @@ import { Dog, DogTime } from './models/dog';
 import { DogService } from './services/dog.service';
 
 @Component({
+  standalone: false,
   selector: 'app-dog',
   templateUrl: './dog.component.html',
   styleUrls: ['./dog.component.scss']

@@ -5,6 +5,7 @@ import { BowlingService } from "../../services/bowling.service";
 import { AuthService } from "src/app/auth/auth.service";
 
 @Component({
+  standalone: false,
   selector: "app-bowling",
   templateUrl: "./bowling.component.html",
   styleUrls: ["./bowling.component.scss"],

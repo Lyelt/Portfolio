@@ -3,6 +3,7 @@ import { YugiohService } from '../../services/yugioh.service';
 import { User } from '../../../auth/user';
 
 @Component({
+  standalone: false,
   selector: 'app-yugioh-select-user',
   templateUrl: './yugioh-select-user.component.html',
   styleUrls: ['./yugioh-select-user.component.scss']

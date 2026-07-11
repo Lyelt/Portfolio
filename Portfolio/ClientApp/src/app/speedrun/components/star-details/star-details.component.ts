@@ -5,6 +5,7 @@ import { StarTime } from '../../models/star-time';
 import { SpeedrunService } from '../../services/speedrun.service';
 
 @Component({
+  standalone: false,
   selector: 'app-star-details',
   templateUrl: './star-details.component.html',
   styleUrls: ['./star-details.component.scss']

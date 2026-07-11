@@ -3,6 +3,7 @@ import { BowlingService } from '../../services/bowling.service';
 import { User } from '../../../auth/user';
 
 @Component({
+  standalone: false,
   selector: 'app-bowling-select-user',
   templateUrl: './bowling-select-user.component.html',
   styleUrls: ['./bowling-select-user.component.scss']

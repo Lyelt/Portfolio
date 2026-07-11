@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-demo',
   templateUrl: './demo.component.html',
   styleUrls: ['./demo.component.scss']

@@ -3,6 +3,7 @@ import { DateHelper } from 'src/app/shared/helpers/date-helpers';
 import { BowlingService } from '../../services/bowling.service';
 
 @Component({
+  standalone: false,
   selector: 'bowling-filters',
   templateUrl: './filters.component.html',
   styleUrls: ['./filters.component.scss']
