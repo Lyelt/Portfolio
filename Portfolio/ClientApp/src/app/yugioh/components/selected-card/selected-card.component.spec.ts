@@ -25,7 +25,7 @@ describe('SelectedCardComponent', () => {
       race: 'Normal',
       attribute: null,
       card_Sets: [],
-      card_Images: [{ id: '1', image_Url: '', image_Url_Small: '' }],
+      card_Images: [{ id: 1, image_Url: '', image_Url_Small: '' }],
       card_Prices: [{ tcgplayer_Price: 1 }]
     } as YugiohCard;
     fixture.detectChanges();
