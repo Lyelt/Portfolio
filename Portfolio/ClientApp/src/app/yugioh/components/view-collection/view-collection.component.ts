@@ -4,6 +4,7 @@ import { YugiohCard, YugiohUtilities, CardTypeEnum } from '../../models/yugioh.m
 import { YugiohService } from '../../services/yugioh.service';
 
 @Component({
+  standalone: false,
   selector: 'app-view-collection',
   templateUrl: './view-collection.component.html',
   styleUrls: ['./view-collection.component.scss']

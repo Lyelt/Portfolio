@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-skills-section',
   templateUrl: './skills-section.component.html',
   styleUrls: ['./skills-section.component.scss']

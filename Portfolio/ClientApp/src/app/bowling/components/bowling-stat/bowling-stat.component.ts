@@ -3,6 +3,7 @@ import { BowlingStat, StatCategory } from '../../models/bowling-stat';
 import { BowlingService } from '../../services/bowling.service';
 
 @Component({
+  standalone: false,
   selector: 'app-bowling-stat',
   templateUrl: './bowling-stat.component.html',
   styleUrls: ['./bowling-stat.component.scss']

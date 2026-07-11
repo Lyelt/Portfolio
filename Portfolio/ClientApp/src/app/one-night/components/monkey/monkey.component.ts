@@ -5,6 +5,7 @@ import { GameAudioService } from '../../services/game-audio.service';
 import { RoleService } from '../../services/role.service';
 
 @Component({
+  standalone: false,
   selector: 'app-monkey',
   templateUrl: './monkey.component.html',
   styleUrls: ['./monkey.component.scss']

@@ -4,6 +4,7 @@ import { YugiohCard } from '../../models/yugioh.model';
 import { YugiohService } from '../../services/yugioh.service';
 
 @Component({
+  standalone: false,
   selector: 'app-small-world',
   templateUrl: './small-world.component.html',
   styleUrls: ['./small-world.component.scss']

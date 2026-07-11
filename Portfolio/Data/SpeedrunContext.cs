@@ -27,6 +27,8 @@ namespace Portfolio.Data
             builder.Entity<ApplicationUser>()
                 .ToTable("AspNetUsers");
 
+            PostgresTimestampMappings.ConfigureApplicationUserLockout(builder);
+
             builder.Entity<Course>()
                 .HasMany(c => c.Stars)
                 .WithOne();
@@ -46,6 +48,11 @@ namespace Portfolio.Data
                 .Property(st => st.Time)
                 .HasConversion(new TimeSpanToTicksConverter());
 
+            builder.Entity<StarTime>()
+                .Property(st => st.LastUpdated)
+                .HasConversion(PostgresTimestampMappings.UtcStoredNaive)
+                .HasColumnType(PostgresTimestampMappings.TimestampWithoutTimeZone);
+
             builder.Entity<ArchivedStarTime>()
                 .HasKey(st => new { st.Id });
 
@@ -60,6 +67,16 @@ namespace Portfolio.Data
             builder.Entity<ArchivedStarTime>()
                 .Property(st => st.Time)
                 .HasConversion(new TimeSpanToTicksConverter());
+
+            builder.Entity<ArchivedStarTime>()
+                .Property(st => st.Timestamp)
+                .HasConversion(PostgresTimestampMappings.UtcStoredNaive)
+                .HasColumnType(PostgresTimestampMappings.TimestampWithoutTimeZone);
+
+            builder.Entity<ArchivedStarTime>()
+                .Property(st => st.LastUpdated)
+                .HasConversion(PostgresTimestampMappings.UtcStoredNaive)
+                .HasColumnType(PostgresTimestampMappings.TimestampWithoutTimeZone);
         }
     }
 }

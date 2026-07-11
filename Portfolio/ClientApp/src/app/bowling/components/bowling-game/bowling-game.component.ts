@@ -10,6 +10,7 @@ export class BowlingScore {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-bowling-game',
   templateUrl: './bowling-game.component.html',
   styleUrls: ['./bowling-game.component.scss']

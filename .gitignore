@@ -184,6 +184,17 @@ orleans.codegen.cs
 
 /node_modules
 
+# Local environment and secret files must never be committed.
+.env
+.env.*
+!.env.example
+!.env.*.example
+**/secrets/
+!deploy/secrets/
+!deploy/secrets/*.env.example
+*.secret
+*.secrets
+
 # RIA/Silverlight projects
 Generated_Code/
 

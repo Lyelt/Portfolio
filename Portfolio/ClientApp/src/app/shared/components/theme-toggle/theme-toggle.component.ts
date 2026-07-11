@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-theme-toggle',
   templateUrl: './theme-toggle.component.html',
   styleUrls: ['./theme-toggle.component.scss']

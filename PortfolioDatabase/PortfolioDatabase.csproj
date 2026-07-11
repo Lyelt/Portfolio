@@ -16,6 +16,8 @@
     <EmbeddedResource Include="scripts\1.0.0\003 - Create Speedrun Tables.sql" />
     <EmbeddedResource Include="scripts\1.0.0\003b - Add Speedrun Stars.sql" />
     <EmbeddedResource Include="scripts\1.0.0\005 - Add Yugioh Tables.sql" />
+    <EmbeddedResource Include="scripts\1.0.0\007 - Align PostgreSQL Keys With Application Models.sql" />
+    <EmbeddedResource Include="scripts\1.0.0\008 - Preserve Legacy Migration Records.sql" />
   </ItemGroup>
 
   <ItemGroup>

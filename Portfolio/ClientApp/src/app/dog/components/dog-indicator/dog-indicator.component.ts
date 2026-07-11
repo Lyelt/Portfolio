@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-dog-indicator',
   templateUrl: './dog-indicator.component.html',
   styleUrls: ['./dog-indicator.component.scss']

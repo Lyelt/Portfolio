@@ -27,6 +27,8 @@ namespace Portfolio.Data
             builder.Entity<ApplicationUser>()
                 .ToTable("AspNetUsers");
 
+            PostgresTimestampMappings.ConfigureApplicationUserLockout(builder);
+
             builder.Entity<CardCollection>()
                 .ToTable("CardCollections");
 

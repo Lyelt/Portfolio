@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+set +x
+umask 077
+
+readonly PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+export PATH
+
+readonly POSTGRES_IMAGE='postgres:17-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193'
+readonly IMPORT_DIR='/srv/backups/portfolio/import'
+readonly ENV_FILE='/srv/secrets/portfolio/prod.env'
+readonly PRODUCTION_SENTINEL='/srv/secrets/portfolio/production-enabled'
+readonly IMPORT_MARKER='/srv/secrets/portfolio/production-import-complete'
+readonly VOLUME='portfolio-prod-postgres-data'
+readonly CONTAINER='portfolio-prod-import-db'
+readonly CURRENT_LINK='/srv/apps/portfolio/prod/current'
+readonly LOCK_FILE='/srv/apps/portfolio/.deploy.lock'
+
+container_created='false'
+
+fail() {
+  printf '[production-import] ERROR: %s\n' "$*" >&2
+  exit 1
+}
+
+assert_root_deploy_file() {
+  local file="$1"
+  [[ -f "${file}" && ! -L "${file}" ]] || fail "Missing guarded file: ${file}"
+  [[ "$(stat -c '%U:%G %a' -- "${file}")" == 'root:deploy 640' ]] ||
+    fail "${file} must be owned by root:deploy with mode 0640."
+}
+
+cleanup() {
+  if [[ "${container_created}" == 'true' ]]; then
+    docker rm --force "${CONTAINER}" >/dev/null 2>&1 || true
+  fi
+}
+trap cleanup EXIT
+
+[[ ${EUID} -eq 0 ]] || fail 'Run this one-time import helper as root.'
+[[ $# -eq 1 ]] || fail "Usage: $0 /srv/backups/portfolio/import/<custom-format-dump>"
+
+if [[ ! -e "${LOCK_FILE}" ]]; then
+  install -o deploy -g deploy -m 0640 /dev/null "${LOCK_FILE}"
+fi
+[[ -f "${LOCK_FILE}" && ! -L "${LOCK_FILE}" ]] || fail "Unsafe deployment lock path: ${LOCK_FILE}"
+exec 9>"${LOCK_FILE}"
+flock --timeout 0 9 || fail 'A deployment or another production import is already running.'
+
+dump_path="$(readlink -f -- "$1")"
+[[ -n "${dump_path}" && "${dump_path}" == "${IMPORT_DIR}/"* ]] ||
+  fail "The dump must resolve beneath ${IMPORT_DIR}."
+[[ -f "${dump_path}" && ! -L "$1" && -s "${dump_path}" ]] ||
+  fail 'The import source must be a nonempty regular file, not a symlink.'
+[[ "$(stat -c '%U:%G %a' -- "${dump_path}")" == 'root:root 600' ]] ||
+  fail 'The import dump must be owned by root:root with mode 0600.'
+
+assert_root_deploy_file "${ENV_FILE}"
+assert_root_deploy_file "${PRODUCTION_SENTINEL}"
+[[ ! -e "${IMPORT_MARKER}" ]] || fail 'A production import has already been marked complete.'
+[[ ! -e "${CURRENT_LINK}" ]] || fail 'A current production release already exists.'
+[[ -z "$(docker ps --all --quiet --filter label=com.docker.compose.project=portfolio-prod)" ]] ||
+  fail 'Production Compose containers already exist.'
+[[ -z "$(docker ps --all --quiet --filter name=^/${CONTAINER}$)" ]] ||
+  fail "Container ${CONTAINER} already exists."
+if docker volume inspect "${VOLUME}" >/dev/null 2>&1; then
+  fail "Volume ${VOLUME} already exists; no data was changed. Inspect it and obtain approval before any deletion."
+fi
+
+printf '[production-import] Validating custom-format archive before creating a volume.\n'
+docker run --rm --network none --interactive "${POSTGRES_IMAGE}" \
+  pg_restore --list < "${dump_path}" >/dev/null
+
+docker volume create \
+  --label com.docker.compose.project=portfolio-prod \
+  --label com.docker.compose.volume=db_data \
+  --label dev.ghobrial.purpose=production-database \
+  --label dev.ghobrial.import-source-sha256="$(sha256sum "${dump_path}" | awk '{print $1}')" \
+  "${VOLUME}" >/dev/null
+
+docker run --detach \
+  --name "${CONTAINER}" \
+  --network none \
+  --env-file "${ENV_FILE}" \
+  --volume "${VOLUME}:/var/lib/postgresql/data" \
+  "${POSTGRES_IMAGE}" >/dev/null
+container_created='true'
+
+for _ in $(seq 1 60); do
+  if docker exec "${CONTAINER}" sh -ceu \
+    'pg_isready --username="$POSTGRES_USER" --dbname="$POSTGRES_DB"' >/dev/null 2>&1; then
+    break
+  fi
+  sleep 2
+done
+docker exec "${CONTAINER}" sh -ceu \
+  'pg_isready --username="$POSTGRES_USER" --dbname="$POSTGRES_DB"' >/dev/null ||
+  fail 'The isolated import database did not become ready.'
+
+printf '[production-import] Restoring into the new, isolated production volume. No app or public route is being started.\n'
+docker exec --interactive "${CONTAINER}" sh -ceu \
+  'exec pg_restore --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --no-owner --no-acl --exit-on-error --single-transaction' \
+  < "${dump_path}"
+
+table_count="$(docker exec "${CONTAINER}" sh -ceu \
+  'exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="SELECT count(*) FROM information_schema.tables WHERE table_schema = '\''public'\'';"')"
+[[ "${table_count}" =~ ^[1-9][0-9]*$ ]] || fail 'Restore completed but no public-schema tables were found.'
+
+docker stop --time 30 "${CONTAINER}" >/dev/null
+docker rm "${CONTAINER}" >/dev/null
+container_created='false'
+install -o root -g deploy -m 0640 /dev/null "${IMPORT_MARKER}"
+
+printf '%s\n' \
+  '[production-import] Import completed and the guarded marker was created.' \
+  '[production-import] The production app, Cloudflare route, and DNS remain untouched.' \
+  '[production-import] Before first deployment, verify a full restore drill and keep the GitHub production variable disabled.'

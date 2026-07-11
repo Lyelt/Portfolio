@@ -48,7 +48,7 @@ export class CardSet {
 }
 
 export class CardImage {
-  id: string;
+  id: number;
   image_Url: string;
   image_Url_Small: string;
 }

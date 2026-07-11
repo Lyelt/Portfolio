@@ -6,6 +6,7 @@ import { ArchivedStarTime } from '../../models/star-time';
 import { SpeedrunService } from '../../services/speedrun.service';
 
 @Component({
+  standalone: false,
   selector: 'app-archive',
   templateUrl: './archive.component.html',
   styleUrls: ['./archive.component.scss']

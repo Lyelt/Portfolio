@@ -1,38 +1,49 @@
+# Node 22 satisfies Angular 21's runtime requirements. Both upstream
+# images are multi-architecture and resolve to linux/arm64 on the hosting VM.
+FROM node:22-bookworm-slim@sha256:53ada149d435c38b14476cb57e4a7da73c15595aba79bd6971b547ceb6d018bf AS node
+
 # ---------- build stage ----------
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:ea8bde36c11b6e7eec2656d0e59101d4462f6bd630730f2c8201ed0572b295d5 AS build
 WORKDIR /app
 
-# install Node.js 18
+# Copy the pinned Node runtime instead of executing a remote setup script.
 RUN apt-get update \
-    && apt-get install -y curl \
-    && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
+    && apt-get install -y --no-install-recommends libatomic1 \
     && rm -rf /var/lib/apt/lists/*
+COPY --from=node /usr/local/ /usr/local/
+RUN node --version && npm --version
 
 # copy csproj and restore as distinct layers
-COPY *.sln .
+COPY Portfolio.sln ./
 COPY Portfolio/*.csproj ./Portfolio/
+COPY Portfolio.Tests/*.csproj ./Portfolio.Tests/
 COPY PortfolioDatabase/*.csproj ./PortfolioDatabase/
-RUN dotnet restore
+RUN dotnet restore ./Portfolio.sln
 
-# copy everything and publish web
+# copy application sources and publish both artifacts
 COPY Portfolio/. ./Portfolio/
-RUN dotnet publish ./Portfolio/Portfolio.csproj -c Release -o /out/web
-
-# copy everything and publish dbup exe
 COPY PortfolioDatabase/. ./PortfolioDatabase/
+RUN dotnet publish ./Portfolio/Portfolio.csproj -c Release -o /out/web
 RUN dotnet publish ./PortfolioDatabase/PortfolioDatabase.csproj -c Release -o /out/dbup
 
 # ---------- runtime stage ----------
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
-ENV ASPNETCORE_URLS=http://*:5000
-ENV TZ=America/New_York
+FROM mcr.microsoft.com/dotnet/aspnet:10.0@sha256:7644f992230d35cf230017189d4038c0ae0f7388b13f4f7ae1900a155bafb597 AS runtime
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates curl \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV ASPNETCORE_HTTP_PORTS=8080 \
+    DOTNET_EnableDiagnostics=0 \
+    TZ=America/New_York
 
 WORKDIR /app
-ADD /Portfolio/nginx.conf.sigil /app/nginx.conf.sigil
-COPY /Portfolio/appsettings.json /app/
-
 COPY --from=build /out/web/ ./
 COPY --from=build /out/dbup/ ./dbup/
+RUN chmod -R a+rX /app
 
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD curl --fail --silent --show-error http://127.0.0.1:8080/healthz || exit 1
+
+USER $APP_UID
 ENTRYPOINT ["dotnet", "Portfolio.dll"]

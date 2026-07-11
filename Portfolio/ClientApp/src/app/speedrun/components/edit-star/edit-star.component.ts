@@ -4,6 +4,7 @@ import { StarTime } from '../../models/star-time';
 import { SpeedrunService } from '../../services/speedrun.service';
 
 @Component({
+  standalone: false,
   selector: 'app-edit-star',
   templateUrl: './edit-star.component.html',
   styleUrls: ['./edit-star.component.scss']

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GameNight, GameNightMeal } from '../../models/game-night';
 
 @Component({
+  standalone: false,
   selector: 'app-meals',
   templateUrl: './meals.component.html',
   styleUrls: ['./meals.component.scss']

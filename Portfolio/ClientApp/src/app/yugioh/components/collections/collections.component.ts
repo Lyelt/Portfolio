@@ -3,6 +3,7 @@ import { YugiohService } from '../../services/yugioh.service';
 import { CardCollection } from '../../models/card-collections';
 
 @Component({
+  standalone: false,
     selector: 'app-collections',
     templateUrl: './collections.component.html',
     styleUrls: ['./collections.component.scss']

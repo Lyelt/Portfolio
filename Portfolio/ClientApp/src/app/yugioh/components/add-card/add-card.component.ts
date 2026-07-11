@@ -3,6 +3,7 @@ import { Card } from '../../models/card-collections';
 import { YugiohCard, CardSet } from '../../models/yugioh.model';
 
 @Component({
+  standalone: false,
     selector: 'app-add-card',
     templateUrl: './add-card.component.html',
     styleUrls: ['./add-card.component.scss']

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { AuthService } from '../../auth.service';
 
 @Component({
+  standalone: false,
     selector: 'app-hash',
     templateUrl: './hash.component.html',
     styleUrls: ['./hash.component.scss']

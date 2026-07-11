@@ -8,6 +8,7 @@ import { StarTime } from '../../models/star-time';
 import { SpeedrunService } from '../../services/speedrun.service';
 
 @Component({
+  standalone: false,
   selector: 'app-course',
   templateUrl: './course.component.html',
   styleUrls: ['./course.component.scss']

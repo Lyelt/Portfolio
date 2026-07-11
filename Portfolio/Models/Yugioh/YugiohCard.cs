@@ -44,7 +44,7 @@ namespace Portfolio.Models.Yugioh
     public class CardImage
     {
         public CardImage() { }
-        public string Id { get; set; }
+        public int? Id { get; set; }
         public string Image_Url { get; set; }
         public string Image_Url_Small { get; set; }
     }

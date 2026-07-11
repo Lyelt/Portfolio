@@ -3,6 +3,7 @@ import { GameNight } from '../../models/game-night';
 import { GameNightService } from '../../services/game-night.service';
 
 @Component({
+  standalone: false,
   selector: 'app-game-night-schedule',
   templateUrl: './game-night-schedule.component.html',
   styleUrls: ['./game-night-schedule.component.scss']

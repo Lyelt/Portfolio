@@ -30,6 +30,9 @@ namespace Portfolio.Data
             builder.Entity<ApplicationUser>()
                 .ToTable("AspNetUsers");
 
+            var usesPostgres = Database.ProviderName == "Npgsql.EntityFrameworkCore.PostgreSQL";
+            PostgresTimestampMappings.ConfigureApplicationUserLockout(builder, usesPostgres);
+
             builder.Entity<BowlingFrame>()
                 .ToTable("BowlingFrames");
 
@@ -38,6 +41,13 @@ namespace Portfolio.Data
 
             builder.Entity<BowlingSession>()
                 .ToTable("BowlingSessions");
+
+            var sessionDate = builder.Entity<BowlingSession>()
+                .Property(session => session.Date)
+                .HasConversion(PostgresTimestampMappings.WallClock);
+
+            if (usesPostgres)
+                sessionDate.HasColumnType(PostgresTimestampMappings.TimestampWithoutTimeZone);
 
             // Games
 

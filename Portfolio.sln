@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{02
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortfolioDatabase", "PortfolioDatabase\PortfolioDatabase.csproj", "{FC316B20-818A-4F40-9906-C6A53B42B4B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portfolio.Tests", "Portfolio.Tests\Portfolio.Tests.csproj", "{065AE9DD-5FF9-4706-A1C0-70DB4D309B6C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{FC316B20-818A-4F40-9906-C6A53B42B4B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC316B20-818A-4F40-9906-C6A53B42B4B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC316B20-818A-4F40-9906-C6A53B42B4B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{065AE9DD-5FF9-4706-A1C0-70DB4D309B6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{065AE9DD-5FF9-4706-A1C0-70DB4D309B6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{065AE9DD-5FF9-4706-A1C0-70DB4D309B6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{065AE9DD-5FF9-4706-A1C0-70DB4D309B6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,23 @@
+.git
+.github
+.vs
+.vscode
+
+**/._*
+**/bin
+**/obj
+**/node_modules
+**/TestResults
+**/*.log
+**/*.suo
+**/*.user
+
+# Never include local configuration or credentials in an image build context.
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.*.example
+**/secrets
+**/secrets/**
+**/*.secret
+**/*.secrets

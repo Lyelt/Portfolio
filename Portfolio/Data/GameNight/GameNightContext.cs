@@ -32,6 +32,8 @@ namespace Portfolio.Data
             builder.Entity<ApplicationUser>()
                 .ToTable("AspNetUsers");
 
+            PostgresTimestampMappings.ConfigureApplicationUserLockout(builder);
+
             builder.Entity<GameNight>()
                 .HasOne(gn => gn.User)
                 .WithMany();
@@ -61,6 +63,16 @@ namespace Portfolio.Data
             builder.Entity<GameNight>()
                 .Property(gn => gn.UserId)
                 .IsRequired(false);
+
+            builder.Entity<GameNight>()
+                .Property(gameNight => gameNight.Date)
+                .HasConversion(PostgresTimestampMappings.WallClock)
+                .HasColumnType(PostgresTimestampMappings.TimestampWithoutTimeZone);
+
+            builder.Entity<GameNightMeal>()
+                .Property(meal => meal.DateAdded)
+                .HasConversion(PostgresTimestampMappings.WallClock)
+                .HasColumnType(PostgresTimestampMappings.TimestampWithoutTimeZone);
 
             builder.Entity<GameNightGame>()
                 .Property(g => g.Image)

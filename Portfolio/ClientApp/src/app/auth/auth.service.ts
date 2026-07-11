@@ -35,14 +35,11 @@ export class AuthService {
   }
 
   guestLogin() {
-    let creds = new Credentials();
-    creds.username = "Guest";
-
-    return this.http.post<{ token: string, userId: string }>("/Auth/GuestLogin", creds).pipe(
+    return this.http.post<{ token: string, userId: string }>("/Auth/GuestLogin", {}).pipe(
       map((response) => {
         localStorage.setItem("jwt", response.token);
         localStorage.setItem("userId", response.userId);
-        localStorage.setItem("userName", creds.username);
+        localStorage.setItem("userName", "Guest");
       })
     );
   }

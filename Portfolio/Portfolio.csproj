@@ -28,7 +28,6 @@
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="PortfolioLog.log" />
     <None Remove="upgrade-steps.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -104,7 +103,7 @@
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm ci" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --configuration production" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr -- --configuration production" Condition=" '$(BuildServerSideRenderer)' == 'true' " />
 

@@ -6,6 +6,7 @@ import { SpeedrunService } from "../../services/speedrun.service";
 import { Star } from "../../models/star";
 
 @Component({
+  standalone: false,
   selector: "app-speedrun",
   templateUrl: "./speedrun.component.html",
   styleUrls: ["./speedrun.component.scss"],
