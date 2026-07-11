@@ -1,0 +1,195 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+set +x
+umask 077
+
+readonly PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+export PATH
+
+readonly BACKUP_DIR='/srv/backups/portfolio/daily'
+readonly SECRET_FILE='/srv/secrets/portfolio/backup.env'
+readonly PRODUCTION_ENV_FILE='/srv/secrets/portfolio/prod.env'
+readonly LOCK_FILE='/srv/apps/portfolio/.deploy.lock'
+readonly POSTGRES_IMAGE='postgres:17-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193'
+readonly RETENTION_DAYS=90
+
+temporary_dump=''
+temporary_encrypted=''
+temporary_checksum=''
+temporary_identity=''
+temporary_restore_env=''
+published_encrypted=''
+published_checksum=''
+restore_container=''
+restore_volume=''
+backup_age_identity=''
+backup_age_recipient=''
+
+log() {
+  printf '[production-backup] %s\n' "$*" >&2
+}
+
+fail() {
+  log "ERROR: $*"
+  exit 1
+}
+
+cleanup() {
+  [[ -z "${restore_container}" ]] || docker rm --force "${restore_container}" >/dev/null 2>&1 || true
+  [[ -z "${restore_volume}" ]] || docker volume rm "${restore_volume}" >/dev/null 2>&1 || true
+  [[ -z "${temporary_dump}" ]] || rm -f -- "${temporary_dump}"
+  [[ -z "${temporary_encrypted}" ]] || rm -f -- "${temporary_encrypted}"
+  [[ -z "${temporary_checksum}" ]] || rm -f -- "${temporary_checksum}"
+  [[ -z "${temporary_identity}" ]] || rm -f -- "${temporary_identity}"
+  [[ -z "${temporary_restore_env}" ]] || rm -f -- "${temporary_restore_env}"
+  [[ -z "${published_encrypted}" ]] || rm -f -- "${published_encrypted}"
+  [[ -z "${published_checksum}" ]] || rm -f -- "${published_checksum}"
+  unset backup_age_identity backup_age_recipient
+}
+trap cleanup EXIT
+
+[[ "$(id -un)" == 'deploy' ]] || fail 'Run as the deploy service account.'
+cd /srv/apps/portfolio
+for command in age age-keygen awk basename cut date df docker find flock grep id mktemp mv rm seq sha256sum sleep stat; do
+  command -v "${command}" >/dev/null 2>&1 || fail "Missing required command: ${command}"
+done
+[[ -d "${BACKUP_DIR}" && -w "${BACKUP_DIR}" && ! -L "${BACKUP_DIR}" ]] || fail "Unsafe backup directory: ${BACKUP_DIR}"
+[[ -f "${LOCK_FILE}" && ! -L "${LOCK_FILE}" ]] || fail "Unsafe deployment lock: ${LOCK_FILE}"
+
+for guarded_file in "${SECRET_FILE}" "${PRODUCTION_ENV_FILE}"; do
+  [[ -f "${guarded_file}" && ! -L "${guarded_file}" ]] || fail "Missing guarded file: ${guarded_file}"
+  [[ "$(stat -c '%U:%G %a' -- "${guarded_file}")" == 'root:deploy 640' ]] ||
+    fail "${guarded_file} must be owned by root:deploy with mode 0640."
+done
+
+[[ "$(grep -Ec '^BACKUP_AGE_IDENTITY=' "${SECRET_FILE}")" == '1' ]] ||
+  fail 'Backup secret file must contain exactly one age identity.'
+[[ "$(grep -Ec '^BACKUP_AGE_RECIPIENT=' "${SECRET_FILE}")" == '1' ]] ||
+  fail 'Backup secret file must contain exactly one age recipient.'
+backup_age_identity="$(grep -E '^BACKUP_AGE_IDENTITY=[[:graph:]]+$' "${SECRET_FILE}" | cut -d= -f2- || true)"
+backup_age_recipient="$(grep -E '^BACKUP_AGE_RECIPIENT=[[:graph:]]+$' "${SECRET_FILE}" | cut -d= -f2- || true)"
+[[ -n "${backup_age_identity}" && "${backup_age_identity}" != replace-* ]] || fail 'Backup age identity is missing or is still the public placeholder.'
+[[ -n "${backup_age_recipient}" && "${backup_age_recipient}" != replace-* ]] || fail 'Backup age recipient is missing or is still the public placeholder.'
+
+temporary_identity="$(mktemp "${BACKUP_DIR}/.portfolio-backup-age-identity.XXXXXX")"
+printf '%s\n' "${backup_age_identity}" > "${temporary_identity}"
+derived_recipient="$(age-keygen -y "${temporary_identity}")"
+[[ "${derived_recipient}" == "${backup_age_recipient}" ]] || fail 'Backup age identity and recipient do not match.'
+unset derived_recipient
+
+temporary_restore_env="$(mktemp "${BACKUP_DIR}/.portfolio-production-restore.XXXXXX.env")"
+grep -E '^(POSTGRES_DB|POSTGRES_PASSWORD|POSTGRES_USER)=' "${PRODUCTION_ENV_FILE}" > "${temporary_restore_env}"
+[[ "$(grep -Ec '^(POSTGRES_DB|POSTGRES_PASSWORD|POSTGRES_USER)=' "${temporary_restore_env}")" == '3' ]] ||
+  fail 'Could not create the minimal PostgreSQL restore environment.'
+
+exec 9>"${LOCK_FILE}"
+flock --timeout 900 9 || fail 'A deployment or database operation held the global lock for more than 15 minutes.'
+
+mapfile -t database_containers < <(docker ps --quiet \
+  --filter label=com.docker.compose.project=portfolio-prod \
+  --filter label=com.docker.compose.service=db)
+[[ "${#database_containers[@]}" == '1' ]] || fail 'Expected exactly one running production database container.'
+readonly database_container="${database_containers[0]}"
+[[ "$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{end}}' "${database_container}")" == 'healthy' ]] ||
+  fail 'Production database is not healthy.'
+
+database_size_bytes="$(docker exec "${database_container}" sh -ceu '
+  exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="SELECT pg_database_size(current_database());"
+')"
+available_bytes="$(df --output=avail -B1 "${BACKUP_DIR}" | awk 'NR == 2 { print $1 }')"
+[[ "${database_size_bytes}" =~ ^[0-9]+$ && "${available_bytes}" =~ ^[0-9]+$ ]] || fail 'Could not calculate backup capacity.'
+readonly reserve_bytes=$((12 * 1024 * 1024 * 1024))
+readonly working_space_bytes=$((database_size_bytes * 4 + 512 * 1024 * 1024))
+readonly required_bytes=$((reserve_bytes + working_space_bytes))
+(( available_bytes >= required_bytes )) || fail 'Insufficient disk space for dump, encryption, full restore, and the 12-GiB safety reserve.'
+unset database_size_bytes available_bytes
+
+timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
+readonly final_encrypted="${BACKUP_DIR}/portfolio-production-${timestamp}.dump.age"
+readonly final_checksum="${final_encrypted}.sha256"
+[[ ! -e "${final_encrypted}" && ! -e "${final_checksum}" ]] || fail 'Timestamped backup path already exists.'
+
+temporary_dump="$(mktemp "${BACKUP_DIR}/.portfolio-production-${timestamp}.XXXXXX.dump")"
+temporary_encrypted="$(mktemp "${BACKUP_DIR}/.portfolio-production-${timestamp}.XXXXXX.dump.age")"
+temporary_checksum="$(mktemp "${BACKUP_DIR}/.portfolio-production-${timestamp}.XXXXXX.sha256")"
+
+log 'Creating PostgreSQL custom-format dump.'
+docker exec "${database_container}" sh -ceu \
+  'exec pg_dump --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --format=custom --no-owner --no-acl' \
+  > "${temporary_dump}"
+[[ -s "${temporary_dump}" ]] || fail 'Production dump is empty.'
+docker run --rm --network none --interactive "${POSTGRES_IMAGE}" pg_restore --list \
+  < "${temporary_dump}" >/dev/null
+
+log 'Encrypting with age and validating authenticated decryption.'
+age --encrypt --recipient "${backup_age_recipient}" --output "${temporary_encrypted}" "${temporary_dump}"
+age --decrypt --identity "${temporary_identity}" "${temporary_encrypted}" |
+  docker run --rm --network none --interactive "${POSTGRES_IMAGE}" pg_restore --list >/dev/null
+
+log 'Restoring the authenticated backup into an isolated disposable PostgreSQL instance.'
+restore_container="portfolio-prod-backup-restore-$RANDOM-$$"
+restore_volume="$(docker volume create \
+  --label com.ghobrial.portfolio.purpose=production-backup-restore-test \
+  --label "com.ghobrial.portfolio.restore-container=${restore_container}")"
+[[ -n "${restore_volume}" ]] || fail 'Docker did not create a disposable restore volume.'
+docker run --detach \
+  --name "${restore_container}" \
+  --network none \
+  --env-file "${temporary_restore_env}" \
+  --volume "${restore_volume}:/var/lib/postgresql/data" \
+  "${POSTGRES_IMAGE}" >/dev/null
+for _ in $(seq 1 60); do
+  if docker exec "${restore_container}" sh -ceu \
+    'pg_isready --username="$POSTGRES_USER" --dbname="$POSTGRES_DB"' >/dev/null 2>&1; then
+    break
+  fi
+  sleep 2
+done
+docker exec "${restore_container}" sh -ceu \
+  'pg_isready --username="$POSTGRES_USER" --dbname="$POSTGRES_DB"' >/dev/null ||
+  fail 'Disposable restore database did not become ready.'
+age --decrypt --identity "${temporary_identity}" "${temporary_encrypted}" |
+  docker exec --interactive "${restore_container}" sh -ceu \
+    'exec pg_restore --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --no-owner --no-acl --exit-on-error --single-transaction'
+
+restored_table_count="$(docker exec "${restore_container}" sh -ceu '
+  exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="
+    SELECT count(*) FROM information_schema.tables WHERE table_schema IN ('\''public'\'', '\''legacy'\'');"
+')"
+restored_migration_count="$(docker exec "${restore_container}" sh -ceu '
+  exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="SELECT count(*) FROM \"schemaversions\";"
+')"
+[[ "${restored_table_count}" =~ ^[0-9]+$ && "${restored_table_count}" -ge 20 ]] || fail 'Restored database is missing application tables.'
+[[ "${restored_migration_count}" =~ ^[0-9]+$ && "${restored_migration_count}" -ge 1 ]] || fail 'Restored database is missing migration history.'
+
+docker rm --force "${restore_container}" >/dev/null
+restore_container=''
+docker volume rm "${restore_volume}" >/dev/null
+restore_volume=''
+
+encrypted_hash="$(sha256sum "${temporary_encrypted}" | awk '{print $1}')"
+printf '%s  %s\n' "${encrypted_hash}" "$(basename "${final_encrypted}")" > "${temporary_checksum}"
+unset encrypted_hash
+
+mv -- "${temporary_encrypted}" "${final_encrypted}"
+temporary_encrypted=''
+published_encrypted="${final_encrypted}"
+mv -- "${temporary_checksum}" "${final_checksum}"
+temporary_checksum=''
+published_checksum="${final_checksum}"
+rm -f -- "${temporary_dump}" "${temporary_identity}" "${temporary_restore_env}"
+temporary_dump=''
+temporary_identity=''
+temporary_restore_env=''
+published_encrypted=''
+published_checksum=''
+
+log "Removing authenticated local backups older than ${RETENTION_DAYS} days after successful backup and restore validation."
+while IFS= read -r -d '' expired_backup; do
+  rm -f -- "${expired_backup}" "${expired_backup}.sha256"
+done < <(find "${BACKUP_DIR}" -maxdepth 1 -type f \
+  -name 'portfolio-production-*.dump.age' -mtime "+${RETENTION_DAYS}" -print0)
+
+log 'Backup, authenticated encryption, full restore, and schema validation passed.'
+printf '%s\n' "${final_encrypted}"

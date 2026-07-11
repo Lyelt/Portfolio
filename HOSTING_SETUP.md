@@ -1,6 +1,6 @@
 # Mac mini hosting runbook
 
-Status recorded 2026-07-10: the Mac power settings, Multipass VM, Docker
+Status recorded 2026-07-11: the Mac power settings, Multipass VM, Docker
 Engine, shared `web` network, UFW rules, `/srv` skeleton, registered GitHub
 runner service, and private Caddy edge service are installed. GitHub Actions
 automatically deploys the exact `staging` branch head as an ARM64 image with a
@@ -10,15 +10,18 @@ was converted and staging now runs from
 30,410 rows including the legacy EF journal were content-verified before
 cutover. Public HTTPS, authenticated reads, migrations, database-aware
 readiness, the Caddy Host route, VM restart recovery, checksum-backed staging
-backups, and rollback retention were verified.
+backups, and rollback retention were verified. Production was restored into its
+separate guarded volume, restore-tested with the exact application image, and
+deployed privately from `master` at `dd97763782bdcf61c7393ccb58bf92ab7724b724`.
 
 Cloudflared is connected with four registered tunnel connections. Cloudflare is
 now authoritative for `ghobrial.dev`, and the proxied staging CNAME and tunnel
 route return database-aware `healthy` over HTTPS with an active Universal SSL
-certificate and an active HTTP-to-HTTPS redirect. Production containers/data,
-production enablement guards, and a production tunnel route remain absent. The
-hosting changes are tracked on the long-lived `staging` branch; `master` remains
-the production branch and has not received this deployment setup.
+certificate and an active HTTP-to-HTTPS redirect. The production containers,
+data, enablement guards, pre-deploy backup, and private Caddy route are healthy;
+the production tunnel route remains separate from deployment and is not yet
+cut over in this status record. `staging` remains the pre-production branch and
+`master` is the production deployment branch.
 
 ## Safety boundaries
 
@@ -66,9 +69,9 @@ routed traffic; SSH is allowed only from the detected Multipass NAT subnet.
 
 ## Known pre-cutover work
 
-- The frontend audit reports 125 legacy dependency findings: 15 low, 34
-  moderate, 72 high, and 4 critical. A successful build does not remediate
-  them. Review production-reachable findings before cutover.
+- The Angular 21 refresh reports zero npm audit findings during the exact image
+  build. GitHub may continue displaying legacy alerts until it rescans the new
+  default-branch lockfile.
 - macOS Software Update offers recommended Sequoia 15.7.7 and Command Line
   Tools 16.4 updates. Apply them in an approved maintenance window and repeat
   recovery tests. Do not install the optional major Tahoe upgrade without a
@@ -77,8 +80,9 @@ routed traffic; SSH is allowed only from the detected Multipass NAT subnet.
   7000, and Synergy listens on LAN port 24802. Review active use before changing
   those host services or enabling the firewall.
 - A full Mac cold boot/power-loss recovery without desktop login is untested.
-- Backups currently exist only inside the VM; an encrypted off-VM target and a
-  full restore drill are required before production.
+- The production seed has decrypt-tested age-encrypted copies in iCloud Drive
+  and the Mac login Keychain holds its recovery identity. Production restore
+  drills passed; confirm the first scheduled GitHub artifact after promotion.
 - A UPS is strongly recommended.
 
 ## 1. Mac host settings
@@ -148,6 +152,8 @@ Still required from the owner:
 - A fresh authoritative MySQL backup from DigitalOcean, unless its canonical
   checksum still exactly matches the already converted source snapshot.
 - An encrypted off-VM backup destination and failure-alert recipient.
+- A dedicated age identity stored both in `/srv/secrets/portfolio/backup.env`
+  and in a separate recovery system outside the VM.
 
 The staging database password and JWT key were generated inside the VM and are
 stored only in `/srv/secrets/portfolio/staging.env` as `root:deploy` mode `0640`.
@@ -162,9 +168,13 @@ sudo install -o root -g deploy -m 0640 \
 sudo install -o root -g deploy -m 0640 \
   /srv/secrets/examples/portfolio-prod.env.example \
   /srv/secrets/portfolio/prod.env
+sudo install -o root -g deploy -m 0640 \
+  /srv/secrets/examples/portfolio-backup.env.example \
+  /srv/secrets/portfolio/backup.env
 sudoedit /srv/secrets/cloudflare-tunnel.env
 sudoedit /srv/secrets/edge.env
 sudoedit /srv/secrets/portfolio/prod.env
+sudoedit /srv/secrets/portfolio/backup.env
 exit
 ```
 
@@ -414,12 +424,23 @@ off-VM. Only then prune older unused cache/images/releases/backups. The VM must
 never hold the sole production backup.
 
 Validated pre-deploy dumps and SHA-256 sidecars protect deployment events, not
-data written between deployments. Before production cutover, configure and
-prove a scheduled daily production `pg_dump`, bounded retention, encrypted
-off-VM copy, failure alert,
-and recurring restore test. Keep production disabled until the destination,
-retention window, and alert recipient are explicitly chosen; they cannot be
-safely inferred during this setup.
+data written between deployments. The default-branch workflow
+`.github/workflows/backup-production.yml` runs daily at 08:17 UTC and can also
+be dispatched manually. It invokes the fixed host helper, creates a custom
+PostgreSQL dump, encrypts it with authenticated age encryption, decrypt-validates
+it, restores it into a disposable network-isolated PostgreSQL instance, checks
+the restored schema and migration history, and uploads only the encrypted archive
+and its SHA-256 sidecar as a 30-day GitHub Actions artifact. Validated encrypted
+copies remain in `/srv/backups/portfolio/daily` for 90 days. GitHub Actions run
+failure is the primary backup alert; keep Actions notifications enabled for this
+repository and investigate any missed or failed scheduled run.
+
+The production seed also has a decrypt-tested encrypted copy in the Mac owner's
+iCloud Drive. The recurring backup age identity is stored in the macOS login
+Keychain as `Portfolio Production Backup Age Identity` and provisioned separately
+into the VM backup env file. Never print it in a shell transcript or Actions log. Run a
+manual workflow after first production deployment and confirm the artifact is
+downloadable before treating the recurring backup requirement as complete.
 
 Ubuntu unattended upgrades are enabled without automatic reboot. Schedule
 kernel/host reboots and the recommended macOS minor update, then retest.

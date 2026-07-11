@@ -38,6 +38,7 @@ transfer deploy/portfolio/deploy-portfolio deploy-portfolio
 transfer deploy/portfolio/switch-staging-database switch-staging-database
 transfer deploy/portfolio/staging-database-volume.default staging-database-volume.default
 transfer deploy/portfolio/import-production-database import-production-database
+transfer deploy/portfolio/backup-production backup-production
 transfer deploy/portfolio/register-runner register-runner
 for example in "${REPOSITORY_ROOT}"/deploy/secrets/*.env.example; do
   multipass transfer "${example}" "${VM_NAME}:${remote_stage}/$(basename "${example}")"
@@ -45,7 +46,8 @@ done
 
 multipass exec "${VM_NAME}" -- sudo install -d -o deploy -g deploy -m 0750 \
   /srv/edge /srv/edge/conf /srv/apps/portfolio /srv/secrets/examples \
-  /srv/backups/portfolio/import /srv/backups/portfolio/staging /srv/backups/portfolio/prod
+  /srv/backups/portfolio/import /srv/backups/portfolio/staging \
+  /srv/backups/portfolio/prod /srv/backups/portfolio/daily
 multipass exec "${VM_NAME}" -- sudo install -o root -g deploy -m 0644 \
   "${remote_stage}/HOSTING_SETUP.md" /srv/HOSTING_SETUP.md
 multipass exec "${VM_NAME}" -- sudo install -o root -g root -m 0644 \
@@ -61,6 +63,8 @@ multipass exec "${VM_NAME}" -- sudo install -o root -g root -m 0755 \
   "${remote_stage}/switch-staging-database" /usr/local/sbin/switch-portfolio-staging-database
 multipass exec "${VM_NAME}" -- sudo install -o root -g root -m 0755 \
   "${remote_stage}/import-production-database" /usr/local/sbin/import-production-database
+multipass exec "${VM_NAME}" -- sudo install -o root -g root -m 0755 \
+  "${remote_stage}/backup-production" /usr/local/sbin/backup-portfolio-production
 multipass exec "${VM_NAME}" -- sudo install -o root -g root -m 0755 \
   "${remote_stage}/register-runner" /usr/local/sbin/register-portfolio-runner
 multipass exec "${VM_NAME}" -- sudo install -d -o root -g root -m 0755 \

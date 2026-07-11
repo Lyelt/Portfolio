@@ -26,6 +26,7 @@ users:
 package_update: true
 package_upgrade: true
 packages:
+  - age
   - apt-transport-https
   - ca-certificates
   - curl
@@ -146,6 +147,7 @@ runcmd:
         /srv/backups/portfolio \
         /srv/backups/portfolio/staging \
         /srv/backups/portfolio/prod \
+        /srv/backups/portfolio/daily \
         /srv/actions-runner \
         /srv/actions-runner/portfolio
 
