@@ -3,6 +3,7 @@ import { Player } from '../../models/player'
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
+  standalone: false,
   selector: 'app-player',
   templateUrl: './player.component.html',
     styleUrls: ['./player.component.scss'],

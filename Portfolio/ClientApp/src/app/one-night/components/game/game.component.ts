@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Role } from '../../models/role';
 import { RoleService } from '../../services/role.service';
 import { GameAudioService } from '../../services/game-audio.service';
-import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { NavigationStart, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Voiceline } from '../../models/voiceline';
 
 @Component({
+  standalone: false,
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss']
@@ -24,8 +25,8 @@ export class GameComponent implements OnInit {
 
   constructor(protected roleService: RoleService, protected audioService: GameAudioService, private router: Router) { 
     router.events.pipe(
-      filter(event => event instanceof NavigationStart)
-    ).subscribe((event: NavigationEnd) => {
+      filter((event): event is NavigationStart => event instanceof NavigationStart)
+    ).subscribe(() => {
       audioService.stop();
     });
   }

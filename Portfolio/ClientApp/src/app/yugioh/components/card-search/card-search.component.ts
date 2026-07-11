@@ -4,6 +4,7 @@ import { YugiohService } from '../../services/yugioh.service';
 import { CardCollection, Card } from '../../models/card-collections';
 
 @Component({
+  standalone: false,
     selector: 'app-card-search',
     templateUrl: './card-search.component.html',
     styleUrls: ['./card-search.component.scss']

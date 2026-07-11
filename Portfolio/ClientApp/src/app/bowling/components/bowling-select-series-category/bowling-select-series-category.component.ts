@@ -2,6 +2,7 @@ import { Component, OnInit, OnChanges, Output, EventEmitter, Input } from '@angu
 import { SeriesCategory } from '../../models/series-category';
 
 @Component({
+  standalone: false,
   selector: 'app-bowling-select-series-category',
   templateUrl: './bowling-select-series-category.component.html',
   styleUrls: ['./bowling-select-series-category.component.scss']

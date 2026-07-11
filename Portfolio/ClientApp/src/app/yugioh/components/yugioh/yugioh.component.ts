@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
+  standalone: false,
     selector: 'app-yugioh',
     templateUrl: './yugioh.component.html',
     styleUrls: ['./yugioh.component.scss']

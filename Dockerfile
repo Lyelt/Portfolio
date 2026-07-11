@@ -1,6 +1,6 @@
-# Node 18 is kept intentionally for Angular 16 compatibility. Both upstream
+# Node 22 satisfies Angular 21's runtime requirements. Both upstream
 # images are multi-architecture and resolve to linux/arm64 on the hosting VM.
-FROM node:18-bookworm-slim@sha256:f9ab18e354e6855ae56ef2b290dd225c1e51a564f87584b9bd21dd651838830e AS node
+FROM node:22-bookworm-slim@sha256:53ada149d435c38b14476cb57e4a7da73c15595aba79bd6971b547ceb6d018bf AS node
 
 # ---------- build stage ----------
 FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:ea8bde36c11b6e7eec2656d0e59101d4462f6bd630730f2c8201ed0572b295d5 AS build
@@ -16,6 +16,7 @@ RUN node --version && npm --version
 # copy csproj and restore as distinct layers
 COPY Portfolio.sln ./
 COPY Portfolio/*.csproj ./Portfolio/
+COPY Portfolio.Tests/*.csproj ./Portfolio.Tests/
 COPY PortfolioDatabase/*.csproj ./PortfolioDatabase/
 RUN dotnet restore ./Portfolio.sln
 

@@ -4,6 +4,7 @@ import { GameNight, GameNightGame } from '../../models/game-night';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
+  standalone: false,
   selector: 'app-games',
   templateUrl: './games.component.html',
   styleUrls: ['./games.component.scss']

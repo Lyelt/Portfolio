@@ -4,6 +4,7 @@ import { GameNight } from '../../models/game-night';
 import { first } from 'rxjs';
 
 @Component({
+  standalone: false,
   selector: 'app-game-night-home',
   templateUrl: './game-night-home.component.html',
   styleUrls: ['./game-night-home.component.scss']

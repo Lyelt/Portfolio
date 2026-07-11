@@ -6,6 +6,7 @@ import { BowlingService } from '../../services/bowling.service';
 import { User } from '../../../auth/user';
 
 @Component({
+  standalone: false,
   selector: 'app-bowling-add-game',
   templateUrl: './bowling-add-game.component.html',
   styleUrls: ['./bowling-add-game.component.scss']

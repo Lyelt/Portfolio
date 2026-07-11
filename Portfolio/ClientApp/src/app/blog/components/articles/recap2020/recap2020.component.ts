@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-recap2020',
   templateUrl: './recap2020.component.html',
   styleUrls: ['./recap2020.component.scss']

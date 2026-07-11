@@ -4,6 +4,7 @@ import { GameNightUserStatus, UserStatus } from '../../models/game-night';
 import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
+  standalone: false,
   selector: 'app-game-night-user-statuses',
   templateUrl: './game-night-user-statuses.component.html',
   styleUrls: ['./game-night-user-statuses.component.scss']

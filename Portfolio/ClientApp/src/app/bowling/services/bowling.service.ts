@@ -1,107 +1,167 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { User } from '../../auth/user';
 import { BowlingSession } from '../models/bowling-session';
 import { BowlingGame } from '../models/bowling-game';
 import { BowlingStat, StatCategory } from '../models/bowling-stat';
-import { BowlingSeries, SingleSeriesEntry } from '../models/bowling-series';
+import { BowlingSeries } from '../models/bowling-series';
 import { SeriesCategoryEnum } from '../models/series-category';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BowlingDashboard } from '../models/bowling-dashboard';
+import { BehaviorSubject, EMPTY, Observable, ReplaySubject } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+
+interface BowlingFilterState {
+  initialized: boolean;
+  userId?: string;
+  startTime?: number;
+  endTime?: number;
+  leagueMatchesOnly: boolean;
+  seriesCategory: SeriesCategoryEnum;
+  statCategory: string;
+}
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class BowlingService {
-    
-    public selectedBowlerId?: string = null;
-    private startTime?: Date = null;
-    private endTime?: Date = null;
-    private leagueMatchesOnly: boolean = true; 
-    private selectedSeriesCategory: SeriesCategoryEnum = SeriesCategoryEnum.SessionAverage;
-    private selectedStatCategory: string = StatCategory.Overall.toString();
+  private readonly filterChanges = new BehaviorSubject<BowlingFilterState>({
+    initialized: false,
+    leagueMatchesOnly: true,
+    seriesCategory: SeriesCategoryEnum.SessionAverage,
+    statCategory: StatCategory[StatCategory.Overall]
+  });
 
-    private filteredSeries: BehaviorSubject<BowlingSeries[]> = new BehaviorSubject(null);
-    private filteredStats: BehaviorSubject<BowlingStat[]> = new BehaviorSubject(null);
-    private filteredSessions: BehaviorSubject<BowlingSession[]> = new BehaviorSubject(null);
-    
-    constructor(private http: HttpClient) {
-        this.reload();
-     }
+  private readonly filteredSeries = new ReplaySubject<BowlingSeries[]>(1);
+  private readonly filteredStats = new ReplaySubject<BowlingStat[]>(1);
+  private readonly filteredSessions = new ReplaySubject<BowlingSession[]>(1);
 
-    public setTimeRange(start?: Date, end?: Date) {
-        this.startTime = new Date(start);
-        this.endTime = new Date(end);
-        this.reload();
-    }
+  constructor(private http: HttpClient) {
+    this.filterChanges.pipe(
+      debounceTime(50),
+      distinctUntilChanged((left, right) => this.filtersEqual(left, right)),
+      switchMap(filters => this.filtersAreValid(filters)
+        ? this.getDashboard(filters).pipe(catchError(() => EMPTY))
+        : EMPTY)
+    ).subscribe(dashboard => {
+      this.filteredSeries.next(dashboard.series);
+      this.filteredStats.next(dashboard.stats);
+      this.filteredSessions.next(dashboard.sessions);
+    });
+  }
 
-    public setBowlerId(id: string) {
-        this.selectedBowlerId = id;
-        this.reload();
-    }
+  public get selectedBowlerId(): string {
+    return this.filterChanges.value.userId;
+  }
 
-    public setStatCategory(category: string) {
-        this.selectedStatCategory = category;
-        this.reload();
-    }
+  public initializeFilters(start?: Date, end?: Date, leagueMatchesOnly: boolean = true) {
+    this.updateFilters({
+      initialized: true,
+      startTime: this.toTimestamp(start),
+      endTime: this.toTimestamp(end),
+      leagueMatchesOnly
+    });
+  }
 
-    public setLeagueMatchFilter(enabled: boolean) {
-        this.leagueMatchesOnly = enabled;
-        this.reload();
-    }
+  public setTimeRange(start?: Date, end?: Date) {
+    this.updateFilters({
+      startTime: this.toTimestamp(start),
+      endTime: this.toTimestamp(end)
+    });
+  }
 
-    private reload() {
-        this.getSeries();
-        this.getStats();
-        this.getSessions();
-    }
+  public setBowlerId(id: string) {
+    this.updateFilters({ userId: id?.trim() || undefined });
+  }
 
-    public series(): Observable<BowlingSeries[]> {
-        return this.filteredSeries.asObservable();
-    }
+  public setSeriesCategory(category: SeriesCategoryEnum) {
+    this.updateFilters({ seriesCategory: category });
+  }
 
-    public stats(): Observable<BowlingStat[]> {
-        return this.filteredStats.asObservable();
-    }
+  public setStatCategory(category: string) {
+    this.updateFilters({ statCategory: category });
+  }
 
-    public sessions(): Observable<BowlingSession[]> {
-        return this.filteredSessions.asObservable();
-    }
+  public setLeagueMatchFilter(enabled: boolean) {
+    this.updateFilters({ leagueMatchesOnly: enabled });
+  }
 
-    public getBowlers(): Observable<User[]> {
-        return this.http.get<User[]>("Bowling/GetUsers");
-    }
+  public series(): Observable<BowlingSeries[]> {
+    return this.filteredSeries.asObservable();
+  }
 
-    private getSessions() {
-        this.http.get<BowlingSession[]>(`Bowling/GetSessions/${this.getFilterUrlSegment()}`).subscribe(data => {
-            this.filteredSessions.next(data);
-        });
-    }
+  public stats(): Observable<BowlingStat[]> {
+    return this.filteredStats.asObservable();
+  }
 
-    private getSeries() {
-        this.http.get<BowlingSeries[]>(`Bowling/GetSeries/${this.selectedSeriesCategory}/${this.getFilterUrlSegment()}`).subscribe(data => {
-            this.filteredSeries.next(data);
-        });
-    }
+  public sessions(): Observable<BowlingSession[]> {
+    return this.filteredSessions.asObservable();
+  }
 
-    private getStats() {
-        this.http.get<BowlingStat[]>(`Bowling/GetStats/${this.selectedStatCategory}/${this.getFilterUrlSegment()}`).subscribe(data => {
-            this.filteredStats.next(data);
-        });
-    }
+  public getBowlers(): Observable<User[]> {
+    return this.http.get<User[]>('Bowling/GetUsers');
+  }
 
-    private getFilterUrlSegment(): string {
-        return `${this.selectedBowlerId}/${this.leagueMatchesOnly}/${this.startTime?.getTime()}/${this.endTime?.getTime()}`;
-    }
+  public startNewSession(session: BowlingSession) {
+    return this.http.post<BowlingSession>('Bowling/StartNewSession', session);
+  }
 
-    startNewSession(session: BowlingSession) {
-        return this.http.post<BowlingSession>("Bowling/StartNewSession", session);
-    }
+  public addGameToSession(game: BowlingGame) {
+    return this.http.post<BowlingGame>('Bowling/AddGameToSession', game);
+  }
 
-    addGameToSession(game: BowlingGame) {
-        return this.http.post<BowlingGame>("Bowling/AddGameToSession", game);
-    }
+  public deleteGame(game: BowlingGame) {
+    return this.http.delete(`Bowling/DeleteGame/${game.id}`);
+  }
 
-    deleteGame(game: BowlingGame) {
-        return this.http.delete(`Bowling/DeleteGame/${game.id}`);
-    }
+  private getDashboard(filters: BowlingFilterState): Observable<BowlingDashboard> {
+    let params = new HttpParams()
+      .set('userId', filters.userId)
+      .set('leagueMatchesOnly', filters.leagueMatchesOnly.toString())
+      .set('seriesCategory', SeriesCategoryEnum[filters.seriesCategory])
+      .set('statCategory', filters.statCategory);
+
+    if (filters.startTime !== undefined)
+      params = params.set('startTime', filters.startTime.toString());
+
+    if (filters.endTime !== undefined)
+      params = params.set('endTime', filters.endTime.toString());
+
+    return this.http.get<BowlingDashboard>('Bowling/GetDashboard', { params });
+  }
+
+  private updateFilters(changes: Partial<BowlingFilterState>) {
+    this.filterChanges.next({ ...this.filterChanges.value, ...changes });
+  }
+
+  private filtersAreValid(filters: BowlingFilterState): boolean {
+    return filters.initialized &&
+      !!filters.userId &&
+      this.timestampIsValid(filters.startTime) &&
+      this.timestampIsValid(filters.endTime) &&
+      (filters.startTime === undefined || filters.endTime === undefined || filters.startTime <= filters.endTime) &&
+      Number.isInteger(filters.seriesCategory) &&
+      !!SeriesCategoryEnum[filters.seriesCategory] &&
+      !!filters.statCategory;
+  }
+
+  private filtersEqual(left: BowlingFilterState, right: BowlingFilterState): boolean {
+    return left.initialized === right.initialized &&
+      left.userId === right.userId &&
+      left.startTime === right.startTime &&
+      left.endTime === right.endTime &&
+      left.leagueMatchesOnly === right.leagueMatchesOnly &&
+      left.seriesCategory === right.seriesCategory &&
+      left.statCategory === right.statCategory;
+  }
+
+  private timestampIsValid(value?: number): boolean {
+    return value === undefined || Number.isFinite(value);
+  }
+
+  private toTimestamp(value?: Date): number | undefined {
+    if (value === undefined || value === null)
+      return undefined;
+
+    return value instanceof Date ? value.getTime() : new Date(value).getTime();
+  }
 }

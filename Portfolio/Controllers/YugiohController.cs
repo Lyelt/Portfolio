@@ -11,12 +11,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Portfolio.Models.Auth;
-using Microsoft.Extensions.Caching.Memory;
 using Portfolio.Models.Yugioh;
-using System.Net.Http;
 using Microsoft.AspNetCore.Authorization;
 using Portfolio.Extensions;
 using Portfolio.Models.Errors;
+using System.Threading;
 
 namespace Portfolio.Controllers
 {
@@ -24,50 +23,53 @@ namespace Portfolio.Controllers
     {
         private static string[] VALID_ROLES = new string[] { ApplicationRole.Administrator.ToString(), ApplicationRole.Duelist.ToString() };
 
-        private const string CACHE_KEY = "_Cards";
-
         private readonly PortfolioContext _userContext;
         private readonly YugiohContext _yugiohContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<YugiohController> _logger;
-        private readonly IMemoryCache _cardCache;
-        private readonly YugiohApiClient _yugiohClient;
+        private readonly IYugiohCardCatalog _cardCatalog;
 
-        public YugiohController(PortfolioContext userContext, UserManager<ApplicationUser> userManager, ILogger<YugiohController> logger, IMemoryCache cardCache, YugiohApiClient yugiohClient, YugiohContext yugiohContext)
+        public YugiohController(PortfolioContext userContext, UserManager<ApplicationUser> userManager, ILogger<YugiohController> logger, IYugiohCardCatalog cardCatalog, YugiohContext yugiohContext)
         {
             _userContext = userContext;
             _userManager = userManager;
             _logger = logger;
-            _cardCache = cardCache;
-            _yugiohClient = yugiohClient;
+            _cardCatalog = cardCatalog;
             _yugiohContext = yugiohContext;
         }
 
         [HttpGet]
         [AllowAnonymous]
         [Route("Yugioh/GetCards/{pageNumber}/{count}/{nameFilter?}")]
-        public async Task<IActionResult> GetCards(int pageNumber, int count, string nameFilter)
+        public async Task<IActionResult> GetCards(int pageNumber, int count, string nameFilter, CancellationToken cancellationToken)
         {
-            var cards = await GetCardsAsync();
-            return Ok(cards.Skip((pageNumber - 1) * count).Take(count).ToList());
+            var cards = await GetCardsAsync(cancellationToken, nameFilter);
+            var pageSize = Math.Max(count, 0);
+            return Ok(cards.Skip((Math.Max(pageNumber, 1) - 1) * pageSize).Take(pageSize).ToList());
         }
 
         [HttpGet]
         [AllowAnonymous]
         [Route("Yugioh/GetCardById/{cardId}")]
-        public async Task<IActionResult> GetCardById(int cardId)
+        public async Task<IActionResult> GetCardById(int cardId, CancellationToken cancellationToken)
         {
-            var cards = await GetCardsAsync();
+            var cards = await GetCardsAsync(cancellationToken);
             return Ok(cards.FirstOrDefault(c => c.Id == cardId));
         }
 
         [HttpPost]
         [AllowAnonymous]
         [Route("Yugioh/GetCardsWithFilter")]
-        public async Task<IActionResult> GetCardsWithFilter([FromBody] YugiohCardFilter filter)
+        public async Task<IActionResult> GetCardsWithFilter([FromBody] YugiohCardFilter filter, CancellationToken cancellationToken)
         {
-            var cards = await GetCardsAsync(filter);
-            return Ok(new SearchResults { Results = cards.Skip(((filter?.PageNumber ?? 1) - 1) * filter?.Count ?? 20).Take(filter?.Count ?? 20).ToList(), TotalResults = cards.Count() });
+            var cards = await GetCardsAsync(cancellationToken, GetNameFilter(filter));
+            var pageNumber = Math.Max(filter?.PageNumber ?? 1, 1);
+            var count = filter?.Count > 0 ? filter.Count : 20;
+            return Ok(new SearchResults
+            {
+                Results = cards.Skip((pageNumber - 1) * count).Take(count).ToList(),
+                TotalResults = cards.Count
+            });
         }
 
         [HttpGet]
@@ -81,14 +83,14 @@ namespace Portfolio.Controllers
 
         [HttpGet]
         [Route("Yugioh/GetCollections/{userId}")]
-        public async Task<IActionResult> GetCollections(string userId)
+        public async Task<IActionResult> GetCollections(string userId, CancellationToken cancellationToken)
         {
             var collections = await _yugiohContext.Collections
                 .Where(cc => cc.UserId.Equals(userId))
                 .Include(cc => cc.CardIds)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
-            var allCards = await GetCardsAsync();
+            var allCards = await GetCardsAsync(cancellationToken);
 
             foreach (var collection in collections)
                 collection.PopulateCards(allCards);
@@ -129,7 +131,7 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [Route("Yugioh/AddCardToCollection")]
-        public async Task<IActionResult> AddCardToCollection([FromBody] Card card)
+        public async Task<IActionResult> AddCardToCollection([FromBody] Card card, CancellationToken cancellationToken)
         {
             if (!await UserCanPerformAction(card.CardCollection.UserId))
                 throw new UnauthorizedException("User does not have the required permissions to update this collection");
@@ -147,15 +149,15 @@ namespace Portfolio.Controllers
                 existingCard.Quantity++;
 
             card.Quantity++;
-            await _yugiohContext.SaveChangesAsync();
+            await _yugiohContext.SaveChangesAsync(cancellationToken);
 
-            collection.PopulateCards(await GetCardsAsync());
+            collection.PopulateCards(await GetCardsAsync(cancellationToken));
             return Ok(collection);
         }
 
         [HttpPost]
         [Route("Yugioh/DeleteCardFromCollection")]
-        public async Task<IActionResult> DeleteCardFromCollection([FromBody] Card card)
+        public async Task<IActionResult> DeleteCardFromCollection([FromBody] Card card, CancellationToken cancellationToken)
         {
             if (!await UserCanPerformAction(card.CardCollection.UserId))
                 throw new UnauthorizedException("User does not have the required permissions to delete from this collection");
@@ -171,9 +173,9 @@ namespace Portfolio.Controllers
             {
                 collection.CardIds.RemoveAll(c => c.Id == card.Id && c.SetCode == card.SetCode && c.Section == card.Section);
             }
-            await _yugiohContext.SaveChangesAsync();
+            await _yugiohContext.SaveChangesAsync(cancellationToken);
 
-            collection.PopulateCards(await GetCardsAsync());
+            collection.PopulateCards(await GetCardsAsync(cancellationToken));
             return Ok(collection);
         }
 
@@ -193,29 +195,20 @@ namespace Portfolio.Controllers
             return Ok(collection);
         }
 
-        private async Task<IEnumerable<YugiohCard>> GetCardsAsync(YugiohCardFilter filter = null)
+        private async Task<IReadOnlyList<YugiohCard>> GetCardsAsync(CancellationToken cancellationToken, string nameFilter = null)
         {
-            IEnumerable<YugiohCard> cards;
+            var cards = await _cardCatalog.GetCardsAsync(cancellationToken);
+            if (string.IsNullOrWhiteSpace(nameFilter))
+                return cards;
 
-            if (!_cardCache.TryGetValue(CACHE_KEY, out cards))
-            {
-                try
-                {
-                    cards = await _yugiohClient.FindCardsAsync();
-                    _cardCache.Set(CACHE_KEY, cards, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5)));
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex.ToString());
-                }
-            }
-
-            var nameFilter = filter?.Filters?.FirstOrDefault(f => f.Name.EqualsIgnoreCase("name"));
-            if (!string.IsNullOrWhiteSpace(nameFilter?.Value))
-                cards = cards.Where(c => c.Name.ContainsIgnoreCase(nameFilter.Value));
-
-            return cards;
+            return cards
+                .Where(card => card.Name != null && card.Name.ContainsIgnoreCase(nameFilter))
+                .ToList();
         }
+
+        private static string GetNameFilter(YugiohCardFilter filter) => filter?.Filters?
+            .FirstOrDefault(propertyFilter => string.Equals(propertyFilter?.Name, "name", StringComparison.OrdinalIgnoreCase))?
+            .Value;
 
         // Ensure the given user ID matches the current user, and that they are in the appropriate role
         private async Task<bool> UserCanPerformAction(string itemUserId)

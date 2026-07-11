@@ -12,6 +12,7 @@ using Portfolio.Data;
 using Microsoft.Extensions.Hosting;
 using Portfolio.Models.Dog;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Net;
 
 namespace Portfolio
@@ -37,17 +38,31 @@ namespace Portfolio
                 .ConfigureAuthentication(Configuration)
                 .AddSingleton<IDogService, DogService>()
                 .AddSingleton<IGameNightChooserFactory, GameNightChooserFactory>()
-                .AddTransient<IGameNightService, GameNightService>();
+                .AddTransient<IGameNightService, GameNightService>()
+                .AddScoped<IBowlingDashboardService, BowlingDashboardService>();
 
             services.AddSignalR(options =>
             {
                 options.EnableDetailedErrors = _environment.IsDevelopment();
             });
 
-            services.AddHttpClient<YugiohApiClient>(client =>
+            services
+                .AddOptions<YugiohCatalogOptions>()
+                .Bind(Configuration.GetSection("Api:Yugioh"))
+                .Validate(options => Uri.TryCreate(options.CardEndpoint, UriKind.Absolute, out _), "Api:Yugioh:CardEndpoint must be an absolute URI.")
+                .Validate(options => options.CacheDurationMinutes > 5, "Api:Yugioh:CacheDurationMinutes must be greater than five.")
+                .Validate(options => options.RequestTimeoutSeconds > 0 && options.RequestTimeoutSeconds <= 600, "Api:Yugioh:RequestTimeoutSeconds must be between 1 and 600.")
+                .ValidateOnStart();
+
+            services.AddHttpClient(YugiohApiClient.HttpClientName, (serviceProvider, client) =>
             {
-                client.BaseAddress = new Uri(Configuration.GetValue("Api:Yugioh:CardEndpoint", "https://db.ygoprodeck.com/api/v7/cardinfo.php?misc=yes"));
+                var options = serviceProvider.GetRequiredService<IOptions<YugiohCatalogOptions>>().Value;
+                client.BaseAddress = new Uri(options.CardEndpoint);
+                client.Timeout = System.Threading.Timeout.InfiniteTimeSpan;
             });
+            services.AddSingleton<TimeProvider>(TimeProvider.System);
+            services.AddSingleton<IYugiohApiClient, YugiohApiClient>();
+            services.AddSingleton<IYugiohCardCatalog, YugiohCardCatalog>();
 
             services
                 .AddMvc(config =>

@@ -3,6 +3,7 @@ import { BowlingSession } from '../../models/bowling-session';
 import { BowlingService } from '../../services/bowling.service';
 
 @Component({
+  standalone: false,
   selector: 'app-bowling-view-games',
   templateUrl: './bowling-view-games.component.html',
   styleUrls: ['./bowling-view-games.component.scss']

@@ -7,6 +7,7 @@ import { LineChartComponent, BarHorizontalComponent } from '@swimlane/ngx-charts
 import { BowlingService } from '../../services/bowling.service';
 
 @Component({
+  standalone: false,
     selector: 'app-bowling-chart',
     templateUrl: './bowling-chart.component.html',
     styleUrls: ['./bowling-chart.component.scss']
@@ -48,6 +49,7 @@ export class BowlingChartComponent implements OnInit, OnChanges {
     loadSeriesData() {
         this.dataLoading = true;
         this.yAxisLabel = this.category.display;
+        this.bowlingService.setSeriesCategory(this.category.category);
 
         this.bowlingService.series().subscribe(data => {
             if (data) {

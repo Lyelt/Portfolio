@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'blog-header',
   templateUrl: './blog-header.component.html',
   styleUrls: ['./blog-header.component.scss']

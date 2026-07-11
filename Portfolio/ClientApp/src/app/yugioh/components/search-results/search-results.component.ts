@@ -12,6 +12,7 @@ import { Card, CardCollection } from "../../models/card-collections";
 import { AuthService } from "src/app/auth/auth.service";
 
 @Component({
+  standalone: false,
   selector: "app-search-results",
   templateUrl: "./search-results.component.html",
   styleUrls: ["./search-results.component.scss"],

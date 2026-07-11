@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { YugiohCard, YugiohUtilities, CardTypeEnum, CardSet } from '../../models/yugioh.model';
 
 @Component({
+  standalone: false,
     selector: 'app-selected-card',
     templateUrl: './selected-card.component.html',
     styles: []

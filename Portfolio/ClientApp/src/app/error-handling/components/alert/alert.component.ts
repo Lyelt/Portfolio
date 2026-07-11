@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit, ElementRef, ViewChild } from '@angular
 import { AlertService } from '../../alert.service';
 
 @Component({
+  standalone: false,
   selector: 'app-alert',
   templateUrl: './alert.component.html',
   styleUrls: ['./alert.component.scss'],

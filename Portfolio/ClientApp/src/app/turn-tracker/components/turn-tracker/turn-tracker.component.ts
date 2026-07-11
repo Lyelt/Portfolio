@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Player } from '../../models/player'
 
 @Component({
+  standalone: false,
     selector: 'app-turn-tracker',
     templateUrl: './turn-tracker.component.html',
     styleUrls: ['./turn-tracker.component.scss']
