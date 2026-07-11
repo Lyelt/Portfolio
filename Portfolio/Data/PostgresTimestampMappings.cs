@@ -25,12 +25,14 @@ namespace Portfolio.Data
                 ? new DateTimeOffset(DateTime.SpecifyKind(value.Value, DateTimeKind.Utc))
                 : null);
 
-        internal static void ConfigureApplicationUserLockout(ModelBuilder builder)
+        internal static void ConfigureApplicationUserLockout(ModelBuilder builder, bool usePostgresColumnType = true)
         {
-            builder.Entity<ApplicationUser>()
+            var property = builder.Entity<ApplicationUser>()
                 .Property(user => user.LockoutEnd)
-                .HasConversion(UtcOffsetStoredNaive)
-                .HasColumnType(TimestampWithoutTimeZone);
+                .HasConversion(UtcOffsetStoredNaive);
+
+            if (usePostgresColumnType)
+                property.HasColumnType(TimestampWithoutTimeZone);
         }
     }
 }

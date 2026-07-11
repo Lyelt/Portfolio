@@ -22,8 +22,8 @@ export class FiltersComponent implements OnInit {
 
   ngOnInit(): void {
     this.setDefaults();
-    this.selectFilter(this.timeframeFilters.find(f => f.selected));
-    this.updateLeagueMatchFilter(this.leagueMatchesOnly);
+    const selectedFilter = this.timeframeFilters.find(f => f.selected);
+    this.bowlingService.initializeFilters(selectedFilter?.start, selectedFilter?.end, this.leagueMatchesOnly);
   }
 
   selectFilter(filter: StatFilter) {
@@ -52,20 +52,23 @@ export class FiltersComponent implements OnInit {
 
   setDefaults() {
     if ('customFilterStart' in localStorage) {
-      this.customFilter.start = JSON.parse(localStorage.getItem('customFilterStart'));
+      this.customFilter.start = new Date(JSON.parse(localStorage.getItem('customFilterStart')));
     }
 
     if ('customFilterEnd' in localStorage) {
-      this.customFilter.end = JSON.parse(localStorage.getItem('customFilterEnd'));
+      this.customFilter.end = new Date(JSON.parse(localStorage.getItem('customFilterEnd')));
     }
 
     if ('selectedFilter' in localStorage) {
-      this.selectFilter(JSON.parse(localStorage.getItem('selectedFilter')));
+      const storedFilter = JSON.parse(localStorage.getItem('selectedFilter')) as StatFilter;
+      const selectedFilter = this.timeframeFilters.find(filter => filter.name === storedFilter?.name);
+      if (selectedFilter) {
+        this.timeframeFilters.forEach(filter => filter.selected = filter === selectedFilter);
+      }
     }
 
     if ('leagueMatchFilter' in localStorage) {
       this.leagueMatchesOnly = JSON.parse(localStorage.getItem('leagueMatchFilter'));
-      this.updateLeagueMatchFilter(this.leagueMatchesOnly);
     }
   }
 }

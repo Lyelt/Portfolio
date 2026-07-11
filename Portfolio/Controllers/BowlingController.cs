@@ -1,99 +1,77 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Portfolio.Identity;
 using Portfolio.Data;
-using Portfolio.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Portfolio.Models.Bowling;
+using Portfolio.Identity;
 using Portfolio.Models.Auth;
+using Portfolio.Models.Bowling;
 using Portfolio.Models.Errors;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Portfolio.Controllers
 {
     public class BowlingController : Controller
     {
-        private static string[] VALID_ROLES = new string[] { ApplicationRole.Administrator.ToString(), ApplicationRole.Bowler.ToString() };
+        private static readonly string[] ValidRoles = new string[]
+        {
+            ApplicationRole.Administrator.ToString(),
+            ApplicationRole.Bowler.ToString()
+        };
 
         private readonly BowlingContext _bowlingContext;
         private readonly PortfolioContext _userContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<BowlingController> _logger;
+        private readonly IBowlingDashboardService _dashboardService;
 
-        public BowlingController(BowlingContext context, PortfolioContext userContext, UserManager<ApplicationUser> userManager, ILogger<BowlingController> logger)
+        public BowlingController(
+            BowlingContext context,
+            PortfolioContext userContext,
+            UserManager<ApplicationUser> userManager,
+            ILogger<BowlingController> logger,
+            IBowlingDashboardService dashboardService)
         {
             _bowlingContext = context;
             _userContext = userContext;
             _userManager = userManager;
             _logger = logger;
+            _dashboardService = dashboardService;
         }
 
         [HttpGet]
         [Route("Bowling/GetUsers")]
-        public IActionResult GetUsers()
+        public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
         {
-            var validUsers = _userContext.GetValidUsersForRoles(VALID_ROLES);
-            _logger.LogDebug($"Found {validUsers.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-            return Ok(validUsers.Select(u => u.AsClientUser()));
+            var validRoleIds = _userContext.Roles
+                .AsNoTracking()
+                .Where(role => ValidRoles.Contains(role.Name))
+                .Select(role => role.Id);
+            var validUserIds = _userContext.UserRoles
+                .AsNoTracking()
+                .Where(userRole => validRoleIds.Contains(userRole.RoleId))
+                .Select(userRole => userRole.UserId);
+            var validUsers = await _userContext.Users
+                .AsNoTracking()
+                .Where(user => validUserIds.Contains(user.Id))
+                .ToListAsync(cancellationToken);
+
+            _logger.LogDebug(
+                "Found {UserCount} users that are in role(s) {ValidRoles}",
+                validUsers.Count,
+                string.Join(", ", ValidRoles));
+            return Ok(validUsers.Select(user => user.AsClientUser()));
         }
 
         [HttpGet]
-        [Route("Bowling/GetSessions/{userId?}/{leagueMatchesOnly?}/{startTime?}/{endTime?}")]
-        public IActionResult GetSessions(string userId = null, bool? leagueMatchesOnly = null, long? startTime = null, long? endTime = null)
+        [Route("Bowling/GetDashboard")]
+        public async Task<IActionResult> GetDashboard(
+            [FromQuery] BowlingDashboardRequest request,
+            CancellationToken cancellationToken)
         {
-            var sessions = GetSessionList(userId, startTime, endTime, leagueMatchesOnly);
-            _logger.LogDebug($"Found {sessions.Count} total sessions.");
-            return Ok(sessions);
-        }
-
-        [HttpGet]
-        [Route("Bowling/GetSeries/{seriesCategory}/{userId?}/{leagueMatchesOnly?}/{startTime?}/{endTime?}")]
-        public IActionResult GetSeries(SeriesCategory seriesCategory, string userId = null, bool? leagueMatchesOnly = null, long? startTime = null, long? endTime = null)
-        {
-            var sessions = GetSessionList(userId, startTime, endTime, leagueMatchesOnly);
-            var bowlers = _userContext.GetValidUsersForRoles(VALID_ROLES).Where(u => userId == null || u.Id == userId).ToList();
-            List<BowlingSeries> series = new BowlingSeriesService(sessions, bowlers).GetSeries(seriesCategory);
-            _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
-            return Ok(series);
-        }
-
-        //[HttpGet]
-        //[Route("Bowling/GetSingleSeries/{seriesCategory}/{userId}")]
-        //public IActionResult GetSingleSeries(SeriesCategory seriesCategory, string userId)
-        //{
-        //    var games = GetGames(userId, null, null);
-
-        //    // TODO: Use service for new category types and refactor to use a more elegant approach.
-        //    var series = new List<SingleSeriesEntry>();
-        //    var numberOfGamesPerScore = new Dictionary<int, int>();
-        //    foreach (var game in games)
-        //    {
-        //        if (numberOfGamesPerScore.ContainsKey(game.TotalScore))
-        //            numberOfGamesPerScore[game.TotalScore]++;
-        //        else
-        //            numberOfGamesPerScore[game.TotalScore] = 1;
-        //    }
-
-        //    foreach (var kvp in numberOfGamesPerScore)
-        //        series.Add(new SingleSeriesEntry { Name = kvp.Key, Value = kvp.Value });
-
-        //    _logger.LogDebug($"Retrieved {series.Count} series for category ${seriesCategory}");
-        //    return Ok(series.OrderByDescending(g => g.Name));
-
-        //}
-
-        [HttpGet]
-        [Route("Bowling/GetStats/{statCategory}/{userId}/{leagueMatchesOnly?}/{startTime?}/{endTime?}")]
-        public IActionResult GetStats(StatCategory statCategory, string userId, bool? leagueMatchesOnly, long? startTime, long? endTime)
-        {
-            var games = GetGames(userId, startTime, endTime, leagueMatchesOnly);
-            var calc = new BowlingStatCalculator(games);
-            return Ok(calc.GetStats(statCategory));
+            return Ok(await _dashboardService.GetDashboardAsync(request, cancellationToken));
         }
 
         [HttpPost]
@@ -148,32 +126,6 @@ namespace Portfolio.Controllers
         private async Task<ApplicationUser> GetCurrentUser()
         {
             return await _userManager.GetUserAsync(User);
-        }
-
-        private List<BowlingGame> GetGames(string userId, long? startTime, long? endTime, bool? leagueMatchesOnly)
-        {
-            var sessions = GetSessionList(userId, startTime, endTime, leagueMatchesOnly);
-
-            return sessions
-                  .SelectMany(s => s.Games.Where(g => g.UserId == userId))
-                  .ToList();
-        }
-
-        private List<BowlingSession> GetSessionList(string userId, long? startTime, long? endTime, bool? leagueMatchesOnly)
-        {
-            bool isLeagueMatch(BowlingSession s) => !(leagueMatchesOnly ?? false) || (s.Date.DayOfWeek == DayOfWeek.Wednesday && s.Date > new DateTime(2019, 8, 27) && s.Games.Count == 3);
-
-            var sessions = _bowlingContext
-                    .Sessions
-                    .Include(s => s.Games.Where(g => userId == null || g.UserId == userId).OrderBy(g => g.GameNumber))
-                    .ThenInclude(g => g.Frames)
-                    .AsEnumerable()
-                    .Where(s => s.Games.Count > 0 && isLeagueMatch(s) && s.Date > DateTimeOffset.FromUnixTimeMilliseconds(startTime ?? 0) && (!endTime.HasValue || s.Date < DateTimeOffset.FromUnixTimeMilliseconds(endTime.Value)))
-                    .ToList();
-
-            sessions.ForEach(s => s.Games = s.Games.OrderBy(g => g.GameNumber).ToList());
-
-            return sessions;
         }
 
         private async Task ThrowIfUserIsGuestAsync()

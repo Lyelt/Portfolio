@@ -16,6 +16,7 @@ RUN node --version && npm --version
 # copy csproj and restore as distinct layers
 COPY Portfolio.sln ./
 COPY Portfolio/*.csproj ./Portfolio/
+COPY Portfolio.Tests/*.csproj ./Portfolio.Tests/
 COPY PortfolioDatabase/*.csproj ./PortfolioDatabase/
 RUN dotnet restore ./Portfolio.sln
 

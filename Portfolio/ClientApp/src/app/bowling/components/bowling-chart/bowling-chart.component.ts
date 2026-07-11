@@ -48,6 +48,7 @@ export class BowlingChartComponent implements OnInit, OnChanges {
     loadSeriesData() {
         this.dataLoading = true;
         this.yAxisLabel = this.category.display;
+        this.bowlingService.setSeriesCategory(this.category.category);
 
         this.bowlingService.series().subscribe(data => {
             if (data) {

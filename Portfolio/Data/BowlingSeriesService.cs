@@ -96,8 +96,7 @@ namespace Portfolio.Data
                 foreach (var game in games)
                 {
                     // For the purpose of charting, make each game appear one after another time-wise.
-                    game.Session.Date = game.Session.Date.AddHours(game.GameNumber);
-                    bowlerSeries.Add(new SeriesEntry { Name = game.Session.Date, Value = game.TotalScore });
+                    bowlerSeries.Add(new SeriesEntry { Name = game.Session.Date.AddHours(game.GameNumber), Value = game.TotalScore });
                 }
 
                 if (bowlerSeries.Count > 0)

@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BowlingSelectSeriesCategoryComponent } from './bowling-select-series-category.component';
+import { MaterialModule } from '../../../material/material.module';
+import { SeriesCategoryEnum } from '../../models/series-category';
 
 describe('BowlingSelectSeriesCategoryComponent', () => {
   let component: BowlingSelectSeriesCategoryComponent;
@@ -8,7 +10,8 @@ describe('BowlingSelectSeriesCategoryComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BowlingSelectSeriesCategoryComponent ]
+      declarations: [ BowlingSelectSeriesCategoryComponent ],
+      imports: [ MaterialModule ]
     })
     .compileComponents();
   }));
@@ -16,6 +19,14 @@ describe('BowlingSelectSeriesCategoryComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BowlingSelectSeriesCategoryComponent);
     component = fixture.componentInstance;
+    component.label = 'Series';
+    component.initialSeriesCategory = {
+      category: SeriesCategoryEnum.SessionAverage,
+      display: 'Session average',
+      description: 'Average score per session',
+      chartType: 'line'
+    };
+    component.seriesCategories = [component.initialSeriesCategory];
     fixture.detectChanges();
   });
 
