@@ -51,6 +51,41 @@ public sealed class YugiohCardCatalogTests
         Assert.Equal(80181649, image.Id);
     }
 
+    [Theory]
+    [InlineData("1", true)]
+    [InlineData("0", false)]
+    [InlineData("true", true)]
+    [InlineData("false", false)]
+    [InlineData("\"1\"", true)]
+    [InlineData("\"0\"", false)]
+    [InlineData("null", null)]
+    public async Task NullableBooleanFlagsMatchTheUpstreamCatalogShape(
+        string encodedValue,
+        bool? expected)
+    {
+        var body = $$"""{"data":[{"id":1,"name":"Boolean card","misc_info":[{"has_effect":{{encodedValue}}}]}]}""";
+        var handler = new StubHttpMessageHandler((_, _) => Task.FromResult(JsonResponse(body)));
+        var catalog = CreateCatalog(handler);
+
+        var card = Assert.Single(await catalog.GetCardsAsync(CancellationToken.None));
+        var miscInfo = Assert.Single(card.Misc_Info);
+
+        Assert.Equal(expected, miscInfo.Has_Effect);
+    }
+
+    [Fact]
+    public async Task NullableBooleanFlagsRejectValuesOtherThanZeroOrOne()
+    {
+        var handler = new StubHttpMessageHandler((_, _) => Task.FromResult(JsonResponse(
+            """{"data":[{"id":1,"name":"Invalid boolean card","misc_info":[{"has_effect":2}]}]}""")));
+        var catalog = CreateCatalog(handler);
+
+        var exception = await Assert.ThrowsAsync<HttpStatusException>(
+            () => catalog.GetCardsAsync(CancellationToken.None));
+
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, exception.StatusCode);
+    }
+
     [Fact]
     public async Task FailedRefreshReturnsLastKnownGoodCatalog()
     {
