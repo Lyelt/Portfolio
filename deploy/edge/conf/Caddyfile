@@ -18,7 +18,7 @@
 		}
 	}
 
-	@production host {$PRODUCTION_DOMAIN}
+	@production host {$PRODUCTION_DOMAIN} www.{$PRODUCTION_DOMAIN}
 	handle @production {
 		reverse_proxy portfolio-prod-web:8080 {
 			header_up X-Forwarded-Proto https
