@@ -21,7 +21,8 @@ namespace Portfolio.Data
         private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
-            NumberHandling = JsonNumberHandling.AllowReadingFromString
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
+            Converters = { new NullableBooleanJsonConverter() }
         };
 
         private readonly IHttpClientFactory _clientFactory;
@@ -64,6 +65,47 @@ namespace Portfolio.Data
         {
             [JsonPropertyName("data")]
             public List<YugiohCard> Data { get; set; }
+        }
+
+        private sealed class NullableBooleanJsonConverter : JsonConverter<bool?>
+        {
+            public override bool? Read(
+                ref Utf8JsonReader reader,
+                System.Type typeToConvert,
+                JsonSerializerOptions options)
+            {
+                switch (reader.TokenType)
+                {
+                    case JsonTokenType.Null:
+                        return null;
+                    case JsonTokenType.True:
+                        return true;
+                    case JsonTokenType.False:
+                        return false;
+                    case JsonTokenType.Number when reader.TryGetInt32(out var numericValue) && numericValue is 0 or 1:
+                        return numericValue == 1;
+                    case JsonTokenType.String:
+                        var stringValue = reader.GetString();
+                        if (bool.TryParse(stringValue, out var booleanValue))
+                            return booleanValue;
+                        if (stringValue is "0" or "1")
+                            return stringValue == "1";
+                        break;
+                }
+
+                throw new JsonException("Expected a nullable boolean encoded as true/false or 0/1.");
+            }
+
+            public override void Write(
+                Utf8JsonWriter writer,
+                bool? value,
+                JsonSerializerOptions options)
+            {
+                if (value.HasValue)
+                    writer.WriteBooleanValue(value.Value);
+                else
+                    writer.WriteNullValue();
+            }
         }
     }
 }
