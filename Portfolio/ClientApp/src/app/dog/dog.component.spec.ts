@@ -20,7 +20,8 @@ describe('DogComponent', () => {
       onNudge: vi.fn().mockReturnValue(NEVER),
       onNudgeAcknowledged: vi.fn().mockReturnValue(NEVER),
       onConnectionStatusChange: vi.fn().mockReturnValue(of(true)),
-      start: vi.fn()
+      start: vi.fn(),
+      stop: vi.fn()
     } as unknown as DogService;
 
     await TestBed.configureTestingModule({

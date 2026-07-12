@@ -1,271 +1,484 @@
-/* use this file exclusively for global styling */
+/* Global design system and third-party overrides. */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&family=Material+Icons&display=swap');
+@import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
+
 @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --page: #f6f7fb;
+  --page-accent: #eceffa;
+  --surface: rgba(255, 255, 255, 0.86);
+  --surface-solid: #ffffff;
+  --surface-muted: #f0f2f8;
+  --text: #1c2433;
+  --text-soft: #626d80;
+  --border: #dce1eb;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-soft: #eef2ff;
+  --accent: #d92f73;
+  --accent-soft: #fdf2f8;
+  --header: rgba(250, 251, 255, 0.84);
+  --focus: #4f46e5;
+  --focus-ring: rgba(79, 70, 229, 0.28);
+  --shadow: 0 24px 55px -32px rgba(30, 41, 59, 0.42);
+  color-scheme: light;
+}
+
+.dark {
+  --page: #171b24;
+  --page-accent: #1d2230;
+  --surface: rgba(36, 42, 56, 0.9);
+  --surface-solid: #242a38;
+  --surface-muted: #2b3242;
+  --text: #edf0f7;
+  --text-soft: #b7c0d2;
+  --border: #3a4356;
+  --primary: #aeb9f6;
+  --primary-hover: #c9d1fb;
+  --primary-soft: #303654;
+  --accent: #f0a2c2;
+  --accent-soft: #4a2d3d;
+  --header: rgba(28, 33, 45, 0.88);
+  --focus: #c4ccff;
+  --focus-ring: rgba(196, 204, 255, 0.26);
+  --shadow: 0 24px 58px -30px rgba(4, 8, 18, 0.62);
+  color-scheme: dark;
+}
 
 @layer base {
+  html {
+    min-width: 320px;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6.5rem;
+    background: var(--page);
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    overflow-x: hidden;
+    background:
+      radial-gradient(circle at 8% 8%, rgba(99, 102, 241, 0.09), transparent 30rem),
+      radial-gradient(circle at 92% 18%, rgba(219, 39, 119, 0.07), transparent 28rem),
+      var(--page);
+    color: var(--text);
+    font-family: 'Raleway', ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+    transition: background-color 220ms ease, color 220ms ease;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button,
+  a {
+    transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: rgba(99, 102, 241, 0.22);
+  }
+
   th {
-    @apply font-normal;
+    @apply font-semibold;
+  }
+
+  img,
+  svg {
+    max-width: 100%;
+  }
+
+  select,
+  textarea,
+  input:not([type='checkbox']):not([type='radio']) {
+    min-height: 2.75rem;
+    border: 1px solid var(--border);
+    border-radius: 0.85rem;
+    background: var(--surface-solid);
+    color: var(--text);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+  }
+
+  select:focus,
+  textarea:focus,
+  input:not([type='checkbox']):not([type='radio']):focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--focus-ring);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-soft);
+    opacity: 0.72;
   }
 }
 
-@tailwind components;
+@layer components {
+  .page-container {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+    max-width: 72rem;
+  }
 
-body {
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  .content-container {
+    @apply mx-auto w-full px-4 sm:px-6;
+    max-width: 50rem;
+  }
+
+  .surface-card {
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(14px);
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest;
+    color: var(--accent);
+  }
+
+  .page-title {
+    @apply text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl;
+  }
+
+  .page-intro,
+  .text-muted {
+    color: var(--text-soft);
+  }
+
+  .btn {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-bold disabled:pointer-events-none disabled:opacity-50;
+    border: 1px solid transparent;
+  }
+
+  .btn:not(:disabled):active {
+    transform: translateY(1px);
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: var(--surface-solid);
+    box-shadow: 0 12px 28px -18px var(--primary);
+  }
+
+  .dark .btn-primary {
+    color: #171b24;
+  }
+
+  .btn-primary:not(:disabled):hover {
+    background: var(--primary-hover);
+    box-shadow: 0 15px 32px -18px var(--primary);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    border-color: var(--border);
+    background: var(--surface-solid);
+    color: var(--text);
+  }
+
+  .btn-secondary:not(:disabled):hover,
+  .btn-ghost:not(:disabled):hover {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+    color: var(--primary-hover);
+  }
+
+  .btn-ghost {
+    border-color: transparent;
+    background: transparent;
+    color: var(--text-soft);
+  }
+
+  .icon-button {
+    @apply inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl;
+    border: 1px solid transparent;
+    color: var(--text-soft);
+  }
+
+  .icon-button:hover {
+    border-color: var(--border);
+    background: var(--surface-muted);
+    color: var(--text);
+  }
+
+  .link {
+    @apply cursor-pointer font-semibold underline decoration-2 underline-offset-4;
+    color: var(--primary);
+    text-decoration-color: color-mix(in srgb, var(--primary) 38%, transparent);
+  }
+
+  .link:hover {
+    color: var(--primary-hover);
+    text-decoration-color: currentColor;
+  }
+
+  .action {
+    @apply font-semibold;
+    color: var(--primary);
+  }
+
+  .emphasis {
+    @apply text-2xl font-bold md:text-4xl;
+    color: var(--accent);
+  }
+
+  .nav-link {
+    @apply relative inline-flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold;
+    color: var(--text-soft);
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    background: var(--primary-soft);
+    color: var(--primary-hover);
+  }
+
+  .nav-link-hover::after {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.35rem;
+    left: 0.75rem;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+    content: '';
+    opacity: 0;
+    transform: scaleX(0.45);
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .nav-link-hover:hover::after,
+  .nav-link-hover:focus-visible::after {
+    opacity: 0.65;
+    transform: scaleX(1);
+  }
+
+  .menu-item {
+    border-radius: 0.65rem;
+  }
+
+  .menu-item:hover,
+  .last-menu-item:hover {
+    background: var(--primary-soft) !important;
+  }
+
+  .last-menu-item {
+    @apply font-bold;
+    border-top: 1px solid var(--border) !important;
+  }
+
+  .blog-card,
+  .app-panel {
+    @apply p-4 sm:p-6;
+    border: 1px solid var(--border);
+    border-radius: 1.1rem;
+    background: var(--surface-solid);
+    box-shadow: var(--shadow);
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-sm font-bold;
+    color: var(--text-soft);
+  }
 }
 
-.emphasis {
-  @apply text-pink-600 font-semibold text-2xl md:text-4xl dark:text-pink-300;
-}
-
-.action {
-  @apply text-indigo-600 font-semibold dark:text-indigo-300;
-}
-
-.btn {
-  @apply font-semibold py-2 px-4 rounded transition-bg ease-in-out duration-200 disabled:opacity-50 disabled:pointer-events-none;
-}
-
-.btn-primary {
-  @apply bg-indigo-600 text-indigo-50 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-800;
-}
-
-.btn-secondary {
-  @apply bg-pink-600 text-pink-50 hover:bg-pink-700 dark:bg-pink-700 dark:hover:bg-pink-800;
-}
-
-
-select {
-  @apply dark:bg-gray-900 dark:border-gray-400 dark:placeholder-gray-400 rounded;
-}
-
-input[type] {
-  @apply dark:bg-gray-900 dark:border-gray-400 dark:placeholder-gray-400 rounded;
-}
-
-::-webkit-calendar-picker-indicator {
-  filter: invert(70%);
-}
-
-.nav-link-hover {
-  @apply relative;
-}
-.nav-link-hover:before {
-  @apply absolute left-1/2 right-1/2 bottom-0 bg-indigo-600 h-0.5 transition-center duration-300 ease-out dark:bg-indigo-400; 
-  content: "";
-  position: absolute;
-  z-index: -1;
-}
-.nav-link-hover:hover:before, .nav-link-hover:focus:before, .nav-link-hover:active:before {
-  @apply left-0 right-0;
-}
-
-.link {
-  @apply text-indigo-600 dark:text-indigo-400 font-semibold underline cursor-pointer hover:text-indigo-700 dark:hover:text-indigo-500;
-}
-
-.blog-card {
-  @apply rounded shadow-xl p-2 bg-white dark:bg-gray-600;
-}
-
-.nav-link {
-  @apply mx-2 uppercase tracking-wide cursor-pointer sm:mx-4;
-}
-
-.last-menu-item {
-  @apply font-bold border-solid border-0 border-t border-gray-400 -mb-2 hover:bg-indigo-200 #{!important};
-}
-
-.menu-item {
-  @apply hover:bg-indigo-200;
-}
-
+/* Decorative background wave. */
 .bg-wave {
   stroke-dasharray: 2100;
   stroke-dashoffset: 2100;
+  stroke-linecap: round;
+  opacity: 0.55;
 }
 
-.bg-wave.wave-1 {
-  animation: line-anim 1s ease forwards;
-}
-
-.bg-wave.wave-2 {
-  animation: line-anim 2s ease forwards;
-}
-
+.bg-wave.wave-1,
 .bg-wave.wave-3 {
-  animation: line-anim 3s ease forwards;
+  stroke: var(--accent);
 }
 
+.bg-wave.wave-2,
 .bg-wave.wave-4 {
-  animation: line-anim 4s ease forwards;
+  stroke: var(--primary);
 }
+
+.bg-wave.wave-1 { animation: line-anim 900ms ease forwards; }
+.bg-wave.wave-2 { animation: line-anim 1200ms ease forwards; }
+.bg-wave.wave-3 { animation: line-anim 1500ms ease forwards; }
+.bg-wave.wave-4 { animation: line-anim 1800ms ease forwards; }
 
 @keyframes line-anim {
-  to {
-    stroke-dashoffset: 0;
-  }
+  to { stroke-dashoffset: 0; }
 }
 
-@tailwind utilities;
-@import url('https://fonts.googleapis.com/css?family=Raleway:300,700|Material+Icons');
-@import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
-
-/* Make the legend labels flow horizontally and wrap instead of one-per-line. */
+/* ngx-charts */
 .chart-legend .legend-labels {
-  white-space: inherit #{!important};
-  background: inherit #{!important};
-  text-align: center #{!important};
+  white-space: inherit !important;
+  background: inherit !important;
+  text-align: center !important;
 }
 
-.chart-legend ul, .chart-legend li {
+.chart-legend ul,
+.chart-legend li {
   display: inline-block;
 }
 
-/*
-  For some reason the horizontal bar chart refuses to be responsive unless there is a legend present.
-  But I don't actually want a legend in this case... So I'm enabling it and then hiding it. Wonderful!
-*/
-.chart-container .chart-horizontal .chart-legend {
-  opacity: 0 #{!important};
-}
+.chart-container .chart-horizontal .chart-legend,
 .chart-container .chart-line-selector .chart-legend {
-  opacity: 0 #{!important};
+  pointer-events: none;
+  opacity: 0 !important;
 }
+
 .ngx-charts text {
-  @apply fill-current #{!important};
+  fill: currentColor !important;
 }
 
-/* Some manual overriding of dialog window responsive sizing */
-@media only screen and (min-width: 640px) {
-  .mat-dialog-container {
-    min-width: 560px;
-    max-width: 560px;
-  }
+/* Angular Material 21 (MDC) color alignment. */
+.dark .mat-mdc-menu-panel,
+.dark .mat-mdc-select-panel,
+.dark .mat-mdc-dialog-container .mat-mdc-dialog-surface {
+  background: var(--surface-solid) !important;
+  color: var(--text) !important;
 }
 
-@media only screen and (min-width: 900px) {
-  .mat-dialog-container {
-    min-width: 800px;
-    max-width: 800px;
-  }
+.dark .mat-mdc-menu-item,
+.dark .mat-mdc-menu-item .mat-icon,
+.dark .mat-mdc-option,
+.dark .mat-mdc-tab .mdc-tab__text-label {
+  color: var(--text) !important;
 }
 
-@media only screen and (min-width: 1250px) {
-  .mat-dialog-container {
-    min-width: 1080px;
-    max-width: 1080px;
-  }
+.dark .mat-mdc-menu-item:hover,
+.dark .mat-mdc-option:hover {
+  background: var(--surface-muted) !important;
 }
 
-.mat-dialog-container {
-  @apply dark:bg-gray-800 dark:text-gray-200;
+.mat-mdc-dialog-container .mat-mdc-dialog-surface {
+  max-width: calc(100vw - 2rem);
+  border-radius: 1.25rem !important;
 }
 
-.mat-tab-label, .mat-tab-link {
-  @apply dark:text-white #{!important};
+@media (min-width: 640px) {
+  .mat-mdc-dialog-container .mat-mdc-dialog-surface { width: 35rem; }
 }
 
-.ng-autocomplete, .autocomplete-container {
-  @apply rounded-l-full rounded-r-none w-auto mb-2  #{!important};
+@media (min-width: 900px) {
+  .mat-mdc-dialog-container .mat-mdc-dialog-surface { width: 50rem; }
+}
+
+@media (min-width: 1250px) {
+  .mat-mdc-dialog-container .mat-mdc-dialog-surface { width: 67.5rem; }
+}
+
+/* angular-ng-autocomplete */
+.ng-autocomplete,
+.autocomplete-container {
+  @apply mb-2 w-auto rounded-l-full rounded-r-none #{!important};
 }
 
 .autocomplete-container {
-  @apply shadow-md #{!important};
+  box-shadow: var(--shadow) !important;
 }
 
-.autocomplete-container .suggestions-container, .autocomplete-container .not-found {
-  @apply dark:bg-gray-900 #{!important};
+.autocomplete-container .suggestions-container,
+.autocomplete-container .not-found,
+.autocomplete-container .input-container input {
+  background: var(--surface-solid) !important;
+  color: var(--text) !important;
 }
 
 .autocomplete-container .suggestions-container ul li a {
-  @apply dark:text-white #{!important};
+  color: var(--text) !important;
 }
 
 .autocomplete-container .input-container input {
-  @apply rounded-l-full rounded-r-none bg-gray-300 dark:bg-gray-900 dark:text-white #{!important};
-
-  &:focus {
-    @apply bg-white dark:bg-gray-700 #{!important};
-  }
+  @apply rounded-l-full rounded-r-none #{!important};
 }
 
+/* Existing active-player border treatment. */
 @keyframes rotate {
-  100% {
-    transform: rotate(1turn);
-  }
+  100% { transform: rotate(1turn); }
 }
 
 .animate-border {
   position: relative;
   z-index: 0;
   overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    z-index: -2;
-    left: 0;
-    /*left: -50%;
-    top: -50%;*/
-    width: 100%;
-    height: 25%;
-    background-repeat: no-repeat;
-    /*background-size: 50% 50%, 50% 50%;*/
-    animation: rotate 3s linear infinite;
-  }
-
-  &::before {
-    @apply bg-pink-400 dark:bg-pink-700;
-  }
-
-
-  &::after {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    left: 3px;
-    top: 3px;
-    width: calc(100% - 6px);
-    height: calc(100% - 6px);
-    border-radius: 999rem;
-  }
-
-  &::after {
-    @apply bg-white dark:bg-gray-900;
-  }
 }
 
-@keyframes ping {
+.animate-border::before {
+  position: absolute;
+  z-index: -2;
+  left: 0;
+  width: 100%;
+  height: 25%;
+  background: var(--accent);
+  background-repeat: no-repeat;
+  content: '';
+  animation: rotate 3s linear infinite;
+}
+
+.animate-border::after {
+  position: absolute;
+  z-index: -1;
+  top: 3px;
+  left: 3px;
+  width: calc(100% - 6px);
+  height: calc(100% - 6px);
+  border-radius: 999rem;
+  background: var(--surface-solid);
+  content: '';
+}
+
+@keyframes ping-soft {
   75%, 100% {
-    transform: scale(1);
     opacity: 0;
+    transform: scale(1);
   }
 }
 
-.ping-500 {
-  animation: ping .5s cubic-bezier(0, 0, 0.2, 1) infinite;
+.ping-500 { animation: ping-soft 0.5s cubic-bezier(0, 0, 0.2, 1) infinite; }
+.ping-1000 { animation: ping-soft 1s cubic-bezier(0, 0, 0.2, 1) infinite; }
+.ping-1500 { animation: ping-soft 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; }
+.ping-2000 { animation: ping-soft 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+.animation-delay-500 { animation-delay: 500ms; }
+.animation-delay-1000 { animation-delay: 1000ms; }
+.animation-delay-1500 { animation-delay: 1500ms; }
+
+::-webkit-calendar-picker-indicator {
+  opacity: 0.72;
 }
 
-.ping-1000 {
-  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 
-.ping-1500 {
-  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-.ping-2000 {
-  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-.animation-delay-500 {
-  animation-delay: 500ms;
-}
-
-.animation-delay-1000 {
-  animation-delay: 1000ms;
-}
-
-.animation-delay-1500 {
-  animation-delay: 1500ms;
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

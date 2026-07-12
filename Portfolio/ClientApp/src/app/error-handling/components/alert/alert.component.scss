@@ -1,0 +1,31 @@
+.alert-dialog {
+  border-color: color-mix(in srgb, #dc2626 26%, var(--border));
+  background: var(--surface-solid);
+  color: var(--text);
+}
+
+.alert-heading {
+  color: var(--text);
+}
+
+.alert-icon {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, #dc2626 12%, var(--surface-solid));
+  color: #b91c1c;
+}
+
+.alert-actions {
+  border-top: 1px solid var(--border);
+  background: var(--surface-muted);
+}
+
+:host-context(.dark) .alert-icon {
+  background: color-mix(in srgb, #fca5a5 12%, var(--surface-solid));
+  color: #fca5a5;
+}

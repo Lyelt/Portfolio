@@ -1,4 +1,4 @@
-<div class="mx-auto flex flex-col items-center px-10"> <!--container-->
+<div class="mx-auto flex w-full max-w-7xl flex-col items-center px-4 sm:px-6 lg:px-8"> <!--container-->
   <div class="flex flex-col justify-center w-full">
     <mat-tab-group (selectedTabChange)="onTabChange($event)" [selectedIndex]="selectedTabIndex" dynamicHeight mat-align-tabs="center">
       <mat-tab>
@@ -12,7 +12,7 @@
           <div class="pt-8 flex flex-col items-center">
             <div *ngIf="selectedCollection" class="self-start pl-1 pb-2">
               <h3 class="text-sm">Editing contents of
-              <span class="link" (click)="selectedTabIndex = 1">{{selectedCollection.name}} <span *ngIf="selectedSection">/ {{selectedSection}}</span></span>
+              <button type="button" class="link" (click)="selectedTabIndex = 1">{{selectedCollection.name}} <span *ngIf="selectedSection">/ {{selectedSection}}</span></button>
               </h3>
             </div>
             <div class="flex-grow w-full">

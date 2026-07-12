@@ -23,43 +23,71 @@ export class DogService {
       this.outsideDogSubject.next(d);
     });
 
-    this.connection = new signalR.HubConnectionBuilder()
+    const connection = new signalR.HubConnectionBuilder()
       .configureLogging(signalR.LogLevel.Information)
       .withUrl("/dogs")
       .build();
+    this.connection = connection;
 
-    this.startConnection();
+    this.startConnection(connection);
 
-    this.connection.onclose((err) => {
+    connection.onclose((err) => {
+      if (this.connection !== connection) {
+        return;
+      }
       this.connectionSubject.next(false);
-      this.startConnection();
+      this.startConnection(connection);
     });
 
-    this.connection.onreconnected(() => {
-      this.connectionSubject.next(true);
+    connection.onreconnected(() => {
+      if (this.connection === connection) {
+        this.connectionSubject.next(true);
+      }
     });
 
-    this.connection.on("dogToggled", (dog: Dog) => {
+    connection.on("dogToggled", (dog: Dog) => {
+      if (this.connection !== connection) {
+        return;
+      }
       console.log("dog toggled: " + dog);
       this.outsideDogSubject.next(dog);
     });
 
-    this.connection.on("dogNudged", (dog: Dog) => {
+    connection.on("dogNudged", (dog: Dog) => {
+      if (this.connection !== connection) {
+        return;
+      }
       console.log("dog nudged: " + dog);
       this.dogNudgedSubject.next(dog);
     });
 
-    this.connection.on("nudgeAcknowledged", (dog: Dog) => {
+    connection.on("nudgeAcknowledged", (dog: Dog) => {
+      if (this.connection !== connection) {
+        return;
+      }
       console.log("nudge acknowledged: " + dog);
       this.nudgeAcknowledgedSubject.next(dog);
     });
   }
 
-  startConnection() {
-    this.connection.start().then(() => {
+  stop(): void {
+    const connection = this.connection;
+    this.connection = null;
+    this.connectionSubject.next(false);
+    connection?.stop();
+  }
+
+  private startConnection(connection: signalR.HubConnection) {
+    connection.start().then(() => {
+      if (this.connection !== connection) {
+        return;
+      }
       console.log('SignalR Connected!');
       this.connectionSubject.next(true);
     }).catch((err) => {
+      if (this.connection !== connection) {
+        return;
+      }
       this.connectionSubject.next(false);
       console.error(err.toString());
     });

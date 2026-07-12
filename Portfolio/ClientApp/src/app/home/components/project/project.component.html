@@ -1,20 +1,15 @@
-<div class="text-center rounded shadow-md mb-6">
-  <div class="p-4 bg-gray-200 dark:bg-gray-900">
-    <p class="font-medium">
-      {{name}}
-    </p>
-    <p class="text-sm">
-      {{description}}
-    </p>
+<article class="project-card surface-card">
+  <div class="project-card__body">
+    <span class="project-card__icon" aria-hidden="true"><mat-icon>code</mat-icon></span>
+    <h3>{{name}}</h3>
+    <p>{{description}}</p>
   </div>
-  <div class="flex justify-center py-1 border-t border-gray-300 bg-white dark:bg-pink-700">
-    <a [href]="blogUrl" class="flex items-center btn hover:bg-gray-200 dark:hover:bg-pink-900">
-      <mat-icon class="mr-1">menu_book</mat-icon>
-      <p>Read More</p>
+  <div class="project-card__actions">
+    <a [href]="blogUrl" class="project-card__link">
+      <mat-icon aria-hidden="true">menu_book</mat-icon><span>Read More</span>
     </a>
-    <a [href]="githubUrl" target="_blank" class="flex items-center btn hover:bg-gray-200 dark:hover:bg-pink-900">
-      <mat-icon class="mr-1">open_in_new</mat-icon>
-      <p>View on GitHub</p>
+    <a [href]="githubUrl" target="_blank" rel="noopener noreferrer" class="project-card__link">
+      <mat-icon aria-hidden="true">open_in_new</mat-icon><span>View on GitHub</span>
     </a>
   </div>
-</div>
+</article>

@@ -4,14 +4,16 @@
       <span class="opacity-0"></span>
       <h1 class="font-bold text-2xl">Bowling Scores</h1>
       <span class="opacity-0" *ngIf="!currentUserId"></span>
-      <mat-icon class="cursor-pointer" *ngIf="currentUserId" [matMenuTriggerFor]="menu">menu</mat-icon>
+      <button type="button" class="icon-button" *ngIf="currentUserId" [matMenuTriggerFor]="menu" aria-label="Open bowling menu">
+        <mat-icon>menu</mat-icon>
+      </button>
     </div>
     <mat-menu #menu="matMenu">
-      <span mat-menu-item class="menu-item" (click)="setView('overview')" [class.bg-indigo-100]="view === 'overview'"><mat-icon>score</mat-icon>Overview</span>
-      <span mat-menu-item class="menu-item" (click)="setView('stats')" [class.bg-indigo-100]="view === 'stats'"><mat-icon>query_stats</mat-icon>Stats Report</span>
-      <span mat-menu-item class="menu-item" (click)="setView('games')" [class.bg-indigo-100]="view === 'games'"><mat-icon>view_list</mat-icon>View Games</span>
-      <span mat-menu-item class="menu-item" (click)="setView('edit')" [class.bg-indigo-100]="view === 'edit'" *ngIf="userCanEdit()"><mat-icon>edit</mat-icon>Add Games</span>
-      <span mat-menu-item class="menu-item" (click)="currentUserId = null" [class.bg-indigo-100]="!currentUserId"><mat-icon>people_alt</mat-icon>Change Bowler</span>
+      <button type="button" mat-menu-item class="menu-item" (click)="setView('overview')" [ngClass]="{'bg-indigo-100 dark:bg-gray-700': view === 'overview'}"><mat-icon>score</mat-icon>Overview</button>
+      <button type="button" mat-menu-item class="menu-item" (click)="setView('stats')" [ngClass]="{'bg-indigo-100 dark:bg-gray-700': view === 'stats'}"><mat-icon>query_stats</mat-icon>Stats Report</button>
+      <button type="button" mat-menu-item class="menu-item" (click)="setView('games')" [ngClass]="{'bg-indigo-100 dark:bg-gray-700': view === 'games'}"><mat-icon>view_list</mat-icon>View Games</button>
+      <button type="button" mat-menu-item class="menu-item" (click)="setView('edit')" [ngClass]="{'bg-indigo-100 dark:bg-gray-700': view === 'edit'}" *ngIf="userCanEdit()"><mat-icon>edit</mat-icon>Add Games</button>
+      <button type="button" mat-menu-item class="menu-item" (click)="currentUserId = null"><mat-icon>people_alt</mat-icon>Change Bowler</button>
     </mat-menu>
     <div class="max-w-md px-6 mx-auto" *ngIf="!currentUserId">
       <app-bowling-select-user [initialUserId]="currentUserId" [label]="'Choose bowler...'" (selectionChange)="selectUser($event)"></app-bowling-select-user>
@@ -38,7 +40,7 @@
         <app-bowling-start-session></app-bowling-start-session>
       </div>
       <div *ngIf="!dataFound" class="flex justify-center">
-        <div class="flex items-center justify-center space-x-2 rounded p-4 font-medium bg-indigo-600 text-indigo-50 dark:bg-pink-700 dark:text-pink-100 ">
+        <div class="app-panel flex items-center justify-center space-x-2 font-medium">
           <mat-icon>help_outline</mat-icon>
           <p>No data found for this criteria.</p>
         </div>

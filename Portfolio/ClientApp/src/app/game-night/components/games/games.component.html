@@ -1,42 +1,73 @@
-<div *ngIf="getSelectedGameNight()" class="px-6">
-    <div class="flex flex-col font-medium text-xl text-center mb-10">
-        <span>{{gameNightBelongsToLoggedInUser() ? "Select your" : "Viewing"}} games for</span>
-        <span class="emphasis">{{getSelectedGameNight().date | date: 'EEEE, MMMM d'}}</span>
-    </div>
-    <div class="mb-2 overflow-y-auto flex flex-col space-y-5 border-b pb-6">
-        <div *ngFor="let game of games"
-            (click)="toggleGameSelected(game)" 
-            class="flex flex-row justify-between">
-                <div class="flex flex-row space-x-2">
-                    <mat-icon *ngIf="!isGameSelected(game)">check_circle_outline</mat-icon>
-                    <mat-icon *ngIf="isGameSelected(game)" class="text-pink-600">check_circle</mat-icon>
-                    <span class="overflow-ellipsis">{{game.name}}</span>
-                </div>
-                <div class="flex flex-row space-x-2 w-1/5 justify-end">
-                    <div class="flex flex-row w-1/2 justify-between">
-                        <span>{{game.minPlayers}}</span>
-                        <span>-</span>
-                        <span>{{game.maxPlayers}}</span>
-                    </div>
-                    <mat-icon>person</mat-icon>
-                </div>
-        </div>
-    </div>
-    <div *ngIf="!addingGames" class="flex flex-row space-x-2 pt-4" (click)="addingGames = true">
-        <mat-icon>add</mat-icon>
+<section *ngIf="getSelectedGameNight()" class="mx-auto max-w-3xl">
+  <header class="mb-6 text-center sm:mb-8">
+    <p class="eyebrow justify-center">
+      <mat-icon aria-hidden="true">sports_esports</mat-icon>
+      Game lineup
+    </p>
+    <h1 class="mt-3 flex flex-col text-xl font-semibold sm:text-2xl">
+      <span>{{gameNightBelongsToLoggedInUser() ? "Select your" : "Viewing"}} games for</span>
+      <span class="emphasis mt-1">{{getSelectedGameNight().date | date: 'EEEE, MMMM d'}}</span>
+    </h1>
+  </header>
+
+  <div class="app-panel">
+    <ul class="max-h-[48vh] space-y-2 overflow-y-auto pr-1" aria-label="Games">
+      <li *ngFor="let game of games">
+        <button
+          type="button"
+          class="flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-2 text-left hover:border-indigo-200 hover:bg-indigo-50 dark:hover:border-gray-600 dark:hover:bg-gray-800 sm:px-4"
+          [ngClass]="{'border-indigo-200 bg-indigo-50 dark:border-indigo-700 dark:bg-gray-800': isGameSelected(game)}"
+          [attr.aria-pressed]="isGameSelected(game)"
+          [attr.aria-disabled]="!gameNightBelongsToLoggedInUser()"
+          (click)="toggleGameSelected(game)"
+        >
+          <span class="flex min-w-0 items-center gap-3">
+            <mat-icon class="shrink-0 text-gray-400" *ngIf="!isGameSelected(game)" aria-hidden="true">check_circle_outline</mat-icon>
+            <mat-icon class="shrink-0 text-pink-600 dark:text-pink-300" *ngIf="isGameSelected(game)" aria-hidden="true">check_circle</mat-icon>
+            <span class="min-w-0 break-words font-semibold">{{game.name}}</span>
+          </span>
+
+          <span class="text-muted flex shrink-0 items-center gap-1 rounded-lg bg-gray-100 px-2 py-1 text-xs font-semibold dark:bg-gray-700" aria-label="Player range">
+            <span>{{game.minPlayers}}</span>
+            <span aria-hidden="true">–</span>
+            <span>{{game.maxPlayers}}</span>
+            <mat-icon class="text-base" aria-hidden="true">person</mat-icon>
+          </span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="mt-5 border-t border-gray-200 pt-5 dark:border-gray-700">
+      <button *ngIf="!addingGames" class="btn btn-secondary" type="button" (click)="addingGames = true">
+        <mat-icon aria-hidden="true">add</mat-icon>
         <span>Add Game</span>
-    </div>
-    <form [formGroup]="form" class="flex flex-col space-y-4 relative pt-4" *ngIf="addingGames">
-        <span class="absolute top-0 right-0" (click)="addingGames = false">
-            <mat-icon>highlight_remove</mat-icon>
-        </span>
-        <div class="flex flex-row space-x-4">
-            <input class="w-full" type="text" placeholder="Game" id="name" formControlName="name" />
+      </button>
+
+      <form [formGroup]="form" (ngSubmit)="form.valid && addGame()" class="space-y-4" *ngIf="addingGames">
+        <div class="flex min-h-11 items-center justify-between gap-4">
+          <h2 class="text-lg font-bold">Add Game</h2>
+          <button class="icon-button" type="button" (click)="addingGames = false" aria-label="Close add game form">
+            <mat-icon aria-hidden="true">close</mat-icon>
+          </button>
+        </div>
+
+        <div>
+          <label class="field-label" for="name">Game</label>
+          <input class="w-full" type="text" placeholder="Game" id="name" formControlName="name" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+          <div>
+            <label class="field-label" for="minPlayers">Minimum players</label>
+            <input class="w-full" type="number" placeholder="Min" id="minPlayers" formControlName="minPlayers" />
           </div>
-        <div class="flex flex-row space-x-4">
-            <input class="w-1/3" type="number" placeholder="Min" id="minPlayers" formControlName="minPlayers" />
-            <input class="w-1/3" type="number" placeholder="Max" id="maxPlayers" formControlName="maxPlayers" />
-            <div class="w-1/3"><button type="submit" class="btn btn-primary w-full h-full" [disabled]="!form.valid" (click)="addGame()">Add</button></div>
-        </div> 
-    </form>
-</div>
+          <div>
+            <label class="field-label" for="maxPlayers">Maximum players</label>
+            <input class="w-full" type="number" placeholder="Max" id="maxPlayers" formControlName="maxPlayers" />
+          </div>
+          <button type="submit" class="btn btn-primary col-span-2 w-full sm:col-span-1 sm:w-auto" [disabled]="!form.valid">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

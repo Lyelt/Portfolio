@@ -56,7 +56,8 @@ export class GamesComponent implements OnInit {
       gnGames.push(game);
     }
     else {
-      gnGames.splice(gnGames.findIndex(g => g.id === game.id, 0));
+      const selectedGameIndex = gnGames.findIndex(g => g.id === game.id);
+      gnGames.splice(selectedGameIndex, 1);
     }
 
     this.gnService.saveGames(this.getSelectedGameNight());

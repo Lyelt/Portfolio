@@ -1,2 +1,8 @@
-<mat-icon (click)="toggle()" *ngIf="!checked" class="cursor-pointer">{{uncheckedIcon}}</mat-icon>
-<mat-icon (click)="toggle()" *ngIf="checked" class="cursor-pointer text-yellow-400">{{checkedIcon}}</mat-icon>
+<button type="button"
+        class="icon-button"
+        (click)="toggle()"
+        [attr.aria-pressed]="checked"
+        [attr.aria-label]="checked ? 'Mark goal incomplete' : 'Mark goal complete'">
+  <mat-icon *ngIf="!checked">{{uncheckedIcon}}</mat-icon>
+  <mat-icon *ngIf="checked" class="text-yellow-500 dark:text-yellow-300">{{checkedIcon}}</mat-icon>
+</button>

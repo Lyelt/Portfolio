@@ -1,11 +1,12 @@
 
 <div class="flex flex-col">
-    <table *ngIf="archives && archives.length > 0" class="divide-y divide-gray-200 dark:divide-gray-900">
+  <div *ngIf="archives && archives.length > 0" class="app-panel overflow-x-auto p-0">
+    <table class="min-w-[34rem] divide-y divide-gray-200 sm:min-w-full dark:divide-gray-700" aria-label="Archived star times">
         <thead>
             <tr>
                 <th class="text-left py-2 font-medium uppercase tracking-wide">Time</th>
                 <th class="text-left py-2 font-medium uppercase tracking-wide">Original Upload</th>
-                <th></th>
+                <th><span class="sr-only">Actions</span></th>
             </tr>
         </thead>
         <tbody>
@@ -14,13 +15,13 @@
                     <td class="pr-4 pt-4 text-left w-1/3">
                         <div class="flex flex-col space-y-1">
                             <span>{{archive.timestamp | date:'mediumDate'}}</span>
-                            <span class="text-gray-400 text-xs">Overridden on {{archive.lastUpdated | date:'mediumDate'}}</span>
+                            <span class="text-muted text-xs">Overridden on {{archive.lastUpdated | date:'mediumDate'}}</span>
                         </div>
                     </td>
                     <td class="pr-4 py-2 w-1/3">
                         <div class="flex space-x-4">
-                            <a class="link text-sm text-indigo-600 dark:text-pink-700 font-medium cursor-pointer hover:underline" [href]="archive.videoUrl | safeYt">View</a>
-                            <span class="link text-sm text-indigo-600 dark:text-pink-700 font-medium cursor-pointer hover:underline" (click)="deleteArchive(archive)">Delete</span>
+                            <a class="link text-sm font-medium" [href]="archive.videoUrl | safeYt">View</a>
+                            <button type="button" class="link text-sm font-medium" (click)="deleteArchive(archive)">Delete</button>
                         </div>
                         
                     </td>
@@ -32,6 +33,7 @@
             </tr>
         </tbody>
     </table>
+  </div>
     <div *ngIf="!archives || archives.length === 0" class="p-8 font-bold">
         No history to show
     </div>

@@ -1,44 +1,74 @@
-<div *ngIf="getSelectedGameNight() && !getSelectedGameNight().isCancelled">
-    <div class="flex flex-col space-y-4 text-xl md:text-2xl items-center w-full mb-12">
-        <div class="flex flex-col items-center md:flex-row md:items-baseline md:space-x-2">
-            <span>{{(isSelectedGameNightNext() ? "Next" : "This")}} game night is</span>
-            <span class="emphasis">{{getSelectedGameNight().date | date: 'EEEE, MMMM d'}}</span>
-        </div> 
-        <div>It's <span class="emphasis">{{getSelectedGameNight().user?.userName}}</span>'s night</div>
-        <div>
-            <div *ngIf="getSelectedGameNight()?.meal">We're having 
-                <span class="emphasis">{{gnService.selectedGameNight.meal.name | lowercase}}</span>
-            </div>
-            <a class="text-base action" routerLink="/gamenight/meals" *ngIf="!getSelectedGameNight().meal && userCanSetMeal()">{{userCanSetMeal() ? 'Select' : 'Suggest'}} a meal &rarr;</a>
-        </div>
+<section *ngIf="getSelectedGameNight() && !getSelectedGameNight().isCancelled" class="mx-auto max-w-4xl">
+  <div class="surface-card px-5 py-7 text-center sm:px-8 sm:py-9">
+    <p class="eyebrow justify-center">
+      <mat-icon aria-hidden="true">event</mat-icon>
+      Game Night
+    </p>
+
+    <div class="mt-4 flex flex-col items-center gap-3 text-lg font-medium sm:text-xl">
+      <div class="flex flex-col items-center sm:flex-row sm:flex-wrap sm:justify-center sm:gap-2">
+        <span>{{(isSelectedGameNightNext() ? "Next" : "This")}} game night is</span>
+        <span class="emphasis">{{getSelectedGameNight().date | date: 'EEEE, MMMM d'}}</span>
+      </div>
+
+      <p>It's <span class="emphasis">{{getSelectedGameNight().user?.userName}}</span>'s night</p>
+
+      <div>
+        <p *ngIf="getSelectedGameNight()?.meal">
+          We're having <span class="emphasis">{{getSelectedGameNight().meal.name | lowercase}}</span>
+        </p>
+        <a class="btn btn-secondary mt-2" routerLink="/gamenight/meals" *ngIf="!getSelectedGameNight().meal && userCanSetMeal()">
+          <mat-icon aria-hidden="true">restaurant</mat-icon>
+          Select a meal
+          <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+        </a>
+      </div>
     </div>
-    
-    <div class="w-full" >
-        <div class="flex flex-col items-center space-y-12">
-            <div class="w-full mx-12 max-w-xs md:max-w-md py-4 px-8 border rounded-lg shadow-lg bg-white dark:bg-gray-900 relative" >
-                <div class="flex flex-col space-y-2" *ngIf="getSelectedGameNight().games?.length === 0">
-                    <div class="flex flex-col items-center">
-                        <img class="h-36" src="assets/icons/camping.svg"/>
-                        <span class="text-xs">No Games Selected</span>
-                    </div>
-                </div>
-                <div class="flex flex-col space-y-4">
-                    <div *ngFor="let g of getSelectedGameNight().games" class="before:content-['•'] before:text-pink-600 font-semibold">
-                        {{g.name}}
-                    </div>
-                </div>
-                <div class="absolute top-4 right-4 text-gray-600"
-                routerLink="/gamenight/games"
-                *ngIf="gameNightBelongsToLoggedInUser()"><mat-icon>edit</mat-icon></div>
-            </div>
-            <div class="w-full mx-12 max-w-xs md:max-w-md border rounded-lg shadow-lg bg-white dark:bg-gray-900">
-                <app-game-night-user-statuses></app-game-night-user-statuses>
-            </div>
-        </div>
-    </div>
-</div>
-<div *ngIf="getSelectedGameNight() && getSelectedGameNight().isCancelled" class="flex flex-col items-center space-y-24 text-xl md:text-2xl px-24 text-center">
-    <span>This game night was cancelled.</span>
-    <button class="btn btn-primary" (click)="uncancelGameNight()">Reactivate</button>
-</div>
+  </div>
+
+  <div class="mt-5 grid gap-5 md:grid-cols-2">
+    <section class="app-panel relative" aria-labelledby="selected-games-heading">
+      <div class="mb-4 flex min-h-11 items-center justify-between gap-3">
+        <h2 id="selected-games-heading" class="text-lg font-bold tracking-tight">Games</h2>
+        <a
+          class="icon-button"
+          routerLink="/gamenight/games"
+          *ngIf="gameNightBelongsToLoggedInUser()"
+          aria-label="Edit selected games"
+        >
+          <mat-icon aria-hidden="true">edit</mat-icon>
+        </a>
+      </div>
+
+      <div *ngIf="getSelectedGameNight().games?.length === 0" class="flex flex-col items-center py-4 text-center">
+        <img class="h-32 w-auto" src="assets/icons/camping.svg" alt="Camping illustration" loading="lazy" decoding="async" />
+        <span class="text-muted mt-3 text-sm">No Games Selected</span>
+      </div>
+
+      <ul *ngIf="getSelectedGameNight().games?.length" class="space-y-2">
+        <li *ngFor="let g of getSelectedGameNight().games" class="flex min-h-11 items-center gap-3 rounded-xl px-3 py-2 font-semibold">
+          <span class="h-2 w-2 shrink-0 rounded-full bg-pink-500 dark:bg-pink-300" aria-hidden="true"></span>
+          <span>{{g.name}}</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="app-panel overflow-hidden p-0" aria-labelledby="availability-heading">
+      <h2 id="availability-heading" class="px-6 pt-6 text-lg font-bold tracking-tight">Availability</h2>
+      <app-game-night-user-statuses></app-game-night-user-statuses>
+    </section>
+  </div>
+</section>
+
+<section
+  *ngIf="getSelectedGameNight() && getSelectedGameNight().isCancelled"
+  class="surface-card mx-auto flex max-w-xl flex-col items-center gap-6 px-6 py-10 text-center sm:px-10"
+>
+  <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-50 text-pink-600 dark:bg-gray-800 dark:text-pink-300">
+    <mat-icon aria-hidden="true">event_busy</mat-icon>
+  </span>
+  <p class="text-lg font-semibold sm:text-xl">This game night was cancelled.</p>
+  <button class="btn btn-primary" type="button" (click)="uncancelGameNight()">Reactivate</button>
+</section>
+
 <app-user-status-confirmation></app-user-status-confirmation>

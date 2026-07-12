@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 
 @Component({
@@ -8,8 +9,9 @@ import { AuthService } from '../auth/auth.service';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+  mobileMenuOpen = false;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
     if (!('userName' in localStorage)) {
@@ -17,13 +19,18 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  scrollToElement(elementId: string) {
-    // Update the URL hash without triggering Angular scroll restoration
-    history.replaceState(null, '', `#${elementId}`);
-    const el = document.querySelector("#" + elementId);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.mobileMenuOpen = false;
+  }
+
+  logout() {
+    this.authService.logout();
+    this.closeMobileMenu();
+    this.router.navigateByUrl('/');
   }
 
   loggedInUserName() {

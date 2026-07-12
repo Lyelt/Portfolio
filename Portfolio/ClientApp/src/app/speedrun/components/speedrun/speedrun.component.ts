@@ -20,7 +20,7 @@ export class SpeedrunComponent implements OnInit {
   selectedStar: Star;
   compact: boolean = false;
 
-  constructor(private srService: SpeedrunService, private route: ActivatedRoute) {
+  constructor(private srService: SpeedrunService, private route: ActivatedRoute, private router: Router) {
 
   }
 
@@ -49,8 +49,7 @@ export class SpeedrunComponent implements OnInit {
   }
 
   showStarDetails(star: Star) {
-    this.selectedStar = star;
-    window.history.pushState("Star selected", "Super Mario 64", "/speedrun/star/" + star.starId);
+    this.router.navigate(['/speedrun/star', star.starId]);
   }
 
   getVisibleCourses() {
@@ -107,7 +106,6 @@ export class SpeedrunComponent implements OnInit {
   }
 
   closeStar() {
-    this.selectedStar = null;
-    window.history.pushState("No star selected", "Super Mario 64", "/speedrun");
+    this.router.navigate(['/speedrun']);
   }
 }

@@ -1,0 +1,10 @@
+.frame-button {
+  min-height: 4.5rem;
+  border-radius: 0.65rem;
+}
+
+.frame-button:hover,
+.frame-button.selected {
+  background: var(--primary-soft);
+  color: var(--primary-hover);
+}

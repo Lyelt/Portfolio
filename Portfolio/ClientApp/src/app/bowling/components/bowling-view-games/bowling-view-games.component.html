@@ -1,6 +1,6 @@
 <div *ngIf="!openSession">
-    <div class="px-4 flex flex-col space-y-6 max-h-96 sm:max-h-screen overflow-y-auto">
-        <div *ngFor="let session of getSessionPage()" class="flex flex-col cursor-pointer border-b border-gray-500 border-opacity-10 pb-4 last:border-0" (click)="open(session)">
+    <div class="flex max-h-96 flex-col space-y-3 overflow-y-auto sm:max-h-screen">
+        <button type="button" *ngFor="let session of getSessionPage()" class="app-panel flex flex-col text-left" (click)="open(session)">
             <div class="flex flex-col">
                 <div class="flex justify-between pb-2">
                     <span class="font-bold">{{session.date | date:'fullDate':'UTC'}}</span>
@@ -11,22 +11,22 @@
                     </div>
                 </div>
                 <div class="flex flex-wrap space-x-2">
-                    <span *ngFor="let game of session.games" class="rounded px-2 py-1 bg-indigo-600 dark:bg-pink-700 text-indigo-50 dark:text-pink-50">
+                    <span *ngFor="let game of session.games" class="rounded-lg bg-indigo-600 px-2 py-1 text-indigo-50 dark:bg-indigo-700 dark:text-indigo-50">
                         {{game.totalScore}}
                     </span>
                 </div>
             </div>
-        </div>
+        </button>
     </div>
-    <div class="flex items-center justify-between pt-8 text-xs sm:text-base">
+    <div class="flex flex-col gap-3 pt-8 text-sm sm:flex-row sm:items-center sm:justify-between sm:text-base">
         <span>Showing <span class="font-bold">{{start}}</span> to <span class="font-bold">{{end}}</span> of <span class="font-bold">{{sessions.length}}</span> results</span>
-        <div class="flex space-x-4">
-            <button class="btn border border-gray-800 dark:border-gray-300 focus:outline-none" (click)="setPage(pageNumber - 1)">Previous</button>
-            <button class="btn border border-gray-800 dark:border-gray-300 focus:outline-none" (click)="setPage(pageNumber + 1)">Next</button>
+        <div class="flex gap-2">
+            <button type="button" class="btn btn-secondary" [disabled]="pageNumber === 1" (click)="setPage(pageNumber - 1)">Previous</button>
+            <button type="button" class="btn btn-secondary" [disabled]="end >= sessions.length" (click)="setPage(pageNumber + 1)">Next</button>
         </div>
     </div>
 </div>
 <div *ngIf="openSession">
-    <a class="link" (click)="back()">&larr; Back</a>
+    <button type="button" class="btn btn-ghost" (click)="back()">&larr; Back</button>
     <app-bowling-add-game [session]="openSession" readOnly="true"></app-bowling-add-game>
 </div>

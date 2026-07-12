@@ -29,7 +29,7 @@ export class TurnTrackerComponent implements OnInit {
     }
 
     addPlayer() {
-        if (this.newPlayerName && this.newPlayerOrder) {
+        if (this.newPlayerName && this.newPlayerOrder !== null && this.newPlayerOrder !== undefined) {
             let newId = this.players.length == 0 ? 1 : Math.max(...this.players.map(p => p.id)) + 1;
             this.players.push({ id: newId, name: this.newPlayerName, order: this.newPlayerOrder, isActive: false });
             this.resort();
