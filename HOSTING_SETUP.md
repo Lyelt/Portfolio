@@ -61,6 +61,9 @@ approved and proven.
   internal database networks, volumes, and backup directories.
 - Host paths: `/srv/apps`, `/srv/edge`, `/srv/secrets`, `/srv/backups`, and
   `/srv/actions-runner`.
+- Host mutations across application runners serialize on the shared
+  `/srv/apps/.deploy.lock`, preventing concurrent builds or backups from
+  exhausting the VM.
 
 Docker defaults future published ports to VM loopback, uses bounded local logs,
 and has live restore enabled. The current design has no `ports` entry and does
@@ -216,6 +219,17 @@ In Cloudflare, create one remotely managed tunnel and initially add only:
 Do not create the `ghobrial.dev` tunnel hostname, alter production DNS, or
 remove the DigitalOcean route. Future apps join `web` with a unique alias and
 receive a hostname block in `/srv/edge/conf/Caddyfile`.
+
+The shared edge configuration also reserves these Five Roosters routes once
+that app's isolated containers and Cloudflare public hostnames are installed:
+
+- `staging.fiveroostersbakery.com` to `five-roosters-staging-web:8080`.
+- `fiveroostersbakery.com` and `www.fiveroostersbakery.com` to
+  `five-roosters-prod-web:8080`.
+
+All three Cloudflare public hostnames must use origin service
+`http://edge-proxy:8080` and an HTTP Host Header override matching the public
+hostname. Do not expose a VM port or start a second tunnel for the bakery.
 
 ## 5. Register the GitHub Actions runner
 

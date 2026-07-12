@@ -48,6 +48,10 @@ multipass exec "${VM_NAME}" -- sudo install -d -o deploy -g deploy -m 0750 \
   /srv/edge /srv/edge/conf /srv/apps/portfolio /srv/secrets/examples \
   /srv/backups/portfolio/import /srv/backups/portfolio/staging \
   /srv/backups/portfolio/prod /srv/backups/portfolio/daily
+if ! multipass exec "${VM_NAME}" -- sudo test -e /srv/apps/.deploy.lock; then
+  multipass exec "${VM_NAME}" -- sudo install -o deploy -g deploy -m 0640 \
+    /dev/null /srv/apps/.deploy.lock
+fi
 multipass exec "${VM_NAME}" -- sudo install -o root -g deploy -m 0644 \
   "${remote_stage}/HOSTING_SETUP.md" /srv/HOSTING_SETUP.md
 multipass exec "${VM_NAME}" -- sudo install -o root -g root -m 0644 \

@@ -25,6 +25,20 @@
 		}
 	}
 
+	@fiveRoostersStaging host {$FIVE_ROOSTERS_STAGING_DOMAIN}
+	handle @fiveRoostersStaging {
+		reverse_proxy five-roosters-staging-web:8080 {
+			header_up X-Forwarded-Proto https
+		}
+	}
+
+	@fiveRoostersProduction host {$FIVE_ROOSTERS_PRODUCTION_DOMAIN} www.{$FIVE_ROOSTERS_PRODUCTION_DOMAIN}
+	handle @fiveRoostersProduction {
+		reverse_proxy five-roosters-prod-web:8080 {
+			header_up X-Forwarded-Proto https
+		}
+	}
+
 	handle {
 		respond "unknown host" 404
 	}
