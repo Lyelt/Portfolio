@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+
+.schedule-list {
+  scrollbar-color: var(--border) transparent;
+  scrollbar-width: thin;
+}
+
+.schedule-option {
+  border-color: var(--border);
+  background: var(--surface-solid);
+  color: var(--text-soft);
+}
+
+.schedule-option:hover {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.schedule-option--selected {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 12px 24px -18px var(--primary);
+}
+
+:host-context(.dark) .schedule-option--selected {
+  color: #171b24;
+}

@@ -31,13 +31,6 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    if (localStorage.theme === "dark") {
-      document.querySelector("html").classList.add("dark");
-    }
-    else {
-      document.querySelector("html").classList.remove("dark");
-    }
-
     this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
@@ -54,8 +47,7 @@ export class AppComponent {
         mergeMap(route => route.data),
       )
       .subscribe(event => {
-        if (event != null && event.toolbar != null)
-          this.toolbar = event.toolbar;
+        this.toolbar = event?.toolbar !== false;
       });
   }
 }

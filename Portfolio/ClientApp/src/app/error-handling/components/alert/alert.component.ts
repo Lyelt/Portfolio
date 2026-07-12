@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { AlertService } from '../../alert.service';
 
 @Component({
@@ -7,22 +7,25 @@ import { AlertService } from '../../alert.service';
   templateUrl: './alert.component.html',
   styleUrls: ['./alert.component.scss'],
 })
-export class AlertComponent implements OnInit {
-  @ViewChild("modal") modal;
-  constructor(public alertService: AlertService, private el: ElementRef) { }
+export class AlertComponent {
+  constructor(public alertService: AlertService) { }
 
-  ngOnInit(): void {
-  }
-
-  @HostListener('document:click', [`$event`])
-  onClick(event) {
-    if (this.modal && !this.modal.nativeElement.contains(event.target)) {
-      this.closeModal();
+  @HostListener('document:keydown', ['$event'])
+  onKeydown(event: KeyboardEvent) {
+    if (!this.alertService.isVisible) {
+      return;
     }
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeModal();
+      return;
+    }
+
   }
 
   closeModal() {
-    this.alertService.isVisible = false;
+    this.alertService.hideError();
   }
 
   getGithubIssueUrl(): string {

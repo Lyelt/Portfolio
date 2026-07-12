@@ -1,0 +1,12 @@
+:host {
+  display: inline-flex;
+}
+
+.theme-toggle mat-icon {
+  transition: color 180ms ease, transform 260ms ease;
+}
+
+.theme-toggle:hover mat-icon {
+  color: var(--primary-hover);
+  transform: rotate(12deg) scale(1.05);
+}

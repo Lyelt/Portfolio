@@ -1,5 +1,5 @@
 <div *ngIf="!results">
-    <div *ngFor="let collection of collections" (click)="evaluate(collection)">{{collection.name}}</div>
+    <button type="button" class="app-panel mb-3 block w-full text-left font-semibold" *ngFor="let collection of collections" (click)="evaluate(collection)">{{collection.name}}</button>
 </div>
 <div *ngIf="results" class="mt-6">
     <div *ngFor="let r of results">

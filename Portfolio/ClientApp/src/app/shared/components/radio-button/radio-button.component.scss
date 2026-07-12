@@ -1,0 +1,20 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.radio-option {
+  min-height: 2.75rem;
+}
+
+.radio-selected {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--surface-solid);
+  box-shadow: 0 12px 26px -18px var(--primary);
+}
+
+.radio-selected:hover {
+  background: var(--primary-hover);
+  color: var(--surface-solid);
+}

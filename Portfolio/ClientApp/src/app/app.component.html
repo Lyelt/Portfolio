@@ -1,8 +1,12 @@
-<app-header *ngIf="toolbar"></app-header>
-<div class="pt-24 pb-32">
-  <app-alert></app-alert>
-  <router-outlet></router-outlet>
-</div>
-<div class="absolute right-0 bottom-0 left-0" *ngIf="toolbar">
-  <app-footer></app-footer>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<div class="app-shell" [class.app-shell--toolbarless]="!toolbar">
+  <app-header *ngIf="toolbar"></app-header>
+
+  <main id="main-content" tabindex="-1" [class.site-main]="toolbar" [class.site-main--toolbarless]="!toolbar">
+    <app-alert></app-alert>
+    <router-outlet></router-outlet>
+  </main>
+
+  <app-footer *ngIf="toolbar"></app-footer>
 </div>

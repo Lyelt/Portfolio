@@ -1,0 +1,16 @@
+.role-option {
+  color: var(--text-soft);
+}
+
+.role-option:hover {
+  border-color: var(--primary);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+.role-option.role-selected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-hover);
+  box-shadow: 0 0 0 3px var(--focus), var(--shadow);
+}

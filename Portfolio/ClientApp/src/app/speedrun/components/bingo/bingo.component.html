@@ -1,70 +1,70 @@
-<div class="flex flex-col items-center lg:flex-row lg:justify-around lg:items-start">
-  <div class="flex flex-col justify-center p-4 w-full lg:w-1/2">
-    <h2 class="font-semibold text-center">Courses</h2>
-    <div class="mb-2 bg-white dark:bg-gray-900 rounded shadow px-2 py-4" *ngFor="let course of courses">
-      <div class="flex justify-between items-center">
-        <span class="w-12">{{course.name}}</span>
-        <div class="flex">
+<div class="page-container flex flex-col items-center gap-6 lg:flex-row lg:items-start">
+  <section class="flex w-full flex-col justify-center lg:w-1/2" aria-labelledby="bingo-courses-title">
+    <h2 id="bingo-courses-title" class="mb-3 text-center font-semibold">Courses</h2>
+    <div class="app-panel mb-3 p-3 sm:p-4" *ngFor="let course of courses">
+      <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+        <span class="font-semibold sm:w-20">{{course.name}}</span>
+        <div class="flex flex-wrap justify-center">
           <span *ngFor="let star of stageStars" title="{{star.name}}">
             <app-bingo-goal [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
           </span>
         </div>
-        <div class="flex justify-end w-16">
-          <div class="flex flex-col items-center mr-2">
+        <div class="flex justify-center gap-1 sm:justify-end">
+          <div class="flex flex-col items-center">
             <app-bingo-goal (toggled)="hundredToggled($event)" [uncheckedIcon]="'radio_button_unchecked'" [checkedIcon]="'radio_button_checked'"></app-bingo-goal>
-            <span class="text-2xs sm:text-xs">100</span>
+            <span class="text-xs">100</span>
           </div>
-          <div class="flex flex-col items-center mr-2" *ngIf="course.hasCannon">
+          <div class="flex flex-col items-center" *ngIf="course.hasCannon">
             <app-bingo-goal (toggled)="cannonToggled($event)" [uncheckedIcon]="'check_box_outline_blank'" [checkedIcon]="'check_box'"></app-bingo-goal>
-            <span class="text-2xs sm:text-xs">Cannon</span>
+            <span class="text-xs">Cannon</span>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="flex flex-col justify-center p-4 w-full lg:w-1/2">
-    <h2 class="font-semibold text-center">Castle Secrets</h2>
-    <div class="mb-1 bg-white dark:bg-gray-900 rounded shadow px-2 py-4" *ngFor="let category of secrets">
-      <div class="flex justify-between items-center">
-        <span>{{category.name}}</span>
-        <div class="flex justify-end">
-          <div class="flex flex-col items-center w-20 sm:w-32" *ngFor="let star of category.stars">
+  </section>
+  <section class="flex w-full flex-col justify-center lg:w-1/2" aria-labelledby="bingo-secrets-title">
+    <h2 id="bingo-secrets-title" class="mb-3 text-center font-semibold">Castle Secrets</h2>
+    <div class="app-panel mb-3 p-3 sm:p-4" *ngFor="let category of secrets">
+      <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+        <span class="font-semibold">{{category.name}}</span>
+        <div class="flex flex-wrap justify-center sm:justify-end">
+          <div class="flex w-24 flex-col items-center sm:w-32" *ngFor="let star of category.stars">
             <app-bingo-goal (toggled)="secretToggled($event)" [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
-            <span class="text-2xs sm:text-xs">{{star.name}}</span>
+            <span class="text-center text-xs">{{star.name}}</span>
           </div>
-          <div class="flex flex-col items-center w-20 sm:w-32" *ngIf="category.name == 'Secret Stages'">
+          <div class="flex w-24 flex-col items-center sm:w-32" *ngIf="category.name == 'Secret Stages'">
             <app-bingo-goal (toggled)="cannonToggled($event)" [uncheckedIcon]="'check_box_outline_blank'" [checkedIcon]="'check_box'"></app-bingo-goal>
-            <span class="text-2xs sm:text-xs">Cloud Stage Cannon</span>
+            <span class="text-center text-xs">Cloud Stage Cannon</span>
           </div>
         </div>
       </div>
     </div>
     <h2 class="font-semibold text-center mt-8">Miscellaneous</h2>
-    <div class="mb-1 bg-white dark:bg-gray-900 rounded shadow px-2 py-4">
-      <div class="flex justify-between items-center">
-        <span>Bosses</span>
-        <div class="flex justify-end">
-          <div class="flex flex-col items-center w-16 sm:w-24" *ngFor="let boss of bosses">
+    <div class="app-panel mb-3 mt-3 p-3 sm:p-4">
+      <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+        <span class="font-semibold">Bosses</span>
+        <div class="flex flex-wrap justify-center sm:justify-end">
+          <div class="flex w-20 flex-col items-center sm:w-24" *ngFor="let boss of bosses">
             <app-bingo-goal [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
-            <span class="text-2xs sm:text-xs">{{boss.name}}</span>
+            <span class="text-center text-xs">{{boss.name}}</span>
           </div>
         </div>
       </div>
     </div>
-    <div class="mb-1 bg-white dark:bg-gray-900 rounded shadow px-2 py-4">
-      <div class="flex justify-between items-center">
-        <span>Races</span>
-        <div class="flex justify-end">
-          <div class="flex flex-col items-center w-20 sm:w-32" *ngFor="let race of races">
+    <div class="app-panel mb-3 p-3 sm:p-4">
+      <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+        <span class="font-semibold">Races</span>
+        <div class="flex flex-wrap justify-center sm:justify-end">
+          <div class="flex w-24 flex-col items-center sm:w-32" *ngFor="let race of races">
             <app-bingo-goal [uncheckedIcon]="'star_border'" [checkedIcon]="'star'"></app-bingo-goal>
-            <span class="text-2xs sm:text-xs">{{race.name}}</span>
+            <span class="text-center text-xs">{{race.name}}</span>
           </div>
         </div>
       </div>
     </div>
     <div class="mt-8">
       <div>
-        <h3 class="uppercase text-gray-500 tracking-wide mb-2">Current Stats</h3>
+        <h3 class="text-muted mb-2 uppercase tracking-wide">Current Stats</h3>
         <ul>
           <li class="flex mb-6">
             <mat-icon class="mr-8">star</mat-icon>
@@ -80,21 +80,21 @@
           </li>
         </ul>
         <hr class="my-4" />
-        <h3 class="uppercase text-gray-500 tracking-wide mb-2">Images</h3>
+        <h3 class="text-muted mb-2 uppercase tracking-wide">Images</h3>
         <div class="flex flex-col">
-          <div class="flex">
-            <span class="link mr-8" (click)="showingCoinImg = !showingCoinImg;">Coins</span>
-            <span class="link" (click)="showingCannonImg = !showingCannonImg;">Cannons</span>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="btn btn-ghost" [attr.aria-expanded]="showingCoinImg" (click)="showingCoinImg = !showingCoinImg;">Coins</button>
+            <button type="button" class="btn btn-ghost" [attr.aria-expanded]="showingCannonImg" (click)="showingCannonImg = !showingCannonImg;">Cannons</button>
           </div>
           <div class="flex flex-col mt-8" *ngIf="showingCoinImg || showingCannonImg">
-            <img src="assets/speedrun/coins.png" *ngIf="showingCoinImg" class="mb-4" />
-            <img src="assets/speedrun/cannons.png" *ngIf="showingCannonImg" />
+            <img src="assets/speedrun/coins.png" alt="Super Mario 64 coin reference" *ngIf="showingCoinImg" class="mb-4 rounded-xl" loading="lazy" />
+            <img src="assets/speedrun/cannons.png" alt="Super Mario 64 cannon reference" *ngIf="showingCannonImg" class="rounded-xl" loading="lazy" />
           </div>
         </div>
         <hr class="my-4" />
-        <h3 class="uppercase text-gray-500 tracking-wide mb-2">Actions</h3>
-        <div class="flex">
-          <button type="button" class="btn btn-primary flex items-center mr-8" (click)="reset()"><mat-icon class="mr-2">refresh</mat-icon> Reset</button>
+        <h3 class="text-muted mb-2 uppercase tracking-wide">Actions</h3>
+        <div class="flex flex-wrap gap-3">
+          <button type="button" class="btn btn-primary" (click)="reset()"><mat-icon>refresh</mat-icon> Reset</button>
           <button type="button" class="btn btn-secondary flex items-center" (click)="toggleHelp(true)" *ngIf="!showingHelp"><mat-icon class="mr-2">help_outline</mat-icon> Show Help</button>
           <button type="button" class="btn btn-secondary flex items-center" (click)="toggleHelp(false)" *ngIf="showingHelp"><mat-icon class="mr-2">help_outline</mat-icon> Hide Help</button>
         </div>
@@ -106,5 +106,5 @@
       If the goal is a castle secret, a cannon, or a 100-coin star, the respective count will be updated.
       The 6 regular stars from each stage do not count toward any goals, but can help you visualize "N stars from X stages" goals.</p>
     </div>
-  </div>
+  </section>
 </div>

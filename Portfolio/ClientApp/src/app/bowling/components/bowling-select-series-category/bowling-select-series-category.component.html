@@ -1,5 +1,7 @@
 <div class="flex items-center">
-  <mat-icon [matTooltip]="currentSeriesCategory.description" class="mr-2 pt-2 text-gray-500 dark:text-gray-300" #tooltip="matTooltip" (click)="tooltip.toggle()">help_outline</mat-icon>
+  <button type="button" class="icon-button mr-2" [matTooltip]="currentSeriesCategory.description" #tooltip="matTooltip" (click)="tooltip.toggle()" aria-label="Show series category help">
+    <mat-icon>help_outline</mat-icon>
+  </button>
   <label class="flex flex-col">
     <span class="pb-1">{{label}}</span>
     <select [(ngModel)]="currentSeriesCategory" (change)="selectSeriesCategory()">

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { GameNightService } from '../../services/game-night.service';
 
 @Component({
@@ -10,6 +10,14 @@ import { GameNightService } from '../../services/game-night.service';
 export class UserStatusConfirmationComponent {
 
   constructor(public gnService: GameNightService){}
+
+  @HostListener('document:keydown.escape', ['$event'])
+  closeOnEscape(event: KeyboardEvent) {
+    if (this.gnService.skippingNight) {
+      event.preventDefault();
+      this.closeModal();
+    }
+  }
 
   
   closeModal() {

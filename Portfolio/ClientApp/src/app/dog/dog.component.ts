@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { Dog, DogTime } from './models/dog';
 import { DogService } from './services/dog.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   standalone: false,
@@ -9,7 +10,7 @@ import { DogService } from './services/dog.service';
   templateUrl: './dog.component.html',
   styleUrls: ['./dog.component.scss']
 })
-export class DogComponent implements OnInit {
+export class DogComponent implements OnInit, OnDestroy {
   time: Date = new Date();
   lastUpdatedTime: Date = new Date();
   canMakeChanges: boolean;
@@ -30,11 +31,13 @@ export class DogComponent implements OnInit {
 
   allClearAudio: HTMLAudioElement;
   nudgeAudio: HTMLAudioElement;
+  private clockIntervalId: ReturnType<typeof setInterval>;
+  private readonly destroyed$ = new Subject<void>();
 
   constructor(private dogService: DogService, private cd: ChangeDetectorRef, private authService: AuthService) { }
 
   ngOnInit(): void {
-    setInterval(() => {
+    this.clockIntervalId = setInterval(() => {
       this.time = new Date();
     }, 1000);
 
@@ -50,7 +53,7 @@ export class DogComponent implements OnInit {
 
     this.refreshDogTimes();
     
-    this.dogService.outsideDog().subscribe(d => {
+    this.dogService.outsideDog().pipe(takeUntil(this.destroyed$)).subscribe(d => {
       if (this.awaitingAlert && this.outsideDog === this.otherDog && d !== this.otherDog) {
         console.log("playing sound to indicate that " + this.otherDog + " is no longer outside");
         if (!this.allClearAudio) {
@@ -72,7 +75,7 @@ export class DogComponent implements OnInit {
       this.cd.detectChanges();
     });
 
-    this.dogService.onNudge().subscribe(nudgedDog => {
+    this.dogService.onNudge().pipe(takeUntil(this.destroyed$)).subscribe(nudgedDog => {
       if (this.outsideDog === this.myDog && nudgedDog === this.myDog) {
         console.log("playing sound to indicate that " + nudgedDog + " should come inside");
         if (!this.nudgeAudio) {
@@ -85,18 +88,26 @@ export class DogComponent implements OnInit {
       }
     });
 
-    this.dogService.onNudgeAcknowledged().subscribe(nudgedDog => {
+    this.dogService.onNudgeAcknowledged().pipe(takeUntil(this.destroyed$)).subscribe(nudgedDog => {
       if (nudgedDog === this.otherDog) {
         console.log(nudgedDog + " is coming inside soon");
         this.nudgeAcknowledged = true;
       }
     });
     
-    this.dogService.onConnectionStatusChange().subscribe(connected => {
+    this.dogService.onConnectionStatusChange().pipe(takeUntil(this.destroyed$)).subscribe(connected => {
       this.connected = connected;
     });
 
     this.dogService.start();
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.clockIntervalId);
+    this.destroyed$.next();
+    this.destroyed$.complete();
+    this.silence();
+    this.dogService.stop();
   }
 
   refresh() {
@@ -129,8 +140,10 @@ export class DogComponent implements OnInit {
 
   refreshDogTimes() {
     this.dogService.getRecentDogTimes(10).subscribe(times => {
-      this.dogTimes = times;
-      this.lastUpdatedTime = new Date(times[0].timestamp + 'Z');
+      this.dogTimes = times || [];
+      if (this.dogTimes.length > 0) {
+        this.lastUpdatedTime = new Date(this.dogTimes[0].timestamp + 'Z');
+      }
     });
   }
 

@@ -1,0 +1,82 @@
+<blog-article>
+  <blog-header>
+    <blog-title>A New Home and a Fresh Coat of Paint</blog-title>
+    <blog-date>July 12, 2026</blog-date>
+    <blog-subtitle>Apparently, keeping a website alive is a hobby all by itself.</blog-subtitle>
+  </blog-header>
+
+  <blog-section>
+    <blog-section-title>So, What Happened?</blog-section-title>
+    <blog-p>
+      This website has had a surprisingly eventful few days. I started with what I thought would be a fairly focused infrastructure project and ended up with a self-hosted deployment path, a more carefully documented hosting setup, and a front-end that looks like it belongs to the present decade. I am choosing to call that scope expansion instead of what it obviously was: me getting distracted.
+    </blog-p>
+    <blog-p>
+      The other reason this happened is that I wanted to try something new. Most of this work was a test and proof of concept for the newly released (at the time) 5.6 Sol Ultra. I wanted to see how well it could handle a real, slightly messy project with real infrastructure, real bugs, and real decisions that cannot be solved by making a button a little bluer.
+    </blog-p>
+  </blog-section>
+
+  <blog-section>
+    <blog-section-title>A New Home</blog-section-title>
+    <blog-p>
+      The biggest change was the switch to self-hosting. The new path runs on a Mac mini with an Ubuntu Multipass virtual machine, Docker and Docker Compose, Caddy at the edge, and an outbound Cloudflare Tunnel. There is also a self-hosted GitHub Actions runner, because apparently I wanted the little computer in my office to have a job title.
+    </blog-p>
+    <blog-p>
+      This was more involved than simply running <blog-code>docker compose up</blog-code> and declaring victory. I had to think through the network boundary, secrets, backups, database storage, deploy behavior, and what should happen when the machine reboots. The hosting runbook now records the setup and the recovery path instead of relying on future-me's notoriously unreliable memory.
+    </blog-p>
+    <blog-p>
+      The move is deliberately staged. The self-hosted environment and edge path are in place, while the existing production source remains protected until the final cutover is appropriate. That makes the whole thing much less exciting than pointing DNS at a new box and hoping for the best, but I have learned that boring infrastructure is usually a sign that infrastructure is working.
+    </blog-p>
+  </blog-section>
+
+  <blog-section>
+    <blog-section-title>Giving the Front-End Some Attention</blog-section-title>
+    <blog-p>
+      Once the hosting work was in a good place, I gave the front-end the pass it had been quietly requesting for several years. The original site was functional, but its styling had grown organically: a lot of utility classes, a few very dark dark-mode surfaces, and a mobile header that mostly hoped the screen was wide enough.
+    </blog-p>
+    <blog-p>
+      The modernization focused on making the whole site feel like one product instead of a collection of pages that happen to share a URL. I introduced a shared visual system with calmer dark colors, softer surfaces, consistent borders and shadows, clearer focus states, and a small amount of motion. The home page now has a stronger introduction and responsive project grids, and the blog has a proper archive with readable article cards.
+    </blog-p>
+    <blog-p>
+      I also worked through the less glamorous parts: mobile spacing, touch target sizes, semantic buttons and links, form labels, dialog behavior, route navigation, stale state, and a handful of bugs that had been hiding in plain sight. The goal was not to rewrite everything. It was to make the existing ideas easier to use and a little nicer to live with.
+    </blog-p>
+  </blog-section>
+
+  <blog-section>
+    <blog-section-title>What 5.6 Sol Ultra Did</blog-section-title>
+    <blog-p>
+      The point of the exercise was never to see whether a model could generate a pretty landing page from scratch. It was to see whether it could understand an existing application, keep its voice, make changes across a large number of components, and still leave me with something I could inspect and maintain.
+    </blog-p>
+    <blog-p>
+      I gave it the broad goal, then spent a lot of time reviewing the results, checking the actual pages at mobile and desktop sizes, running builds and tests, and correcting the places where an apparently reasonable change was not actually the right behavior. That review loop mattered. The model was useful because it could move quickly through a large surface area, but the project still needed judgment about what belonged in the product.
+    </blog-p>
+    <blog-p>
+      And, quite honestly, I am blown away. The combination of infrastructure work, responsive UI changes, accessibility fixes, bug fixes, and verification was far beyond what I expected from a proof of concept. It felt less like asking for snippets and more like having a very fast collaborator who was willing to keep walking through the app with me.
+    </blog-p>
+  </blog-section>
+
+  <blog-section>
+    <blog-section-title>The Part Where I Try to Be Reasonable</blog-section-title>
+    <blog-p>
+      This is still a portfolio site. It does not need a twelve-service Kubernetes cluster, a design system committee, or a heroic deployment ceremony every time I change a paragraph. The useful outcome is a simpler hosting path, a clearer recovery story, and a front-end that I will hopefully not be embarrassed to open on my phone anymore.
+    </blog-p>
+    <blog-p>
+      I am calling the work a success. The site has a new home, a fresh coat of paint, and a much better excuse for its next blog post. Now I just need to remember to write that post before 2028.
+    </blog-p>
+  </blog-section>
+
+  <blog-section>
+    <blog-section-title>My Actual Thoughts</blog-section-title>
+    <blog-p>
+      If it wasn't obvious, the entirety of the preceding blog post was written by AI. I told it to "add a blog post using the same voice/style as the other blog posts," plus a few key points I wanted it to touch on.
+    </blog-p>
+    <blog-p>
+      The truth is, I <i>am</i> blown away by 5.6 Sol Ultra (ironically, I'm using 5.6 Luna XHigh now because I'd like not to burn my usage limit with this prompt), and a simple prompt to modernize the entire front-end did more in 20 minutes than I did in the past 3 years. That said, I have my qualms.
+    </blog-p>
+    <blog-p>
+      The website now looks much better than it did, but it also looks like every other AI-generated website I've visited in the past year. The text it added (a few brief headers and summaries, plus the blog post itself) read like the most obvious AI voice ever. There's just something I can't get past about text that reads like AI. It makes me immediately want to discredit everything I'm looking at.
+    </blog-p>
+    <blog-p>
+      Anyway, I did it, and it looks amazing, so here we are. I don't quite know how anyone will get hired as a Software Engineer these days anyway, but I guess this portfolio now exists to show that I can pilot an LLM decently competently rather than any showcase of my actual development skills. Good luck, future me!
+    </blog-p>
+  </blog-section>
+</blog-article>

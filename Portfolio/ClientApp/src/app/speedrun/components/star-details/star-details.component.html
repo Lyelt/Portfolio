@@ -1,31 +1,31 @@
 <div class="pt-8">
-    <div class="flex justify-between mb-8">
-        <span class="link" (click)="closed.emit()">&larr; Back</span>
-        <h3 class="font-bold text-lg md:text-2xl">{{star.name}}</h3>
-        <span class="opacity-0"></span>
+    <div class="mb-8 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
+        <button type="button" class="btn btn-ghost" (click)="closed.emit()">&larr; Back</button>
+        <h2 class="truncate text-center text-lg font-bold md:text-2xl">{{star.name}}</h2>
+        <span class="h-11 w-11" aria-hidden="true"></span>
     </div>
     <div>
         <!-- tab labels -->
-        <nav class="flex items-center justify-center space-x-8 text-xs sm:text-sm md:text-base md:space-x-12 lg:space-x-20 mb-20">
-            <span class="nav-link nav-link-hover text-center" [ngClass]="{'font-bold border-b-2 border-indigo-400': selectedTab === 'time'}" (click)="selectedTab = 'time'">Time Comparison</span>
-            <span class="nav-link nav-link-hover text-center" [ngClass]="{'font-bold border-b-2 border-indigo-400': selectedTab === 'edit'}" (click)="selectedTab = 'edit'">Edit</span>
-            <span class="nav-link nav-link-hover text-center" [ngClass]="{'font-bold border-b-2 border-indigo-400': selectedTab === 'archive'}" (click)="selectedTab = 'archive'">Archive</span>
-            <span class="nav-link nav-link-hover text-center" [ngClass]="{'font-bold border-b-2 border-indigo-400': selectedTab === 'rta'}" (click)="selectedTab = 'rta'">RTA Guide</span>
+        <nav class="-mx-4 mb-12 flex items-center justify-start gap-2 overflow-x-auto px-4 pb-2 text-sm sm:mx-0 sm:justify-center sm:px-0 md:mb-16 md:text-base" aria-label="Star detail views">
+            <button type="button" class="nav-link nav-link-hover flex-none text-center" [attr.aria-pressed]="selectedTab === 'time'" [ngClass]="{'active font-bold': selectedTab === 'time'}" (click)="selectedTab = 'time'">Time Comparison</button>
+            <button type="button" class="nav-link nav-link-hover flex-none text-center" [attr.aria-pressed]="selectedTab === 'edit'" [ngClass]="{'active font-bold': selectedTab === 'edit'}" (click)="selectedTab = 'edit'">Edit</button>
+            <button type="button" class="nav-link nav-link-hover flex-none text-center" [attr.aria-pressed]="selectedTab === 'archive'" [ngClass]="{'active font-bold': selectedTab === 'archive'}" (click)="selectedTab = 'archive'">Archive</button>
+            <button type="button" class="nav-link nav-link-hover flex-none text-center" [attr.aria-pressed]="selectedTab === 'rta'" [ngClass]="{'active font-bold': selectedTab === 'rta'}" (click)="selectedTab = 'rta'">RTA Guide</button>
         </nav>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-6" *ngIf="selectedTab === 'time'">
+        <div class="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-6" *ngIf="selectedTab === 'time'">
             <div *ngFor="let runner of runners" class="md:first:text-right">
                 <div *ngIf="getStarTime(runner); let time" class="flex flex-col">
                     <span class="uppercase font-medium tracking-wide pb-4">{{runner.userName}}</span>
                     <span class="pb-4" [ngClass]="{'font-bold tracking-tight text-indigo-600 dark:text-pink-400' : starTimeIsFastest(time)}">{{time.timeDisplay}}</span>
-                    <div class="h-96 lg:h-112 xl:h-128">
-                        <iframe *ngIf="time.videoUrl" class="w-full h-full" [src]="time.videoUrl | safeYt" frameborder="0" allowfullscreen></iframe>
+                    <div class="surface-card aspect-video overflow-hidden">
+                        <iframe *ngIf="time.videoUrl" class="h-full w-full" [src]="time.videoUrl | safeYt" [title]="runner.userName + ' run video for ' + star.name" loading="lazy" allowfullscreen></iframe>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-6" *ngIf="selectedTab === 'edit'">
+        <div class="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-6" *ngIf="selectedTab === 'edit'">
             <div *ngFor="let runner of runners; let i = index" class="flex flex-col md:first:text-right">
                 <span class="uppercase font-medium tracking-wide pb-4">{{runner.userName}}</span>
                 <app-edit-star class="hidden md:block" [starTime]="getStarTime(runner)" [runnerName]="runner.userName" [alignment]="i === 0 ? 'right' : 'left'"></app-edit-star>
@@ -33,7 +33,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-6" *ngIf="selectedTab === 'archive'">
+        <div class="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-6" *ngIf="selectedTab === 'archive'">
             <div *ngFor="let runner of runners" class="flex flex-col">
                 <span class="uppercase tracking-wide mb-6 text-center">{{runner.userName}}</span>
                 <app-archive [star]="star" [runner]="runner"></app-archive>
@@ -41,8 +41,8 @@
         </div>
 
         <div *ngIf="selectedTab === 'rta'">
-            <div class="w-full h-256" *ngIf="star.rtaGuideUrl">
-                <iframe class="w-full h-full" [src]="star.rtaGuideUrl | safe"></iframe>
+            <div class="surface-card h-[70vh] min-h-96 w-full overflow-hidden" *ngIf="star.rtaGuideUrl">
+                <iframe class="h-full w-full" [src]="star.rtaGuideUrl | safe" [title]="'RTA guide for ' + star.name" loading="lazy"></iframe>
             </div>
         </div>
     </div>

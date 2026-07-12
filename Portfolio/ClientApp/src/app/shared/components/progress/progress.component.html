@@ -1,6 +1,16 @@
 <div class="flex flex-col w-full">
-    <span *ngIf="showNumbers" class="text-xs text-right mb-1.5 tracking-wide">{{complete}}/{{total}}</span>
-    <div class="overflow-hidden h-1 rounded" [ngClass]="{'bg-red-200': percentage >= 0 && percentage < 50, 'bg-orange-200': percentage >= 50 && percentage < 80, 'bg-green-200': percentage >= 80}">
-        <div [style.width.%]="percentage" class="h-full" [ngClass]="{'bg-red-500': percentage >= 0 && percentage < 50, 'bg-orange-500': percentage >= 50 && percentage < 80, 'bg-green-500': percentage >= 80}"></div>
+    <span *ngIf="showNumbers" class="text-muted mb-1.5 text-right text-xs font-semibold tracking-wide" aria-hidden="true">{{complete}}/{{total}}</span>
+    <div
+      class="progress-track"
+      role="progressbar"
+      aria-label="Completion progress"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      [attr.aria-valuenow]="normalizedPercentage"
+      [attr.aria-valuetext]="progressValueText">
+        <div
+          [style.width.%]="normalizedPercentage"
+          class="progress-fill"
+          [ngClass]="{'progress-low': normalizedPercentage < 50, 'progress-medium': normalizedPercentage >= 50 && normalizedPercentage < 80, 'progress-high': normalizedPercentage >= 80}"></div>
     </div>
 </div>

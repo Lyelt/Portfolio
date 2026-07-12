@@ -87,6 +87,7 @@ import { DogComponent } from './dog/dog.component';
 import { DogIndicatorComponent } from './dog/components/dog-indicator/dog-indicator.component';
 import { MaterialModule } from './material/material.module';
 import { September2023Component } from './blog/components/articles/september2023/september2023.component';
+import { SelfHostingComponent } from './blog/components/articles/self-hosting/self-hosting.component';
 import { BlogCodeComponent } from './blog/components/blog-template/blog-code/blog-code.component';
 import { GameNightComponent } from './game-night/components/game-night/game-night.component';
 import { GameNightHomeComponent } from './game-night/components/game-night-home/game-night-home.component';
@@ -95,8 +96,6 @@ import { GamesComponent } from './game-night/components/games/games.component';
 import { MealsComponent } from './game-night/components/meals/meals.component';
 import { GameNightUserStatusesComponent } from './game-night/components/game-night-user-statuses/game-night-user-statuses.component';
 import { UserStatusConfirmationComponent } from './game-night/components/user-status-confirmation/user-status-confirmation.component';
-import { BaseUrlInterceptor } from './base-url-interceptor';
-import { environment } from 'src/environments/environment';
 
 const routes: Routes = [
     {
@@ -140,6 +139,9 @@ const routes: Routes = [
     },
     {
         path: 'blog/upgrade', component: September2023Component
+    },
+    {
+        path: 'blog/self-hosting', component: SelfHostingComponent
     },
     {
         path: 'speedrun', component: SpeedrunComponent, canActivate: [AuthGuard]
@@ -287,6 +289,7 @@ const routes: Routes = [
         DogComponent,
         DogIndicatorComponent,
         September2023Component,
+        SelfHostingComponent,
         BlogCodeComponent,
         GameNightComponent,
         GameNightHomeComponent,
@@ -300,7 +303,12 @@ const routes: Routes = [
         CommonModule,
         HttpClientModule,
       MaterialModule,
-      RouterModule.forRoot(routes, { useHash: false, scrollPositionRestoration: 'disabled' }),
+      RouterModule.forRoot(routes, {
+        useHash: false,
+        anchorScrolling: 'enabled',
+        scrollOffset: [0, 96],
+        scrollPositionRestoration: 'enabled'
+      }),
         NgxChartsModule,
         AutocompleteLibModule,
         JwtModule.forRoot({
@@ -317,9 +325,7 @@ const routes: Routes = [
         JwtHelperService,
         FramesPipe,
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: BaseUrlInterceptor, multi: true },
-        { provide: "BASE_API_URL", useValue: environment.apiUrl }
+        { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
     ],
     bootstrap: [AppComponent]
 })

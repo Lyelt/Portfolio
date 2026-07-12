@@ -1,65 +1,109 @@
-<div>
-  <section class="flex flex-col items-center text-center px-4 pb-8">
-    <h1 class="font-bold text-2xl mb-4">
-      Hi, I'm <span class="text-indigo-500 dark:text-indigo-400">Nicholas Ghobrial</span>.
+<section class="home-hero" aria-labelledby="home-title">
+  <div class="home-hero__glow home-hero__glow--one" aria-hidden="true"></div>
+  <div class="home-hero__glow home-hero__glow--two" aria-hidden="true"></div>
+
+  <div class="page-container home-hero__content">
+    <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Software engineer · Connecticut</p>
+    <h1 id="home-title" class="home-hero__title">
+      Hi, I'm <span>Nicholas Ghobrial</span>.
     </h1>
-    <p class="max-w-xl">
-      I'm a software engineer from Connecticut working for
-      <a class="link" href="https://capsuletech.com/capsule-surveillance">Capsule Technologies</a>, a Philips medical device software company.
+    <p class="home-hero__intro">
+      I'm a software engineer from Connecticut working on
+      <a class="link" href="https://www.usa.philips.com/healthcare/product/NOCTNSURV/capsule-surveillance" target="_blank" rel="noopener noreferrer">medical device software</a>
+      for Philips.
     </p>
-  </section>
-  <div class="w-full opacity-75 -mt-8 md:-mt-12 xl:-mt-18">
+    <div class="home-hero__actions">
+      <a class="btn btn-primary" [routerLink]="['/']" fragment="projects">
+        Explore my work <mat-icon aria-hidden="true">arrow_downward</mat-icon>
+      </a>
+      <a class="btn btn-secondary" routerLink="/blog">
+        Read the blog <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+      </a>
+    </div>
+  </div>
+
+  <div class="home-hero__wave">
     <app-background-icon></app-background-icon>
   </div>
-</div>
+</section>
 
-<div class="container mx-auto px-4 max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-  <!-- Projects -->
+<div class="page-container home-content">
   <app-section id="projects">
     <app-section-title>Personal Projects</app-section-title>
-    <app-project *ngFor="let project of projects" [name]="project.name" [description]="project.description" [blogUrl]="project.blogUrl" [githubUrl]="project.viewUrl"></app-project>
-    
-    <div class="flex flex-col border-b-2 border-pink-400 dark:border-pink-700 py-4 my-8 leading-tight text-left text-gray-600 dark:text-gray-200">
-      <h2 class="font-semibold text-md">Live Demos</h2>
-      <p class="text-sm pt-2">You can see these particular projects in action and try them out yourself!</p>
+    <p class="section-intro">A selection of tools and experiments I've built around work, learning, and the things I enjoy.</p>
+
+    <div class="project-grid project-grid--featured">
+      <app-project *ngFor="let project of projects" [name]="project.name" [description]="project.description"
+                   [blogUrl]="project.blogUrl" [githubUrl]="project.viewUrl"></app-project>
     </div>
-    <app-demo *ngFor="let demo of demos" [name]="demo.name" [description]="demo.description" [blogUrl]="demo.blogUrl" [demoUrl]="demo.viewUrl"></app-demo>
+
+    <div class="live-demos-heading">
+      <div>
+        <p class="eyebrow">Try something</p>
+        <h3>Live demos</h3>
+      </div>
+      <p>You can see these particular projects in action and try them out yourself!</p>
+    </div>
+
+    <div class="project-grid project-grid--demos">
+      <app-demo *ngFor="let demo of demos" [name]="demo.name" [description]="demo.description"
+                [blogUrl]="demo.blogUrl" [demoUrl]="demo.viewUrl"></app-demo>
+    </div>
   </app-section>
 
-  <!-- Skills and Experience -->
   <app-section id="skills">
     <app-section-title>Skills and Experience</app-section-title>
+    <p class="section-intro">The technologies and practices I reach for most often.</p>
     <app-skills>
       <app-skills-section *ngFor="let skill of skills" [title]="skill.title" [skills]="skill.skills"></app-skills-section>
     </app-skills>
   </app-section>
 
-  <!-- About -->
   <app-section id="about">
     <app-section-title>About Me</app-section-title>
-    <blog-p>
-      In 2014, I graduated high school with absolutely no clue what I wanted to do in life. I knew I liked video games, though, so I decided to try my hand at a computer science degree.
-    </blog-p>
-    <blog-p>
-      In 2018, I graduated from the <a class="link" href="https://www.newhaven.edu/">University of New Haven</a> with said degree and a passion for programming that I discovered along the way.
-    </blog-p>
-    <blog-p>
-      Aside from my aforementioned love of video games, I also enjoy board games, tennis, bowling, playing guitar, and cooking. Check out <a class="link" href="/blog/portfolio">my portfolio blog post</a> for a look at some of the software I've built around my hobbies.
-    </blog-p>
+    <div class="surface-card prose-card">
+      <blog-p>
+        In 2014, I graduated high school with absolutely no clue what I wanted to do in life. I knew I liked video games, though, so I decided to try my hand at a computer science degree.
+      </blog-p>
+      <blog-p>
+        In 2018, I graduated from the <a class="link" href="https://www.newhaven.edu/" target="_blank" rel="noopener noreferrer">University of New Haven</a> with said degree and a passion for programming that I discovered along the way.
+      </blog-p>
+      <blog-p>
+        Aside from my aforementioned love of video games, I also enjoy board games, tennis, bowling, playing guitar, and cooking. Check out <a class="link" routerLink="/blog/portfolio">my portfolio blog post</a> for a look at some of the software I've built around my hobbies.
+      </blog-p>
+    </div>
   </app-section>
 
-  <!-- Contact -->
   <app-section id="contact">
     <app-section-title>Contact Me</app-section-title>
-    <div class="flex flex-col">
-      <div class="flex flex-row align-center justify-start py-3"><mat-icon class="text-indigo-500 dark:text-indigo-400">email</mat-icon><span class="ml-12">nicholas.ghobrial@gmail.com</span></div>
-      <div class="flex flex-row align-center justify-start py-3"><mat-icon class="text-indigo-500 dark:text-indigo-400">call</mat-icon><span class="ml-12">(203) 318-4094</span></div>
-      <div class="flex flex-row align-center justify-start py-3"><mat-icon class="text-indigo-500 dark:text-indigo-400">location_on</mat-icon><span class="ml-12"><span class="text-xs font-light mr-1">near</span><a class="link text-gray-600" href="https://www.google.com/maps/place/New+Haven,+CT">New Haven, CT</a></span></div>
+    <p class="section-intro">The easiest ways to get in touch or see where I'm based.</p>
+    <div class="contact-grid">
+      <a class="surface-card contact-card" href="mailto:nicholas.ghobrial@gmail.com">
+        <span class="contact-card__icon"><mat-icon aria-hidden="true">email</mat-icon></span>
+        <span class="contact-card__copy"><strong>Email</strong><span>nicholas.ghobrial@gmail.com</span></span>
+        <mat-icon class="contact-card__arrow" aria-hidden="true">arrow_outward</mat-icon>
+      </a>
+      <a class="surface-card contact-card" href="tel:+12033184094">
+        <span class="contact-card__icon"><mat-icon aria-hidden="true">call</mat-icon></span>
+        <span class="contact-card__copy"><strong>Phone</strong><span>(203) 318-4094</span></span>
+        <mat-icon class="contact-card__arrow" aria-hidden="true">arrow_outward</mat-icon>
+      </a>
+      <a class="surface-card contact-card" href="https://www.google.com/maps/place/New+Haven,+CT" target="_blank" rel="noopener noreferrer">
+        <span class="contact-card__icon"><mat-icon aria-hidden="true">location_on</mat-icon></span>
+        <span class="contact-card__copy"><strong>Location</strong><span>Near New Haven, CT</span></span>
+        <mat-icon class="contact-card__arrow" aria-hidden="true">arrow_outward</mat-icon>
+      </a>
     </div>
   </app-section>
 
   <app-section id="blog">
-    <app-section-title>Blog</app-section-title>
-    <blog-p>Click <a class="link" href="/blog">here</a> to view some posts about my thought process as I developed this portfolio and my other projects.</blog-p>
+    <div class="blog-cta surface-card">
+      <div>
+        <p class="eyebrow">Notes from the process</p>
+        <h2>Read the blog</h2>
+        <p>Posts about my thought process as I developed this portfolio and my other projects.</p>
+      </div>
+      <a class="btn btn-primary" routerLink="/blog">Browse posts <mat-icon aria-hidden="true">arrow_forward</mat-icon></a>
+    </div>
   </app-section>
 </div>

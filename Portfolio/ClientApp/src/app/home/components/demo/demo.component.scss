@@ -1,0 +1,67 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.demo-card {
+  display: grid;
+  height: 100%;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.demo-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 48%, var(--border));
+  transform: translateY(-2px);
+}
+
+.demo-card__icon {
+  display: grid;
+  width: 2.65rem;
+  height: 2.65rem;
+  place-items: center;
+  border-radius: 0.8rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.demo-card__copy h3 {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.demo-card__copy p {
+  margin-top: 0.4rem;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.demo-card__actions {
+  display: flex;
+  grid-column: 1 / -1;
+  flex-direction: column-reverse;
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+}
+
+.demo-card__actions .btn {
+  width: 100%;
+  font-size: 0.78rem;
+}
+
+.demo-card__actions mat-icon {
+  width: 1rem;
+  height: 1rem;
+  font-size: 1rem;
+}
+
+@media (min-width: 480px) {
+  .demo-card__actions {
+    flex-direction: row;
+  }
+
+  .demo-card__actions .btn { width: auto; }
+}

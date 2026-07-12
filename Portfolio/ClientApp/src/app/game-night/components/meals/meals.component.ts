@@ -38,9 +38,6 @@ export class MealsComponent implements OnInit {
       gn.gameNightMealId = meal.id;
       this.gnService.saveMeal(gn);
     }
-    else {
-      //this.gnService.suggestMeal(meal);
-    }
   }
 
   public userCanSetMeal(): boolean {

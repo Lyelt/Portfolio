@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
 
 @Component({
   standalone: false,
@@ -7,7 +6,7 @@ import { Router } from '@angular/router';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   projects: Project[] = [
     { name: "D&D Encounter Simulator", description: "A tool used for tracking initiatives and statistics during a D&D encounter.", blogUrl: "/blog/encounter", viewUrl: "https://github.com/Lyelt/EncounterSimulator" },
     { name: "Typing Analyzer", description: "Gather interesting and useful stats about your typing patterns.", blogUrl: "https://trello.com/c/9eS9U7oW/31-requirements", viewUrl: "https://github.com/Lyelt/TypingAnalyzer" },
@@ -27,16 +26,6 @@ export class HomeComponent implements OnInit {
     { title: "Continuous Integration & Deployment", skills: ["Docker / dokku", "Jenkins", "Azure DevOps"]},
   ];
 
-  constructor(private router: Router) {
-
-  }
-
-  ngOnInit() {
-  }
-
-  navigate(url: string) {
-    window.open(url, '_blank');
-  }
 }
 
 class Project {

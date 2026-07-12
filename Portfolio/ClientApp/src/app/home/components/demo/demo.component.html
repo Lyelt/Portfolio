@@ -1,20 +1,11 @@
-<div class="text-center rounded shadow-md mb-6">
-  <div class="p-4 bg-gray-200 dark:bg-gray-900 border-b border-gray-300">
-    <p class="font-medium">
-      {{name}}
-    </p>
-    <p class="text-sm">
-      {{description}}
-    </p>
+<article class="demo-card surface-card">
+  <span class="demo-card__icon" aria-hidden="true"><mat-icon>play_circle_outline</mat-icon></span>
+  <div class="demo-card__copy">
+    <h3>{{name}}</h3>
+    <p>{{description}}</p>
   </div>
-  <div class="flex justify-center py-1 bg-white dark:bg-pink-700">
-    <a [href]="blogUrl" target="_blank" class="flex items-center btn hover:bg-gray-200 dark:hover:bg-pink-900">
-      <mat-icon class="mr-1">menu_book</mat-icon>
-      <p>Read More</p>
-    </a>
-    <a [href]="demoUrl" class="flex items-center btn hover:bg-gray-200 dark:hover:bg-pink-900">
-      <mat-icon class="mr-1">visibility</mat-icon>
-      <p>View in Action</p>
-    </a>
+  <div class="demo-card__actions">
+    <a [href]="blogUrl" class="btn btn-ghost"><mat-icon aria-hidden="true">menu_book</mat-icon>Read More</a>
+    <a [href]="demoUrl" class="btn btn-primary"><mat-icon aria-hidden="true">arrow_forward</mat-icon>View in Action</a>
   </div>
-</div>
+</article>

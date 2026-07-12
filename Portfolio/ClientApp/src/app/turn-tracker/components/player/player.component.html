@@ -1,19 +1,42 @@
 <form (ngSubmit)="emitPlayerEndedTurn()">
-  <div class="bg-gray-300 dark:bg-gray-500 rounded-full px-4 py-2 mt-4 flex justify-between items-center" [class.animate-border]="player.isActive">
-    <mat-icon *ngIf="!player.isActive" title="Remove {{player.name}}"
-              class="cursor-pointer h-6"
-              (click)="emitPlayerRemoved()" [@fade]>clear</mat-icon>
+  <div
+    class="player-card app-panel mt-3 flex items-center justify-between gap-2"
+    [class.animate-border]="player.isActive"
+    [attr.aria-current]="player.isActive ? 'step' : null">
+    <button
+      *ngIf="!player.isActive"
+      type="button"
+      class="icon-button"
+      title="Remove {{player.name}}"
+      attr.aria-label="Remove {{player.name}}"
+      (click)="emitPlayerRemoved()"
+      [@fade]>
+      <mat-icon aria-hidden="true">clear</mat-icon>
+    </button>
 
-    <button *ngIf="player.isActive" title="Previous player"
-            class="cursor-pointer text-indigo-500 h-6" type="button"
-            (click)="emitPlayerNavigatedBackward()" [@slideButtonLeft]><mat-icon>navigate_before</mat-icon></button>
+    <button
+      *ngIf="player.isActive"
+      title="Previous player"
+      aria-label="Previous player"
+      class="icon-button"
+      type="button"
+      (click)="emitPlayerNavigatedBackward()"
+      [@slideButtonLeft]>
+      <mat-icon aria-hidden="true">navigate_before</mat-icon>
+    </button>
 
-    <p class="truncate px-1 h-6 text-left flex-grow ml-8 sm:ml-12">{{player.name}}</p>
+    <p class="min-w-0 flex-1 truncate px-2 text-left font-semibold">{{player.name}}</p>
 
-    <span *ngIf="!player.isActive" class="h-6" [@fade]>{{player.order}}</span>
+    <span *ngIf="!player.isActive" class="order-badge" [@fade] aria-label="Order {{player.order}}">{{player.order}}</span>
 
-    <button *ngIf="player.isActive" title="Next player"
-            class="cursor-pointer text-indigo-500 h-6" type="submit" [@slideButtonRight]><mat-icon>navigate_next</mat-icon></button>
+    <button
+      *ngIf="player.isActive"
+      title="Next player"
+      aria-label="Next player"
+      class="icon-button"
+      type="submit"
+      [@slideButtonRight]>
+      <mat-icon aria-hidden="true">navigate_next</mat-icon>
+    </button>
   </div>
 </form>
-

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../auth.service';
 
 @Component({
@@ -10,7 +10,8 @@ import { AuthService } from '../../auth.service';
 export class HashComponent implements OnInit {
 
     input: string = "";
-    @ViewChild('output') output: ElementRef;
+    hashValue: string = "";
+    copyStatus: string = "";
 
     constructor(private authService: AuthService) { }
 
@@ -19,13 +20,22 @@ export class HashComponent implements OnInit {
 
     hash() {
         this.authService.getHashedPassword(this.input).subscribe(response => {
-            this.output.nativeElement.value = response.hash;
+            this.hashValue = response.hash;
+            this.copyStatus = "";
         });
     }
 
-    copyToClipboard() {
-        this.output.nativeElement.select();
-        document.execCommand("copy");
+    async copyToClipboard() {
+        if (!this.hashValue) {
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(this.hashValue);
+            this.copyStatus = "Copied";
+        } catch {
+            this.copyStatus = "Copy failed";
+        }
     }
 
 }
