@@ -14,3 +14,12 @@ Other features of the website:
 * [Super Mario 64 Bingo Tool](https://ghobrial.dev/speedrun/bingo)
 * [Turn Tracker](https://ghobrial.dev/initiative). See [blog post](https://ghobrial.dev/blog/initiative) for more info.
 * [Yu-Gi-Oh Deck Builder](https://ghobrial.dev/yugioh). See [blog post](https://ghobrial.dev/blog/yugioh) for more info.
+
+## Deployment
+
+Portfolio publishes immutable multi-architecture images from `staging` and
+`master`. The application repository owns its image, PostgreSQL Compose model,
+migrations, deployment adapter, and backups; the private
+`Lyelt/MacMiniInfrastructure` repository owns the shared Mac mini, Caddy,
+Cloudflare Tunnel, Docker network, and runner installation. See
+[HOSTING_SETUP.md](HOSTING_SETUP.md) for the application operations contract.
