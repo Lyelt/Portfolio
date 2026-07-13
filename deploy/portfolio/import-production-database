@@ -15,7 +15,7 @@ readonly IMPORT_MARKER='/srv/secrets/portfolio/production-import-complete'
 readonly VOLUME='portfolio-prod-postgres-data'
 readonly CONTAINER='portfolio-prod-import-db'
 readonly CURRENT_LINK='/srv/apps/portfolio/prod/current'
-readonly LOCK_FILE='/srv/apps/portfolio/.deploy.lock'
+readonly LOCK_FILE='/srv/apps/.deploy.lock'
 
 container_created='false'
 

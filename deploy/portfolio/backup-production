@@ -10,7 +10,7 @@ export PATH
 readonly BACKUP_DIR='/srv/backups/portfolio/daily'
 readonly SECRET_FILE='/srv/secrets/portfolio/backup.env'
 readonly PRODUCTION_ENV_FILE='/srv/secrets/portfolio/prod.env'
-readonly LOCK_FILE='/srv/apps/portfolio/.deploy.lock'
+readonly LOCK_FILE='/srv/apps/.deploy.lock'
 readonly POSTGRES_IMAGE='postgres:17-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193'
 readonly RETENTION_DAYS=90
 
