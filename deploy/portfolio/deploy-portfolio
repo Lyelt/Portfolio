@@ -12,7 +12,7 @@ readonly BASE_DIR='/srv/apps/portfolio'
 readonly REPOSITORY_DIR="${BASE_DIR}/repository.git"
 readonly SECRETS_DIR='/srv/secrets/portfolio'
 readonly BACKUPS_DIR='/srv/backups/portfolio'
-readonly LOCK_FILE="${BASE_DIR}/.deploy.lock"
+readonly LOCK_FILE='/srv/apps/.deploy.lock'
 readonly COMPOSE_RELATIVE_PATH='deploy/portfolio/compose.yml'
 readonly INSTALLED_SCRIPT='/usr/local/sbin/deploy-portfolio'
 readonly PRODUCTION_SENTINEL="${SECRETS_DIR}/production-enabled"
@@ -52,7 +52,7 @@ cleanup() {
 trap cleanup EXIT
 
 usage() {
-  printf 'Usage: %s <staging|prod> <40-character-commit-sha>\n' "$0" >&2
+  printf 'Usage: %s <staging|prod> <40-character-commit-sha> <ghcr-image@sha256:digest>\n' "$0" >&2
   exit 64
 }
 
@@ -161,7 +161,7 @@ compose_for() {
       DEPLOY_ENV="${deployment_environment}" \
       APP_ENVIRONMENT="${app_environment}" \
       DB_VOLUME_NAME="${database_volume}" \
-      IMAGE_TAG="${image_tag}" \
+      IMAGE_REF="${image_tag}" \
       WEB_ALIAS="${web_alias}" \
       docker compose \
         --env-file "${secrets_file}" \
@@ -258,15 +258,19 @@ read_current_release() {
 create_database_backup() {
   local release="$1"
   local image_tag="$2"
-  local backup_dir timestamp final_backup final_checksum backup_hash
+  local backup_dir timestamp final_backup final_checksum backup_hash safe_label
+
+  safe_label="${image_tag//\//-}"
+  safe_label="${safe_label//@/-}"
+  safe_label="${safe_label//:/-}"
 
   backup_dir="${BACKUPS_DIR}/${deployment_environment}"
   [[ -d "${backup_dir}" && -w "${backup_dir}" ]] ||
     fail "Database backup directory is unavailable: ${backup_dir}"
 
   timestamp="$(date -u '+%Y%m%dT%H%M%S%NZ')"
-  final_backup="${backup_dir}/${timestamp}-${image_tag}.dump"
-  temporary_backup="$(mktemp "${backup_dir}/.${timestamp}-${image_tag}.XXXXXX.dump")"
+  final_backup="${backup_dir}/${timestamp}-${safe_label}.dump"
+  temporary_backup="$(mktemp "${backup_dir}/.${timestamp}-${safe_label}.XXXXXX.dump")"
   chmod 0600 "${temporary_backup}"
 
   log "Creating ${deployment_environment} PostgreSQL backup before build or service restart."
@@ -288,7 +292,7 @@ create_database_backup() {
   mv -- "${temporary_backup}" "${final_backup}"
   temporary_backup=''
   backup_hash="$(sha256sum "${final_backup}" | awk '{ print $1 }')"
-  temporary_checksum="$(mktemp "${backup_dir}/.${timestamp}-${image_tag}.XXXXXX.sha256")"
+  temporary_checksum="$(mktemp "${backup_dir}/.${timestamp}-${safe_label}.XXXXXX.sha256")"
   chmod 0600 "${temporary_checksum}"
   printf '%s  %s\n' "${backup_hash}" "$(basename "${final_backup}")" > "${temporary_checksum}"
   mv -- "${temporary_checksum}" "${final_checksum}"
@@ -316,12 +320,15 @@ rollback_application() {
   fail 'Initial deployment failed health checks. The database volume was retained.'
 }
 
-[[ $# -eq 2 ]] || usage
+[[ $# -eq 3 ]] || usage
 readonly requested_environment="$1"
 readonly requested_sha="$2"
+readonly requested_image_ref="$3"
 
 [[ "${requested_sha}" =~ ^[0-9a-f]{40}$ ]] ||
   fail 'Commit SHA must be exactly 40 lowercase hexadecimal characters.'
+[[ "${requested_image_ref}" =~ ^ghcr\.io/lyelt/portfolio@sha256:[0-9a-f]{64}$ ]] ||
+  fail 'Image must be the Portfolio GHCR image with a full SHA-256 digest.'
 
 case "${requested_environment}" in
   staging)
@@ -399,10 +406,14 @@ fi
 
 current_release=''
 current_sha=''
+current_image_ref=''
 if current_release="$(read_current_release "${current_link}" "${releases_dir}")"; then
   IFS= read -r current_sha < "${current_release}/.source-sha"
   [[ "${current_sha}" =~ ^[0-9a-f]{40}$ ]] || fail 'Current release has an invalid source marker.'
-  assert_database_volume_mount "${current_release}" "${current_sha}" "${database_volume}"
+  [[ -f "${current_release}/.image-ref" && ! -L "${current_release}/.image-ref" ]] || fail 'Current release is missing its image marker.'
+  IFS= read -r current_image_ref < "${current_release}/.image-ref"
+  [[ "${current_image_ref}" =~ ^ghcr\.io/lyelt/portfolio@sha256:[0-9a-f]{64}$ ]] || fail 'Current release has an invalid image marker.'
+  assert_database_volume_mount "${current_release}" "${current_image_ref}" "${database_volume}"
 fi
 
 if [[ -e "${REPOSITORY_DIR}" && ( ! -d "${REPOSITORY_DIR}" || -L "${REPOSITORY_DIR}" ) ]]; then
@@ -427,9 +438,9 @@ resolved_sha="$(git --git-dir="${REPOSITORY_DIR}" rev-parse --verify "${requeste
   fail "Requested SHA is not the exact current head of ${expected_branch}; a newer workflow should deploy the newer head."
 
 if [[ "${current_sha}" == "${requested_sha}" ]]; then
-  database_is_healthy "${current_release}" "${current_sha}" ||
+  database_is_healthy "${current_release}" "${current_image_ref}" ||
     fail 'Current release marker matches, but the selected database is not healthy.'
-  wait_for_application "${current_release}" "${current_sha}" ||
+  wait_for_application "${current_release}" "${current_image_ref}" ||
     fail 'Current release marker matches, but the application is not healthy.'
   log "Commit ${requested_sha} is already the current ${deployment_environment} release."
   exit 0
@@ -445,6 +456,7 @@ git --git-dir="${REPOSITORY_DIR}" archive --format=tar "${requested_sha}" |
 [[ -f "${temporary_release}/${COMPOSE_RELATIVE_PATH}" && ! -L "${temporary_release}/${COMPOSE_RELATIVE_PATH}" ]] ||
   fail "Commit is missing a regular ${COMPOSE_RELATIVE_PATH}."
 printf '%s\n' "${requested_sha}" > "${temporary_release}/.source-sha"
+printf '%s\n' "${requested_image_ref}" > "${temporary_release}/.image-ref"
 chmod -R go-w "${temporary_release}"
 release_suffix="${temporary_release##*.}"
 release_dir="${releases_dir}/${requested_sha}-${release_suffix}"
@@ -452,27 +464,25 @@ release_dir="${releases_dir}/${requested_sha}-${release_suffix}"
 mv -- "${temporary_release}" "${release_dir}"
 temporary_release=''
 
-compose_for "${release_dir}" "${requested_sha}" config --quiet
+docker pull "${requested_image_ref}"
+compose_for "${release_dir}" "${requested_image_ref}" config --quiet
 
 if [[ -n "${current_release}" ]]; then
-  database_is_healthy "${current_release}" "${current_sha}" ||
+  database_is_healthy "${current_release}" "${current_image_ref}" ||
     fail "The current ${deployment_environment} database is not healthy; refusing to restart it before a backup."
-  create_database_backup "${current_release}" "${current_sha}"
+  create_database_backup "${current_release}" "${current_image_ref}"
 elif [[ "${deployment_environment}" == 'prod' ]]; then
     if docker volume inspect "${database_volume}" >/dev/null 2>&1; then
       assert_secret_file "${PRODUCTION_IMPORT_MARKER}"
       log 'A guarded production import marker and existing database volume were found; validating and backing up the imported database before migration.'
-      compose_for "${release_dir}" "${requested_sha}" up --detach --no-build db
-      wait_for_database "${release_dir}" "${requested_sha}" ||
+      compose_for "${release_dir}" "${requested_image_ref}" up --detach --no-build db
+      wait_for_database "${release_dir}" "${requested_image_ref}" ||
         fail 'Imported production database did not become healthy.'
-      create_database_backup "${release_dir}" "${requested_sha}"
+      create_database_backup "${release_dir}" "${requested_image_ref}"
     else
       fail 'No production database volume exists. Production must first be restored through the guarded import helper; an empty database will not be initialized automatically.'
     fi
 fi
-
-log "Building application image from exact commit ${requested_sha}."
-compose_for "${release_dir}" "${requested_sha}" build --pull app
 
 log 'Validating non-root runtime access to required application files.'
 if ! docker run --rm \
@@ -481,25 +491,25 @@ if ! docker run --rm \
   --cap-drop ALL \
   --security-opt no-new-privileges:true \
   --entrypoint /bin/sh \
-  "portfolio-${deployment_environment}:${requested_sha}" \
+  "${requested_image_ref}" \
   -ceu 'test "$(id -u)" -ne 0; test -r /app/appsettings.json; test -r /app/Portfolio.dll'; then
   fail 'Built image failed the non-root runtime file-access validation.'
 fi
 
 log 'Starting the environment-specific PostgreSQL service.'
-compose_for "${release_dir}" "${requested_sha}" up --detach --no-build db
-wait_for_database "${release_dir}" "${requested_sha}" || fail 'Database did not become healthy.'
+compose_for "${release_dir}" "${requested_image_ref}" up --detach --no-build db
+wait_for_database "${release_dir}" "${requested_image_ref}" || fail 'Database did not become healthy.'
 
 log 'Applying database migrations with the newly built image.'
-if ! compose_for "${release_dir}" "${requested_sha}" run --rm --no-deps migrate; then
+if ! compose_for "${release_dir}" "${requested_image_ref}" run --rm --no-deps migrate; then
   fail 'Database migration failed; the application was not replaced. The database may contain partial migration changes.'
 fi
 
 log 'Replacing the application container.'
-compose_for "${release_dir}" "${requested_sha}" up --detach --no-deps --no-build app
+compose_for "${release_dir}" "${requested_image_ref}" up --detach --no-deps --no-build app
 
-if ! wait_for_application "${release_dir}" "${requested_sha}"; then
-  rollback_application "${release_dir}" "${requested_sha}" "${current_release}" "${current_sha}"
+if ! wait_for_application "${release_dir}" "${requested_image_ref}"; then
+  rollback_application "${release_dir}" "${requested_image_ref}" "${current_release}" "${current_image_ref}"
 fi
 
 temporary_link="${environment_dir}/.current-${requested_sha}-$$"

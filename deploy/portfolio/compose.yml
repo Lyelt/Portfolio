@@ -21,11 +21,8 @@ services:
       - db_private
 
   app:
-    image: portfolio-${DEPLOY_ENV:?DEPLOY_ENV is required}:${IMAGE_TAG:?IMAGE_TAG is required}
+    image: ${IMAGE_REF:?IMAGE_REF is required}
     platform: linux/arm64
-    build:
-      context: ../..
-      dockerfile: Dockerfile
     restart: unless-stopped
     init: true
     read_only: true
@@ -55,7 +52,7 @@ services:
           - ${WEB_ALIAS:?WEB_ALIAS is required}
 
   migrate:
-    image: portfolio-${DEPLOY_ENV:?DEPLOY_ENV is required}:${IMAGE_TAG:?IMAGE_TAG is required}
+    image: ${IMAGE_REF:?IMAGE_REF is required}
     platform: linux/arm64
     restart: "no"
     entrypoint:
