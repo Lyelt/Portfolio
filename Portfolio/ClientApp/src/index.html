@@ -9,9 +9,22 @@
   <meta name="author" content="Nicholas Ghobrial" />
   <meta name="keywords" content="developer,portfolio,software,engineer,resume" />
   <meta name="title" content="Nicholas Ghobrial's Portfolio" />
+  <meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#171b24" media="(prefers-color-scheme: dark)">
   <link rel="icon" type="image/x-icon" href="n.ico">
+  <script>
+    (() => {
+      const savedTheme = localStorage.getItem('theme');
+      const theme = savedTheme === 'light' || savedTheme === 'dark'
+        ? savedTheme
+        : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+      document.documentElement.classList.add(theme);
+      localStorage.setItem('theme', theme);
+    })();
+  </script>
 </head>
-<body class="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100 relative min-h-screen">
+<body>
   <app-root></app-root>
 </body>
 </html>

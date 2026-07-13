@@ -1,18 +1,20 @@
 <div>
-  <div *ngIf="!selectedStar" class="flex flex-col justify-center container mx-auto px-8" [class.max-w-6xl]="!compact">
+  <div *ngIf="!selectedStar" class="container mx-auto flex flex-col justify-center px-4 sm:px-6 lg:px-8" [class.max-w-6xl]="!compact">
     <h1 class="font-bold text-2xl mb-4 text-center">Super Mario 64</h1>
     <div class="flex justify-between mb-6">
-      <div class="flex space-x-8">
-        <span class="link" (click)="toggleCollapsed()">{{expanded?.length > 0 ? "Collapse" : "Expand"}} All</span>
-        <span class="link hidden md:inline" (click)="changeView()">{{compact ? "List" : "Compact"}} View</span>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" class="btn btn-ghost" (click)="toggleCollapsed()">{{expanded?.length > 0 ? "Collapse" : "Expand"}} All</button>
+        <button type="button" class="btn btn-ghost hidden md:inline-flex" (click)="changeView()">{{compact ? "List" : "Compact"}} View</button>
       </div>
-      <mat-icon class="cursor-pointer" [matMenuTriggerFor]="menu">menu</mat-icon>
+      <button type="button" class="icon-button" [matMenuTriggerFor]="menu" aria-label="Open speedrun menu">
+        <mat-icon>menu</mat-icon>
+      </button>
     </div>
     <mat-menu #menu="matMenu">
-      <span mat-menu-item class="menu-item" routerLink="bingo">Bingo</span>
-      <a mat-menu-item class="menu-item" target="_blank" href="https://drive.google.com/open?authuser=0&id=1_cOIEnuKIQ-3LA_U0ygpiL87PTSBPlHmKDId0vC7alo">Single Star WRs</a>
-      <a mat-menu-item class="menu-item" target="_blank" href="https://drive.google.com/open?authuser=0&id=1J20aivGnvLlAuyRIMMclIFUmrkHXUzgcDmYa31gdtCI">Ultimate Star Spreadsheet</a>
-      <a mat-menu-item class="menu-item" target="_blank" href="https://docs.google.com/spreadsheets/d/1i1BYP4hv6Uy6clz3YclEVx_Z_RK1Tx1uLYjdwi4iWmE/edit#gid=0">Competition</a>
+      <button type="button" mat-menu-item class="menu-item" routerLink="bingo">Bingo</button>
+      <a mat-menu-item class="menu-item" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/open?authuser=0&id=1_cOIEnuKIQ-3LA_U0ygpiL87PTSBPlHmKDId0vC7alo">Single Star WRs</a>
+      <a mat-menu-item class="menu-item" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/open?authuser=0&id=1J20aivGnvLlAuyRIMMclIFUmrkHXUzgcDmYa31gdtCI">Ultimate Star Spreadsheet</a>
+      <a mat-menu-item class="menu-item" target="_blank" rel="noopener noreferrer" href="https://docs.google.com/spreadsheets/d/1i1BYP4hv6Uy6clz3YclEVx_Z_RK1Tx1uLYjdwi4iWmE/edit#gid=0">Competition</a>
     </mat-menu>
     <div class="mb-12">
       <app-course *ngIf="categories" 
@@ -29,7 +31,7 @@
         (starSelected)="showStarDetails($event)"></app-course>
     </div>
   </div>
-  <div *ngIf="selectedStar" class="px-8">
+  <div *ngIf="selectedStar" class="px-4 sm:px-6 lg:px-8">
     <app-star-details [star]="selectedStar" (closed)="closeStar()"></app-star-details>
   </div>
 </div>

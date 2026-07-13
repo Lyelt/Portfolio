@@ -1,5 +1,6 @@
 <button type="button"
-    class="w-full px-4 py-2 text-sm sm:text-base uppercase tracking-wide font-medium bg-gray-200 dark:bg-gray-700 cursor-pointer focus:outline-none hover:ring-2 focus:ring-2 hover:ring-indigo-700 dark:hover:ring-pink-700 focus:ring-indigo-600 dark:focus:ring-pink-900 sm:shadow-md" 
-    [ngClass]="{'bg-indigo-600 dark:bg-pink-700 text-indigo-50 dark:text-pink-100':selected}">
+    class="radio-option btn btn-secondary w-full uppercase tracking-wide"
+    [class.radio-selected]="selected"
+    [attr.aria-pressed]="selected">
     <span>{{label}}</span>
 </button>

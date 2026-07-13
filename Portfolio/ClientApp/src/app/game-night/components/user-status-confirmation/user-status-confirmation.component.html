@@ -1,21 +1,36 @@
-<div class="fixed z-topmost inset-0 w-full h-full overflow-auto bg-black bg-opacity-50" *ngIf="gnService.skippingNight">
-    <div #modal class="bg-white dark:bg-gray-900 mx-auto my-8 w-4/5 xl:w-1/2 rounded-lg text-sm md:text-base relative">
-        <button type="button" 
-                        class="absolute top-3 right-4 cursor-pointer text-2xl focus:outline-none" 
-                        (click)="closeModal()">&times;</button>
-        <div class="flex flex-col pb-12 pt-4 px-6">
-            <div class="flex justify-start items-center font-bold mb-4 text-lg space-x-4">
-                <mat-icon>error_outline</mat-icon>
-                <span>Schedule Conflict!</span>
-            </div>
-            <span>You're going to miss some or all of your night. Would you like to skip your night?</span>
-        </div>
-        <div class="flex justify-between rounded-b-lg bg-gray-100 dark:bg-gray-800 px-4 py-3">
-            <button type="button" class="btn" (click)="cancel()">Cancel Night</button>
-            <div class="flex space-x-4">
-                <button type="button" class="btn focus:outline-none focus:ring-2 font-medium" (click)="closeModal()">No</button>
-                <button type="button" class="btn border focus:outline-none focus:ring-2 font-medium bg-gray-600 text-gray-50 dark:bg-gray-300 dark:text-gray-900" (click)="skip()">Yes</button>
-            </div>
-        </div>
+<div class="fixed inset-0 z-topmost grid min-h-full place-items-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm sm:p-6" *ngIf="gnService.skippingNight" (click)="closeModal()">
+  <div
+    class="surface-card relative w-full max-w-lg overflow-hidden text-sm sm:text-base"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="schedule-conflict-title"
+    aria-describedby="schedule-conflict-description"
+    cdkTrapFocus
+    [cdkTrapFocusAutoCapture]="true"
+    (click)="$event.stopPropagation()"
+  >
+    <button class="icon-button absolute right-3 top-3" type="button" (click)="closeModal()" aria-label="Close dialog">
+      <mat-icon aria-hidden="true">close</mat-icon>
+    </button>
+
+    <div class="px-6 pb-8 pt-6 sm:px-8 sm:pb-10 sm:pt-8">
+      <div class="mb-4 flex items-center gap-3 pr-10">
+        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-pink-50 text-pink-600 dark:bg-gray-800 dark:text-pink-300">
+          <mat-icon aria-hidden="true">event_busy</mat-icon>
+        </span>
+        <h2 id="schedule-conflict-title" class="text-lg font-bold sm:text-xl">Schedule Conflict!</h2>
+      </div>
+      <p id="schedule-conflict-description" class="text-muted leading-7">
+        You're going to miss some or all of your night. Would you like to skip your night?
+      </p>
     </div>
+
+    <div class="flex flex-col gap-3 border-t border-gray-200 bg-gray-50 px-5 py-4 dark:border-gray-700 dark:bg-gray-800 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <button type="button" class="btn btn-secondary w-full sm:w-auto" (click)="cancel()">Cancel Night</button>
+      <div class="grid grid-cols-2 gap-3 sm:flex">
+        <button type="button" class="btn btn-ghost" (click)="closeModal()">No</button>
+        <button type="button" class="btn btn-primary" (click)="skip()">Yes</button>
+      </div>
+    </div>
+  </div>
 </div>

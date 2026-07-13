@@ -1,9 +1,9 @@
-<div class="mb-8">
-  <h3 class="text-gray-600 text-md mb-2 dark:text-gray-200 font-medium">{{title}}</h3>
-  <div class="">
-    <div class="flex items-center py-3 rounded odd:bg-gray-200 dark:odd:bg-gray-900 px-2 space-x-4" *ngFor="let skill of skills">
-      <mat-icon class="text-indigo-400 dark:text-indigo-300">check_circle_outline</mat-icon>
-      <span class="tracking-wide">{{skill}}</span>
-    </div>
-  </div>
-</div>
+<article class="skill-card surface-card">
+  <span class="skill-card__icon" aria-hidden="true"><mat-icon>auto_awesome</mat-icon></span>
+  <h3>{{title}}</h3>
+  <ul>
+    <li *ngFor="let skill of skills">
+      <mat-icon aria-hidden="true">check</mat-icon><span>{{skill}}</span>
+    </li>
+  </ul>
+</article>

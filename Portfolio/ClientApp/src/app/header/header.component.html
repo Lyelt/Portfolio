@@ -1,29 +1,66 @@
-<header class="fixed top-0 z-999 w-full bg-white dark:bg-gray-900 shadow-lg py-4 px-2 text-xs sm:text-base overflow-x-auto">
-  <nav class="flex items-center">
-    <a href="#" class="nav-link hidden sm:inline"><mat-icon routerLink="">home</mat-icon></a>
-    <span class="flex-shrink flex-auto"></span>
-    <a class="nav-link nav-link-hover" routerLink="" href="#projects" (click)="scrollToElement('projects')">Projects</a>
-    <a class="nav-link nav-link-hover" routerLink="" href="#skills" (click)="scrollToElement('skills')">Skills</a>
-    <a class="nav-link nav-link-hover" routerLink="" href="#about" (click)="scrollToElement('about')">About</a>
-    <a class="nav-link nav-link-hover" routerLink="" href="#contact" (click)="scrollToElement('contact')">Contact</a>
-    <a class="nav-link nav-link-hover" routerLink="blog">Blog</a>
-    <span class="flex-shrink flex-auto sm:hidden"></span>
-    <span class="flex cursor-pointer" mat-icon-button [matMenuTriggerFor]="menu">
-      <mat-icon class="sm:ml-2">more_vert</mat-icon>
-    </span>
-    <mat-menu #menu="matMenu">
-      <span mat-menu-item routerLink="bowling" class="menu-item"><mat-icon svgIcon="bowling"></mat-icon>Bowling</span>
-      <span mat-menu-item routerLink="yugioh" class="menu-item"><mat-icon svgIcon="yugioh"></mat-icon>Yu-Gi-Oh</span>
-      <!-- <span mat-menu-item routerLink="tier" class="menu-item"><mat-icon>format_list_numbered</mat-icon>Tier Lists</span> -->
-      <span mat-menu-item routerLink="initiative" class="menu-item"><mat-icon>repeat_one</mat-icon>Initiative</span>
-      <!-- <span mat-menu-item routerLink="recipes" class="menu-item"><mat-icon>menu_book</mat-icon>Recipes</span> -->
-      <span mat-menu-item routerLink="speedrun" class="menu-item"><mat-icon>sports_esports</mat-icon>Speedrun</span>
-      <span mat-menu-item routerLink="gamenight" class="menu-item"><mat-icon svgIcon="gameNight"></mat-icon>Game Night</span>
-      <span mat-menu-item routerLink="login" class="last-menu-item flex items-center" *ngIf="loggedInUserName(); let username">
-        <mat-icon class="transform rotate-180">exit_to_app</mat-icon>Logout {{username}}
-      </span>
+<header class="site-header">
+  <nav class="site-nav page-container" aria-label="Primary navigation">
+    <a class="brand" routerLink="/" aria-label="Nicholas Ghobrial — home" (click)="closeMobileMenu()">
+      <span class="brand-mark" aria-hidden="true">N</span>
+      <span class="brand-name">Nicholas Ghobrial</span>
+    </a>
+
+    <div class="desktop-nav" aria-label="Portfolio sections">
+      <a class="nav-link nav-link-hover" [routerLink]="['/']" fragment="projects">Projects</a>
+      <a class="nav-link nav-link-hover" [routerLink]="['/']" fragment="skills">Skills</a>
+      <a class="nav-link nav-link-hover" [routerLink]="['/']" fragment="about">About</a>
+      <a class="nav-link nav-link-hover" [routerLink]="['/']" fragment="contact">Contact</a>
+      <a class="nav-link nav-link-hover" routerLink="/blog" routerLinkActive="active">Blog</a>
+    </div>
+
+    <div class="header-actions">
+      <app-theme-toggle></app-theme-toggle>
+
+      <button type="button" class="icon-button desktop-more" [matMenuTriggerFor]="menu" aria-label="Open project apps menu">
+        <mat-icon aria-hidden="true">apps</mat-icon>
+      </button>
+
+      <button type="button" class="icon-button mobile-menu-button" aria-controls="mobile-navigation"
+              [attr.aria-expanded]="mobileMenuOpen" [attr.aria-label]="mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'"
+              (click)="toggleMobileMenu()">
+        <mat-icon aria-hidden="true">{{mobileMenuOpen ? 'close' : 'menu'}}</mat-icon>
+      </button>
+    </div>
+
+    <mat-menu #menu="matMenu" xPosition="before">
+      <a mat-menu-item routerLink="/bowling" class="menu-item"><mat-icon svgIcon="bowling"></mat-icon>Bowling</a>
+      <a mat-menu-item routerLink="/yugioh" class="menu-item"><mat-icon svgIcon="yugioh"></mat-icon>Yu-Gi-Oh</a>
+      <a mat-menu-item routerLink="/initiative" class="menu-item"><mat-icon>repeat_one</mat-icon>Initiative</a>
+      <a mat-menu-item routerLink="/speedrun" class="menu-item"><mat-icon>sports_esports</mat-icon>Speedrun</a>
+      <a mat-menu-item routerLink="/gamenight" class="menu-item"><mat-icon svgIcon="gameNight"></mat-icon>Game Night</a>
+      <button mat-menu-item type="button" class="last-menu-item" *ngIf="loggedInUserName(); let username" (click)="logout()">
+        <mat-icon class="rotate-180">exit_to_app</mat-icon>Logout {{username}}
+      </button>
     </mat-menu>
-    <span class="flex-shrink flex-auto"></span>
-    <app-theme-toggle class="hidden sm:inline"></app-theme-toggle>
   </nav>
+
+  <div id="mobile-navigation" class="mobile-navigation" *ngIf="mobileMenuOpen">
+    <div class="page-container mobile-navigation-inner">
+      <div class="mobile-section-links">
+        <a class="mobile-nav-link" [routerLink]="['/']" fragment="projects" (click)="closeMobileMenu()">Projects</a>
+        <a class="mobile-nav-link" [routerLink]="['/']" fragment="skills" (click)="closeMobileMenu()">Skills</a>
+        <a class="mobile-nav-link" [routerLink]="['/']" fragment="about" (click)="closeMobileMenu()">About</a>
+        <a class="mobile-nav-link" [routerLink]="['/']" fragment="contact" (click)="closeMobileMenu()">Contact</a>
+        <a class="mobile-nav-link" routerLink="/blog" (click)="closeMobileMenu()">Blog</a>
+      </div>
+
+      <div class="mobile-apps" aria-label="Project apps">
+        <span class="mobile-apps-label">Project apps</span>
+        <a routerLink="/bowling" (click)="closeMobileMenu()"><mat-icon svgIcon="bowling"></mat-icon>Bowling</a>
+        <a routerLink="/yugioh" (click)="closeMobileMenu()"><mat-icon svgIcon="yugioh"></mat-icon>Yu-Gi-Oh</a>
+        <a routerLink="/initiative" (click)="closeMobileMenu()"><mat-icon>repeat_one</mat-icon>Initiative</a>
+        <a routerLink="/speedrun" (click)="closeMobileMenu()"><mat-icon>sports_esports</mat-icon>Speedrun</a>
+        <a routerLink="/gamenight" (click)="closeMobileMenu()"><mat-icon svgIcon="gameNight"></mat-icon>Game Night</a>
+      </div>
+
+      <button type="button" class="mobile-logout" *ngIf="loggedInUserName(); let username" (click)="logout()">
+        <mat-icon class="rotate-180">exit_to_app</mat-icon>Logout {{username}}
+      </button>
+    </div>
+  </div>
 </header>

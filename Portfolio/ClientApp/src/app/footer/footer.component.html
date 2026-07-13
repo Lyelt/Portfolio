@@ -1,10 +1,27 @@
-<footer class="text-sm bg-white dark:bg-gray-900 border-t border-gray-300 dark:border-gray-900 mt-12">
-  <nav class="flex justify-center items-center">
-    <app-theme-toggle class="sm:hidden"></app-theme-toggle>
-    <a class="px-6 py-4" href="https://github.com/Lyelt" title="Github"><img class="p-0.5 bg-white rounded" src="assets/github-logo.png" /></a>
-    <a class="px-6 py-4" href="https://www.linkedin.com/in/nicholasghobrial/" title="LinkedIn"><img src="assets/linkedin-logo.png" /></a>
-  </nav>
-  <nav class="flex justify-center">
-    <p class="text-xs px-6 py-4">	&copy; Nicholas Ghobrial 2026</p>
-  </nav>
+<footer class="site-footer">
+  <div class="page-container footer-content">
+    <div>
+      <a class="footer-brand" routerLink="/">
+        <span class="footer-brand-mark" aria-hidden="true">N</span>
+        <span>Nicholas Ghobrial</span>
+      </a>
+      <p class="footer-note">Software, side projects, and a few favorite hobbies.</p>
+    </div>
+
+    <nav class="footer-links" aria-label="Social links">
+      <a href="https://github.com/Lyelt" target="_blank" rel="noopener noreferrer">
+        <img src="assets/github-logo.png" width="24" height="24" alt="" aria-hidden="true" />
+        <span>GitHub</span>
+      </a>
+      <a href="https://www.linkedin.com/in/nicholasghobrial/" target="_blank" rel="noopener noreferrer">
+        <img src="assets/linkedin-logo.png" width="24" height="24" alt="" aria-hidden="true" />
+        <span>LinkedIn</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="page-container footer-bottom">
+    <p>&copy; Nicholas Ghobrial 2026</p>
+    <a routerLink="/blog">Read the blog <span aria-hidden="true">→</span></a>
+  </div>
 </footer>

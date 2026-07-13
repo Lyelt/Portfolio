@@ -1,6 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
 import { SkillsSectionComponent } from './skills-section.component';
+import { MatIconModule } from '@angular/material/icon';
+
+@NgModule({
+  declarations: [SkillsSectionComponent],
+  imports: [CommonModule, MatIconModule]
+})
+class SkillsSectionTestModule {}
 
 describe('SkillsSectionComponent', () => {
   let component: SkillsSectionComponent;
@@ -8,7 +17,7 @@ describe('SkillsSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SkillsSectionComponent ]
+      imports: [SkillsSectionTestModule]
     })
     .compileComponents();
   });

@@ -1,4 +1,12 @@
-<article class="container mx-auto antialiased leading-relaxed p-4 text-sm sm:text-base max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-6xl">
-  <div class="link" routerLink="/blog">&larr; Back to blog</div>
-  <ng-content></ng-content>
+<article class="content-container pb-14 pt-2 antialiased sm:pb-20 sm:pt-6">
+  <nav aria-label="Blog navigation">
+    <a class="btn btn-ghost -ml-3" routerLink="/blog">
+      <mat-icon aria-hidden="true">arrow_back</mat-icon>
+      <span>Back to blog</span>
+    </a>
+  </nav>
+
+  <div class="surface-card mt-4 px-5 py-7 sm:px-8 sm:py-10 md:px-10">
+    <ng-content></ng-content>
+  </div>
 </article>

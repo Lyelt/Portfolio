@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { YugiohService } from '../../services/yugioh.service';
 import { YugiohCard, YugiohCardFilter, YugiohUtilities } from '../../models/yugioh.model';
-import { Card, CardCollection } from '../../models/card-collections';
-import { ActivatedRoute } from '@angular/router';
+import { CardCollection } from '../../models/card-collections';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
@@ -21,7 +21,7 @@ export class YugiohComponent implements OnInit {
 
     selectedTabIndex: number = 0;
 
-    constructor(private yugiohService: YugiohService, private auth: AuthService, private route: ActivatedRoute) { }
+    constructor(private yugiohService: YugiohService, private auth: AuthService, private route: ActivatedRoute, private router: Router) { }
     
     ngOnInit() {
         this.currentUserId = this.auth.getLoggedInUserId();
@@ -52,14 +52,13 @@ export class YugiohComponent implements OnInit {
     }
 
     cardSelected(card) {
-        this.selectedCard = card;
-        window.history.pushState(card, card.name, "/yugioh/card/" + card.id);
+        this.router.navigate(['/yugioh/card', card.id]);
     }
 
     searchCleared() {
         this.selectedCard = null;
         this.searchFilter = null;
-        window.history.pushState("No card selected", "Yu-Gi-Oh", "/yugioh");
+        this.router.navigate(['/yugioh']);
     }
 
     cardSearched(filter: YugiohCardFilter) {
@@ -70,7 +69,8 @@ export class YugiohComponent implements OnInit {
     searchSubmitted(filter: YugiohCardFilter) {
         this.selectedCard = null;
         this.searchFilter = filter;
-        window.history.pushState("Card searched", "Yu-Gi-Oh", "/yugioh/search?name=" + filter.filters.find(f => f.name == "name").value);
+        const name = filter.filters.find(f => f.name === 'name')?.value;
+        this.router.navigate(['/yugioh/search'], { queryParams: { name } });
     }
 
     selectCollection(event: any) {

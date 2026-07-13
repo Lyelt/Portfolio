@@ -15,7 +15,7 @@
     <div class="flex flex-col border-b">
       <div class="flex flex-col justify-center">
         <a [innerHtml]="getCardDisplay(item)"></a>
-        <span *ngIf="!collection" class="absolute right-0 mr-8 cursor-pointer text-indigo-400 hover:text-indigo-600" title="View on TCGPlayer" (click)="redirectToTcgPlayer($event, item)"><mat-icon>open_in_new</mat-icon></span>
+        <button type="button" *ngIf="!collection" class="icon-button absolute right-2 top-1/2 -translate-y-1/2" title="View on TCGPlayer" [attr.aria-label]="'View ' + item.name + ' on TCGPlayer'" (click)="redirectToTcgPlayer($event, item)"><mat-icon>open_in_new</mat-icon></button>
         <app-add-card *ngIf="collection" [card]="item" [setCard]="getSetCard(item)" (cardAdded)="addCard($event)" (cardRemoved)="removeCard($event)"></app-add-card>
       </div>
     </div>
@@ -26,5 +26,5 @@
       <span class="font-bold uppercase tracking-wide text-gray-500 text-center mt-2">No Cards Found</span>
     </div>
   </ng-template>
-  <button type="submit" class="btn btn-primary rounded-r-full shadow-xl h-10 sm:flex sm:items-center"><mat-icon>search</mat-icon><span class="hidden sm:inline sm:ml-2">Search</span></button>
+  <button type="submit" class="btn btn-primary h-11 rounded-r-full sm:flex sm:items-center" aria-label="Search cards"><mat-icon>search</mat-icon><span class="hidden sm:inline sm:ml-2">Search</span></button>
 </form>

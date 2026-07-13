@@ -7,27 +7,21 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./theme-toggle.component.scss']
 })
 export class ThemeToggleComponent implements OnInit {
-  theme: string;
+  theme: 'light' | 'dark' = 'light';
   constructor() { }
 
   ngOnInit(): void {
-    if (!('theme' in localStorage)) {
-      const media = window.matchMedia('(prefers-color-scheme: dark)');
-      localStorage.theme = media && media.matches ? 'dark' : 'light';
-    }
-
-    this.theme = localStorage.theme;
-    this.setClass();
+    this.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
   }
 
   toggleDarkMode() {
-    localStorage.theme = localStorage.theme === 'light' ? 'dark' : 'light';
-    this.theme = localStorage.theme;
+    this.theme = this.theme === 'light' ? 'dark' : 'light';
+    localStorage.setItem('theme', this.theme);
     this.setClass();
   }
 
   setClass() {
-    document.querySelector('html').classList.remove('light', 'dark');
-    document.querySelector('html').classList.add(localStorage.theme);
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(this.theme);
   }
 }

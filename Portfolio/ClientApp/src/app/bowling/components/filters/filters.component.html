@@ -1,12 +1,12 @@
-<div class="border-b border-gray-400 mb-6">
-    <div class="mb-4 cursor-pointer flex" (click)="isOpen = !isOpen">
+<div class="app-panel mb-6">
+    <button type="button" class="mb-4 flex min-h-11 w-full items-center rounded-lg text-left" (click)="isOpen = !isOpen" [attr.aria-expanded]="isOpen" aria-controls="bowling-filter-options">
         <mat-icon *ngIf="!isOpen">keyboard_arrow_right</mat-icon>
         <mat-icon *ngIf="isOpen">keyboard_arrow_down</mat-icon>
-        <span class="ml-1 font-bold underline leading-snug">Filter Stats</span>
-    </div>
-    <div class="px-2 pb-4" *ngIf="isOpen">
+        <span class="ml-1 font-bold leading-snug">Filter Stats</span>
+    </button>
+    <div id="bowling-filter-options" class="pb-1" *ngIf="isOpen">
         <div>
-            <div class="grid grid-cols-3 gap-1 sm:gap-2">
+            <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
                 <div *ngFor="let filter of timeframeFilters" > 
                     <radio-button
                         [label]="filter.name" 
@@ -17,18 +17,18 @@
         </div>
         <div class="pt-2">
             <div class="flex items-center">
-                <input type="checkbox" [(ngModel)]="leagueMatchesOnly" name="leagueMatchFilter" (ngModelChange)="updateLeagueMatchFilter($event)"/>
+                <input id="leagueMatchFilter" type="checkbox" [(ngModel)]="leagueMatchesOnly" name="leagueMatchFilter" (ngModelChange)="updateLeagueMatchFilter($event)"/>
                 <label class="pl-2" for="leagueMatchFilter">League Matches Only</label>
             </div>
             <div class="mt-4 flex flex-col items-end space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-end sm:space-x-4" *ngIf="customFilterIsSelected()">
                 <div class="flex flex-col">
-                    <label for="customStart" class="pb-1">From...</label>
-                    <input type="date" [(ngModel)]="customFilter.start" name="customStart" placeholder="From..." (change)="updateTimeRange()"/>
+                    <label for="customStart" class="field-label">From...</label>
+                    <input id="customStart" type="date" [(ngModel)]="customFilter.start" name="customStart" placeholder="From..." (change)="updateTimeRange()"/>
     
                 </div>
                 <div class="flex flex-col">
-                    <label for="customEnd" class="pb-1">To...</label>
-                    <input type="date" [(ngModel)]="customFilter.end" name="customEnd" placeholder="To..." (change)="updateTimeRange()"/>
+                    <label for="customEnd" class="field-label">To...</label>
+                    <input id="customEnd" type="date" [(ngModel)]="customFilter.end" name="customEnd" placeholder="To..." (change)="updateTimeRange()"/>
                 </div>
             </div>
         </div>

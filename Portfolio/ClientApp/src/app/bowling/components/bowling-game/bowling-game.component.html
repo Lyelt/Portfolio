@@ -1,5 +1,7 @@
 <div class="flex items-center mb-2">
-  <mat-icon *ngIf="!readOnly" class="cursor-pointer " (click)="delete()">delete_forever</mat-icon>
+  <button type="button" *ngIf="!readOnly" class="icon-button" (click)="delete()" [attr.aria-label]="'Delete game ' + game.gameNumber">
+    <mat-icon>delete_forever</mat-icon>
+  </button>
   <span class="text-lg font-semibold ml-4">Game {{game.gameNumber}}</span>
 </div>
 <div class="mb-2">
@@ -10,8 +12,8 @@
     <mat-chip (click)="save()" color="accent" selected>Save</mat-chip>
   </mat-chip-list>
 </div>
-<div class="flex justify-around bg-gray-200 dark:bg-gray-900 py-2 rounded-lg sm:rounded-2xl text-center text-2xs sm:text-xs md:text-sm lg:text-base" tabindex="0" (keyup)="handleKey($event)">
-  <div class="w-1/12 flex flex-col sm:pr-2" *ngFor="let frame of game.frames" (click)="selectFrame(frame.frameNumber)" [class.selected]="game.id == 0 && frame.frameNumber == currentFrame">
+<div class="surface-card flex justify-around overflow-hidden py-2 text-center text-xs sm:rounded-2xl sm:text-sm lg:text-base" tabindex="0" (keyup)="handleKey($event)" [attr.aria-label]="'Scorecard for game ' + game.gameNumber">
+  <button type="button" class="frame-button flex min-w-0 flex-1 flex-col sm:pr-1" *ngFor="let frame of game.frames" (click)="selectFrame(frame.frameNumber)" [class.selected]="game.id == 0 && frame.frameNumber == currentFrame" [attr.aria-label]="'Select frame ' + frame.frameNumber">
     <span class="font-semibold">{{frame.frameNumber}}</span>
     <div class="flex">
       <div class="w-1/2 h-full pt-1 pb-0.5 float-left"
@@ -30,5 +32,5 @@
       </div>
     </div>
     <div class="pt-1 font-medium">{{getScoreSoFar(game, frame)}}</div>
-  </div>
+  </button>
 </div>

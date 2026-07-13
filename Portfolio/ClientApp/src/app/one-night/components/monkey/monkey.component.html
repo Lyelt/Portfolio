@@ -1,5 +1,5 @@
-<div>
-    <div *ngFor="let player of players; let i = index">
-        <div class="rounded bg-red-400">Player {{i + 1}}</div>
+<div class="grid gap-2 sm:grid-cols-2" aria-label="Players">
+    <div *ngFor="let player of players; let i = index" class="surface-card px-4 py-3 font-semibold">
+        Player {{i + 1}}
     </div>
 </div>

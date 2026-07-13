@@ -9,6 +9,7 @@ import { Component, OnInit } from '@angular/core';
 export class BlogComponent implements OnInit {
 
   blogs: Blog[] = [
+    { title: "A new home and a fresh coat of paint", date: "July 12, 2026", link: "self-hosting" },
     { title: "Getting with the times", date: "September 18, 2023", link: "upgrade"},
     { title: "Going public", date: "May 9, 2021", link: "public" },
     { title: "A look back at 2020", date: "December 18, 2020", link: "recap" },
