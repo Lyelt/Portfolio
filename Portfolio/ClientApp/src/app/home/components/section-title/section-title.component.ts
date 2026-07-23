@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   standalone: false,
@@ -6,11 +6,4 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './section-title.component.html',
   styleUrls: ['./section-title.component.scss']
 })
-export class SectionTitleComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-}
+export class SectionTitleComponent { }

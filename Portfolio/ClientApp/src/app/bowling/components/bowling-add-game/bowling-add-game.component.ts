@@ -9,7 +9,6 @@ import { User } from '../../../auth/user';
   standalone: false,
   selector: 'app-bowling-add-game',
   templateUrl: './bowling-add-game.component.html',
-  styleUrls: ['./bowling-add-game.component.scss']
 })
 export class BowlingAddGameComponent implements OnInit {
   @Input() session: BowlingSession;

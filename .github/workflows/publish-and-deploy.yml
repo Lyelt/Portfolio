@@ -54,7 +54,6 @@ jobs:
     needs: [source, verify]
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    environment: ${{ github.ref_name == 'master' && 'production' || 'staging' }}
     permissions:
       contents: read
       packages: write
@@ -62,16 +61,16 @@ jobs:
       image_ref: ${{ steps.image.outputs.image_ref }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3
+        uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4
 
       - name: Sign in to GitHub Container Registry
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -79,7 +78,7 @@ jobs:
 
       - name: Build and push
         id: build
-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7
         with:
           context: .
           file: Dockerfile
@@ -101,31 +100,6 @@ jobs:
           IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
         run: echo "image_ref=$IMAGE_NAME@$IMAGE_DIGEST" >> "$GITHUB_OUTPUT"
 
-      - name: Write deployment manifest
-        env:
-          IMAGE_REF: ${{ steps.image.outputs.image_ref }}
-          ENVIRONMENT: ${{ github.ref_name == 'master' && 'production' || 'staging' }}
-        run: |
-          mkdir -p deployment-request
-          jq --null-input \
-            --arg repository "$GITHUB_REPOSITORY" \
-            --arg application portfolio \
-            --arg branch "$GITHUB_REF_NAME" \
-            --arg environment "$ENVIRONMENT" \
-            --arg image_ref "$IMAGE_REF" \
-            --arg commit_sha "$GITHUB_SHA" \
-            --arg workflow_run_url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
-            '{schema_version: 1, repository: $repository, application: $application, branch: $branch, environment: $environment, image_ref: $image_ref, commit_sha: $commit_sha, workflow_run_url: $workflow_run_url, compose_files: ["deploy/portfolio/compose.yml"], health_paths: ["/livez", "/healthz"]}' \
-            > "deployment-request/$ENVIRONMENT.json"
-
-      - name: Publish deployment manifest artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: deploy-${{ github.ref_name }}-${{ github.sha }}
-          path: deployment-request/*.json
-          if-no-files-found: error
-          retention-days: 30
-
   deploy-staging:
     name: Deploy staging
     needs: publish
@@ -139,6 +113,24 @@ jobs:
       contents: read
       packages: read
     steps:
+      - name: Check out immutable release
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify installed host commands
+        run: |
+          set -Eeuo pipefail
+          if ! cmp deploy/portfolio/deploy-portfolio /usr/local/sbin/deploy-portfolio ||
+             ! cmp deploy/portfolio/backup-production /usr/local/sbin/backup-portfolio-production ||
+             ! cmp deploy/portfolio/restore-production /usr/local/sbin/restore-portfolio-production ||
+             ! cmp deploy/portfolio/schema-contract.sql /usr/local/share/portfolio/schema-contract.sql; then
+            printf 'Installed Portfolio host files are stale; rerun the reviewed ecosystem bootstrap before deployment.\n' >&2
+            exit 1
+          fi
+
       - name: Authenticate immutable image pull
         env:
           GHCR_TOKEN: ${{ github.token }}
@@ -162,7 +154,8 @@ jobs:
             --arg branch "$GITHUB_REF_NAME" --arg environment staging \
             --arg image_ref "$IMAGE_REF" --arg commit_sha "$GITHUB_SHA" \
             --arg workflow_run_url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
-            '{schema_version: 1, repository: $repository, application: $application, branch: $branch, environment: $environment, image_ref: $image_ref, commit_sha: $commit_sha, workflow_run_url: $workflow_run_url, compose_files: ["deploy/portfolio/compose.yml"], health_paths: ["/livez", "/healthz"]}' > "$manifest"
+            --argjson workflow_run_attempt "$GITHUB_RUN_ATTEMPT" \
+            '{schema_version: 2, repository: $repository, application: $application, branch: $branch, environment: $environment, image_ref: $image_ref, commit_sha: $commit_sha, workflow_run_url: $workflow_run_url, workflow_run_attempt: $workflow_run_attempt, compose_files: ["deploy/portfolio/compose.yml"], health_paths: ["/livez", "/healthz"]}' > "$manifest"
           /usr/local/sbin/receive-deployment-manifest "$manifest"
           /usr/local/sbin/deploy-portfolio staging "$GITHUB_SHA" "$IMAGE_REF"
 
@@ -186,6 +179,24 @@ jobs:
       contents: read
       packages: read
     steps:
+      - name: Check out immutable release
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify installed host commands
+        run: |
+          set -Eeuo pipefail
+          if ! cmp deploy/portfolio/deploy-portfolio /usr/local/sbin/deploy-portfolio ||
+             ! cmp deploy/portfolio/backup-production /usr/local/sbin/backup-portfolio-production ||
+             ! cmp deploy/portfolio/restore-production /usr/local/sbin/restore-portfolio-production ||
+             ! cmp deploy/portfolio/schema-contract.sql /usr/local/share/portfolio/schema-contract.sql; then
+            printf 'Installed Portfolio host files are stale; rerun the reviewed ecosystem bootstrap before deployment.\n' >&2
+            exit 1
+          fi
+
       - name: Authenticate immutable image pull
         env:
           GHCR_TOKEN: ${{ github.token }}
@@ -209,7 +220,8 @@ jobs:
             --arg branch "$GITHUB_REF_NAME" --arg environment production \
             --arg image_ref "$IMAGE_REF" --arg commit_sha "$GITHUB_SHA" \
             --arg workflow_run_url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
-            '{schema_version: 1, repository: $repository, application: $application, branch: $branch, environment: $environment, image_ref: $image_ref, commit_sha: $commit_sha, workflow_run_url: $workflow_run_url, compose_files: ["deploy/portfolio/compose.yml"], health_paths: ["/livez", "/healthz"]}' > "$manifest"
+            --argjson workflow_run_attempt "$GITHUB_RUN_ATTEMPT" \
+            '{schema_version: 2, repository: $repository, application: $application, branch: $branch, environment: $environment, image_ref: $image_ref, commit_sha: $commit_sha, workflow_run_url: $workflow_run_url, workflow_run_attempt: $workflow_run_attempt, compose_files: ["deploy/portfolio/compose.yml"], health_paths: ["/livez", "/healthz"]}' > "$manifest"
           /usr/local/sbin/receive-deployment-manifest "$manifest"
           /usr/local/sbin/deploy-portfolio prod "$GITHUB_SHA" "$IMAGE_REF"
 

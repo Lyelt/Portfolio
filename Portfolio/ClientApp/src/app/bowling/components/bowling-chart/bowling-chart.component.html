@@ -1,6 +1,6 @@
 <div class="chart-container app-panel overflow-hidden p-2 sm:p-4">
-  <ngx-charts-line-chart #chart
-                         *ngIf="!dataLoading && category.chartType == 'line'"
+  <ngx-charts-line-chart
+                         *ngIf="!dataLoading"
                          [scheme]="colorScheme"
                          schemeType="ordinal"
                          [results]="bowlingData"
@@ -16,31 +16,9 @@
                          timeline="true"
                          showGridLines="true"
                          [curve]="curve"
-                         (select)="select($event)"
                          class="chart-line-selector">
   </ngx-charts-line-chart>
-  <ngx-charts-bar-horizontal #barChart
-                             *ngIf="!dataLoading && category.chartType == 'horizontalBar'"
-                             [scheme]="colorScheme"
-                             schemeType="ordinal"
-                             [results]="barChartData"
-                             xAxis="true"
-                             yAxis="true"
-                             [legend]="true"
-                             showXAxisLabel="true"
-                             showYAxisLabel="true"
-                             yAxisLabel="Score"
-                             xAxisLabel="Number of games"
-                             class="chart-horizontal">
-  </ngx-charts-bar-horizontal>
 </div>
 <div class="flex flex-col justify-center" *ngIf="dataLoading">
   <mat-progress-spinner class="self-center my-6" color="accent" mode="indeterminate"></mat-progress-spinner>
 </div>
-
-<!-- 
-  showYAxisLabel="true"
-  
-                         [legendTitle]=null
-                         [legendPosition]=null
-                         (legendLabelClick)="onLegendLabelClick($event)" -->

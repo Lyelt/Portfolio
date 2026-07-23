@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   standalone: false,
   selector: 'blog',
   templateUrl: './blog.component.html',
-  styleUrls: ['./blog.component.scss']
 })
-export class BlogComponent implements OnInit {
+export class BlogComponent {
 
   blogs: Blog[] = [
     { title: "A new home and a fresh coat of paint", date: "July 12, 2026", link: "self-hosting" },
@@ -22,10 +21,6 @@ export class BlogComponent implements OnInit {
     { title: "A Dungeons and Dragons encounter tracker", date: "September 30, 2019", link: "encounter" },
   ];
 
-  constructor() { }
-
-  ngOnInit() {
-  }
 }
 
 class Blog {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CardCollection, Card } from '../../models/card-collections';
 import { YugiohCard, YugiohUtilities, CardTypeEnum } from '../../models/yugioh.model';
 import { YugiohService } from '../../services/yugioh.service';
@@ -7,7 +7,6 @@ import { YugiohService } from '../../services/yugioh.service';
   standalone: false,
   selector: 'app-view-collection',
   templateUrl: './view-collection.component.html',
-  styleUrls: ['./view-collection.component.scss']
 })
 export class ViewCollectionComponent implements OnInit {
   collection: CardCollection;

@@ -4,11 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Portfolio.Identity;
 using Portfolio.Data;
-using Portfolio.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Portfolio.Models.Auth;
 using Portfolio.Models.Yugioh;
@@ -21,17 +19,13 @@ namespace Portfolio.Controllers
 {
     public class YugiohController : Controller
     {
-        private static string[] VALID_ROLES = new string[] { ApplicationRole.Administrator.ToString(), ApplicationRole.Duelist.ToString() };
-
-        private readonly PortfolioContext _userContext;
         private readonly YugiohContext _yugiohContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<YugiohController> _logger;
         private readonly IYugiohCardCatalog _cardCatalog;
 
-        public YugiohController(PortfolioContext userContext, UserManager<ApplicationUser> userManager, ILogger<YugiohController> logger, IYugiohCardCatalog cardCatalog, YugiohContext yugiohContext)
+        public YugiohController(UserManager<ApplicationUser> userManager, ILogger<YugiohController> logger, IYugiohCardCatalog cardCatalog, YugiohContext yugiohContext)
         {
-            _userContext = userContext;
             _userManager = userManager;
             _logger = logger;
             _cardCatalog = cardCatalog;
@@ -73,15 +67,6 @@ namespace Portfolio.Controllers
         }
 
         [HttpGet]
-        [Route("Yugioh/GetUsers")]
-        public IActionResult GetUsers()
-        {
-            var duelists = _userContext.GetValidUsersForRoles(VALID_ROLES);
-            _logger.LogDebug($"Found {duelists.Count} users that are in role(s) {string.Join(", ", VALID_ROLES)}");
-            return Ok(duelists.Select(u => u.AsClientUser()));
-        }
-
-        [HttpGet]
         [Route("Yugioh/GetCollections/{userId}")]
         public async Task<IActionResult> GetCollections(string userId, CancellationToken cancellationToken)
         {
@@ -102,7 +87,7 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [Route("Yugioh/UpdateCollection")]
-        public async Task<IActionResult> UpdateCollection([FromBody]CardCollection collection)
+        public async Task<IActionResult> UpdateCollection([FromBody] CardCollection collection)
         {
             if (!await UserCanPerformAction(collection.UserId))
                 throw new UnauthorizedException("User does not have the required permissions to update this collection");
@@ -118,7 +103,7 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [Route("Yugioh/DuplicateCollection")]
-        public async Task<IActionResult> DuplicateCollection([FromBody]CardCollection collection)
+        public async Task<IActionResult> DuplicateCollection([FromBody] CardCollection collection)
         {
             if (!await UserCanPerformAction(collection.UserId))
                 throw new UnauthorizedException("User does not have the required permissions to duplicate this collection");
@@ -215,7 +200,7 @@ namespace Portfolio.Controllers
         {
             var currentUser = await GetCurrentUserAsync();
             return await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Administrator.ToString()) ||
-                (itemUserId == currentUser.Id && 
+                (itemUserId == currentUser.Id &&
                 await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Duelist.ToString()));
         }
 

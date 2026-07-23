@@ -4,16 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Portfolio.Identity;
 using Portfolio.Data;
-using Portfolio.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Portfolio.Models.GameNight;
 using Portfolio.Models.Auth;
 using Portfolio.Models.Errors;
-using Portfolio.Extensions;
 using System.Data;
 
 namespace Portfolio.Controllers
@@ -54,7 +51,7 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [Route("GameNight/AddGame")]
-        public async Task<IActionResult> AddGame([FromBody]GameNightGame game)
+        public async Task<IActionResult> AddGame([FromBody] GameNightGame game)
         {
             await ThrowIfUserNotInRole(ApplicationRole.Gamer);
             _gnContext.Games.Add(game);
@@ -77,8 +74,7 @@ namespace Portfolio.Controllers
         [Route("GameNight/GetGameNights/{startTime}/{length}")]
         public async Task<IActionResult> GetGameNights(long startTime, int length)
         {
-            _logger.LogInformation($"GetGameNights controller action called with a start time of {startTime}");
-           return Ok(await _gnService.GetGameNights(DateTimeOffset.FromUnixTimeMilliseconds(startTime), length));
+            return Ok(await _gnService.GetGameNights(DateTimeOffset.FromUnixTimeMilliseconds(startTime), length));
         }
 
         [HttpDelete]
@@ -113,7 +109,7 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [Route("GameNight/SaveGames")]
-        public async Task<IActionResult> SaveGames([FromBody]GameNight gameNight)
+        public async Task<IActionResult> SaveGames([FromBody] GameNight gameNight)
         {
             await ThrowIfUserNotInRole(ApplicationRole.Gamer);
             await _gnService.SaveGames(gameNight);

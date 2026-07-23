@@ -27,7 +27,7 @@
           <div class="mb-8">
             <app-bowling-stat statCategory="Overall"></app-bowling-stat>
           </div>
-          <app-bowling-chart [category]="currentSeriesCategory" (dataPointClicked)="showSessionDetails($event)"></app-bowling-chart>
+          <app-bowling-chart [category]="currentSeriesCategory"></app-bowling-chart>
         </div>
         <div *ngIf="view === 'stats'">
           <bowling-stats></bowling-stats>

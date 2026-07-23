@@ -6,7 +6,6 @@ using Portfolio.Models.Auth;
 using Portfolio.Models.GameNight;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,32 +19,28 @@ namespace Portfolio.Data
         private readonly IGameNightChooserFactory _gameNightChooser;
         private readonly ILogger<GameNightService> _logger;
 
-        public GameNightService(ILogger<GameNightService> logger, GameNightContext gameNightContext, UserManager<ApplicationUser> userManager, IGameNightChooserFactory gameNightChooser) 
-        { 
+        public GameNightService(ILogger<GameNightService> logger, GameNightContext gameNightContext, UserManager<ApplicationUser> userManager, IGameNightChooserFactory gameNightChooser)
+        {
             _logger = logger;
             _context = gameNightContext;
             _userManager = userManager;
             _gameNightChooser = gameNightChooser;
         }
 
-        public Task<IEnumerable<GameNight>> GetGameNights(DateTimeOffset startDate, int numberOfGameNights)
+        public async Task<IEnumerable<GameNight>> GetGameNights(DateTimeOffset startDate, int numberOfGameNights)
         {
-            _logger.LogInformation($"Request to GetGameNights called with startDate of {startDate} (converted to local: {startDate.ToLocalTime()} just the local date: {startDate.ToLocalTime().Date}");
-            var allGameNights = _context.GameNights
+            var firstDate = startDate.ToLocalTime().Date;
+            return await _context.GameNights
                 .Include(gn => gn.Games)
                 .Include(gn => gn.Meal)
                 .Include(gn => gn.User)
                 .Include(gn => gn.UserStatuses)
                     .ThenInclude(us => us.User)
-                    .AsNoTracking()
-                .AsEnumerable();
-            _logger.LogInformation($"All game night dateTimes and dates: {string.Join(Environment.NewLine, allGameNights.Select(gn => $"DateTime={gn.Date} Date={gn.Date.Date}, IsBeforeStartDate={gn.Date.Date < startDate.ToLocalTime().Date}"))}");
-            var gameNights = allGameNights
+                .AsNoTracking()
+                .Where(gn => gn.Date >= firstDate)
                 .OrderBy(gn => gn.Date)
-                .SkipWhile(gn => gn.Date.Date < startDate.ToLocalTime().Date)
-                .ToList();
-
-            return Task.FromResult(gameNights.Take(numberOfGameNights));
+                .Take(numberOfGameNights)
+                .ToListAsync();
         }
 
         public async Task SaveGames(GameNight newGameNight)
@@ -78,7 +73,7 @@ namespace Portfolio.Data
         {
             var gn = _context.GameNights.Include(gn => gn.UserStatuses).FirstOrDefault(gn => gn.Id == status.GameNightId);
             var existingStatus = gn.UserStatuses.FirstOrDefault(u => u.Id == status.Id);
-            if (existingStatus is GameNightUserStatus) 
+            if (existingStatus is GameNightUserStatus)
             {
                 existingStatus.Status = status.Status;
             }
@@ -93,7 +88,7 @@ namespace Portfolio.Data
         public async Task SkipGameNight(int gameNightId)
         {
             var gameNight = await _context.GameNights.FindAsync(gameNightId);
-            var nextGameNight = await GetNextGameNightFrom(gameNight); 
+            var nextGameNight = await GetNextGameNightFrom(gameNight);
             nextGameNight ??= await CreateNextGameNightFrom(gameNight);
 
             // Need to do this again in the case where the skipped game night doesn't have another night created after it
@@ -131,12 +126,12 @@ namespace Portfolio.Data
 
             for (var i = 1; i < gameNights.Count; i++)
             {
-                gameNights[i].Date = gameNights[i -1].Date;
+                gameNights[i].Date = gameNights[i - 1].Date;
             }
 
             var gameNightToReinstate = gameNights.FirstOrDefault() ?? await CreateNextGameNightFrom(gameNight);
             gameNightToReinstate.Date = gameNight.Date;
-            
+
             // Delete the cancelled game night
             _context.GameNights.Remove(gameNight);
             await _context.SaveChangesAsync();
@@ -177,7 +172,7 @@ namespace Portfolio.Data
                 .OrderBy(gn => gn.Date);
 
             return gameNights
-                .FirstOrDefault(gn => !(gn.IsCancelled ?? false) && gn.Date > startDate)?.Date 
+                .FirstOrDefault(gn => !(gn.IsCancelled ?? false) && gn.Date > startDate)?.Date
                 ?? gameNights.Last().Date.AddDays(7);
         }
 
@@ -194,7 +189,6 @@ namespace Portfolio.Data
                 .Select(u => new GameNightUserStatus { UserId = u.Id, GameNight = gn, GameNightId = gn.Id, Status = UserStatus.Unknown })
                 .ToList();
             await _context.GameNightUserStatuses.AddRangeAsync(userStatuses);
-            //await _context.SaveChangesAsync();
             return userStatuses;
         }
     }

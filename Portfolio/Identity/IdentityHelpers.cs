@@ -4,17 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Portfolio.Identity
 {
     public static class IdentityHelpers
     {
-        private const string DefaultJwtAuthority = "https://ghobrial.dev";
-
         public const string UserIdClaim = "UserId";
-        public static string ValidAudience => GetEnvironmentSetting("JWT_AUDIENCE", DefaultJwtAuthority);
-        public static string ValidIssuer => GetEnvironmentSetting("JWT_ISSUER", DefaultJwtAuthority);
+        public static string ValidAudience => GetRequiredEnvironmentSetting("JWT_AUDIENCE");
+        public static string ValidIssuer => GetRequiredEnvironmentSetting("JWT_ISSUER");
 
         public static string JwtSecurityKey
         {
@@ -30,10 +27,13 @@ namespace Portfolio.Identity
             }
         }
 
-        private static string GetEnvironmentSetting(string name, string defaultValue)
+        private static string GetRequiredEnvironmentSetting(string name)
         {
             var value = Environment.GetEnvironmentVariable(name);
-            return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
+            if (string.IsNullOrWhiteSpace(value))
+                throw new InvalidOperationException($"Required environment variable {name} is not set.");
+
+            return value;
         }
 
         public static List<ApplicationUser> GetValidUsersForRoles(this PortfolioContext context, params string[] validRoleNames)

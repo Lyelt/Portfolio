@@ -25,14 +25,22 @@ MSYS_NO_PATHCONV=1 docker run --rm \
     install -o root -g root -m 0644 /dev/null /srv/edge/compose.yml
     printf "%s\n" "#!/bin/sh" "exit 0" > /usr/local/sbin/receive-deployment-manifest
     chmod 0755 /usr/local/sbin/receive-deployment-manifest
+    printf "%s\n" "#!/bin/sh" "exit 0" > /usr/local/sbin/validate-deployment-manifest
+    chmod 0755 /usr/local/sbin/validate-deployment-manifest
 
     bash /repo/host/install-portfolio-linux-files.sh /repo
     bash /repo/host/install-portfolio-linux-files.sh /repo
 
     test "$(stat -c "%U:%G %a" /usr/local/sbin/deploy-portfolio)" = "root:root 755"
+    test "$(stat -c "%U:%G %a" /usr/local/sbin/backup-portfolio-production)" = "root:root 755"
+    test "$(stat -c "%U:%G %a" /usr/local/sbin/restore-portfolio-production)" = "root:root 755"
+    cmp /repo/deploy/portfolio/restore-production /usr/local/sbin/restore-portfolio-production
+    test "$(stat -c "%U:%G %a" /usr/local/share/portfolio/schema-contract.sql)" = "root:root 644"
     test "$(stat -c "%U:%G %a" /srv/secrets/examples/portfolio-staging.env.example)" = "root:deploy 640"
     test -d /srv/apps/portfolio/staging/releases
+    test "$(stat -c "%U:%G %a" /srv/apps/portfolio/prod/recovery-consumed)" = "deploy:deploy 750"
     test -d /srv/backups/portfolio/daily
     test ! -e /srv/secrets/portfolio/staging-database-volume
+    test ! -e /srv/secrets/portfolio/production-recovery.env
   '
 printf '%s\n' 'PASS: Portfolio target-host installer is idempotent and installs guarded app files.'

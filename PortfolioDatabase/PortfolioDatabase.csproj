@@ -8,16 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="scripts\1.0.0\002 - Create Bowling Tables.sql" />
-    <EmbeddedResource Include="scripts\1.0.0\003a - Add Speedrun Courses.sql" />
-    <EmbeddedResource Include="scripts\1.0.0\004 - Add Dog Tables.sql" />
-    <EmbeddedResource Include="scripts\1.0.0\006 - Add Game Night Tables.sql" />
-    <EmbeddedResource Include="scripts\1.0.0\001 - Create Users and Roles Tables.sql" />
-    <EmbeddedResource Include="scripts\1.0.0\003 - Create Speedrun Tables.sql" />
-    <EmbeddedResource Include="scripts\1.0.0\003b - Add Speedrun Stars.sql" />
-    <EmbeddedResource Include="scripts\1.0.0\005 - Add Yugioh Tables.sql" />
-    <EmbeddedResource Include="scripts\1.0.0\007 - Align PostgreSQL Keys With Application Models.sql" />
-    <EmbeddedResource Include="scripts\1.0.0\009 - Remove Legacy Schema.sql" />
+    <EmbeddedResource Include="scripts\**\*.sql" />
   </ItemGroup>
 
   <ItemGroup>

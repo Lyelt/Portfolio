@@ -7,7 +7,6 @@ import { YugiohService } from '../../services/yugioh.service';
   standalone: false,
   selector: 'app-small-world',
   templateUrl: './small-world.component.html',
-  styleUrls: ['./small-world.component.scss']
 })
 export class SmallWorldComponent implements OnInit {
 
@@ -27,20 +26,18 @@ export class SmallWorldComponent implements OnInit {
 
   evaluate(collection: CardCollection) {
     const key = 'id';
-    let cards = [...new Map(collection.cards.map(card => [card[key], card])).values()];
+    const cards = [...new Map(collection.cards.map(card => [card[key], card])).values()];
 
-    let monsters = cards.filter(c => this.isMainDeckMonster(c));
+    const monsters = cards.filter(c => this.isMainDeckMonster(c));
     if (monsters.length > 0) {
       this.results = [];
     }
     
-    for (let m of monsters) {
-      let targets = this.getSmallWorldTargets(m, monsters);
-      //console.log("TARGETS!", targets);
-      let result: Result = { originalMonster: m, targetResults: [], totalUniqueTargets: 0 };
-      for (let t of targets) {
-        let searches = this.getSmallWorldTargets(t.target, monsters);
-        //console.log("SEARCHES!", searches);
+    for (const m of monsters) {
+      const targets = this.getSmallWorldTargets(m, monsters);
+      const result: Result = { originalMonster: m, targetResults: [], totalUniqueTargets: 0 };
+      for (const t of targets) {
+        const searches = this.getSmallWorldTargets(t.target, monsters);
         result.targetResults.push({ target: t, searches: searches.filter(s => s.target.id !== m.id) });
       }
 
@@ -52,12 +49,11 @@ export class SmallWorldComponent implements OnInit {
   }
 
   getSmallWorldTargets(m: YugiohCard, monsters: YugiohCard[]): Match[] {
-    let matchResults = [];
+    const matchResults = [];
 
-    for (let target of monsters) {
-      let results = this.smallWorldResults(m, target);
+    for (const target of monsters) {
+      const results = this.smallWorldResults(m, target);
       if (results.length === 1) {
-        console.log("Revealed monster: " + results[0].reveal.name + " has matching target " + results[0].target.name + " based on " + results[0].propertyName + " (" + results[0].target[results[0].propertyName] + ")");
         matchResults.push(results[0]);
       }
     }
@@ -81,7 +77,7 @@ export class SmallWorldComponent implements OnInit {
     if ((reveal.misc_Info.length > 0 && reveal.misc_Info[0].question_Def) || (target.misc_Info.length > 0 && target.misc_Info[0].question_Def))
       def.isSame = false;
       
-    let similarities = [atk, def, lvl, attr, type];
+    const similarities = [atk, def, lvl, attr, type];
     return similarities.filter(s => s.isSame);
   }
 

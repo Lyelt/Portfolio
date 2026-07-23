@@ -1,13 +1,13 @@
-<form class="flex" (submit)="onSearchSubmitted($event)">
+<form class="flex" (submit)="onSearchSubmitted()">
   <ng-autocomplete #auto
                    [data]="searchResults?.results"
                    [itemTemplate]="itemTemplate"
                    [notFoundTemplate]="notFoundTemplate"
                    [searchKeyword]="keyword"
                    [placeholder]="placeholder"
-                   (inputFocused)="onFocused($event)"
+                   (inputFocused)="onFocused()"
                    (inputChanged)="onSearch($event)"
-                   (inputCleared)="onCleared($event)"
+                   (inputCleared)="onCleared()"
                    (selected)="onSelected($event)"
                    class="flex-grow">
   </ng-autocomplete>

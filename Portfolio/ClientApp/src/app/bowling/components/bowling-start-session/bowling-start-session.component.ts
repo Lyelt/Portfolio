@@ -6,7 +6,6 @@ import { BowlingSession } from '../../models/bowling-session';
   standalone: false,
   selector: 'app-bowling-start-session',
   templateUrl: './bowling-start-session.component.html',
-  styleUrls: ['./bowling-start-session.component.scss']
 })
 export class BowlingStartSessionComponent implements OnInit {
   sessions: BowlingSession[] = [];

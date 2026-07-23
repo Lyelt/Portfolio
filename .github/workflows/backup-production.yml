@@ -15,20 +15,38 @@ concurrency:
 jobs:
   backup:
     name: Encrypt, restore-test, and upload production backup
-    if: ${{ github.repository == 'Lyelt/Portfolio' && github.ref == 'refs/heads/master' }}
+    if: ${{ github.repository == 'Lyelt/Portfolio' && github.ref == 'refs/heads/master' && vars.PRODUCTION_DEPLOY_ENABLED == 'true' }}
     runs-on:
       - self-hosted
       - linux
       - portfolio-deploy
     timeout-minutes: 60
     steps:
+      - name: Check out protected production revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify installed host commands
+        run: |
+          set -Eeuo pipefail
+          if ! cmp deploy/portfolio/deploy-portfolio /usr/local/sbin/deploy-portfolio ||
+             ! cmp deploy/portfolio/backup-production /usr/local/sbin/backup-portfolio-production ||
+             ! cmp deploy/portfolio/restore-production /usr/local/sbin/restore-portfolio-production ||
+             ! cmp deploy/portfolio/schema-contract.sql /usr/local/share/portfolio/schema-contract.sql; then
+            printf 'Installed Portfolio host files are stale; rerun the reviewed ecosystem bootstrap before this job.\n' >&2
+            exit 1
+          fi
+
       - name: Create and fully restore-test encrypted backup
         id: backup
         run: |
           set -Eeuo pipefail
           backup_path="$(/usr/local/sbin/backup-portfolio-production)"
           case "${backup_path}" in
-            /srv/backups/portfolio/daily/portfolio-production-*.dump.age) ;;
+            /srv/backups/portfolio/daily/portfolio-production-*.backup.tar.age) ;;
             *) printf 'Unexpected backup path.\n' >&2; exit 1 ;;
           esac
           test -f "${backup_path}"
@@ -36,7 +54,7 @@ jobs:
           printf 'path=%s\n' "${backup_path}" >> "${GITHUB_OUTPUT}"
 
       - name: Upload encrypted off-host backup
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: portfolio-production-backup-${{ github.run_id }}-${{ github.run_attempt }}
           path: |

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Portfolio.Models.Bowling
+﻿namespace Portfolio.Models.Bowling
 {
     public class BowlingStat
     {

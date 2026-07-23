@@ -2,7 +2,6 @@ name: PR checks
 
 on:
   pull_request:
-    branches: [master, staging]
   workflow_call:
   workflow_dispatch:
 
@@ -20,15 +19,15 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Check out repository
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Install .NET SDK
-        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
         with:
           global-json-file: global.json
 
       - name: Install Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 22
           cache: npm
@@ -44,13 +43,16 @@ jobs:
           dotnet list Portfolio.sln package --vulnerable --include-transitive
           npm audit --prefix Portfolio/ClientApp --audit-level=high
 
+      - name: Verify source formatting
+        run: dotnet format Portfolio.sln --verify-no-changes --no-restore
+
       - name: Validate deployment hard cut
         run: |
           bash -n \
             deploy/portfolio/deploy-portfolio \
             deploy/portfolio/backup-production \
-            host/install-portfolio-linux-files.sh \
-            host/install-vm-files.sh
+            deploy/portfolio/restore-production \
+            host/install-portfolio-linux-files.sh
           bash tests/install-portfolio-linux-files-test.sh
           grep -Fq "readonly database_volume='portfolio-staging-postgres-data'" \
             deploy/portfolio/deploy-portfolio
@@ -59,10 +61,44 @@ jobs:
           grep -Fq "stops the failed application" HOSTING_SETUP.md
           grep -Fq 'DROP SCHEMA IF EXISTS legacy CASCADE;' \
             'PortfolioDatabase/scripts/1.0.0/009 - Remove Legacy Schema.sql'
-          grep -Fq "schema_name = '\\''legacy'\\''" \
-            deploy/portfolio/backup-production
+          grep -Fq 'schema-contract.sql' deploy/portfolio/deploy-portfolio
+          grep -Fq 'schema-contract.sql' deploy/portfolio/backup-production
+          grep -Fq 'schema-contract.sql' tests/schema-migration-test.sh
+          grep -Fq "Unexpected Portfolio tables" \
+            deploy/portfolio/schema-contract.sql
           grep -Fq "assert_canonical_database_schema" \
             deploy/portfolio/deploy-portfolio
+          grep -Fq "database.dump SOURCE_SHA IMAGE_REF SHA256SUMS" \
+            deploy/portfolio/backup-production
+          grep -Fq "database.dump SOURCE_SHA IMAGE_REF SHA256SUMS" \
+            deploy/portfolio/restore-production
+          grep -Fq "production-recovery.env" \
+            deploy/portfolio/deploy-portfolio
+          grep -Fq 'recovery_consumed_file="${recovery_consumed_dir}/${recovery_backup_sha}"' \
+            deploy/portfolio/deploy-portfolio
+          grep -Fq 'consumed_marker="${CONSUMED_DIR}/${backup_sha256}"' \
+            deploy/portfolio/restore-production
+          grep -Fq '/srv/apps/portfolio/prod/recovery-consumed' \
+            host/install-portfolio-linux-files.sh
+          grep -Fq "/usr/local/sbin/validate-deployment-manifest" \
+            deploy/portfolio/deploy-portfolio
+          grep -Fq '"${GITHUB_RUN_ATTEMPT}"' \
+            deploy/portfolio/deploy-portfolio
+          test "$(grep -Fc 'schema_version: 2' \
+            .github/workflows/publish-and-deploy.yml)" -eq 2
+          test "$(grep -Fc -- '--argjson workflow_run_attempt "$GITHUB_RUN_ATTEMPT"' \
+            .github/workflows/publish-and-deploy.yml)" -eq 2
+          ! grep -Fq 'schema_version: 1' \
+            .github/workflows/publish-and-deploy.yml
+          grep -Fq "/usr/local/sbin/restore-portfolio-production" \
+            HOSTING_SETUP.md
+          preflight_line="$(grep -nF "Snapshotting the authenticated historical database" \
+            deploy/portfolio/deploy-portfolio | cut -d: -f1)"
+          migration_line="$(grep -nF "Applying database migrations with the published immutable image" \
+            deploy/portfolio/deploy-portfolio | cut -d: -f1)"
+          test "${preflight_line}" -lt "${migration_line}"
+          ! grep -Eq 'RETENTION_DAYS|mtime[[:space:]]+\\+' \
+            deploy/portfolio/backup-production
           ! grep -RiqE \
             'staging-database-volume|legacy transition|restoring application image|production-import-complete' \
             deploy host HOSTING_SETUP.md
@@ -84,7 +120,7 @@ jobs:
 
       - name: Upload failure evidence
         if: failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: portfolio-failure-evidence
           if-no-files-found: ignore
@@ -97,13 +133,13 @@ jobs:
     timeout-minutes: 25
     steps:
       - name: Check out repository
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4
 
       - name: Build runtime image
-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7
         with:
           context: .
           file: Dockerfile

@@ -8,8 +8,6 @@ export class BingoService {
   private reset = new Subject<any>();
   resetObservable = this.reset.asObservable();
 
-  constructor() { }
-
   public resetComponents() {
     this.reset.next(null);
   }

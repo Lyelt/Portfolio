@@ -5,7 +5,6 @@ import { GameNightService } from '../../services/game-night.service';
   standalone: false,
   selector: 'app-user-status-confirmation',
   templateUrl: './user-status-confirmation.component.html',
-  styleUrls: ['./user-status-confirmation.component.scss']
 })
 export class UserStatusConfirmationComponent {
 

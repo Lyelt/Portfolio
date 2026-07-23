@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Portfolio.Data;
 using System;
@@ -8,7 +7,7 @@ namespace Portfolio.Extensions
 {
     public static class DatabaseExtensions
     {
-        public static IServiceCollection ConfigureDatabase(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureDatabase(this IServiceCollection services)
         {
             services
                 .AddDbContext<PortfolioContext>(o => GetOptions(o))

@@ -1,6 +1,6 @@
-<div class="mx-auto flex w-full max-w-7xl flex-col items-center px-4 sm:px-6 lg:px-8"> <!--container-->
+<div class="mx-auto flex w-full max-w-7xl flex-col items-center px-4 sm:px-6 lg:px-8">
   <div class="flex flex-col justify-center w-full">
-    <mat-tab-group (selectedTabChange)="onTabChange($event)" [selectedIndex]="selectedTabIndex" dynamicHeight mat-align-tabs="center">
+    <mat-tab-group dynamicHeight mat-align-tabs="center">
       <mat-tab>
         <ng-template mat-tab-label>
           <div class="flex">
@@ -10,13 +10,8 @@
         </ng-template>
         <ng-template matTabContent>
           <div class="pt-8 flex flex-col items-center">
-            <div *ngIf="selectedCollection" class="self-start pl-1 pb-2">
-              <h3 class="text-sm">Editing contents of
-              <button type="button" class="link" (click)="selectedTabIndex = 1">{{selectedCollection.name}} <span *ngIf="selectedSection">/ {{selectedSection}}</span></button>
-              </h3>
-            </div>
             <div class="flex-grow w-full">
-              <app-card-search [section]="selectedSection" [collection]="selectedCollection" [currentFilter]="searchFilter"
+              <app-card-search [currentFilter]="searchFilter"
               (cardSelected)="cardSelected($event)" 
               (searchCleared)="searchCleared()" 
               (cardSearched)="cardSearched($event)" 
@@ -43,7 +38,7 @@
           </div>
         </ng-template>
         <ng-template matTabContent>
-          <app-collections *ngIf="!openedCollection()" (collectionSelected)="selectCollection($event)"></app-collections>
+          <app-collections *ngIf="!openedCollection()"></app-collections>
           <app-view-collection *ngIf="openedCollection()"></app-view-collection>
         </ng-template>
       </mat-tab>

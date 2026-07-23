@@ -1,21 +1,15 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { YugiohCard, YugiohUtilities, CardTypeEnum, CardSet } from '../../models/yugioh.model';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { YugiohCard, YugiohUtilities, CardSet } from '../../models/yugioh.model';
 
 @Component({
   standalone: false,
     selector: 'app-selected-card',
-    templateUrl: './selected-card.component.html',
-    styles: []
+    templateUrl: './selected-card.component.html'
 })
-export class SelectedCardComponent implements OnInit {
+export class SelectedCardComponent {
 
     @Input() card: YugiohCard;
     @Output() onBack = new EventEmitter<any>();
-
-    constructor() { }
-
-    ngOnInit() {
-    }
 
     back() {
         this.onBack.emit();

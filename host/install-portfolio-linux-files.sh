@@ -15,7 +15,7 @@ source_file() {
 [[ "$(id -u)" == '0' ]] || fail 'Run as root.'
 [[ "$(uname -s)" == 'Linux' ]] || fail 'The target host must run Linux.'
 id deploy >/dev/null 2>&1 || fail 'The shared host installer must create the deploy account first.'
-for required_command in age curl docker git jq sha256sum; do
+for required_command in cmp docker; do
   command -v "${required_command}" >/dev/null 2>&1 ||
     fail "Missing required command: ${required_command}"
 done
@@ -24,7 +24,8 @@ docker compose version >/dev/null 2>&1 || fail 'Docker Compose v2 is required.'
 for required_path in \
   /srv/apps/.deploy.lock \
   /srv/edge/compose.yml \
-  /usr/local/sbin/receive-deployment-manifest; do
+  /usr/local/sbin/receive-deployment-manifest \
+  /usr/local/sbin/validate-deployment-manifest; do
   [[ -e "${required_path}" ]] || fail "Shared infrastructure prerequisite is missing: ${required_path}"
 done
 [[ -f /srv/apps/.deploy.lock && ! -L /srv/apps/.deploy.lock ]] ||
@@ -34,27 +35,38 @@ done
 
 bash -n \
   "$(source_file deploy/portfolio/deploy-portfolio)" \
-  "$(source_file deploy/portfolio/backup-production)"
+  "$(source_file deploy/portfolio/backup-production)" \
+  "$(source_file deploy/portfolio/restore-production)"
 
 install -d -o deploy -g deploy -m 0750 \
   /srv/apps/portfolio \
   /srv/apps/portfolio/staging/releases \
   /srv/apps/portfolio/prod/releases \
+  /srv/apps/portfolio/prod/recovery-consumed \
   /srv/backups/portfolio/staging \
   /srv/backups/portfolio/prod \
   /srv/backups/portfolio/daily
 install -d -o root -g deploy -m 0750 \
   /srv/secrets/portfolio \
   /srv/secrets/examples
+install -d -o root -g root -m 0755 /usr/local/share/portfolio
 
-install -o root -g deploy -m 0644 \
-  "$(source_file HOSTING_SETUP.md)" /srv/PORTFOLIO_HOSTING.md
-install -o root -g root -m 0644 \
-  "$(source_file deploy/portfolio/compose.yml)" /srv/apps/portfolio/compose.reference.yml
 install -o root -g root -m 0755 \
   "$(source_file deploy/portfolio/deploy-portfolio)" /usr/local/sbin/deploy-portfolio
 install -o root -g root -m 0755 \
   "$(source_file deploy/portfolio/backup-production)" /usr/local/sbin/backup-portfolio-production
+install -o root -g root -m 0755 \
+  "$(source_file deploy/portfolio/restore-production)" /usr/local/sbin/restore-portfolio-production
+install -o root -g root -m 0644 \
+  "$(source_file deploy/portfolio/schema-contract.sql)" /usr/local/share/portfolio/schema-contract.sql
+cmp -s "$(source_file deploy/portfolio/deploy-portfolio)" /usr/local/sbin/deploy-portfolio ||
+  fail 'The installed deployment command differs from this checkout.'
+cmp -s "$(source_file deploy/portfolio/backup-production)" /usr/local/sbin/backup-portfolio-production ||
+  fail 'The installed backup command differs from this checkout.'
+cmp -s "$(source_file deploy/portfolio/restore-production)" /usr/local/sbin/restore-portfolio-production ||
+  fail 'The installed restore command differs from this checkout.'
+cmp -s "$(source_file deploy/portfolio/schema-contract.sql)" /usr/local/share/portfolio/schema-contract.sql ||
+  fail 'The installed schema contract differs from this checkout.'
 
 for relative_example in \
   deploy/secrets/portfolio-staging.env.example \

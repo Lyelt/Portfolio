@@ -1,5 +1,7 @@
 *.sh text eol=lf
 *.example text eol=lf
 *.yml text eol=lf
+*.yaml text eol=lf
 deploy/portfolio/backup-production text eol=lf
 deploy/portfolio/deploy-portfolio text eol=lf
+deploy/portfolio/restore-production text eol=lf

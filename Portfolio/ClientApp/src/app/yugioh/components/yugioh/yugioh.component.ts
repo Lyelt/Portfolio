@@ -1,30 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { YugiohService } from '../../services/yugioh.service';
 import { YugiohCard, YugiohCardFilter, YugiohUtilities } from '../../models/yugioh.model';
-import { CardCollection } from '../../models/card-collections';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   standalone: false,
     selector: 'app-yugioh',
     templateUrl: './yugioh.component.html',
-    styleUrls: ['./yugioh.component.scss']
 })
 export class YugiohComponent implements OnInit {
-    currentUserId: string;
-    selectedSection: string;
     searchFilter: YugiohCardFilter;
 
     selectedCard: YugiohCard;
-    selectedCollection: CardCollection;
 
-    selectedTabIndex: number = 0;
-
-    constructor(private yugiohService: YugiohService, private auth: AuthService, private route: ActivatedRoute, private router: Router) { }
+    constructor(private yugiohService: YugiohService, private route: ActivatedRoute, private router: Router) { }
     
     ngOnInit() {
-        this.currentUserId = this.auth.getLoggedInUserId();
         this.route.params.subscribe(params => {
             const route = this.route.routeConfig.path.split('/')[1];
 
@@ -45,10 +36,6 @@ export class YugiohComponent implements OnInit {
 
     openedCollection() {
         return this.yugiohService.getCurrentCollection();
-    }
-
-    showSearchResults() {
-        this.selectedCard = null; 
     }
 
     cardSelected(card) {
@@ -73,17 +60,4 @@ export class YugiohComponent implements OnInit {
         this.router.navigate(['/yugioh/search'], { queryParams: { name } });
     }
 
-    selectCollection(event: any) {
-        this.selectedCollection = event.collection;
-        this.selectedSection = event.section;
-        this.selectedTabIndex = 0;
-    }
-
-    isLoggedIn() {
-        return localStorage.getItem('jwt');
-    }
-
-    onTabChange(event: any) {
-        this.selectedTabIndex = event.index;
-    }
 }

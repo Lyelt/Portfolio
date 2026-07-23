@@ -6,7 +6,6 @@ import { User } from '../../../auth/user';
   standalone: false,
   selector: 'app-bowling-select-user',
   templateUrl: './bowling-select-user.component.html',
-  styleUrls: ['./bowling-select-user.component.scss']
 })
 export class BowlingSelectUserComponent implements OnInit {
   @Input() label: string;

@@ -3,8 +3,7 @@ export enum SeriesCategoryEnum {
     OverallAverage,
     Game,
     StrikePct,
-    SinglePinSparePct,
-    NumberOfGamesByScore
+    SinglePinSparePct
 }
 
 export class SeriesCategory {
@@ -13,7 +12,5 @@ export class SeriesCategory {
     display: string;
 
     description: string;
-
-    chartType: string;
 }
 

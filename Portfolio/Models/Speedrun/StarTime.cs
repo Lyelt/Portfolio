@@ -1,11 +1,7 @@
 ﻿using Portfolio.Extensions;
 using Portfolio.Models.Auth;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Portfolio.Models.Speedrun
 {
@@ -38,13 +34,19 @@ namespace Portfolio.Models.Speedrun
 
         public ArchivedStarTime AsArchive()
         {
-            return new ArchivedStarTime { Timestamp = LastUpdated, 
-                Star = Star, StarId = StarId, 
-                User = User, UserId = UserId, 
-                LastUpdated = DateTime.UtcNow, 
-                Time = Time, 
-                VideoUrl = VideoUrl, 
-                TimeDisplay = TimeDisplay, TotalMilliseconds = TotalMilliseconds, Frames = Frames 
+            return new ArchivedStarTime
+            {
+                Timestamp = LastUpdated,
+                Star = Star,
+                StarId = StarId,
+                User = User,
+                UserId = UserId,
+                LastUpdated = DateTime.UtcNow,
+                Time = Time,
+                VideoUrl = VideoUrl,
+                TimeDisplay = TimeDisplay,
+                TotalMilliseconds = TotalMilliseconds,
+                Frames = Frames
             };
         }
 

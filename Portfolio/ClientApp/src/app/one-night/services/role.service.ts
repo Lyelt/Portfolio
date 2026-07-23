@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { Role } from '../models/role';
 import { RoleGroup } from '../models/role-group';
 
@@ -16,25 +16,8 @@ export class RoleService {
   private roleSubject: BehaviorSubject<Role[]> = new BehaviorSubject(null);
   private roleGroupsSubject: BehaviorSubject<RoleGroup[]> = new BehaviorSubject(null);
 
-  constructor(private http: HttpClient) { 
-    this.http.get<RoleGroup[]>('assets/one-night/monkey/role-groups.json').toPromise().then(groups => {
-      this.roleGroups = groups;
-
-      this.http.get<Role[]>('assets/one-night/monkey/roles.json').toPromise().then(roles => {
-        this.roles = roles;
-        
-        if (ROLES_KEY in localStorage) {
-          const storedRoles: Role[] = JSON.parse(localStorage.getItem(ROLES_KEY));
-          this.roles.forEach(r => {
-              r.selected = storedRoles.find(sr => sr.name === r.name && sr.displayOrder === r.displayOrder).selected;
-          });
-        }
-        
-        this.checkRoleGroups();
-        this.roleSubject.next(this.roles);
-        this.roleGroupsSubject.next(this.roleGroups);
-      });
-    });
+  constructor(private http: HttpClient) {
+    void this.initialize();
   }
 
   public getRoles(): Observable<Role[]> {
@@ -64,5 +47,24 @@ export class RoleService {
       // Assume the group is special if there are no roles in it (such as "Everyone").
       rg.isActive = (rg.mustIncludeAllRoles && activeRolesInGroup.length === rg.roleIds.length) || (!rg.mustIncludeAllRoles && activeRolesInGroup.length > 0) || (rg.roleIds.length === 0);
     });
+  }
+
+  private async initialize(): Promise<void> {
+    this.roleGroups = await firstValueFrom(
+      this.http.get<RoleGroup[]>('assets/one-night/monkey/role-groups.json'));
+    this.roles = await firstValueFrom(
+      this.http.get<Role[]>('assets/one-night/monkey/roles.json'));
+
+    if (ROLES_KEY in localStorage) {
+      const storedRoles: Role[] = JSON.parse(localStorage.getItem(ROLES_KEY));
+      this.roles.forEach(r => {
+        r.selected = storedRoles.find(
+          sr => sr.name === r.name && sr.displayOrder === r.displayOrder).selected;
+      });
+    }
+
+    this.checkRoleGroups();
+    this.roleSubject.next(this.roles);
+    this.roleGroupsSubject.next(this.roleGroups);
   }
 }

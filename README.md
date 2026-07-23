@@ -43,14 +43,12 @@ Run the same source checks as CI with:
 npm audit --prefix Portfolio/ClientApp --audit-level=high
 npm run build --prefix Portfolio/ClientApp -- --configuration production
 npm test --prefix Portfolio/ClientApp -- --watch=false
+dotnet format Portfolio.sln --verify-no-changes --no-restore
 dotnet build Portfolio.sln --configuration Release
 dotnet test Portfolio.sln --configuration Release --no-build
 ```
 
-CI intentionally does not enforce repository-wide `dotnet format`: the legacy
-solution has a large untouched whitespace baseline. Format files you change;
-normalizing that baseline belongs in a dedicated review. CI does reject
-high-severity npm advisories.
+CI also rejects high-severity npm advisories.
 
 ## Operations
 
@@ -58,4 +56,7 @@ high-severity npm advisories.
 backup, promotion, and troubleshooting contract. Shared host bootstrap,
 DNS/tunnel recovery, runner recreation, credential recovery, and the complete
 restore drill are canonical in the private `Lyelt/MacMiniInfrastructure`
-repository.
+repository. A blank production host is restored only through
+`/usr/local/sbin/restore-portfolio-production`, which binds the recovered
+database volume to the authenticated package's source SHA and immutable image
+before the first deployment.

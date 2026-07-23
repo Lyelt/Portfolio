@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { BowlingGame } from '../../models/bowling-game';
 import { BowlingFrame } from '../../models/bowling-frame';
 import { BowlingUtilities } from '../../models/bowling-utilities';
@@ -15,7 +15,7 @@ export class BowlingScore {
   templateUrl: './bowling-game.component.html',
   styleUrls: ['./bowling-game.component.scss']
 })
-export class BowlingGameComponent implements OnInit {
+export class BowlingGameComponent {
   @Input() game: BowlingGame;
   @Input() readOnly: boolean;
   @Output() gameSaved: EventEmitter<BowlingGame> = new EventEmitter();
@@ -38,11 +38,6 @@ export class BowlingGameComponent implements OnInit {
     { display: "9", value: 9, show: true  },
     { display: "X", value: 10, show: true  }
   ];
-  constructor() { }
-
-  ngOnInit() {
-  }
-
   getScoresToDisplay() {
     return this.possibleScores.filter(s => s.show);
   }

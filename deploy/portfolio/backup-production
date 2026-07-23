@@ -11,10 +11,20 @@ readonly BACKUP_DIR='/srv/backups/portfolio/daily'
 readonly SECRET_FILE='/srv/secrets/portfolio/backup.env'
 readonly PRODUCTION_ENV_FILE='/srv/secrets/portfolio/prod.env'
 readonly LOCK_FILE='/srv/apps/.deploy.lock'
+readonly INSTALLED_SCRIPT='/usr/local/sbin/backup-portfolio-production'
+readonly SCHEMA_CONTRACT='/usr/local/share/portfolio/schema-contract.sql'
+readonly PRODUCTION_DIR='/srv/apps/portfolio/prod'
+readonly RELEASES_DIR="${PRODUCTION_DIR}/releases"
+readonly CURRENT_LINK="${PRODUCTION_DIR}/current"
+readonly COMPOSE_PROJECT='portfolio-prod'
+readonly DATABASE_VOLUME='portfolio-prod-postgres-data'
 readonly POSTGRES_IMAGE='postgres:17-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193'
-readonly RETENTION_DAYS=90
+readonly RESERVE_BYTES=$((12 * 1024 * 1024 * 1024))
 
-temporary_dump=''
+temporary_payload_dir=''
+temporary_archive=''
+temporary_decrypted_archive=''
+temporary_restore_dir=''
 temporary_encrypted=''
 temporary_checksum=''
 temporary_identity=''
@@ -26,19 +36,24 @@ restore_volume=''
 backup_age_identity=''
 backup_age_recipient=''
 
-log() {
-  printf '[production-backup] %s\n' "$*" >&2
-}
+log() { printf '[portfolio-backup] %s\n' "$*" >&2; }
+fail() { log "ERROR: $*"; exit 1; }
 
-fail() {
-  log "ERROR: $*"
-  exit 1
+remove_temporary_directory() {
+  local directory="$1"
+  [[ -z "${directory}" ]] && return
+  [[ "${directory}" == "${BACKUP_DIR}/."* ]] ||
+    fail "Refusing to remove unexpected temporary directory: ${directory}"
+  rm -rf -- "${directory}"
 }
 
 cleanup() {
   [[ -z "${restore_container}" ]] || docker rm --force "${restore_container}" >/dev/null 2>&1 || true
   [[ -z "${restore_volume}" ]] || docker volume rm "${restore_volume}" >/dev/null 2>&1 || true
-  [[ -z "${temporary_dump}" ]] || rm -f -- "${temporary_dump}"
+  remove_temporary_directory "${temporary_payload_dir}"
+  remove_temporary_directory "${temporary_restore_dir}"
+  [[ -z "${temporary_archive}" ]] || rm -f -- "${temporary_archive}"
+  [[ -z "${temporary_decrypted_archive}" ]] || rm -f -- "${temporary_decrypted_archive}"
   [[ -z "${temporary_encrypted}" ]] || rm -f -- "${temporary_encrypted}"
   [[ -z "${temporary_checksum}" ]] || rm -f -- "${temporary_checksum}"
   [[ -z "${temporary_identity}" ]] || rm -f -- "${temporary_identity}"
@@ -49,85 +64,183 @@ cleanup() {
 }
 trap cleanup EXIT
 
+assert_guarded_file() {
+  local file="$1"
+  [[ -f "${file}" && ! -L "${file}" ]] || fail "Missing guarded file: ${file}"
+  [[ "$(stat -c '%U:%G %a' -- "${file}")" == 'root:deploy 640' ]] ||
+    fail "${file} must be owned by root:deploy with mode 0640."
+}
+
+assert_archive_payload() {
+  local archive="$1" destination="$2" listing
+  listing="$(tar --list --file "${archive}")"
+  [[ "${listing}" == $'database.dump\nSOURCE_SHA\nIMAGE_REF\nSHA256SUMS' ]] ||
+    fail 'The decrypted archive does not contain the exact canonical backup payload.'
+  tar --extract --file "${archive}" --directory "${destination}" \
+    --no-same-owner --no-same-permissions
+  [[ "$(find "${destination}" -mindepth 1 -maxdepth 1 -print | grep -c .)" == '4' ]] ||
+    fail 'The extracted backup payload contains unexpected entries.'
+  for entry in database.dump SOURCE_SHA IMAGE_REF SHA256SUMS; do
+    [[ -f "${destination}/${entry}" && ! -L "${destination}/${entry}" ]] ||
+      fail "The extracted backup payload has an unsafe ${entry} entry."
+  done
+  (
+    cd "${destination}"
+    sha256sum --check SHA256SUMS >/dev/null
+  ) || fail 'The authenticated backup payload checksum failed.'
+}
+
+[[ $# -eq 0 ]] || fail 'This helper takes no arguments.'
 [[ "$(id -un)" == 'deploy' ]] || fail 'Run as the deploy service account.'
-cd /srv/apps/portfolio
-for command in age age-keygen awk basename cut date df docker find flock grep id mktemp mv rm seq sha256sum sleep stat; do
+[[ "$(readlink -f -- "$0")" == "${INSTALLED_SCRIPT}" ]] ||
+  fail "Run the fixed host copy at ${INSTALLED_SCRIPT}."
+[[ "$(stat -c '%U:%G %a' -- "${INSTALLED_SCRIPT}")" == 'root:root 755' ]] ||
+  fail 'The fixed backup helper must be root:root mode 0755.'
+for command in age age-keygen awk basename cut date df docker find flock grep id mktemp mv readlink rm seq sha256sum sleep stat tar; do
   command -v "${command}" >/dev/null 2>&1 || fail "Missing required command: ${command}"
 done
-[[ -d "${BACKUP_DIR}" && -w "${BACKUP_DIR}" && ! -L "${BACKUP_DIR}" ]] || fail "Unsafe backup directory: ${BACKUP_DIR}"
+[[ -d "${BACKUP_DIR}" && -w "${BACKUP_DIR}" && ! -L "${BACKUP_DIR}" ]] ||
+  fail "Unsafe backup directory: ${BACKUP_DIR}"
+[[ "$(stat -c '%U:%G %a' -- "${BACKUP_DIR}")" == 'deploy:deploy 750' ]] ||
+  fail "${BACKUP_DIR} must be deploy:deploy with mode 0750."
+[[ -d "${RELEASES_DIR}" && ! -L "${RELEASES_DIR}" ]] ||
+  fail "Unsafe release directory: ${RELEASES_DIR}"
+[[ "$(stat -c '%U:%G %a' -- "${RELEASES_DIR}")" == 'deploy:deploy 750' ]] ||
+  fail "${RELEASES_DIR} must be deploy:deploy with mode 0750."
 [[ -f "${LOCK_FILE}" && ! -L "${LOCK_FILE}" ]] || fail "Unsafe deployment lock: ${LOCK_FILE}"
+[[ "$(stat -c '%U:%G %a' -- "${LOCK_FILE}")" == 'deploy:deploy 640' ]] ||
+  fail "${LOCK_FILE} must be deploy:deploy with mode 0640."
+[[ -f "${SCHEMA_CONTRACT}" && ! -L "${SCHEMA_CONTRACT}" ]] ||
+  fail "Missing schema contract: ${SCHEMA_CONTRACT}"
+[[ "$(stat -c '%U:%G %a' -- "${SCHEMA_CONTRACT}")" == 'root:root 644' ]] ||
+  fail "${SCHEMA_CONTRACT} must be owned by root:root with mode 0644."
+[[ -S /var/run/docker.sock ]] || fail 'The Docker socket is unavailable.'
+assert_guarded_file "${SECRET_FILE}"
+assert_guarded_file "${PRODUCTION_ENV_FILE}"
 
-for guarded_file in "${SECRET_FILE}" "${PRODUCTION_ENV_FILE}"; do
-  [[ -f "${guarded_file}" && ! -L "${guarded_file}" ]] || fail "Missing guarded file: ${guarded_file}"
-  [[ "$(stat -c '%U:%G %a' -- "${guarded_file}")" == 'root:deploy 640' ]] ||
-    fail "${guarded_file} must be owned by root:deploy with mode 0640."
+for key in BACKUP_AGE_IDENTITY BACKUP_AGE_RECIPIENT; do
+  [[ "$(grep -Ec "^${key}=" "${SECRET_FILE}")" == '1' ]] ||
+    fail "${SECRET_FILE} must define ${key} exactly once."
 done
-
-[[ "$(grep -Ec '^BACKUP_AGE_IDENTITY=' "${SECRET_FILE}")" == '1' ]] ||
-  fail 'Backup secret file must contain exactly one age identity.'
-[[ "$(grep -Ec '^BACKUP_AGE_RECIPIENT=' "${SECRET_FILE}")" == '1' ]] ||
-  fail 'Backup secret file must contain exactly one age recipient.'
 backup_age_identity="$(grep -E '^BACKUP_AGE_IDENTITY=[[:graph:]]+$' "${SECRET_FILE}" | cut -d= -f2- || true)"
 backup_age_recipient="$(grep -E '^BACKUP_AGE_RECIPIENT=[[:graph:]]+$' "${SECRET_FILE}" | cut -d= -f2- || true)"
-[[ -n "${backup_age_identity}" && "${backup_age_identity}" != replace-* ]] || fail 'Backup age identity is missing or is still the public placeholder.'
-[[ -n "${backup_age_recipient}" && "${backup_age_recipient}" != replace-* ]] || fail 'Backup age recipient is missing or is still the public placeholder.'
+[[ -n "${backup_age_identity}" && "${backup_age_identity}" != replace-* ]] ||
+  fail 'Backup age identity is missing or is still the public placeholder.'
+[[ -n "${backup_age_recipient}" && "${backup_age_recipient}" != replace-* ]] ||
+  fail 'Backup age recipient is missing or is still the public placeholder.'
 
-temporary_identity="$(mktemp "${BACKUP_DIR}/.portfolio-backup-age-identity.XXXXXX")"
+temporary_identity="$(mktemp "${BACKUP_DIR}/.portfolio-age-identity.XXXXXX")"
 printf '%s\n' "${backup_age_identity}" > "${temporary_identity}"
-derived_recipient="$(age-keygen -y "${temporary_identity}")"
-[[ "${derived_recipient}" == "${backup_age_recipient}" ]] || fail 'Backup age identity and recipient do not match.'
-unset derived_recipient
+[[ "$(age-keygen -y "${temporary_identity}")" == "${backup_age_recipient}" ]] ||
+  fail 'Backup age identity and recipient do not match.'
 
-temporary_restore_env="$(mktemp "${BACKUP_DIR}/.portfolio-production-restore.XXXXXX.env")"
-grep -E '^(POSTGRES_DB|POSTGRES_PASSWORD|POSTGRES_USER)=' "${PRODUCTION_ENV_FILE}" > "${temporary_restore_env}"
-[[ "$(grep -Ec '^(POSTGRES_DB|POSTGRES_PASSWORD|POSTGRES_USER)=' "${temporary_restore_env}")" == '3' ]] ||
-  fail 'Could not create the minimal PostgreSQL restore environment.'
+temporary_restore_env="$(mktemp "${BACKUP_DIR}/.portfolio-restore.XXXXXX.env")"
+for key in POSTGRES_DB POSTGRES_PASSWORD POSTGRES_USER; do
+  [[ "$(grep -Ec "^${key}=" "${PRODUCTION_ENV_FILE}")" == '1' ]] ||
+    fail "${PRODUCTION_ENV_FILE} must define ${key} exactly once."
+done
+grep -E '^(POSTGRES_DB|POSTGRES_PASSWORD|POSTGRES_USER)=' \
+  "${PRODUCTION_ENV_FILE}" > "${temporary_restore_env}"
 
 exec 9>"${LOCK_FILE}"
 flock --timeout 900 9 || fail 'A deployment or database operation held the global lock for more than 15 minutes.'
 
+[[ -L "${CURRENT_LINK}" ]] || fail 'The production current release link is missing.'
+current_release="$(readlink -f -- "${CURRENT_LINK}")"
+[[ -d "${current_release}" && "${current_release}" == "${RELEASES_DIR}/"* ]] ||
+  fail 'The production current release points outside the guarded release directory.'
+for marker in .source-sha .image-ref; do
+  [[ -f "${current_release}/${marker}" && ! -L "${current_release}/${marker}" ]] ||
+    fail "The production current release is missing ${marker}."
+done
+IFS= read -r source_sha < "${current_release}/.source-sha"
+IFS= read -r image_ref < "${current_release}/.image-ref"
+[[ "$(grep -Ecx '[0-9a-f]{40}' "${current_release}/.source-sha")" == '1' ]] ||
+  fail 'The production source marker is invalid.'
+[[ "$(grep -Ecx 'ghcr\.io/lyelt/portfolio@sha256:[0-9a-f]{64}' "${current_release}/.image-ref")" == '1' ]] ||
+  fail 'The production image marker is not an immutable Portfolio image.'
+[[ "$(basename -- "${current_release}")" == "${source_sha}-"* ]] ||
+  fail 'The production release directory does not match its source marker.'
+
+mapfile -t application_containers < <(docker ps --quiet \
+  --filter "label=com.docker.compose.project=${COMPOSE_PROJECT}" \
+  --filter 'label=com.docker.compose.service=app')
+[[ "${#application_containers[@]}" == '1' ]] ||
+  fail 'Expected exactly one running production application container.'
+readonly application_container="${application_containers[0]}"
+[[ "$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{end}}' "${application_container}")" == 'healthy' ]] ||
+  fail 'The production application is not healthy.'
+[[ "$(docker inspect --format '{{.Config.Image}}' "${application_container}")" == "${image_ref}" ]] ||
+  fail 'The production application image does not match the current immutable release marker.'
+
 mapfile -t database_containers < <(docker ps --quiet \
-  --filter label=com.docker.compose.project=portfolio-prod \
-  --filter label=com.docker.compose.service=db)
-[[ "${#database_containers[@]}" == '1' ]] || fail 'Expected exactly one running production database container.'
+  --filter "label=com.docker.compose.project=${COMPOSE_PROJECT}" \
+  --filter 'label=com.docker.compose.service=db')
+[[ "${#database_containers[@]}" == '1' ]] ||
+  fail 'Expected exactly one running production database container.'
 readonly database_container="${database_containers[0]}"
 [[ "$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{end}}' "${database_container}")" == 'healthy' ]] ||
-  fail 'Production database is not healthy.'
+  fail 'The production database is not healthy.'
+[[ "$(docker inspect --format '{{.Config.Image}}' "${database_container}")" == "${POSTGRES_IMAGE}" ]] ||
+  fail 'The production database is not running the pinned PostgreSQL image.'
+database_mount="$(docker inspect --format '{{range .Mounts}}{{if eq .Destination "/var/lib/postgresql/data"}}{{.Name}}{{end}}{{end}}' "${database_container}")"
+[[ "${database_mount}" == "${DATABASE_VOLUME}" ]] ||
+  fail "The production database is not mounted from ${DATABASE_VOLUME}."
 
 database_size_bytes="$(docker exec "${database_container}" sh -ceu '
   exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="SELECT pg_database_size(current_database());"
 ')"
 available_bytes="$(df --output=avail -B1 "${BACKUP_DIR}" | awk 'NR == 2 { print $1 }')"
-[[ "${database_size_bytes}" =~ ^[0-9]+$ && "${available_bytes}" =~ ^[0-9]+$ ]] || fail 'Could not calculate backup capacity.'
-readonly reserve_bytes=$((12 * 1024 * 1024 * 1024))
-readonly working_space_bytes=$((database_size_bytes * 4 + 512 * 1024 * 1024))
-readonly required_bytes=$((reserve_bytes + working_space_bytes))
-(( available_bytes >= required_bytes )) || fail 'Insufficient disk space for dump, encryption, full restore, and the 12-GiB safety reserve.'
-unset database_size_bytes available_bytes
+[[ "${database_size_bytes}" =~ ^[0-9]+$ && "${available_bytes}" =~ ^[0-9]+$ ]] ||
+  fail 'Could not calculate backup capacity.'
+required_bytes=$((RESERVE_BYTES + database_size_bytes * 5 + 512 * 1024 * 1024))
+(( available_bytes >= required_bytes )) ||
+  fail 'Insufficient disk space for packaging, encryption, full restore, and the 12-GiB safety reserve.'
+database_size_bytes=''
+available_bytes=''
+required_bytes=''
 
 timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
-readonly final_encrypted="${BACKUP_DIR}/portfolio-production-${timestamp}.dump.age"
+readonly final_encrypted="${BACKUP_DIR}/portfolio-production-${timestamp}.backup.tar.age"
 readonly final_checksum="${final_encrypted}.sha256"
-[[ ! -e "${final_encrypted}" && ! -e "${final_checksum}" ]] || fail 'Timestamped backup path already exists.'
+[[ ! -e "${final_encrypted}" && ! -e "${final_checksum}" ]] ||
+  fail 'Timestamped backup path already exists.'
+temporary_payload_dir="$(mktemp --directory "${BACKUP_DIR}/.portfolio-payload-${timestamp}.XXXXXX")"
+temporary_archive="$(mktemp "${BACKUP_DIR}/.portfolio-${timestamp}.XXXXXX.backup.tar")"
+temporary_encrypted="$(mktemp "${BACKUP_DIR}/.portfolio-${timestamp}.XXXXXX.backup.tar.age")"
+temporary_decrypted_archive="$(mktemp "${BACKUP_DIR}/.portfolio-${timestamp}.XXXXXX.decrypted.tar")"
+temporary_restore_dir="$(mktemp --directory "${BACKUP_DIR}/.portfolio-restore-payload-${timestamp}.XXXXXX")"
+temporary_checksum="$(mktemp "${BACKUP_DIR}/.portfolio-${timestamp}.XXXXXX.sha256")"
 
-temporary_dump="$(mktemp "${BACKUP_DIR}/.portfolio-production-${timestamp}.XXXXXX.dump")"
-temporary_encrypted="$(mktemp "${BACKUP_DIR}/.portfolio-production-${timestamp}.XXXXXX.dump.age")"
-temporary_checksum="$(mktemp "${BACKUP_DIR}/.portfolio-production-${timestamp}.XXXXXX.sha256")"
-
-log 'Creating PostgreSQL custom-format dump.'
+log 'Creating the canonical PostgreSQL dump and immutable release metadata.'
 docker exec "${database_container}" sh -ceu \
   'exec pg_dump --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --format=custom --no-owner --no-acl' \
-  > "${temporary_dump}"
-[[ -s "${temporary_dump}" ]] || fail 'Production dump is empty.'
+  > "${temporary_payload_dir}/database.dump"
+[[ -s "${temporary_payload_dir}/database.dump" ]] || fail 'Production dump is empty.'
 docker run --rm --network none --interactive "${POSTGRES_IMAGE}" pg_restore --list \
-  < "${temporary_dump}" >/dev/null
+  < "${temporary_payload_dir}/database.dump" >/dev/null
+printf '%s\n' "${source_sha}" > "${temporary_payload_dir}/SOURCE_SHA"
+printf '%s\n' "${image_ref}" > "${temporary_payload_dir}/IMAGE_REF"
+(
+  cd "${temporary_payload_dir}"
+  sha256sum database.dump SOURCE_SHA IMAGE_REF > SHA256SUMS
+  sha256sum --check SHA256SUMS >/dev/null
+)
+tar --create --file "${temporary_archive}" --directory "${temporary_payload_dir}" \
+  database.dump SOURCE_SHA IMAGE_REF SHA256SUMS
 
-log 'Encrypting with age and validating authenticated decryption.'
-age --encrypt --recipient "${backup_age_recipient}" --output "${temporary_encrypted}" "${temporary_dump}"
-age --decrypt --identity "${temporary_identity}" "${temporary_encrypted}" |
-  docker run --rm --network none --interactive "${POSTGRES_IMAGE}" pg_restore --list >/dev/null
+log 'Encrypting the canonical package and validating its authenticated payload.'
+age --encrypt --recipient "${backup_age_recipient}" "${temporary_archive}" > "${temporary_encrypted}"
+age --decrypt --identity "${temporary_identity}" --output "${temporary_decrypted_archive}" "${temporary_encrypted}"
+assert_archive_payload "${temporary_decrypted_archive}" "${temporary_restore_dir}"
+[[ "$(<"${temporary_restore_dir}/SOURCE_SHA")" == "${source_sha}" ]] ||
+  fail 'The authenticated backup source marker changed during packaging.'
+[[ "$(<"${temporary_restore_dir}/IMAGE_REF")" == "${image_ref}" ]] ||
+  fail 'The authenticated backup image marker changed during packaging.'
+docker run --rm --network none --interactive "${POSTGRES_IMAGE}" pg_restore --list \
+  < "${temporary_restore_dir}/database.dump" >/dev/null
 
-log 'Restoring the authenticated backup into an isolated disposable PostgreSQL instance.'
+log 'Restoring the authenticated package into an isolated database and checking the canonical schema.'
 restore_container="portfolio-prod-backup-restore-$RANDOM-$$"
 restore_volume="$(docker volume create \
   --label com.ghobrial.portfolio.purpose=production-backup-restore-test \
@@ -140,61 +253,52 @@ docker run --detach \
   --volume "${restore_volume}:/var/lib/postgresql/data" \
   "${POSTGRES_IMAGE}" >/dev/null
 for _ in $(seq 1 60); do
-  if docker exec "${restore_container}" sh -ceu \
-    'pg_isready --username="$POSTGRES_USER" --dbname="$POSTGRES_DB"' >/dev/null 2>&1; then
-    break
-  fi
+  docker exec "${restore_container}" sh -ceu \
+    'pg_isready --username="$POSTGRES_USER" --dbname="$POSTGRES_DB"' >/dev/null 2>&1 && break
   sleep 2
 done
 docker exec "${restore_container}" sh -ceu \
   'pg_isready --username="$POSTGRES_USER" --dbname="$POSTGRES_DB"' >/dev/null ||
   fail 'Disposable restore database did not become ready.'
-age --decrypt --identity "${temporary_identity}" "${temporary_encrypted}" |
-  docker exec --interactive "${restore_container}" sh -ceu \
-    'exec pg_restore --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --no-owner --no-acl --exit-on-error --single-transaction'
-
-restored_table_count="$(docker exec "${restore_container}" sh -ceu '
-  exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="
-    SELECT count(*) FROM information_schema.tables WHERE table_schema = '\''public'\'';"
-')"
-restored_legacy_schema_count="$(docker exec "${restore_container}" sh -ceu '
-  exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="
-    SELECT count(*) FROM information_schema.schemata WHERE schema_name = '\''legacy'\'';"
-')"
-restored_migration_count="$(docker exec "${restore_container}" sh -ceu '
-  exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="SELECT count(*) FROM \"schemaversions\";"
-')"
-[[ "${restored_table_count}" =~ ^[0-9]+$ && "${restored_table_count}" -ge 20 ]] || fail 'Restored database is missing application tables.'
-[[ "${restored_legacy_schema_count}" == '0' ]] || fail 'Restored database still contains the retired legacy schema.'
-[[ "${restored_migration_count}" =~ ^[0-9]+$ && "${restored_migration_count}" -ge 1 ]] || fail 'Restored database is missing migration history.'
-
+docker exec --interactive "${restore_container}" sh -ceu \
+  'exec pg_restore --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --no-owner --no-acl --exit-on-error --single-transaction' \
+  < "${temporary_restore_dir}/database.dump"
+docker exec --interactive "${restore_container}" sh -ceu \
+  'exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --set=ON_ERROR_STOP=1' \
+  < "${SCHEMA_CONTRACT}" ||
+  fail 'Restored database does not match the canonical Portfolio schema contract.'
 docker rm --force "${restore_container}" >/dev/null
 restore_container=''
 docker volume rm "${restore_volume}" >/dev/null
 restore_volume=''
 
-encrypted_hash="$(sha256sum "${temporary_encrypted}" | awk '{print $1}')"
+encrypted_hash="$(sha256sum "${temporary_encrypted}" | awk '{ print $1 }')"
 printf '%s  %s\n' "${encrypted_hash}" "$(basename "${final_encrypted}")" > "${temporary_checksum}"
-unset encrypted_hash
-
 mv -- "${temporary_encrypted}" "${final_encrypted}"
 temporary_encrypted=''
 published_encrypted="${final_encrypted}"
 mv -- "${temporary_checksum}" "${final_checksum}"
 temporary_checksum=''
 published_checksum="${final_checksum}"
-rm -f -- "${temporary_dump}" "${temporary_identity}" "${temporary_restore_env}"
-temporary_dump=''
+[[ "$(stat -c '%U:%G %a' -- "${final_encrypted}")" == 'deploy:deploy 600' ]] ||
+  fail 'The encrypted backup must be deploy:deploy mode 0600.'
+[[ "$(stat -c '%U:%G %a' -- "${final_checksum}")" == 'deploy:deploy 600' ]] ||
+  fail 'The backup checksum must be deploy:deploy mode 0600.'
+(
+  cd "${BACKUP_DIR}"
+  sha256sum --check "$(basename "${final_checksum}")" >/dev/null
+)
+
+remove_temporary_directory "${temporary_payload_dir}"
+temporary_payload_dir=''
+remove_temporary_directory "${temporary_restore_dir}"
+temporary_restore_dir=''
+rm -f -- "${temporary_archive}" "${temporary_decrypted_archive}" "${temporary_identity}" "${temporary_restore_env}"
+temporary_archive=''
+temporary_decrypted_archive=''
 temporary_identity=''
 temporary_restore_env=''
 published_encrypted=''
 published_checksum=''
-
-log "Removing authenticated local backups older than ${RETENTION_DAYS} days after successful backup and restore validation."
-while IFS= read -r -d '' expired_backup; do
-  rm -f -- "${expired_backup}" "${expired_backup}.sha256"
-done < <(find "${BACKUP_DIR}" -maxdepth 1 -type f \
-  -name 'portfolio-production-*.dump.age' -mtime "+${RETENTION_DAYS}" -print0)
-
-log 'Backup, authenticated encryption, full restore, and schema validation passed.'
+log 'Encrypted immutable release package and full database restore validation passed; prior backups were left untouched.'
 printf '%s\n' "${final_encrypted}"

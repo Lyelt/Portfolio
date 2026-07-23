@@ -4,11 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Portfolio.Identity;
 using Portfolio.Data;
-using Portfolio.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Portfolio.Models.Speedrun;
 using Portfolio.Models.Auth;
@@ -88,7 +86,7 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [Route("Speedrun/UpdateStarTime")]
-        public async Task<IActionResult> UpdateStarTime([FromBody]StarTime starTime)
+        public async Task<IActionResult> UpdateStarTime([FromBody] StarTime starTime)
         {
             var currentUser = await GetCurrentUser();
             bool userIsAdmin = await _userManager.IsInRoleAsync(currentUser, ApplicationRole.Administrator.ToString());

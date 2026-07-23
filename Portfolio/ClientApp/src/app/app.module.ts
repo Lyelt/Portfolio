@@ -18,7 +18,6 @@ import { SpeedrunComponent } from './speedrun/components/speedrun/speedrun.compo
 import { BowlingComponent } from './bowling/components/bowling/bowling.component';
 import { EditStarComponent } from './speedrun/components/edit-star/edit-star.component';
 import { BingoComponent } from './speedrun/components/bingo/bingo.component';
-import { ConfigureSpeedrunComponent } from './speedrun/components/configure-speedrun/configure-speedrun.component';
 import { BingoGoalComponent } from './speedrun/components/bingo-goal/bingo-goal.component';
 import { BowlingChartComponent } from './bowling/components/bowling-chart/bowling-chart.component';
 import { BowlingStartSessionComponent } from './bowling/components/bowling-start-session/bowling-start-session.component';
@@ -26,7 +25,6 @@ import { BowlingAddGameComponent } from './bowling/components/bowling-add-game/b
 import { BowlingSelectUserComponent } from './bowling/components/bowling-select-user/bowling-select-user.component';
 import { BowlingGameComponent } from './bowling/components/bowling-game/bowling-game.component';
 import { BowlingStatComponent } from './bowling/components/bowling-stat/bowling-stat.component';
-import { BowlingSelectSeriesCategoryComponent } from './bowling/components/bowling-select-series-category/bowling-select-series-category.component';
 import { BlogComponent } from './blog/components/blog/blog.component';
 import { BackgroundIconComponent } from './shared/components/background-icon/background-icon.component';
 import { BlogArticleComponent } from './blog/components/blog-template/blog-article/blog-article.component';
@@ -40,15 +38,11 @@ import { BowlingArticleComponent } from './blog/components/articles/bowling-arti
 import { SpeedrunArticleComponent } from './blog/components/articles/speedrun-article/speedrun-article.component';
 import { TurnTrackerComponent } from './turn-tracker/components/turn-tracker/turn-tracker.component';
 import { PlayerComponent } from './turn-tracker/components/player/player.component';
-import { TierListComponent } from './tier-list/components/tier-list/tier-list.component';
 import { InitiativeComponent } from './blog/components/articles/initiative/initiative.component';
-import { RecipesComponent } from './cooking/components/recipes/recipes.component';
 import { YugiohComponent } from './yugioh/components/yugioh/yugioh.component';
 import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 import { CollectionsComponent } from './yugioh/components/collections/collections.component';
-import { YugiohSelectUserComponent } from './yugioh/components/yugioh-select-user/yugioh-select-user.component';
 import { CardSearchComponent } from './yugioh/components/card-search/card-search.component';
-import { HashComponent } from './auth/components/hash/hash.component';
 import { YugiohArticleComponent } from './blog/components/articles/yugioh-article/yugioh-article.component';
 import { ViewCollectionComponent } from './yugioh/components/view-collection/view-collection.component';
 import { AddCardComponent } from './yugioh/components/add-card/add-card.component';
@@ -102,9 +96,6 @@ const routes: Routes = [
         path: '', component: HomeComponent
     },
     {
-        path: 'hash', component: HashComponent
-    },
-    {
         path: 'blog', component: BlogComponent
     },
     {
@@ -150,25 +141,13 @@ const routes: Routes = [
         path: 'speedrun/star/:starId', component: SpeedrunComponent, canActivate: [AuthGuard]
     },
     {
-        path: 'speedrun/configure', component: ConfigureSpeedrunComponent, canActivate: [AuthGuard]
-    },
-    {
         path: 'speedrun/bingo', component: BingoComponent
-    },
-    {
-        path: 'speedrun/archive', component: ArchiveComponent, canActivate: [AuthGuard]
     },
     {
         path: 'bowling', component: BowlingComponent, canActivate: [AuthGuard]
     },
     {
         path: 'initiative', component: TurnTrackerComponent
-    },
-    {
-        path: 'tier', component: TierListComponent
-    },
-    {
-        path: 'recipes', component: RecipesComponent
     },
     {
         path: 'login', component: LoginComponent
@@ -193,9 +172,6 @@ const routes: Routes = [
     },
     {
         path: 'gamenight', component: GameNightComponent, canActivate: [AuthGuard], data: { toolbar: false }
-    },
-    {
-        path: 'gamenight/home', component: GameNightComponent, canActivate: [AuthGuard], data: { toolbar: false }
     },
     {
         path: 'gamenight/games', component: GameNightComponent, canActivate: [AuthGuard], data: { toolbar: false }
@@ -223,7 +199,6 @@ const routes: Routes = [
         LoginComponent,
         EditStarComponent,
         BingoComponent,
-        ConfigureSpeedrunComponent,
         BingoGoalComponent,
         BowlingChartComponent,
         BowlingStartSessionComponent,
@@ -231,7 +206,6 @@ const routes: Routes = [
         BowlingSelectUserComponent,
         BowlingGameComponent,
         BowlingStatComponent,
-        BowlingSelectSeriesCategoryComponent,
         BlogComponent,
         BackgroundIconComponent,
         BlogArticleComponent,
@@ -245,14 +219,10 @@ const routes: Routes = [
         SpeedrunArticleComponent,
         TurnTrackerComponent,
         PlayerComponent,
-        TierListComponent,
         InitiativeComponent,
-        RecipesComponent,
         YugiohComponent,
         CollectionsComponent,
-        YugiohSelectUserComponent,
         CardSearchComponent,
-        HashComponent,
         YugiohArticleComponent,
         ViewCollectionComponent,
         AddCardComponent,
@@ -304,7 +274,6 @@ const routes: Routes = [
         HttpClientModule,
       MaterialModule,
       RouterModule.forRoot(routes, {
-        useHash: false,
         anchorScrolling: 'enabled',
         scrollOffset: [0, 96],
         scrollPositionRestoration: 'enabled'

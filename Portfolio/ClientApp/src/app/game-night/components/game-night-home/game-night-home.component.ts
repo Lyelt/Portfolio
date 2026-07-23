@@ -7,7 +7,6 @@ import { first } from 'rxjs';
   standalone: false,
   selector: 'app-game-night-home',
   templateUrl: './game-night-home.component.html',
-  styleUrls: ['./game-night-home.component.scss']
 })
 export class GameNightHomeComponent {
   private nextGameNight: GameNight;

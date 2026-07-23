@@ -8,7 +8,6 @@ import { AuthService } from '../../auth.service';
   standalone: false,
     selector: 'app-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
 

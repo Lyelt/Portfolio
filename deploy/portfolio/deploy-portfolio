@@ -8,6 +8,7 @@ readonly PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 export PATH
 
 readonly REPOSITORY_URL='https://github.com/Lyelt/Portfolio.git'
+readonly REPOSITORY_SLUG='Lyelt/Portfolio'
 readonly BASE_DIR='/srv/apps/portfolio'
 readonly REPOSITORY_DIR="${BASE_DIR}/repository.git"
 readonly SECRETS_DIR='/srv/secrets/portfolio'
@@ -15,7 +16,15 @@ readonly BACKUPS_DIR='/srv/backups/portfolio'
 readonly LOCK_FILE='/srv/apps/.deploy.lock'
 readonly COMPOSE_RELATIVE_PATH='deploy/portfolio/compose.yml'
 readonly INSTALLED_SCRIPT='/usr/local/sbin/deploy-portfolio'
+readonly MANIFEST_VALIDATOR='/usr/local/sbin/validate-deployment-manifest'
+readonly SCHEMA_CONTRACT='/usr/local/share/portfolio/schema-contract.sql'
+readonly SCHEMA_CONTRACT_RELATIVE_PATH='deploy/portfolio/schema-contract.sql'
 readonly PRODUCTION_SENTINEL="${SECRETS_DIR}/production-enabled"
+readonly RECOVERY_APPROVAL="${SECRETS_DIR}/production-recovery.env"
+readonly RECOVERY_SOURCE_LABEL='com.ghobrial.portfolio.recovery.source-sha'
+readonly RECOVERY_IMAGE_LABEL='com.ghobrial.portfolio.recovery.image-ref'
+readonly RECOVERY_BACKUP_LABEL='com.ghobrial.portfolio.recovery.backup-sha256'
+readonly RECOVERY_APPROVAL_MAX_AGE_SECONDS=86400
 readonly DEPLOY_HOME="${HOME:-/home/deploy}"
 readonly MINIMUM_FREE_KIB=$((12 * 1024 * 1024))
 
@@ -23,6 +32,10 @@ temporary_release=''
 temporary_backup=''
 temporary_checksum=''
 temporary_link=''
+temporary_recovery_consumed=''
+recovery_mode='false'
+recovery_backup_sha=''
+recovery_consumed_file=''
 
 log() {
   printf '[portfolio-deploy] %s\n' "$*"
@@ -45,6 +58,9 @@ cleanup() {
   fi
   if [[ -n "${temporary_link}" && -L "${temporary_link}" ]]; then
     rm -f -- "${temporary_link}"
+  fi
+  if [[ -n "${temporary_recovery_consumed}" && -f "${temporary_recovery_consumed}" ]]; then
+    rm -f -- "${temporary_recovery_consumed}"
   fi
 }
 trap cleanup EXIT
@@ -74,6 +90,15 @@ assert_fixed_host_install() {
     fail "${INSTALLED_SCRIPT} must be owned by root:root."
   (( (permissions & 0022) == 0 )) ||
     fail "${INSTALLED_SCRIPT} must not be writable by group or other users."
+
+  [[ -f "${SCHEMA_CONTRACT}" && ! -L "${SCHEMA_CONTRACT}" ]] ||
+    fail "Missing installed schema contract: ${SCHEMA_CONTRACT}"
+  [[ "$(stat -c '%U:%G %a' -- "${SCHEMA_CONTRACT}")" == 'root:root 644' ]] ||
+    fail "${SCHEMA_CONTRACT} must be owned by root:root with mode 0644."
+  [[ -f "${MANIFEST_VALIDATOR}" && ! -L "${MANIFEST_VALIDATOR}" ]] ||
+    fail "Missing shared manifest validator: ${MANIFEST_VALIDATOR}"
+  [[ "$(stat -c '%U:%G %a' -- "${MANIFEST_VALIDATOR}")" == 'root:root 755' ]] ||
+    fail "${MANIFEST_VALIDATOR} must be owned by root:root with mode 0755."
 }
 
 assert_secret_file() {
@@ -130,6 +155,69 @@ require_nonempty_env_key() {
     fail "${required_key} still contains an example placeholder in ${file}."
 
   key_value=''
+}
+
+read_exact_assignment() {
+  local file="$1"
+  local key="$2"
+  local value
+
+  [[ "$(grep -Ec "^${key}=" "${file}")" == '1' ]] ||
+    fail "${file} must define ${key} exactly once."
+  value="$(grep -E "^${key}=" "${file}" | cut -d= -f2-)"
+  [[ -n "${value}" ]] || fail "${key} must not be empty in ${file}."
+  printf '%s\n' "${value}"
+}
+
+assert_recovered_production_volume() {
+  local requested_source="$1"
+  local requested_image="$2"
+  local approved_source approved_image approved_volume approved_epoch now_epoch approval_age
+  local volume_source volume_image volume_backup
+  local -a attached_containers
+
+  assert_secret_file "${RECOVERY_APPROVAL}"
+  [[ "$(grep -Ec '^(SOURCE_SHA|IMAGE_REF|DATABASE_VOLUME|BACKUP_SHA256|APPROVED_AT_EPOCH)=' "${RECOVERY_APPROVAL}")" == '5' ]] ||
+    fail 'The production recovery approval must contain exactly five canonical assignments.'
+  [[ "$(grep -Evc '^(SOURCE_SHA|IMAGE_REF|DATABASE_VOLUME|BACKUP_SHA256|APPROVED_AT_EPOCH)=' "${RECOVERY_APPROVAL}")" == '0' ]] ||
+    fail 'The production recovery approval contains an unexpected assignment.'
+
+  approved_source="$(read_exact_assignment "${RECOVERY_APPROVAL}" SOURCE_SHA)"
+  approved_image="$(read_exact_assignment "${RECOVERY_APPROVAL}" IMAGE_REF)"
+  approved_volume="$(read_exact_assignment "${RECOVERY_APPROVAL}" DATABASE_VOLUME)"
+  recovery_backup_sha="$(read_exact_assignment "${RECOVERY_APPROVAL}" BACKUP_SHA256)"
+  approved_epoch="$(read_exact_assignment "${RECOVERY_APPROVAL}" APPROVED_AT_EPOCH)"
+
+  [[ "${approved_source}" == "${requested_source}" ]] ||
+    fail 'The recovered backup source marker does not match the requested release.'
+  [[ "${approved_image}" == "${requested_image}" ]] ||
+    fail 'The recovered backup image marker does not match the requested immutable image.'
+  [[ "${approved_volume}" == "${database_volume}" ]] ||
+    fail 'The recovered backup approval names an unexpected database volume.'
+  [[ "${recovery_backup_sha}" =~ ^[0-9a-f]{64}$ ]] ||
+    fail 'The recovered backup approval has an invalid backup digest.'
+  recovery_consumed_file="${recovery_consumed_dir}/${recovery_backup_sha}"
+  [[ ! -e "${recovery_consumed_file}" && ! -L "${recovery_consumed_file}" ]] ||
+    fail 'This production backup has already been used for recovery.'
+  [[ "${approved_epoch}" =~ ^[0-9]+$ ]] ||
+    fail 'The recovered backup approval has an invalid timestamp.'
+  now_epoch="$(date -u +%s)"
+  approval_age=$((now_epoch - approved_epoch))
+  (( approval_age >= 0 && approval_age <= RECOVERY_APPROVAL_MAX_AGE_SECONDS )) ||
+    fail 'The recovered backup approval is expired or dated in the future; rerun the root-owned restore helper.'
+
+  docker volume inspect "${database_volume}" >/dev/null 2>&1 ||
+    fail "The approved recovered database volume is missing: ${database_volume}"
+  mapfile -t attached_containers < <(docker ps --all --quiet --filter "volume=${database_volume}")
+  [[ "${#attached_containers[@]}" == '0' ]] ||
+    fail 'The recovered database volume is still attached to a container.'
+  volume_source="$(docker volume inspect --format "{{index .Labels \"${RECOVERY_SOURCE_LABEL}\"}}" "${database_volume}")"
+  volume_image="$(docker volume inspect --format "{{index .Labels \"${RECOVERY_IMAGE_LABEL}\"}}" "${database_volume}")"
+  volume_backup="$(docker volume inspect --format "{{index .Labels \"${RECOVERY_BACKUP_LABEL}\"}}" "${database_volume}")"
+  [[ "${volume_source}" == "${approved_source}" &&
+      "${volume_image}" == "${approved_image}" &&
+      "${volume_backup}" == "${recovery_backup_sha}" ]] ||
+    fail 'The recovered database volume labels do not match the root-owned recovery approval.'
 }
 
 compose_for() {
@@ -296,14 +384,14 @@ assert_canonical_database_schema() {
   local release="$1"
   local image_ref="$2"
   local source_sha="$3"
-  local legacy_schema_count
+  local contract="${4:-${SCHEMA_CONTRACT}}"
 
-  legacy_schema_count="$(compose_for "${release}" "${image_ref}" "${source_sha}" exec -T db \
-    sh -ceu 'exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="
-      SELECT count(*) FROM information_schema.schemata WHERE schema_name = '\''legacy'\'';"')"
-  legacy_schema_count="${legacy_schema_count//$'\r'/}"
-  [[ "${legacy_schema_count}" == '0' ]] ||
-    fail 'The retired legacy schema still exists after migration.'
+  [[ -f "${contract}" && ! -L "${contract}" ]] ||
+    fail "Missing canonical schema contract: ${contract}"
+  compose_for "${release}" "${image_ref}" "${source_sha}" exec -T db \
+    sh -ceu 'exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --set=ON_ERROR_STOP=1' \
+    < "${contract}" ||
+    fail 'The database does not match the canonical Portfolio schema contract.'
 }
 
 stop_failed_application() {
@@ -329,6 +417,7 @@ readonly requested_image_ref="$3"
 case "${requested_environment}" in
   staging)
     readonly deployment_environment='staging'
+    readonly manifest_environment='staging'
     readonly expected_branch='staging'
     readonly compose_project='portfolio-staging'
     readonly web_alias='portfolio-staging-web'
@@ -337,6 +426,7 @@ case "${requested_environment}" in
     ;;
   prod)
     readonly deployment_environment='prod'
+    readonly manifest_environment='production'
     readonly expected_branch='master'
     readonly compose_project='portfolio-prod'
     readonly web_alias='portfolio-prod-web'
@@ -352,8 +442,9 @@ readonly environment_dir="${BASE_DIR}/${deployment_environment}"
 readonly releases_dir="${environment_dir}/releases"
 readonly current_link="${environment_dir}/current"
 readonly secrets_file="${SECRETS_DIR}/${deployment_environment}.env"
+readonly recovery_consumed_dir="${environment_dir}/recovery-consumed"
 
-for required_command in awk df docker flock git mktemp readlink seq sha256sum stat tar; do
+for required_command in awk cut date df docker flock git grep mktemp readlink seq sha256sum stat tar; do
   require_command "${required_command}"
 done
 
@@ -364,6 +455,12 @@ assert_fixed_host_install
 [[ -d "${environment_dir}" && ! -L "${environment_dir}" ]] || fail "Missing host directory: ${environment_dir}"
 [[ -d "${releases_dir}" && -w "${releases_dir}" && ! -L "${releases_dir}" ]] ||
   fail "Release directory is unavailable: ${releases_dir}"
+if [[ "${deployment_environment}" == 'prod' ]]; then
+  [[ -d "${recovery_consumed_dir}" && ! -L "${recovery_consumed_dir}" ]] ||
+    fail "Missing guarded recovery-consumption directory: ${recovery_consumed_dir}"
+  [[ "$(stat -c '%U:%G %a' -- "${recovery_consumed_dir}")" == 'deploy:deploy 750' ]] ||
+    fail "${recovery_consumed_dir} must be deploy:deploy with mode 0750."
+fi
 [[ -S '/var/run/docker.sock' ]] || fail 'Docker socket is unavailable.'
 docker network inspect web >/dev/null 2>&1 || fail 'Required external Docker network does not exist: web'
 
@@ -407,6 +504,36 @@ if current_release="$(read_current_release "${current_link}" "${releases_dir}")"
   [[ "${current_image_ref}" =~ ^ghcr\.io/lyelt/portfolio@sha256:[0-9a-f]{64}$ ]] ||
     fail 'Current release has an invalid image marker.'
   assert_database_volume_mount "${current_release}" "${current_image_ref}" "${current_sha}" "${database_volume}"
+elif [[ "${deployment_environment}" == 'prod' ]]; then
+  assert_recovered_production_volume "${requested_sha}" "${requested_image_ref}"
+  recovery_mode='true'
+fi
+
+if [[ "${recovery_mode}" != 'true' ]]; then
+  [[ "${GITHUB_ACTIONS:-}" == 'true' ]] ||
+    fail 'Normal deployments may run only from GitHub Actions.'
+  [[ "${GITHUB_SERVER_URL:-}" == 'https://github.com' ]] ||
+    fail 'GITHUB_SERVER_URL is not the approved GitHub origin.'
+  [[ "${GITHUB_REPOSITORY:-}" == "${REPOSITORY_SLUG}" ]] ||
+    fail 'GITHUB_REPOSITORY does not match the Portfolio repository.'
+  [[ "${GITHUB_SHA:-}" == "${requested_sha}" ]] ||
+    fail 'GITHUB_SHA does not match the requested commit.'
+  [[ "${GITHUB_REF:-}" == "refs/heads/${expected_branch}" ]] ||
+    fail 'GITHUB_REF does not match the deployment branch.'
+  [[ "${GITHUB_RUN_ID:-}" =~ ^[1-9][0-9]*$ ]] ||
+    fail 'GITHUB_RUN_ID is invalid.'
+  [[ "${GITHUB_RUN_ATTEMPT:-}" =~ ^[1-9][0-9]*$ ]] ||
+    fail 'GITHUB_RUN_ATTEMPT is invalid.'
+  "${MANIFEST_VALIDATOR}" \
+    portfolio \
+    "${manifest_environment}" \
+    "${REPOSITORY_SLUG}" \
+    "${expected_branch}" \
+    "${requested_sha}" \
+    "${requested_image_ref}" \
+    "${GITHUB_RUN_ID}" \
+    "${GITHUB_RUN_ATTEMPT}" \
+    "${COMPOSE_RELATIVE_PATH}"
 fi
 
 if [[ -e "${REPOSITORY_DIR}" && ( ! -d "${REPOSITORY_DIR}" || -L "${REPOSITORY_DIR}" ) ]]; then
@@ -427,8 +554,15 @@ git --git-dir="${REPOSITORY_DIR}" \
 
 remote_sha="$(git --git-dir="${REPOSITORY_DIR}" rev-parse --verify "refs/remotes/origin/${expected_branch}^{commit}")"
 resolved_sha="$(git --git-dir="${REPOSITORY_DIR}" rev-parse --verify "${requested_sha}^{commit}")"
-[[ "${remote_sha}" == "${requested_sha}" && "${resolved_sha}" == "${requested_sha}" ]] ||
-  fail "Requested SHA is not the exact current head of ${expected_branch}; a newer workflow should deploy the newer head."
+[[ "${resolved_sha}" == "${requested_sha}" ]] ||
+  fail 'Requested SHA did not resolve to the exact requested commit.'
+if [[ "${recovery_mode}" == 'true' ]]; then
+  git --git-dir="${REPOSITORY_DIR}" merge-base --is-ancestor "${requested_sha}" "${remote_sha}" ||
+    fail "The recovered source is not part of the protected ${expected_branch} history."
+else
+  [[ "${remote_sha}" == "${requested_sha}" ]] ||
+    fail "Requested SHA is not the exact current head of ${expected_branch}; a newer workflow should deploy the newer head."
+fi
 
 if [[ "${current_sha}" == "${requested_sha}" ]]; then
   database_is_healthy "${current_release}" "${current_image_ref}" "${current_sha}" ||
@@ -448,6 +582,9 @@ git --git-dir="${REPOSITORY_DIR}" archive --format=tar "${requested_sha}" |
 
 [[ -f "${temporary_release}/${COMPOSE_RELATIVE_PATH}" && ! -L "${temporary_release}/${COMPOSE_RELATIVE_PATH}" ]] ||
   fail "Commit is missing a regular ${COMPOSE_RELATIVE_PATH}."
+[[ -f "${temporary_release}/${SCHEMA_CONTRACT_RELATIVE_PATH}" &&
+    ! -L "${temporary_release}/${SCHEMA_CONTRACT_RELATIVE_PATH}" ]] ||
+  fail "Commit is missing a regular ${SCHEMA_CONTRACT_RELATIVE_PATH}."
 printf '%s\n' "${requested_sha}" > "${temporary_release}/.source-sha"
 printf '%s\n' "${requested_image_ref}" > "${temporary_release}/.image-ref"
 chmod -R go-w "${temporary_release}"
@@ -464,8 +601,8 @@ if [[ -n "${current_release}" ]]; then
   database_is_healthy "${current_release}" "${current_image_ref}" "${current_sha}" ||
     fail "The current ${deployment_environment} database is not healthy; refusing to restart it before a backup."
   create_database_backup "${current_release}" "${current_image_ref}" "${current_sha}"
-elif [[ "${deployment_environment}" == 'prod' ]]; then
-  fail 'Production has no current immutable release. Restore the approved database and image through the recovery procedure before deploying.'
+elif [[ "${deployment_environment}" == 'prod' && "${recovery_mode}" != 'true' ]]; then
+  fail 'Production has no current immutable release or exact approved recovered database.'
 fi
 
 log 'Validating non-root runtime access to required application files.'
@@ -484,11 +621,24 @@ log 'Starting the environment-specific PostgreSQL service.'
 compose_for "${release_dir}" "${requested_image_ref}" "${requested_sha}" up --detach --no-build db
 wait_for_database "${release_dir}" "${requested_image_ref}" "${requested_sha}" || fail 'Database did not become healthy.'
 
+if [[ "${recovery_mode}" == 'true' ]]; then
+  log 'Snapshotting the authenticated historical database before its source image runs migrations.'
+  create_database_backup "${release_dir}" "${requested_image_ref}" "${requested_sha}"
+fi
+
 log 'Applying database migrations with the published immutable image.'
 if ! compose_for "${release_dir}" "${requested_image_ref}" "${requested_sha}" run --rm --no-deps migrate; then
   fail 'Database migration failed; the application was not replaced. The database may contain partial migration changes.'
 fi
-assert_canonical_database_schema "${release_dir}" "${requested_image_ref}" "${requested_sha}"
+if [[ "${recovery_mode}" == 'true' ]]; then
+  assert_canonical_database_schema \
+    "${release_dir}" \
+    "${requested_image_ref}" \
+    "${requested_sha}" \
+    "${release_dir}/${SCHEMA_CONTRACT_RELATIVE_PATH}"
+else
+  assert_canonical_database_schema "${release_dir}" "${requested_image_ref}" "${requested_sha}"
+fi
 
 log 'Replacing the application container.'
 compose_for "${release_dir}" "${requested_image_ref}" "${requested_sha}" up --detach --no-deps --no-build app
@@ -503,4 +653,14 @@ mv --no-target-directory --force "${temporary_link}" "${current_link}"
 temporary_link=''
 
 log "Successfully deployed ${deployment_environment} at ${requested_sha}."
+if [[ "${recovery_mode}" == 'true' ]]; then
+  temporary_recovery_consumed="$(mktemp "${recovery_consumed_dir}/.${recovery_backup_sha}.XXXXXX")"
+  printf 'SOURCE_SHA=%s\nIMAGE_REF=%s\nBACKUP_SHA256=%s\n' \
+    "${requested_sha}" "${requested_image_ref}" "${recovery_backup_sha}" \
+    > "${temporary_recovery_consumed}"
+  chmod 0640 "${temporary_recovery_consumed}"
+  mv -- "${temporary_recovery_consumed}" "${recovery_consumed_file}"
+  temporary_recovery_consumed=''
+  log "Recovery approval was consumed; remove the root-owned approval file: ${RECOVERY_APPROVAL}"
+fi
 log "VM free space after deployment: $(df --output=avail -h "${BASE_DIR}" | awk 'NR == 2 { print $1 }'). No releases, images, caches, or backups were deleted automatically."
