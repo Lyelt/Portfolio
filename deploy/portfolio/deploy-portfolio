@@ -16,8 +16,6 @@ readonly LOCK_FILE='/srv/apps/.deploy.lock'
 readonly COMPOSE_RELATIVE_PATH='deploy/portfolio/compose.yml'
 readonly INSTALLED_SCRIPT='/usr/local/sbin/deploy-portfolio'
 readonly PRODUCTION_SENTINEL="${SECRETS_DIR}/production-enabled"
-readonly PRODUCTION_IMPORT_MARKER="${SECRETS_DIR}/production-import-complete"
-readonly STAGING_DATABASE_SELECTOR="${SECRETS_DIR}/staging-database-volume"
 readonly DEPLOY_HOME="${HOME:-/home/deploy}"
 readonly MINIMUM_FREE_KIB=$((12 * 1024 * 1024))
 
@@ -105,20 +103,6 @@ assert_sentinel() {
     fail "The production sentinel must be owned by root:deploy."
   (( (permissions & 0022) == 0 )) ||
     fail "The production sentinel must not be writable by group or other users."
-}
-
-read_staging_database_volume() {
-  local lines=()
-  local selected_volume
-
-  assert_secret_file "${STAGING_DATABASE_SELECTOR}"
-  mapfile -t lines < "${STAGING_DATABASE_SELECTOR}"
-  [[ ${#lines[@]} -eq 1 ]] ||
-    fail "${STAGING_DATABASE_SELECTOR} must contain exactly one line."
-  selected_volume="${lines[0]%$'\r'}"
-  [[ "${selected_volume}" =~ ^portfolio-staging-postgres-(data|restored-[a-z0-9]+)$ ]] ||
-    fail "${STAGING_DATABASE_SELECTOR} contains an invalid staging volume name."
-  printf '%s\n' "${selected_volume}"
 }
 
 require_nonempty_env_key() {
@@ -308,26 +292,28 @@ create_database_backup() {
   log "Validated database backup and checksum: ${final_backup}"
 }
 
-rollback_application() {
+assert_canonical_database_schema() {
+  local release="$1"
+  local image_ref="$2"
+  local source_sha="$3"
+  local legacy_schema_count
+
+  legacy_schema_count="$(compose_for "${release}" "${image_ref}" "${source_sha}" exec -T db \
+    sh -ceu 'exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="
+      SELECT count(*) FROM information_schema.schemata WHERE schema_name = '\''legacy'\'';"')"
+  legacy_schema_count="${legacy_schema_count//$'\r'/}"
+  [[ "${legacy_schema_count}" == '0' ]] ||
+    fail 'The retired legacy schema still exists after migration.'
+}
+
+stop_failed_application() {
   local new_release="$1"
   local new_image_ref="$2"
   local new_sha="$3"
-  local previous_release="$4"
-  local previous_image_ref="$5"
-  local previous_sha="$6"
 
-  if [[ -n "${previous_release}" ]]; then
-    log "New application failed health checks; restoring application image ${previous_sha}."
-    if compose_for "${previous_release}" "${previous_image_ref}" "${previous_sha}" up --detach --no-deps --no-build app &&
-      wait_for_application "${previous_release}" "${previous_image_ref}" "${previous_sha}"; then
-      fail 'Deployment failed health checks and the previous application image was restored. Database migrations were not automatically reversed.'
-    fi
-    fail 'Deployment failed health checks and the previous application image could not be restored automatically.'
-  fi
-
-  log 'Initial application deployment failed health checks; stopping the new application container.'
+  log 'Application failed health checks; stopping the failed container.'
   compose_for "${new_release}" "${new_image_ref}" "${new_sha}" stop --timeout 30 app >/dev/null 2>&1 || true
-  fail 'Initial deployment failed health checks. The database volume was retained.'
+  fail 'Deployment failed health checks. The database volume and pre-deployment backup were retained; recover the paired database and approved image through the documented procedure.'
 }
 
 [[ $# -eq 3 ]] || usage
@@ -347,6 +333,7 @@ case "${requested_environment}" in
     readonly compose_project='portfolio-staging'
     readonly web_alias='portfolio-staging-web'
     readonly app_environment='Staging'
+    readonly database_volume='portfolio-staging-postgres-data'
     ;;
   prod)
     readonly deployment_environment='prod'
@@ -354,6 +341,7 @@ case "${requested_environment}" in
     readonly compose_project='portfolio-prod'
     readonly web_alias='portfolio-prod-web'
     readonly app_environment='Production'
+    readonly database_volume='portfolio-prod-postgres-data'
     ;;
   *)
     usage
@@ -364,7 +352,6 @@ readonly environment_dir="${BASE_DIR}/${deployment_environment}"
 readonly releases_dir="${environment_dir}/releases"
 readonly current_link="${environment_dir}/current"
 readonly secrets_file="${SECRETS_DIR}/${deployment_environment}.env"
-database_volume=''
 
 for required_command in awk df docker flock git mktemp readlink seq sha256sum stat tar; do
   require_command "${required_command}"
@@ -393,17 +380,11 @@ for required_key in \
 done
 
 if [[ "${deployment_environment}" == 'prod' ]]; then
-  database_volume='portfolio-prod-postgres-data'
   assert_sentinel
 fi
 
 exec 9>"${LOCK_FILE}"
 flock --timeout 1800 9 || fail 'Another portfolio deployment held the global lock for more than 30 minutes.'
-
-if [[ "${deployment_environment}" == 'staging' ]]; then
-  database_volume="$(read_staging_database_volume)"
-fi
-readonly database_volume
 
 available_kib="$(df --output=avail "${BASE_DIR}" | awk 'NR == 2 { print $1 }')"
 [[ "${available_kib}" =~ ^[0-9]+$ ]] || fail 'Could not determine free space for the deployment filesystem.'
@@ -420,19 +401,11 @@ current_image_ref=''
 if current_release="$(read_current_release "${current_link}" "${releases_dir}")"; then
   IFS= read -r current_sha < "${current_release}/.source-sha"
   [[ "${current_sha}" =~ ^[0-9a-f]{40}$ ]] || fail 'Current release has an invalid source marker.'
-  if [[ -f "${current_release}/.image-ref" && ! -L "${current_release}/.image-ref" ]]; then
-    IFS= read -r current_image_ref < "${current_release}/.image-ref"
-    [[ "${current_image_ref}" =~ ^ghcr\.io/lyelt/portfolio@sha256:[0-9a-f]{64}$ ]] || fail 'Current release has an invalid image marker.'
-  else
-    mapfile -t current_app_containers < <(docker ps --quiet \
-      --filter "label=com.docker.compose.project=${compose_project}" \
-      --filter 'label=com.docker.compose.service=app')
-    [[ ${#current_app_containers[@]} -eq 1 ]] || fail 'Legacy transition requires exactly one running current application container.'
-    current_image_ref="$(docker inspect --format '{{.Config.Image}}' "${current_app_containers[0]}")"
-    [[ "${current_image_ref}" == "portfolio-${deployment_environment}:${current_sha}" ]] ||
-      fail 'Legacy current application image does not match its protected source marker.'
-    log "Using retained legacy image ${current_image_ref} only as the first immutable deployment rollback target."
-  fi
+  [[ -f "${current_release}/.image-ref" && ! -L "${current_release}/.image-ref" ]] ||
+    fail 'Current release is missing its immutable image marker.'
+  IFS= read -r current_image_ref < "${current_release}/.image-ref"
+  [[ "${current_image_ref}" =~ ^ghcr\.io/lyelt/portfolio@sha256:[0-9a-f]{64}$ ]] ||
+    fail 'Current release has an invalid image marker.'
   assert_database_volume_mount "${current_release}" "${current_image_ref}" "${current_sha}" "${database_volume}"
 fi
 
@@ -492,16 +465,7 @@ if [[ -n "${current_release}" ]]; then
     fail "The current ${deployment_environment} database is not healthy; refusing to restart it before a backup."
   create_database_backup "${current_release}" "${current_image_ref}" "${current_sha}"
 elif [[ "${deployment_environment}" == 'prod' ]]; then
-    if docker volume inspect "${database_volume}" >/dev/null 2>&1; then
-      assert_secret_file "${PRODUCTION_IMPORT_MARKER}"
-      log 'A guarded production import marker and existing database volume were found; validating and backing up the imported database before migration.'
-      compose_for "${release_dir}" "${requested_image_ref}" "${requested_sha}" up --detach --no-build db
-      wait_for_database "${release_dir}" "${requested_image_ref}" "${requested_sha}" ||
-        fail 'Imported production database did not become healthy.'
-      create_database_backup "${release_dir}" "${requested_image_ref}" "${requested_sha}"
-    else
-      fail 'No production database volume exists. Production must first be restored through the guarded import helper; an empty database will not be initialized automatically.'
-    fi
+  fail 'Production has no current immutable release. Restore the approved database and image through the recovery procedure before deploying.'
 fi
 
 log 'Validating non-root runtime access to required application files.'
@@ -524,12 +488,13 @@ log 'Applying database migrations with the published immutable image.'
 if ! compose_for "${release_dir}" "${requested_image_ref}" "${requested_sha}" run --rm --no-deps migrate; then
   fail 'Database migration failed; the application was not replaced. The database may contain partial migration changes.'
 fi
+assert_canonical_database_schema "${release_dir}" "${requested_image_ref}" "${requested_sha}"
 
 log 'Replacing the application container.'
 compose_for "${release_dir}" "${requested_image_ref}" "${requested_sha}" up --detach --no-deps --no-build app
 
 if ! wait_for_application "${release_dir}" "${requested_image_ref}" "${requested_sha}"; then
-  rollback_application "${release_dir}" "${requested_image_ref}" "${requested_sha}" "${current_release}" "${current_image_ref}" "${current_sha}"
+  stop_failed_application "${release_dir}" "${requested_image_ref}" "${requested_sha}"
 fi
 
 temporary_link="${environment_dir}/.current-${requested_sha}-$$"

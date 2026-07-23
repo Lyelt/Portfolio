@@ -155,12 +155,17 @@ age --decrypt --identity "${temporary_identity}" "${temporary_encrypted}" |
 
 restored_table_count="$(docker exec "${restore_container}" sh -ceu '
   exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="
-    SELECT count(*) FROM information_schema.tables WHERE table_schema IN ('\''public'\'', '\''legacy'\'');"
+    SELECT count(*) FROM information_schema.tables WHERE table_schema = '\''public'\'';"
+')"
+restored_legacy_schema_count="$(docker exec "${restore_container}" sh -ceu '
+  exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="
+    SELECT count(*) FROM information_schema.schemata WHERE schema_name = '\''legacy'\'';"
 ')"
 restored_migration_count="$(docker exec "${restore_container}" sh -ceu '
   exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="SELECT count(*) FROM \"schemaversions\";"
 ')"
 [[ "${restored_table_count}" =~ ^[0-9]+$ && "${restored_table_count}" -ge 20 ]] || fail 'Restored database is missing application tables.'
+[[ "${restored_legacy_schema_count}" == '0' ]] || fail 'Restored database still contains the retired legacy schema.'
 [[ "${restored_migration_count}" =~ ^[0-9]+$ && "${restored_migration_count}" -ge 1 ]] || fail 'Restored database is missing migration history.'
 
 docker rm --force "${restore_container}" >/dev/null
