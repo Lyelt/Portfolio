@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import {  Observable, ReplaySubject, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { User } from '../../auth/user';
 import { Dog, DogTime } from '../models/dog';
 
@@ -31,7 +31,7 @@ export class DogService {
 
     this.startConnection(connection);
 
-    connection.onclose((err) => {
+    connection.onclose(() => {
       if (this.connection !== connection) {
         return;
       }
@@ -49,7 +49,6 @@ export class DogService {
       if (this.connection !== connection) {
         return;
       }
-      console.log("dog toggled: " + dog);
       this.outsideDogSubject.next(dog);
     });
 
@@ -57,7 +56,6 @@ export class DogService {
       if (this.connection !== connection) {
         return;
       }
-      console.log("dog nudged: " + dog);
       this.dogNudgedSubject.next(dog);
     });
 
@@ -65,7 +63,6 @@ export class DogService {
       if (this.connection !== connection) {
         return;
       }
-      console.log("nudge acknowledged: " + dog);
       this.nudgeAcknowledgedSubject.next(dog);
     });
   }
@@ -82,7 +79,6 @@ export class DogService {
       if (this.connection !== connection) {
         return;
       }
-      console.log('SignalR Connected!');
       this.connectionSubject.next(true);
     }).catch((err) => {
       if (this.connection !== connection) {

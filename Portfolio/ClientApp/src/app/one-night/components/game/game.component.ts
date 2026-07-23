@@ -4,7 +4,6 @@ import { RoleService } from '../../services/role.service';
 import { GameAudioService } from '../../services/game-audio.service';
 import { NavigationStart, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { Voiceline } from '../../models/voiceline';
 
 @Component({
   standalone: false,
@@ -15,15 +14,10 @@ import { Voiceline } from '../../models/voiceline';
 export class GameComponent implements OnInit {
   status: string = 'stopped';
   audioStatus: string;
-  currentVoiceline: Voiceline;
-  currentRole: Role;
 
   roles: Role[] = [];
 
-  protected narrator: HTMLAudioElement;
-  protected background: HTMLAudioElement;
-
-  constructor(protected roleService: RoleService, protected audioService: GameAudioService, private router: Router) { 
+  constructor(protected roleService: RoleService, protected audioService: GameAudioService, router: Router) {
     router.events.pipe(
       filter((event): event is NavigationStart => event instanceof NavigationStart)
     ).subscribe(() => {
@@ -38,10 +32,6 @@ export class GameComponent implements OnInit {
 
     this.audioService.status().subscribe(status => {
       this.audioStatus = status;
-    });
-
-    this.audioService.voiceline().subscribe(voiceline => {
-      this.currentVoiceline = voiceline;
     });
   }
 

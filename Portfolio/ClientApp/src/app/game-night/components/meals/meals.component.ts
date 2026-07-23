@@ -7,7 +7,6 @@ import { GameNight, GameNightMeal } from '../../models/game-night';
   standalone: false,
   selector: 'app-meals',
   templateUrl: './meals.component.html',
-  styleUrls: ['./meals.component.scss']
 })
 export class MealsComponent implements OnInit {
   public meals: GameNightMeal[] = [];

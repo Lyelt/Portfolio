@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   standalone: false,
@@ -6,16 +6,11 @@ import { Component, Input, OnInit } from '@angular/core';
   templateUrl: './progress.component.html',
   styleUrls: ['./progress.component.scss']
 })
-export class ProgressComponent implements OnInit {
+export class ProgressComponent {
   @Input() percentage: number;
   @Input() complete: number;
   @Input() total: number;
   @Input() showNumbers: boolean = true;
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
 
   get normalizedPercentage(): number {
     const value = Number.isFinite(this.percentage) ? this.percentage : 0;

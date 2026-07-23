@@ -1,7 +1,6 @@
 services:
   db:
     image: postgres:17-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193
-    platform: linux/arm64
     restart: unless-stopped
     environment:
       - POSTGRES_DB
@@ -22,7 +21,6 @@ services:
 
   app:
     image: ${IMAGE_REF:?IMAGE_REF is required}
-    platform: linux/arm64
     restart: unless-stopped
     init: true
     read_only: true
@@ -53,7 +51,6 @@ services:
 
   migrate:
     image: ${IMAGE_REF:?IMAGE_REF is required}
-    platform: linux/arm64
     restart: "no"
     entrypoint:
       - dotnet

@@ -2,7 +2,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Portfolio.Data;
 using Portfolio.Models.Errors;
-using Portfolio.Models.Yugioh;
 using System.Net;
 using System.Text;
 

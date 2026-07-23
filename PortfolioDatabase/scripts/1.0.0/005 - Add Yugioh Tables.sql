@@ -12,7 +12,7 @@ CREATE TABLE "CardIds" (
     "SetCode" text NULL,
     "Quantity" int NOT NULL,
     "CardCollectionId" int NOT NULL,
-    CONSTRAINT "PK_CardIds" PRIMARY KEY ("Id", "Section"),
+    CONSTRAINT "PK_CardIds" PRIMARY KEY ("Id", "Section", "CardCollectionId"),
     CONSTRAINT "FK_CardIds_CardCollections_CardCollectionId" FOREIGN KEY ("CardCollectionId") REFERENCES "CardCollections" ("Id") ON DELETE CASCADE
 );
 

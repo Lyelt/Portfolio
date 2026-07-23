@@ -8,15 +8,11 @@ import { AuthService } from "src/app/auth/auth.service";
   standalone: false,
   selector: "app-bowling",
   templateUrl: "./bowling.component.html",
-  styleUrls: ["./bowling.component.scss"],
 })
 export class BowlingComponent implements OnInit {
   currentUserId: string;
   currentSeriesCategory: SeriesCategory;
   categoryLabels: SeriesCategory[] = BowlingUtilities.allSeriesCategories;
-
-  selectedStartTime: Date;
-  selectedEndTime: Date;
 
   view: string;
   dataFound: boolean;
@@ -52,17 +48,6 @@ export class BowlingComponent implements OnInit {
   selectUser(userId: string) {
     this.currentUserId = userId;
     this.bowlingService.setBowlerId(this.currentUserId);
-  }
-
-  showSessionDetails(dataPoint) {
-    //if (this.data && this.data.name && this.data.series) {
-        //   const date = new Date(this.data.name);
-        //   this.selectedSession = this.sessions.find(s => new Date(s.date).getTime() == this.data.name.getTime());
-        //   this.selectedSessionUser = this.data.series;
-    const user = dataPoint.series;
-    const date = dataPoint.name;//.getTime() ?
-
-
   }
 
   userCanEdit(): boolean {

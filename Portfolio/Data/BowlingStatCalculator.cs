@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Portfolio.Data
 {
@@ -87,7 +86,7 @@ namespace Portfolio.Data
         {
             var gamesBySession = _games.GroupBy(g => g.Session).Select(g => new { Session = g.Key, Games = g.ToList() });
             var bestSession = gamesBySession.MaxBy(gs => AverageOfGames(gs.Games))?.Session;
-            return bestSession != null ? 
+            return bestSession != null ?
                 new BowlingStat("Best Session Average", AverageOfGames(bestSession.Games), details: $"Session {bestSession.Id} on {bestSession.Date.ToShortDateString()}")
               : new BowlingStat("Best Session Average", 0);
         }
@@ -95,7 +94,7 @@ namespace Portfolio.Data
         {
             var gamesBySession = _games.GroupBy(g => g.Session).Select(g => new { Session = g.Key, Games = g.ToList() });
             var worstSession = gamesBySession.MinBy(gs => AverageOfGames(gs.Games))?.Session;
-            return worstSession != null ? 
+            return worstSession != null ?
                 new BowlingStat("Worst Session Average", AverageOfGames(worstSession.Games), details: $"Session {worstSession.Id} on {worstSession.Date.ToShortDateString()}")
               : new BowlingStat("Worst Session Average", 0);
         }

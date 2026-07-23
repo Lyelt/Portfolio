@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StarTime } from '../../models/star-time';
 import { SpeedrunService } from '../../services/speedrun.service';
@@ -7,7 +7,6 @@ import { SpeedrunService } from '../../services/speedrun.service';
   standalone: false,
   selector: 'app-edit-star',
   templateUrl: './edit-star.component.html',
-  styleUrls: ['./edit-star.component.scss']
 })
 export class EditStarComponent implements OnInit {
   @Input() starTime: StarTime;

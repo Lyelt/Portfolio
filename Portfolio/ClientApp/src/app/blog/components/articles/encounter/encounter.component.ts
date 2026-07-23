@@ -1,16 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   standalone: false,
   selector: 'app-encounter',
   templateUrl: './encounter.component.html',
-  styleUrls: ['./encounter.component.scss']
 })
-export class EncounterComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-}
+export class EncounterComponent {}

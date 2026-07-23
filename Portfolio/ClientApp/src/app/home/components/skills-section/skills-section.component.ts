@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   standalone: false,
@@ -6,12 +6,7 @@ import { Component, Input, OnInit } from '@angular/core';
   templateUrl: './skills-section.component.html',
   styleUrls: ['./skills-section.component.scss']
 })
-export class SkillsSectionComponent implements OnInit {
+export class SkillsSectionComponent {
   @Input() title: string;
   @Input() skills: string[];
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
 }

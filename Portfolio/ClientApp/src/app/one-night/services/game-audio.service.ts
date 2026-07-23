@@ -125,7 +125,6 @@ export class GameAudioService {
   private adjustBackgroundVolume(quieter: boolean, multiplier: number = 2) {
     if (this.background.paused) return;
 
-    console.log(`adjusting volume to be ${quieter ? "quieter" : "louder"}`);
     if (quieter) {
       this.background.volume /= multiplier;
     }

@@ -1,11 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using Portfolio.Models.Auth;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Portfolio.Models.Bowling
 {

@@ -9,7 +9,6 @@ import { Star } from "../../models/star";
   standalone: false,
   selector: "app-speedrun",
   templateUrl: "./speedrun.component.html",
-  styleUrls: ["./speedrun.component.scss"],
 })
 export class SpeedrunComponent implements OnInit {
   allCourses: Course[] = [];

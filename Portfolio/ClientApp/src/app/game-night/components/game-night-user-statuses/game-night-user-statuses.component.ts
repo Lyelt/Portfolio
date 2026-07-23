@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { GameNightService } from '../../services/game-night.service';
 import { GameNightUserStatus, UserStatus } from '../../models/game-night';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -7,7 +7,6 @@ import { AuthService } from 'src/app/auth/auth.service';
   standalone: false,
   selector: 'app-game-night-user-statuses',
   templateUrl: './game-night-user-statuses.component.html',
-  styleUrls: ['./game-night-user-statuses.component.scss']
 })
 export class GameNightUserStatusesComponent implements OnInit {
   userStatus: GameNightUserStatus;

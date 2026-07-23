@@ -9,6 +9,9 @@ CREATE TABLE "Stars" (
     "StarId" int NOT NULL,
     "Name" text NOT NULL,
     "CourseId" int NOT NULL,
+    "RtaGuideUrl" text NULL,
+    "SingleStarUrl" text NULL,
+    "DisplayOrder" int NOT NULL DEFAULT 0,
     CONSTRAINT "PK_Stars" PRIMARY KEY ("StarId"),
     CONSTRAINT "FK_Stars_Courses_CourseId" FOREIGN KEY ("CourseId") REFERENCES "Courses" ("CourseId") ON DELETE CASCADE
 );
@@ -46,15 +49,5 @@ CREATE TABLE "ArchivedStarTimes" (
 CREATE INDEX "IX_ArchivedStarTimes_StarId" ON "ArchivedStarTimes" ("StarId");
 
 CREATE INDEX "IX_ArchivedStarTimes_UserId" ON "ArchivedStarTimes" ("UserId");
-
-COMMIT;
-
-BEGIN;
-
-ALTER TABLE "Stars" ADD COLUMN "RtaGuideUrl" text NULL;
-
-ALTER TABLE "Stars" ADD COLUMN "SingleStarUrl" text NULL;
-
-ALTER TABLE "Stars" ADD COLUMN "DisplayOrder" int NOT NULL DEFAULT 0;
 
 COMMIT;

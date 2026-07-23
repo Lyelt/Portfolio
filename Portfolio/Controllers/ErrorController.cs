@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Portfolio.Models.Errors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Portfolio.Controllers
 {
@@ -30,7 +26,7 @@ namespace Portfolio.Controllers
 
             if (exception is HttpStatusException httpEx)
                 Response.StatusCode = (int)httpEx.StatusCode;
-            
+
             return new ErrorResponse(exception);
         }
     }

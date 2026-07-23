@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DateHelper } from 'src/app/shared/helpers/date-helpers';
 import { BowlingService } from '../../services/bowling.service';
 
@@ -6,7 +6,6 @@ import { BowlingService } from '../../services/bowling.service';
   standalone: false,
   selector: 'bowling-filters',
   templateUrl: './filters.component.html',
-  styleUrls: ['./filters.component.scss']
 })
 export class FiltersComponent implements OnInit {
   isOpen: boolean = true;

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, EventEmitter, Input, Output, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import { YugiohCard, YugiohUtilities, YugiohCardFilter, PropertyFilter, SearchResults } from '../../models/yugioh.model';
+import { YugiohCard, YugiohUtilities, YugiohCardFilter, SearchResults } from '../../models/yugioh.model';
 import { YugiohService } from '../../services/yugioh.service';
 import { CardCollection, Card } from '../../models/card-collections';
 
@@ -7,7 +7,6 @@ import { CardCollection, Card } from '../../models/card-collections';
   standalone: false,
     selector: 'app-card-search',
     templateUrl: './card-search.component.html',
-    styleUrls: ['./card-search.component.scss']
 })
 export class CardSearchComponent implements OnInit, AfterViewInit {
     keyword: string = "name";
@@ -40,7 +39,7 @@ export class CardSearchComponent implements OnInit, AfterViewInit {
         }
     }
 
-    onFocused(e) {
+    onFocused() {
         this.auto.close();
     }
 
@@ -58,13 +57,13 @@ export class CardSearchComponent implements OnInit, AfterViewInit {
         this.cardSearched.emit(this.currentFilter);
     }
 
-    onSearchSubmitted(e) {
+    onSearchSubmitted() {
         this.currentFilter = YugiohUtilities.getFilter(this.auto.query);
         this.searchSubmitted.emit(this.currentFilter);
         this.auto.close();
     }
 
-    onCleared(e) {
+    onCleared() {
         this.auto.close();
         this.searchCleared.emit();
     }

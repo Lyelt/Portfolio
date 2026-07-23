@@ -5,7 +5,6 @@ import { BingoService } from '../../services/bingo.service';
   standalone: false,
   selector: 'app-bingo-goal',
   templateUrl: './bingo-goal.component.html',
-  styleUrls: ['./bingo-goal.component.scss']
 })
 export class BingoGoalComponent implements OnInit {
 

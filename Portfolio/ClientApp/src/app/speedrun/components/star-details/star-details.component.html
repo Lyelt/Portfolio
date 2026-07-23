@@ -5,7 +5,6 @@
         <span class="h-11 w-11" aria-hidden="true"></span>
     </div>
     <div>
-        <!-- tab labels -->
         <nav class="-mx-4 mb-12 flex items-center justify-start gap-2 overflow-x-auto px-4 pb-2 text-sm sm:mx-0 sm:justify-center sm:px-0 md:mb-16 md:text-base" aria-label="Star detail views">
             <button type="button" class="nav-link nav-link-hover flex-none text-center" [attr.aria-pressed]="selectedTab === 'time'" [ngClass]="{'active font-bold': selectedTab === 'time'}" (click)="selectedTab = 'time'">Time Comparison</button>
             <button type="button" class="nav-link nav-link-hover flex-none text-center" [attr.aria-pressed]="selectedTab === 'edit'" [ngClass]="{'active font-bold': selectedTab === 'edit'}" (click)="selectedTab = 'edit'">Edit</button>

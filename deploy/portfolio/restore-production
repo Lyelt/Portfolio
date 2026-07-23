@@ -1,0 +1,221 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+set +x
+umask 077
+
+readonly PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+export PATH
+
+readonly INSTALLED_SCRIPT='/usr/local/sbin/restore-portfolio-production'
+readonly PRODUCTION_ENV_FILE='/srv/secrets/portfolio/prod.env'
+readonly APPROVAL_FILE='/srv/secrets/portfolio/production-recovery.env'
+readonly LOCK_FILE='/srv/apps/.deploy.lock'
+readonly CURRENT_LINK='/srv/apps/portfolio/prod/current'
+readonly CONSUMED_DIR='/srv/apps/portfolio/prod/recovery-consumed'
+readonly WORK_ROOT='/srv/backups/portfolio'
+readonly COMPOSE_PROJECT='portfolio-prod'
+readonly DATABASE_VOLUME='portfolio-prod-postgres-data'
+readonly POSTGRES_IMAGE='postgres:17-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193'
+readonly SOURCE_LABEL='com.ghobrial.portfolio.recovery.source-sha'
+readonly IMAGE_LABEL='com.ghobrial.portfolio.recovery.image-ref'
+readonly BACKUP_LABEL='com.ghobrial.portfolio.recovery.backup-sha256'
+
+temporary_work_dir=''
+temporary_archive=''
+temporary_payload_dir=''
+temporary_restore_env=''
+temporary_approval=''
+restore_container=''
+volume_created='false'
+
+log() { printf '[portfolio-restore] %s\n' "$*" >&2; }
+fail() { log "ERROR: $*"; exit 1; }
+
+cleanup() {
+  [[ -z "${restore_container}" ]] ||
+    docker rm --force "${restore_container}" >/dev/null 2>&1 || true
+  if [[ "${volume_created}" == 'true' ]]; then
+    docker volume rm "${DATABASE_VOLUME}" >/dev/null 2>&1 || true
+  fi
+  [[ -z "${temporary_approval}" ]] || rm -f -- "${temporary_approval}"
+  [[ -z "${temporary_work_dir}" ]] || {
+    [[ "${temporary_work_dir}" == "${WORK_ROOT}/.portfolio-recovery."* ]] &&
+      rm -rf -- "${temporary_work_dir}"
+  }
+}
+trap cleanup EXIT
+
+usage() {
+  printf 'Usage: %s <portfolio-production-*.backup.tar.age> <age-identity-file>\n' "$0" >&2
+  exit 64
+}
+
+assert_root_guarded_file() {
+  local file="$1" expected_metadata="$2"
+  [[ -f "${file}" && ! -L "${file}" ]] || fail "Missing guarded file: ${file}"
+  [[ "$(stat -c '%U:%G %a' -- "${file}")" == "${expected_metadata}" ]] ||
+    fail "${file} must be ${expected_metadata}."
+}
+
+assert_archive_payload() {
+  local archive="$1" destination="$2" listing
+  listing="$(tar --list --file "${archive}")"
+  [[ "${listing}" == $'database.dump\nSOURCE_SHA\nIMAGE_REF\nSHA256SUMS' ]] ||
+    fail 'The decrypted archive does not contain the exact canonical backup payload.'
+  tar --extract --file "${archive}" --directory "${destination}" \
+    --no-same-owner --no-same-permissions
+  [[ "$(find "${destination}" -mindepth 1 -maxdepth 1 -print | grep -c .)" == '4' ]] ||
+    fail 'The extracted backup payload contains unexpected entries.'
+  for entry in database.dump SOURCE_SHA IMAGE_REF SHA256SUMS; do
+    [[ -f "${destination}/${entry}" && ! -L "${destination}/${entry}" ]] ||
+      fail "The extracted backup payload has an unsafe ${entry} entry."
+  done
+  (
+    cd "${destination}"
+    sha256sum --check SHA256SUMS >/dev/null
+  ) || fail 'The authenticated backup payload checksum failed.'
+}
+
+[[ $# -eq 2 ]] || usage
+readonly supplied_backup="$1"
+readonly supplied_identity="$2"
+
+[[ "$(id -u)" == '0' ]] || fail 'Run as root.'
+[[ "$(readlink -f -- "$0")" == "${INSTALLED_SCRIPT}" ]] ||
+  fail "Run the fixed host copy at ${INSTALLED_SCRIPT}."
+[[ "$(stat -c '%U:%G %a' -- "${INSTALLED_SCRIPT}")" == 'root:root 755' ]] ||
+  fail 'The fixed restore helper must be root:root mode 0755.'
+for command in age awk basename cut date dirname docker find flock grep id mkdir mktemp mv readlink rm seq sha256sum sleep stat tar; do
+  command -v "${command}" >/dev/null 2>&1 || fail "Missing required command: ${command}"
+done
+
+[[ -f "${supplied_backup}" && ! -L "${supplied_backup}" ]] ||
+  fail 'The encrypted backup must be a regular, non-symlink file.'
+readonly backup_path="$(readlink -f -- "${supplied_backup}")"
+[[ "$(basename -- "${backup_path}")" == portfolio-production-*.backup.tar.age ]] ||
+  fail 'The encrypted backup filename is not canonical.'
+readonly checksum_path="${backup_path}.sha256"
+[[ -f "${checksum_path}" && ! -L "${checksum_path}" ]] ||
+  fail "Missing regular checksum sidecar: ${checksum_path}"
+[[ -f "${supplied_identity}" && ! -L "${supplied_identity}" ]] ||
+  fail 'The age identity must be a regular, non-symlink file.'
+readonly identity_path="$(readlink -f -- "${supplied_identity}")"
+identity_owner="$(stat -c '%U' -- "${identity_path}")"
+identity_mode="$(stat -c '%a' -- "${identity_path}")"
+identity_permissions=$((8#${identity_mode}))
+[[ "${identity_owner}" == 'root' && $((identity_permissions & 0077)) -eq 0 ]] ||
+  fail 'The age identity must be root-owned and inaccessible to group and other users.'
+unset identity_owner identity_mode identity_permissions
+
+assert_root_guarded_file "${PRODUCTION_ENV_FILE}" 'root:deploy 640'
+[[ -f "${LOCK_FILE}" && ! -L "${LOCK_FILE}" ]] || fail "Missing guarded lock: ${LOCK_FILE}"
+[[ "$(stat -c '%U:%G %a' -- "${LOCK_FILE}")" == 'deploy:deploy 640' ]] ||
+  fail "${LOCK_FILE} must be deploy:deploy with mode 0640."
+[[ -d "${WORK_ROOT}" && ! -L "${WORK_ROOT}" ]] || fail "Unsafe recovery work root: ${WORK_ROOT}"
+[[ -d "${CONSUMED_DIR}" && ! -L "${CONSUMED_DIR}" ]] ||
+  fail "Missing guarded recovery-consumption directory: ${CONSUMED_DIR}"
+[[ "$(stat -c '%U:%G %a' -- "${CONSUMED_DIR}")" == 'deploy:deploy 750' ]] ||
+  fail "${CONSUMED_DIR} must be deploy:deploy with mode 0750."
+[[ ! -e "${CURRENT_LINK}" && ! -L "${CURRENT_LINK}" ]] ||
+  fail 'A production current release already exists; this command is only for a blank recovered host.'
+[[ ! -e "${APPROVAL_FILE}" && ! -L "${APPROVAL_FILE}" ]] ||
+  fail "Remove the existing recovery approval before starting a new restore: ${APPROVAL_FILE}"
+[[ -S /var/run/docker.sock ]] || fail 'The Docker socket is unavailable.'
+mapfile -t existing_containers < <(docker ps --all --quiet \
+  --filter "label=com.docker.compose.project=${COMPOSE_PROJECT}")
+[[ "${#existing_containers[@]}" == '0' ]] ||
+  fail 'Portfolio production containers already exist; recovery requires a blank Compose project.'
+if docker volume inspect "${DATABASE_VOLUME}" >/dev/null 2>&1; then
+  fail "Refusing the existing production database volume: ${DATABASE_VOLUME}"
+fi
+
+exec 9>"${LOCK_FILE}"
+flock --timeout 900 9 || fail 'A deployment or database operation held the global lock for more than 15 minutes.'
+
+(
+  cd "$(dirname -- "${backup_path}")"
+  sha256sum --check "$(basename -- "${checksum_path}")" >/dev/null
+) || fail 'The encrypted backup checksum failed.'
+backup_sha256="$(sha256sum "${backup_path}" | awk '{ print $1 }')"
+[[ "${backup_sha256}" =~ ^[0-9a-f]{64}$ ]] || fail 'Could not calculate the encrypted backup digest.'
+consumed_marker="${CONSUMED_DIR}/${backup_sha256}"
+[[ ! -e "${consumed_marker}" && ! -L "${consumed_marker}" ]] ||
+  fail 'This production backup has already been used for recovery.'
+
+temporary_work_dir="$(mktemp --directory "${WORK_ROOT}/.portfolio-recovery.XXXXXX")"
+chmod 0700 "${temporary_work_dir}"
+temporary_archive="${temporary_work_dir}/backup.tar"
+temporary_payload_dir="${temporary_work_dir}/payload"
+temporary_restore_env="${temporary_work_dir}/postgres.env"
+mkdir -m 0700 "${temporary_payload_dir}"
+age --decrypt --identity "${identity_path}" --output "${temporary_archive}" "${backup_path}"
+assert_archive_payload "${temporary_archive}" "${temporary_payload_dir}"
+
+IFS= read -r source_sha < "${temporary_payload_dir}/SOURCE_SHA"
+IFS= read -r image_ref < "${temporary_payload_dir}/IMAGE_REF"
+[[ "$(grep -Ecx '[0-9a-f]{40}' "${temporary_payload_dir}/SOURCE_SHA")" == '1' ]] ||
+  fail 'The authenticated source marker is invalid.'
+[[ "$(grep -Ecx 'ghcr\.io/lyelt/portfolio@sha256:[0-9a-f]{64}' "${temporary_payload_dir}/IMAGE_REF")" == '1' ]] ||
+  fail 'The authenticated image marker is not an immutable Portfolio image.'
+docker run --rm --network none --interactive "${POSTGRES_IMAGE}" pg_restore --list \
+  < "${temporary_payload_dir}/database.dump" >/dev/null ||
+  fail 'The authenticated database dump is not a valid PostgreSQL custom archive.'
+
+for key in POSTGRES_DB POSTGRES_PASSWORD POSTGRES_USER; do
+  [[ "$(grep -Ec "^${key}=" "${PRODUCTION_ENV_FILE}")" == '1' ]] ||
+    fail "${PRODUCTION_ENV_FILE} must define ${key} exactly once."
+done
+grep -E '^(POSTGRES_DB|POSTGRES_PASSWORD|POSTGRES_USER)=' \
+  "${PRODUCTION_ENV_FILE}" > "${temporary_restore_env}"
+
+docker volume create \
+  --label "${SOURCE_LABEL}=${source_sha}" \
+  --label "${IMAGE_LABEL}=${image_ref}" \
+  --label "${BACKUP_LABEL}=${backup_sha256}" \
+  --name "${DATABASE_VOLUME}" >/dev/null
+volume_created='true'
+restore_container="portfolio-production-recovery-$RANDOM-$$"
+docker run --detach \
+  --name "${restore_container}" \
+  --network none \
+  --env-file "${temporary_restore_env}" \
+  --volume "${DATABASE_VOLUME}:/var/lib/postgresql/data" \
+  "${POSTGRES_IMAGE}" >/dev/null
+for _ in $(seq 1 60); do
+  docker exec "${restore_container}" sh -ceu \
+    'pg_isready --username="$POSTGRES_USER" --dbname="$POSTGRES_DB"' >/dev/null 2>&1 && break
+  sleep 2
+done
+docker exec "${restore_container}" sh -ceu \
+  'pg_isready --username="$POSTGRES_USER" --dbname="$POSTGRES_DB"' >/dev/null ||
+  fail 'The recovered database did not become ready.'
+docker exec --interactive "${restore_container}" sh -ceu \
+  'exec pg_restore --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --no-owner --no-acl --exit-on-error --single-transaction' \
+  < "${temporary_payload_dir}/database.dump"
+integrity_ok="$(docker exec "${restore_container}" sh -ceu '
+  exec psql --username="$POSTGRES_USER" --dbname="$POSTGRES_DB" --tuples-only --no-align --command="
+    SELECT to_regclass('"'"'public.schemaversions'"'"') IS NOT NULL
+      AND (SELECT count(*) FROM information_schema.tables WHERE table_schema = '"'"'public'"'"') > 0;"
+')"
+[[ "${integrity_ok}" == 't' ]] ||
+  fail 'The recovered database is missing its migration journal or public schema.'
+docker rm --force "${restore_container}" >/dev/null
+restore_container=''
+
+temporary_approval="$(mktemp "${APPROVAL_FILE}.XXXXXX")"
+printf 'SOURCE_SHA=%s\nIMAGE_REF=%s\nDATABASE_VOLUME=%s\nBACKUP_SHA256=%s\nAPPROVED_AT_EPOCH=%s\n' \
+  "${source_sha}" \
+  "${image_ref}" \
+  "${DATABASE_VOLUME}" \
+  "${backup_sha256}" \
+  "$(date -u +%s)" > "${temporary_approval}"
+chown root:deploy "${temporary_approval}"
+chmod 0640 "${temporary_approval}"
+mv -- "${temporary_approval}" "${APPROVAL_FILE}"
+temporary_approval=''
+volume_created='false'
+
+log 'The authenticated Portfolio package was restored and passed the pre-migration integrity check.'
+log "Recovery approval expires after 24 hours: ${APPROVAL_FILE}"
+printf 'SOURCE_SHA=%s\nIMAGE_REF=%s\n' "${source_sha}" "${image_ref}"

@@ -7,7 +7,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   standalone: false,
   selector: 'app-games',
   templateUrl: './games.component.html',
-  styleUrls: ['./games.component.scss']
 })
 export class GamesComponent implements OnInit {
   public games: GameNightGame[] = [];

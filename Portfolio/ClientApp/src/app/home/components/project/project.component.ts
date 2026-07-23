@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   standalone: false,
@@ -6,15 +6,10 @@ import { Component, Input, OnInit } from '@angular/core';
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.scss']
 })
-export class ProjectComponent implements OnInit {
+export class ProjectComponent {
 
   @Input() name: string;
   @Input() description: string;
   @Input() blogUrl: string;
   @Input() githubUrl: string;
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
 }

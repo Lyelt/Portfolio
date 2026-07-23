@@ -47,11 +47,6 @@
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://ghobrial.dev/tier/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
     <loc>https://ghobrial.dev/yugioh/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>

@@ -11,7 +11,7 @@
       <p class="pt-6 text-sm font-semibold tracking-wide text-indigo-400">No Collections! Add one below.</p>
     </div>
     <div *ngFor="let collection of collections" class="surface-card mb-3 flex w-full items-center gap-2 p-2">
-      <button type="button" class="min-h-11 min-w-0 flex-1 truncate rounded-xl px-3 text-left font-semibold" (click)="openCollection($event, collection)">{{collection.name}}</button>
+      <button type="button" class="min-h-11 min-w-0 flex-1 truncate rounded-xl px-3 text-left font-semibold" (click)="openCollection(collection)">{{collection.name}}</button>
       <button type="button" class="icon-button" [matMenuTriggerFor]="menu" [attr.aria-label]="'Open menu for ' + collection.name">
         <mat-icon>more_vert</mat-icon>
       </button>
@@ -20,12 +20,8 @@
         <button type="button" mat-menu-item class="menu-item" (click)="startEditing(collection)"><mat-icon>edit</mat-icon>Rename</button>
         <button type="button" mat-menu-item class="menu-item" (click)="deleteCollection(collection)"><mat-icon>clear</mat-icon>Delete</button>
       </mat-menu>
-      <mat-menu #subMenu="matMenu" style="position: absolute !important;">
-        <button type="button" *ngFor="let section of collection.sections" mat-menu-item class="menu-item" (click)="selectCollection(collection, section)">{{section}}</button>
-        <button type="button" mat-menu-item class="last-menu-item" (click)="addingSectionsTo = collection">Add Sections</button>
-      </mat-menu>
     </div>
-    <div class="w-full mt-2" *ngIf="!addingSectionsTo">
+    <div class="w-full mt-2">
       <button type="button" class="icon-button m-2 bg-pink-500 text-white hover:bg-pink-600 hover:text-white" aria-label="Add collection" (click)="addingCollection = !addingCollection" [class.hidden]="addingCollection">
         <mat-icon>add</mat-icon>
       </button>
@@ -34,14 +30,6 @@
         <input id="collection-name" class="flex-grow min-w-0 mr-3 sm:mr-6" type="text" placeholder="Enter collection name"
                [(ngModel)]="editingCollection.name" name="name" required />
         <button type="submit" class="btn btn-secondary">Save</button>
-      </form>
-    </div>
-    <div class="w-full mt-2" *ngIf="addingSectionsTo">
-      <form (submit)="addSectionToCollection()" class="flex justify-between mt-4" name="section">
-        <label for="collection-section-name" class="sr-only">Section name</label>
-        <input id="collection-section-name" class="flex-grow min-w-0 mr-3 sm:mr-6" type="text" placeholder="Enter section name"
-               [(ngModel)]="newSectionName" name="sectionName" required />
-        <button type="submit" class="btn btn-secondary">Add</button>
       </form>
     </div>
   </div>
