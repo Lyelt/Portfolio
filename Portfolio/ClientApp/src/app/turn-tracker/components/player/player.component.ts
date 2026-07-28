@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { Player } from '../../models/player'
 import { trigger, transition, style, animate } from '@angular/animations';
 
@@ -42,18 +42,12 @@ import { trigger, transition, style, animate } from '@angular/animations';
         )
     ]
 })
-export class PlayerComponent implements OnInit {
+export class PlayerComponent {
 
     @Input() player: Player;
     @Output() playerRemoved: EventEmitter<number> = new EventEmitter<number>();
     @Output() playerEndedTurn: EventEmitter<any> = new EventEmitter<any>();
     @Output() playerPreviousTurn: EventEmitter<any> = new EventEmitter<any>();
-
-    constructor() {
-    }
-
-    ngOnInit() {
-    }
 
     emitPlayerRemoved() {
         this.playerRemoved.emit(this.player.id);

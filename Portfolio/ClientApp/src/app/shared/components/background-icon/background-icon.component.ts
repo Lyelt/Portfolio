@@ -1,16 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   standalone: false,
   selector: 'app-background-icon',
   templateUrl: './background-icon.component.html',
-  styleUrls: ['./background-icon.component.scss']
 })
-export class BackgroundIconComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-}
+export class BackgroundIconComponent {}

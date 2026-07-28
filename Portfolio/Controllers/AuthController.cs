@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Portfolio.Data;
@@ -44,7 +42,7 @@ namespace Portfolio.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("Auth/Login")]
-        public IActionResult Login([FromBody]Credentials credentials)
+        public IActionResult Login([FromBody] Credentials credentials)
         {
             if (string.IsNullOrWhiteSpace(credentials?.Username) || string.IsNullOrWhiteSpace(credentials?.Password))
                 throw new BadRequestException("Username and password cannot be null or empty");
@@ -93,14 +91,6 @@ namespace Portfolio.Controllers
             throw new UnauthorizedException("Guest login is unavailable");
         }
 
-
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("Auth/Hash")]
-        public IActionResult Hash([FromBody]Credentials input)
-        {
-            return Ok(new { Hash = _hasher.HashPassword(null, input?.Password ?? "") });
-        }
 
         private static string GetTokenString(ApplicationUser user, DateTime expirationTime)
         {

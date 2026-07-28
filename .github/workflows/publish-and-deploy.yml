@@ -1,10 +1,8 @@
-name: Publish and deploy Portfolio
+name: Deploy merged revision
 
 on:
   push:
-    branches:
-      - staging
-      - master
+    branches: [master, staging]
   workflow_dispatch:
     inputs:
       dashboard_action_uuid:
@@ -14,57 +12,80 @@ on:
 
 run-name: ${{ inputs.dashboard_action_uuid && format('Deploy · dashboard {0}', inputs.dashboard_action_uuid) || format('Deploy · {0}', github.sha) }}
 
-permissions:
-  contents: read
-  packages: write
+permissions: {}
 
 concurrency:
-  group: portfolio-publish-${{ github.ref_name }}
+  group: portfolio-deploy-${{ github.ref_name }}
   cancel-in-progress: false
 
 jobs:
-  verify:
-    name: Verify source
-    if: ${{ github.ref_name == 'staging' || github.ref_name == 'master' }}
+  source:
+    name: Require a merged PR
+    if: github.ref_name == 'master' || github.ref_name == 'staging'
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 2
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-      - name: Install .NET SDK
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: '10.0.x'
-      - name: Restore
-        run: dotnet restore Portfolio.sln
-      - name: Build
-        run: dotnet build Portfolio.sln --configuration Release --no-restore
-      - name: Test
-        run: dotnet test Portfolio.sln --configuration Release --no-build
+      - name: Verify merged-PR provenance
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          matching_prs="$(
+            gh api \
+              -H 'Accept: application/vnd.github+json' \
+              "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls?per_page=100" |
+              jq \
+                --arg branch "$GITHUB_REF_NAME" \
+                --arg sha "$GITHUB_SHA" \
+                '[.[] | select(.merged_at != null and .base.ref == $branch and .merge_commit_sha == $sha)] | length'
+          )"
+          if [[ "$matching_prs" == 0 ]]; then
+            printf 'Deployment requires a merged PR targeting %s for commit %s.\n' \
+              "$GITHUB_REF_NAME" "$GITHUB_SHA" >&2
+            exit 1
+          fi
+
+  verify:
+    name: Verify merged revision
+    needs: source
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
 
   publish:
     name: Publish immutable image
-    needs: verify
-    if: ${{ github.ref_name == 'staging' || github.ref_name == 'master' }}
+    needs: [source, verify]
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    environment: ${{ github.ref_name == 'master' && 'production' || 'staging' }}
+    permissions:
+      contents: read
+      packages: write
     outputs:
-      image_ref: ${{ steps.build.outputs.image_ref }}
+      image_ref: ${{ steps.image.outputs.image_ref }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4
+
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4
+
       - name: Sign in to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and push
-        id: build-push
-        uses: docker/build-push-action@v6
+        id: build
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7
         with:
           context: .
           file: Dockerfile
@@ -78,47 +99,45 @@ jobs:
           sbom: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Set image output
-        id: build
+
+      - name: Export immutable reference
+        id: image
         env:
           IMAGE_NAME: ghcr.io/lyelt/portfolio
-          IMAGE_DIGEST: ${{ steps.build-push.outputs.digest }}
+          IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
         run: echo "image_ref=$IMAGE_NAME@$IMAGE_DIGEST" >> "$GITHUB_OUTPUT"
-      - name: Write deployment manifest
-        env:
-          IMAGE_REF: ${{ steps.build.outputs.image_ref }}
-          ENVIRONMENT: ${{ github.ref_name == 'master' && 'production' || 'staging' }}
-        run: |
-          mkdir -p deployment-request
-          jq --null-input \
-            --arg repository "$GITHUB_REPOSITORY" \
-            --arg application "portfolio" \
-            --arg branch "$GITHUB_REF_NAME" \
-            --arg environment "$ENVIRONMENT" \
-            --arg image_ref "$IMAGE_REF" \
-            --arg commit_sha "$GITHUB_SHA" \
-            --arg workflow_run_url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
-            '{schema_version: 1, repository: $repository, application: $application, branch: $branch, environment: $environment, image_ref: $image_ref, commit_sha: $commit_sha, workflow_run_url: $workflow_run_url, compose_files: ["deploy/portfolio/compose.yml"], health_paths: ["/livez", "/healthz"], database_rollback_policy: "previous-image-compatible-migrations-only"}' \
-            > deployment-request/$ENVIRONMENT.json
-      - name: Publish deployment manifest artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: deploy-${{ github.ref_name }}-${{ github.sha }}
-          path: deployment-request/*.json
-          if-no-files-found: error
-          retention-days: 30
 
   deploy-staging:
-    name: Deploy exact staging digest
+    name: Deploy staging
     needs: publish
-    if: ${{ github.ref_name == 'staging' }}
-    runs-on:
-      - self-hosted
-      - linux
-      - ARM64
-      - portfolio-deploy
+    if: github.ref_name == 'staging'
+    environment:
+      name: staging
+      url: https://staging.ghobrial.dev
+    runs-on: [self-hosted, linux, portfolio-deploy]
     timeout-minutes: 60
+    permissions:
+      contents: read
+      packages: read
     steps:
+      - name: Check out immutable release
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify installed host commands
+        run: |
+          set -Eeuo pipefail
+          if ! cmp deploy/portfolio/deploy-portfolio /usr/local/sbin/deploy-portfolio ||
+             ! cmp deploy/portfolio/backup-production /usr/local/sbin/backup-portfolio-production ||
+             ! cmp deploy/portfolio/restore-production /usr/local/sbin/restore-portfolio-production ||
+             ! cmp deploy/portfolio/schema-contract.sql /usr/local/share/portfolio/schema-contract.sql; then
+            printf 'Installed Portfolio host files are stale; rerun the reviewed ecosystem bootstrap before deployment.\n' >&2
+            exit 1
+          fi
+
       - name: Validate protected configuration
         run: /usr/local/sbin/deploy-portfolio --preflight staging
 
@@ -129,7 +148,9 @@ jobs:
           set -Eeuo pipefail
           docker_config="$(mktemp -d)"
           printf 'DOCKER_CONFIG=%s\n' "$docker_config" >> "$GITHUB_ENV"
-          printf '%s' "$GHCR_TOKEN" | DOCKER_CONFIG="$docker_config" docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          printf '%s' "$GHCR_TOKEN" |
+            DOCKER_CONFIG="$docker_config" docker login ghcr.io \
+              --username "$GITHUB_ACTOR" --password-stdin
 
       - name: Accept manifest and deploy
         env:
@@ -143,28 +164,49 @@ jobs:
             --arg branch "$GITHUB_REF_NAME" --arg environment staging \
             --arg image_ref "$IMAGE_REF" --arg commit_sha "$GITHUB_SHA" \
             --arg workflow_run_url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
-            '{schema_version: 1, repository: $repository, application: $application, branch: $branch, environment: $environment, image_ref: $image_ref, commit_sha: $commit_sha, workflow_run_url: $workflow_run_url, compose_files: ["deploy/portfolio/compose.yml"], health_paths: ["/livez", "/healthz"]}' > "$manifest"
+            --argjson workflow_run_attempt "$GITHUB_RUN_ATTEMPT" \
+            '{schema_version: 2, repository: $repository, application: $application, branch: $branch, environment: $environment, image_ref: $image_ref, commit_sha: $commit_sha, workflow_run_url: $workflow_run_url, workflow_run_attempt: $workflow_run_attempt, compose_files: ["deploy/portfolio/compose.yml"], health_paths: ["/livez", "/healthz"]}' > "$manifest"
           /usr/local/sbin/receive-deployment-manifest "$manifest"
           /usr/local/sbin/deploy-portfolio staging "$GITHUB_SHA" "$IMAGE_REF"
 
       - name: Remove registry credentials
-        if: ${{ always() }}
+        if: always()
         run: |
           if [[ -n "${DOCKER_CONFIG:-}" ]]; then
             rm -rf -- "$DOCKER_CONFIG"
           fi
 
   deploy-production:
-    name: Deploy exact production digest
+    name: Deploy production
     needs: publish
-    if: ${{ github.ref_name == 'master' && vars.PRODUCTION_DEPLOY_ENABLED == 'true' }}
-    runs-on:
-      - self-hosted
-      - linux
-      - ARM64
-      - portfolio-deploy
+    if: github.ref_name == 'master' && vars.PRODUCTION_DEPLOY_ENABLED == 'true'
+    environment:
+      name: production
+      url: https://ghobrial.dev
+    runs-on: [self-hosted, linux, portfolio-deploy]
     timeout-minutes: 60
+    permissions:
+      contents: read
+      packages: read
     steps:
+      - name: Check out immutable release
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify installed host commands
+        run: |
+          set -Eeuo pipefail
+          if ! cmp deploy/portfolio/deploy-portfolio /usr/local/sbin/deploy-portfolio ||
+             ! cmp deploy/portfolio/backup-production /usr/local/sbin/backup-portfolio-production ||
+             ! cmp deploy/portfolio/restore-production /usr/local/sbin/restore-portfolio-production ||
+             ! cmp deploy/portfolio/schema-contract.sql /usr/local/share/portfolio/schema-contract.sql; then
+            printf 'Installed Portfolio host files are stale; rerun the reviewed ecosystem bootstrap before deployment.\n' >&2
+            exit 1
+          fi
+
       - name: Validate protected configuration
         run: /usr/local/sbin/deploy-portfolio --preflight prod
 
@@ -175,7 +217,9 @@ jobs:
           set -Eeuo pipefail
           docker_config="$(mktemp -d)"
           printf 'DOCKER_CONFIG=%s\n' "$docker_config" >> "$GITHUB_ENV"
-          printf '%s' "$GHCR_TOKEN" | DOCKER_CONFIG="$docker_config" docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          printf '%s' "$GHCR_TOKEN" |
+            DOCKER_CONFIG="$docker_config" docker login ghcr.io \
+              --username "$GITHUB_ACTOR" --password-stdin
 
       - name: Accept manifest and deploy
         env:
@@ -189,12 +233,13 @@ jobs:
             --arg branch "$GITHUB_REF_NAME" --arg environment production \
             --arg image_ref "$IMAGE_REF" --arg commit_sha "$GITHUB_SHA" \
             --arg workflow_run_url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
-            '{schema_version: 1, repository: $repository, application: $application, branch: $branch, environment: $environment, image_ref: $image_ref, commit_sha: $commit_sha, workflow_run_url: $workflow_run_url, compose_files: ["deploy/portfolio/compose.yml"], health_paths: ["/livez", "/healthz"]}' > "$manifest"
+            --argjson workflow_run_attempt "$GITHUB_RUN_ATTEMPT" \
+            '{schema_version: 2, repository: $repository, application: $application, branch: $branch, environment: $environment, image_ref: $image_ref, commit_sha: $commit_sha, workflow_run_url: $workflow_run_url, workflow_run_attempt: $workflow_run_attempt, compose_files: ["deploy/portfolio/compose.yml"], health_paths: ["/livez", "/healthz"]}' > "$manifest"
           /usr/local/sbin/receive-deployment-manifest "$manifest"
           /usr/local/sbin/deploy-portfolio prod "$GITHUB_SHA" "$IMAGE_REF"
 
       - name: Remove registry credentials
-        if: ${{ always() }}
+        if: always()
         run: |
           if [[ -n "${DOCKER_CONFIG:-}" ]]; then
             rm -rf -- "$DOCKER_CONFIG"

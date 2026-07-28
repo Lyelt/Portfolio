@@ -19,7 +19,6 @@ public sealed class YugiohControllerTests
         });
         var controller = new YugiohController(
             null,
-            null,
             NullLogger<YugiohController>.Instance,
             catalog,
             null);
@@ -50,7 +49,6 @@ public sealed class YugiohControllerTests
             new YugiohCard { Id = 2, Name = "Dark Magician" }
         });
         var controller = new YugiohController(
-            null,
             null,
             NullLogger<YugiohController>.Instance,
             catalog,

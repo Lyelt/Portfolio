@@ -1,11 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Portfolio.Identity;
-using Portfolio.Models.Auth;
 using Portfolio.Models.Bowling;
 using Portfolio.Models.Errors;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;

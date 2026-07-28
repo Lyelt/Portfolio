@@ -11,9 +11,13 @@ using System;
 using Portfolio.Data;
 using Microsoft.Extensions.Hosting;
 using Portfolio.Models.Dog;
+using Portfolio.Models.Auth;
+using Portfolio.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Net;
+using System.Text.Json.Serialization;
 
 namespace Portfolio
 {
@@ -33,9 +37,15 @@ namespace Portfolio
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .ConfigureDatabase(Configuration)
-                .ConfigureLogging(Configuration)
-                .ConfigureAuthentication(Configuration)
+                .ConfigureDatabase()
+                .ConfigureAuthentication()
+                .AddIdentityCore<ApplicationUser>(options =>
+                {
+                    options.ClaimsIdentity.UserIdClaimType = IdentityHelpers.UserIdClaim;
+                })
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<PortfolioContext>()
+                .Services
                 .AddSingleton<IDogService, DogService>()
                 .AddSingleton<IGameNightChooserFactory, GameNightChooserFactory>()
                 .AddTransient<IGameNightService, GameNightService>()
@@ -72,19 +82,18 @@ namespace Portfolio
                                     .Build();
                     config.Filters.Add(new AuthorizeFilter(policy));
                 })
-                .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-                
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                });
 
-            // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            Serilog.Log.Information("Application successfully initialized.");
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             var forwardedHeaders = new ForwardedHeadersOptions
@@ -107,8 +116,7 @@ namespace Portfolio
             }
             app.UseExceptionHandler("/error");
             app.UseStaticFiles();
-            // If we don't check env.IsDevelopment(), there is a styles.js error that prevents the entire page from being rendered during development
-            if (!env.IsDevelopment()) 
+            if (!env.IsDevelopment())
                 app.UseSpaStaticFiles();
 
             app.UseAuthentication();
@@ -149,7 +157,6 @@ namespace Portfolio
 
                 if (env.IsDevelopment())
                 {
-                    //spa.UseAngularCliServer(npmScript: "start");
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });

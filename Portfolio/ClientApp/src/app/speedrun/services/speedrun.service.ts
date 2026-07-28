@@ -40,7 +40,7 @@ export class SpeedrunService {
   }
 
   deleteArchive(archive: ArchivedStarTime) {
-    return this.http.delete(`Speedrun/DeleteArchivedStarTime/${archive.id}`).subscribe(result => {
+    return this.http.delete(`Speedrun/DeleteArchivedStarTime/${archive.id}`).subscribe(() => {
       this.reload();
     });
   }
@@ -54,7 +54,7 @@ export class SpeedrunService {
   }
 
   updateStarTime(starTime: StarTime) {
-    this.http.post("Speedrun/UpdateStarTime", starTime).subscribe(result => {
+    this.http.post("Speedrun/UpdateStarTime", starTime).subscribe(() => {
       this.reload();
     });
   }

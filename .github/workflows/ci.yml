@@ -2,6 +2,7 @@ name: PR checks
 
 on:
   pull_request:
+  workflow_call:
   workflow_dispatch:
 
 permissions:
@@ -23,7 +24,7 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
         with:
-          dotnet-version: 10.0.x
+          global-json-file: global.json
 
       - name: Install Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
@@ -42,12 +43,65 @@ jobs:
           dotnet list Portfolio.sln package --vulnerable --include-transitive
           npm audit --prefix Portfolio/ClientApp --omit=dev --audit-level=high
 
-      - name: Validate deployment adapters
+      - name: Verify source formatting
+        run: dotnet format Portfolio.sln --verify-no-changes --no-restore
+
+      - name: Validate deployment hard cut and dashboard contract
         run: |
           bash -n \
             deploy/portfolio/deploy-portfolio \
             deploy/portfolio/backup-production \
-            host/install-vm-files.sh
+            deploy/portfolio/restore-production \
+            host/install-portfolio-linux-files.sh
+          bash tests/install-portfolio-linux-files-test.sh
+          grep -Fq "readonly database_volume='portfolio-staging-postgres-data'" \
+            deploy/portfolio/deploy-portfolio
+          grep -Fq "Current release is missing its immutable image marker." \
+            deploy/portfolio/deploy-portfolio
+          grep -Fq "stops the failed application" HOSTING_SETUP.md
+          grep -Fq 'DROP SCHEMA IF EXISTS legacy CASCADE;' \
+            'PortfolioDatabase/scripts/1.0.0/009 - Remove Legacy Schema.sql'
+          grep -Fq 'schema-contract.sql' deploy/portfolio/deploy-portfolio
+          grep -Fq 'schema-contract.sql' deploy/portfolio/backup-production
+          grep -Fq 'schema-contract.sql' tests/schema-migration-test.sh
+          grep -Fq "Unexpected Portfolio tables" \
+            deploy/portfolio/schema-contract.sql
+          grep -Fq "assert_canonical_database_schema" \
+            deploy/portfolio/deploy-portfolio
+          grep -Fq "database.dump SOURCE_SHA IMAGE_REF SHA256SUMS" \
+            deploy/portfolio/backup-production
+          grep -Fq "database.dump SOURCE_SHA IMAGE_REF SHA256SUMS" \
+            deploy/portfolio/restore-production
+          grep -Fq "production-recovery.env" \
+            deploy/portfolio/deploy-portfolio
+          grep -Fq 'recovery_consumed_file="${recovery_consumed_dir}/${recovery_backup_sha}"' \
+            deploy/portfolio/deploy-portfolio
+          grep -Fq 'consumed_marker="${CONSUMED_DIR}/${backup_sha256}"' \
+            deploy/portfolio/restore-production
+          grep -Fq '/srv/apps/portfolio/prod/recovery-consumed' \
+            host/install-portfolio-linux-files.sh
+          grep -Fq "/usr/local/sbin/validate-deployment-manifest" \
+            deploy/portfolio/deploy-portfolio
+          grep -Fq '"${GITHUB_RUN_ATTEMPT}"' \
+            deploy/portfolio/deploy-portfolio
+          test "$(grep -Fc 'schema_version: 2' \
+            .github/workflows/publish-and-deploy.yml)" -eq 2
+          test "$(grep -Fc -- '--argjson workflow_run_attempt "$GITHUB_RUN_ATTEMPT"' \
+            .github/workflows/publish-and-deploy.yml)" -eq 2
+          ! grep -Fq 'schema_version: 1' \
+            .github/workflows/publish-and-deploy.yml
+          grep -Fq "/usr/local/sbin/restore-portfolio-production" \
+            HOSTING_SETUP.md
+          preflight_line="$(grep -nF "Snapshotting the authenticated historical database" \
+            deploy/portfolio/deploy-portfolio | cut -d: -f1)"
+          migration_line="$(grep -nF "Applying database migrations with the published immutable image" \
+            deploy/portfolio/deploy-portfolio | cut -d: -f1)"
+          test "${preflight_line}" -lt "${migration_line}"
+          ! grep -Eq 'RETENTION_DAYS|mtime[[:space:]]+\\+' \
+            deploy/portfolio/backup-production
+          ! grep -RiqE \
+            'staging-database-volume|legacy transition|restoring application image|production-import-complete' \
+            deploy host HOSTING_SETUP.md
           jq -e '
             .schemaVersion == "hosting-dashboard.config.v1"
             and .application == "portfolio"
@@ -59,10 +113,24 @@ jobs:
           npm run build --prefix Portfolio/ClientApp -- --configuration production
           dotnet build Portfolio.sln --configuration Release --no-restore
 
+      - name: Rehearse database migration
+        run: bash tests/schema-migration-test.sh
+
       - name: Run tests
         run: |
           npm test --prefix Portfolio/ClientApp -- --watch=false
-          dotnet test Portfolio.sln --configuration Release --no-build
+          dotnet test Portfolio.sln --configuration Release --no-build \
+            --logger "trx;LogFileName=tests.trx" \
+            --results-directory artifacts/test-results
+
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: portfolio-failure-evidence
+          if-no-files-found: ignore
+          retention-days: 7
+          path: artifacts/test-results/
 
   container:
     name: Validate runtime image and Compose model

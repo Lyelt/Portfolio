@@ -23,7 +23,7 @@ export class HomeComponent {
   skills: Skill[] = [
     { title: "Programming & Back-End", skills: ["C# and the .NET ecosystem", "TPL Dataflow and concurrency", "Java", "SQL Databases", ]},
     { title: "Front-End", skills: ["HTML, CSS, Javascript, & jQuery", "Typescript / Angular", "Material, Bootstrap, & TailwindCSS"]},
-    { title: "Continuous Integration & Deployment", skills: ["Docker / dokku", "Jenkins", "Azure DevOps"]},
+    { title: "Continuous Integration & Deployment", skills: ["Docker", "GitHub Actions", "Azure DevOps"]},
   ];
 
 }

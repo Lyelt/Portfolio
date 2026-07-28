@@ -1,16 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   standalone: false,
   selector: 'blog-p',
   templateUrl: './blog-p.component.html',
-  styleUrls: ['./blog-p.component.scss']
 })
-export class BlogPComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-}
+export class BlogPComponent { }

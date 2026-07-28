@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { YugiohService } from '../../services/yugioh.service';
 import { CardCollection } from '../../models/card-collections';
 
@@ -6,27 +6,20 @@ import { CardCollection } from '../../models/card-collections';
   standalone: false,
     selector: 'app-collections',
     templateUrl: './collections.component.html',
-    styleUrls: ['./collections.component.scss']
 })
 export class CollectionsComponent implements OnInit {
 
-    @Input() userId?: string;
-    @Output() collectionOpened: EventEmitter<CardCollection> = new EventEmitter<CardCollection>();
-    @Output() collectionSelected: EventEmitter<any> = new EventEmitter<any>();
+    userId: string;
     collections: CardCollection[] = [];
     editingCollection: CardCollection;
     addingCollection: boolean = false;
 
-    addingSectionsTo: CardCollection;
-    newSectionName: string;
     loading: boolean = true;
 
     constructor(private yugiohService: YugiohService) { }
 
     ngOnInit() {
-        if (!this.userId) {
-            this.userId = localStorage.getItem('userId');
-        }
+        this.userId = localStorage.getItem('userId');
 
         this.resetSelection();
         this.refreshCollections();
@@ -37,41 +30,29 @@ export class CollectionsComponent implements OnInit {
         this.addingCollection = true;
     }
 
-    openCollection(event: any, collection: CardCollection) {
-        if (event.target.id == "menuSpan" || event.target.id == "menuIcon")
-            return;
-
+    openCollection(collection: CardCollection) {
         this.yugiohService.setCurrentCollection(collection);
     }
 
-    selectCollection(collection: CardCollection, section: string) {
-        this.collectionSelected.emit({ collection: collection, section: section });
-    }
-
     deleteCollection(collection: CardCollection) {
-        this.yugiohService.deleteCollection(collection).subscribe(data => {
+        this.yugiohService.deleteCollection(collection).subscribe(() => {
             this.resetSelection();
             this.refreshCollections();
         });
     }
 
     duplicate(collection: CardCollection) {
-        this.yugiohService.duplicate(collection).subscribe(data => {
+        this.yugiohService.duplicate(collection).subscribe(() => {
             this.refreshCollections();
         });
     }
 
     updateCollection() {
-        this.yugiohService.updateCollection(this.editingCollection).subscribe(data => {
+        this.yugiohService.updateCollection(this.editingCollection).subscribe(() => {
             this.resetSelection();
             this.refreshCollections();
             this.addingCollection = false;
         });
-    }
-
-    addSectionToCollection() {
-        this.addingSectionsTo.sections.push(this.newSectionName);
-        this.addingSectionsTo = null;
     }
 
     refreshCollections() {

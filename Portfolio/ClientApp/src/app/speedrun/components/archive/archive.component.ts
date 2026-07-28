@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { User } from 'src/app/auth/user';
-import { Course } from '../../models/course';
 import { Star } from '../../models/star';
 import { ArchivedStarTime } from '../../models/star-time';
 import { SpeedrunService } from '../../services/speedrun.service';
@@ -9,7 +8,6 @@ import { SpeedrunService } from '../../services/speedrun.service';
   standalone: false,
   selector: 'app-archive',
   templateUrl: './archive.component.html',
-  styleUrls: ['./archive.component.scss']
 })
 export class ArchiveComponent implements OnInit {
   @Input() star: Star;

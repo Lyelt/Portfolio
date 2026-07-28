@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   standalone: false,
@@ -6,7 +6,7 @@ import { Component, Input, OnInit } from '@angular/core';
   templateUrl: './dog-indicator.component.html',
   styleUrls: ['./dog-indicator.component.scss']
 })
-export class DogIndicatorComponent implements OnInit {
+export class DogIndicatorComponent {
 
   @Input() isOutside: boolean;
   @Input() dogName: string;
@@ -14,10 +14,4 @@ export class DogIndicatorComponent implements OnInit {
   @Input() bgClass: string;
   @Input() textClass: string;
   @Input() animatedBorderClass: string;
-  
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
 }

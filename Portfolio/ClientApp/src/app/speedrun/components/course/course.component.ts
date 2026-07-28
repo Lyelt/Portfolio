@@ -4,14 +4,12 @@ import { User } from 'src/app/auth/user';
 import { CompletedStars } from '../../models/completedStars';
 import { Course } from '../../models/course';
 import { Star } from '../../models/star';
-import { StarTime } from '../../models/star-time';
 import { SpeedrunService } from '../../services/speedrun.service';
 
 @Component({
   standalone: false,
   selector: 'app-course',
   templateUrl: './course.component.html',
-  styleUrls: ['./course.component.scss']
 })
 export class CourseComponent implements OnInit {
   @Input() course: Course;

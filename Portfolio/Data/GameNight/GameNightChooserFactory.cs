@@ -10,7 +10,7 @@ namespace Portfolio.Data
         private static readonly string[] DEFAULT_USER_ORDER = new string[] { "Nick", "Bash", "Ben", "Mom", "Sky" };
         private static readonly Dictionary<string, string> _userIdToNextUserId = new();
 
-        public GameNightChooserFactory(IServiceScopeFactory scopeFactory) 
+        public GameNightChooserFactory(IServiceScopeFactory scopeFactory)
         {
             using var scope = scopeFactory.CreateScope();
             using var userContext = scope.ServiceProvider.GetRequiredService<PortfolioContext>();

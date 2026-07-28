@@ -15,12 +15,10 @@ import { AuthService } from "src/app/auth/auth.service";
   standalone: false,
   selector: "app-search-results",
   templateUrl: "./search-results.component.html",
-  styleUrls: ["./search-results.component.scss"],
 })
 export class SearchResultsComponent implements OnInit, OnChanges {
   @Input() searchFilter: YugiohCardFilter;
 
-  searchParam: string;
   searchResults: SearchResults;
 
   pageNumber: number = 1;
@@ -55,7 +53,6 @@ export class SearchResultsComponent implements OnInit, OnChanges {
   }
 
   getSearchResults() {
-    this.searchParam = this.searchFilter.filters.find(f => f.name == "name").value;
     this.ygoService.getCardsWithFilter(this.searchFilter).subscribe((data) => {
       this.searchResults = data;
     });
@@ -71,10 +68,7 @@ export class SearchResultsComponent implements OnInit, OnChanges {
 
   addCardToCollection(card: YugiohCard, set: CardSet, collection: CardCollection, section: string) {
       let addedCard: Card = {id: card.id, setCode: set.set_Code, cardCollection: collection, section: section, quantity: 1};
-      this.ygoService.addCardToCollection(addedCard).subscribe(newCollection => {
-
-      });
-      console.log("added: ", card, set, collection);
+      this.ygoService.addCardToCollection(addedCard).subscribe();
   }
 
   previous() {

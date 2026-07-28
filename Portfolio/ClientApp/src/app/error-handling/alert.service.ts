@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorResponse } from './models/error-response';
 
 @Injectable({
@@ -10,8 +9,6 @@ export class AlertService {
     public alertTitle: string;
     public alertMessage: string;
     public isVisible: boolean;
-
-    constructor() { }
 
     public showError(message: string, title: string): void {
         this.alertTitle = title;

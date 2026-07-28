@@ -5,7 +5,6 @@ import { BingoService } from '../../services/bingo.service';
   standalone: false,
     selector: 'app-bingo',
     templateUrl: './bingo.component.html',
-    styleUrls: ['./bingo.component.scss']
 })
 export class BingoComponent implements OnInit {
     courses: BingoCourse[] = [];

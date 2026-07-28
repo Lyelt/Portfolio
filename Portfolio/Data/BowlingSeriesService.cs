@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Portfolio.Models.Auth;
 using Portfolio.Models.Bowling;
 

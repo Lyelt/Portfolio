@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpBackend } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { SearchResults, YugiohCard, YugiohCardFilter } from '../models/yugioh.model';
-import { User } from '../../auth/user';
 import { CardCollection, Card } from '../models/card-collections';
 
 @Injectable({
@@ -24,10 +23,6 @@ export class YugiohService {
 
     getCardsWithFilter(filter: YugiohCardFilter) {
         return this.http.post<SearchResults>('Yugioh/GetCardsWithFilter', filter);
-    }
-
-    getDuelists() {
-        return this.http.get<User[]>('Yugioh/GetUsers');
     }
 
     getCollectionsForUser(userId: string) {

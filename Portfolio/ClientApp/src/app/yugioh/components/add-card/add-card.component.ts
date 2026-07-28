@@ -6,7 +6,6 @@ import { YugiohCard, CardSet } from '../../models/yugioh.model';
   standalone: false,
     selector: 'app-add-card',
     templateUrl: './add-card.component.html',
-    styleUrls: ['./add-card.component.scss']
 })
 export class AddCardComponent implements OnInit {
     @Input() card: YugiohCard;
@@ -15,8 +14,6 @@ export class AddCardComponent implements OnInit {
     @Output() cardRemoved: EventEmitter<Card> = new EventEmitter<Card>();
 
     selectedSet: CardSet;
-
-    constructor() { }
 
     ngOnInit() {
         if (this.setCard && this.setCard.setCode) {

@@ -1,9 +1,4 @@
-﻿using Portfolio.Models.Auth;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Portfolio.Models.GameNight
 {
@@ -13,7 +8,7 @@ namespace Portfolio.Models.GameNight
         public int Id { get; set; }
 
         public string Name { get; set; }
-        
+
         public string? Image { get; set; }
 
         public int MinPlayers { get; set; }

@@ -8,8 +8,6 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ThemeToggleComponent implements OnInit {
   theme: 'light' | 'dark' = 'light';
-  constructor() { }
-
   ngOnInit(): void {
     this.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
   }

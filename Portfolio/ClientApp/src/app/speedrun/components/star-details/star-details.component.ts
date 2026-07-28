@@ -8,7 +8,6 @@ import { SpeedrunService } from '../../services/speedrun.service';
   standalone: false,
   selector: 'app-star-details',
   templateUrl: './star-details.component.html',
-  styleUrls: ['./star-details.component.scss']
 })
 export class StarDetailsComponent implements OnInit {
   @Input() star: Star;

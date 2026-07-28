@@ -55,7 +55,6 @@ export class DogComponent implements OnInit, OnDestroy {
     
     this.dogService.outsideDog().pipe(takeUntil(this.destroyed$)).subscribe(d => {
       if (this.awaitingAlert && this.outsideDog === this.otherDog && d !== this.otherDog) {
-        console.log("playing sound to indicate that " + this.otherDog + " is no longer outside");
         if (!this.allClearAudio) {
           this.allClearAudio = new Audio('../assets/audio/all-clear.wav');
           this.allClearAudio.loop = true;
@@ -77,7 +76,6 @@ export class DogComponent implements OnInit, OnDestroy {
 
     this.dogService.onNudge().pipe(takeUntil(this.destroyed$)).subscribe(nudgedDog => {
       if (this.outsideDog === this.myDog && nudgedDog === this.myDog) {
-        console.log("playing sound to indicate that " + nudgedDog + " should come inside");
         if (!this.nudgeAudio) {
           this.nudgeAudio = new Audio('../assets/audio/nudge.wav');
           this.nudgeAudio.loop = true;
@@ -90,7 +88,6 @@ export class DogComponent implements OnInit, OnDestroy {
 
     this.dogService.onNudgeAcknowledged().pipe(takeUntil(this.destroyed$)).subscribe(nudgedDog => {
       if (nudgedDog === this.otherDog) {
-        console.log(nudgedDog + " is coming inside soon");
         this.nudgeAcknowledged = true;
       }
     });

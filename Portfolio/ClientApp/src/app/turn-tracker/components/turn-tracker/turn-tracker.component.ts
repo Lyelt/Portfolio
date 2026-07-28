@@ -5,7 +5,6 @@ import { Player } from '../../models/player'
   standalone: false,
     selector: 'app-turn-tracker',
     templateUrl: './turn-tracker.component.html',
-    styleUrls: ['./turn-tracker.component.scss']
 })
 export class TurnTrackerComponent implements OnInit {
     @ViewChild('name') nameInput: ElementRef;
@@ -19,9 +18,6 @@ export class TurnTrackerComponent implements OnInit {
     started: boolean = false;
     turnsElapsed: number = 0;
     roundsElapsed: number = 0;
-
-    constructor() {
-    }
 
     ngOnInit() {
         this.loadPlayers();

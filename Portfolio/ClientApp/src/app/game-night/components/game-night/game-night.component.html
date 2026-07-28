@@ -1,7 +1,7 @@
 <div class="game-night-shell relative min-h-screen select-none">
   <header class="game-night-header fixed inset-x-0 top-0 z-999 border-b">
     <div class="page-container flex min-h-16 items-center gap-2 sm:gap-4">
-      <a class="game-night-brand icon-button sm:w-auto sm:px-3" routerLink="/gamenight/home" aria-label="Game Night home">
+      <a class="game-night-brand icon-button sm:w-auto sm:px-3" routerLink="/gamenight" aria-label="Game Night home">
         <mat-icon aria-hidden="true">celebration</mat-icon>
         <span class="hidden text-sm font-bold sm:inline">Game Night</span>
       </a>
@@ -9,7 +9,7 @@
       <nav class="flex min-w-0 flex-1 items-center justify-center gap-1" aria-label="Game Night">
         <a
           class="game-night-nav-link"
-          routerLink="/gamenight/home"
+          routerLink="/gamenight"
           [ngClass]="{'game-night-nav-link--active': isActive('home') || isActive(undefined)}"
         >Home</a>
         <a
