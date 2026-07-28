@@ -52,7 +52,8 @@ cleanup() {
 trap cleanup EXIT
 
 usage() {
-  printf 'Usage: %s <staging|prod> <40-character-commit-sha> <ghcr-image@sha256:digest>\n' "$0" >&2
+  printf 'Usage: %s --preflight <staging|prod>\n' "$0" >&2
+  printf '       %s <staging|prod> <40-character-commit-sha> <ghcr-image@sha256:digest>\n' "$0" >&2
   exit 64
 }
 
@@ -330,15 +331,27 @@ rollback_application() {
   fail 'Initial deployment failed health checks. The database volume was retained.'
 }
 
-[[ $# -eq 3 ]] || usage
-readonly requested_environment="$1"
-readonly requested_sha="$2"
-readonly requested_image_ref="$3"
+preflight_only='false'
+if [[ $# -eq 2 && "$1" == '--preflight' ]]; then
+  readonly requested_environment="$2"
+  readonly requested_sha=''
+  readonly requested_image_ref=''
+  preflight_only='true'
+elif [[ $# -eq 3 ]]; then
+  readonly requested_environment="$1"
+  readonly requested_sha="$2"
+  readonly requested_image_ref="$3"
+else
+  usage
+fi
+readonly preflight_only
 
-[[ "${requested_sha}" =~ ^[0-9a-f]{40}$ ]] ||
-  fail 'Commit SHA must be exactly 40 lowercase hexadecimal characters.'
-[[ "${requested_image_ref}" =~ ^ghcr\.io/lyelt/portfolio@sha256:[0-9a-f]{64}$ ]] ||
-  fail 'Image must be the Portfolio GHCR image with a full SHA-256 digest.'
+if [[ "${preflight_only}" != 'true' ]]; then
+  [[ "${requested_sha}" =~ ^[0-9a-f]{40}$ ]] ||
+    fail 'Commit SHA must be exactly 40 lowercase hexadecimal characters.'
+  [[ "${requested_image_ref}" =~ ^ghcr\.io/lyelt/portfolio@sha256:[0-9a-f]{64}$ ]] ||
+    fail 'Image must be the Portfolio GHCR image with a full SHA-256 digest.'
+fi
 
 case "${requested_environment}" in
   staging)
@@ -397,13 +410,18 @@ if [[ "${deployment_environment}" == 'prod' ]]; then
   assert_sentinel
 fi
 
-exec 9>"${LOCK_FILE}"
-flock --timeout 1800 9 || fail 'Another portfolio deployment held the global lock for more than 30 minutes.'
-
 if [[ "${deployment_environment}" == 'staging' ]]; then
   database_volume="$(read_staging_database_volume)"
 fi
 readonly database_volume
+
+if [[ "${preflight_only}" == 'true' ]]; then
+  log "Host preflight passed for ${deployment_environment}."
+  exit 0
+fi
+
+exec 9>"${LOCK_FILE}"
+flock --timeout 1800 9 || fail 'Another portfolio deployment held the global lock for more than 30 minutes.'
 
 available_kib="$(df --output=avail "${BASE_DIR}" | awk 'NR == 2 { print $1 }')"
 [[ "${available_kib}" =~ ^[0-9]+$ ]] || fail 'Could not determine free space for the deployment filesystem.'
@@ -458,11 +476,18 @@ resolved_sha="$(git --git-dir="${REPOSITORY_DIR}" rev-parse --verify "${requeste
   fail "Requested SHA is not the exact current head of ${expected_branch}; a newer workflow should deploy the newer head."
 
 if [[ "${current_sha}" == "${requested_sha}" ]]; then
+  [[ "${current_image_ref}" == "${requested_image_ref}" ]] ||
+    fail 'Current source marker matches, but its immutable image digest differs from the accepted request.'
   database_is_healthy "${current_release}" "${current_image_ref}" "${current_sha}" ||
     fail 'Current release marker matches, but the selected database is not healthy.'
+  compose_for "${current_release}" "${current_image_ref}" "${current_sha}" config --quiet
+  create_database_backup "${current_release}" "${current_image_ref}" "${current_sha}"
+  log "Commit ${requested_sha} is already current; recreating the application so reviewed protected configuration is reloaded."
+  compose_for "${current_release}" "${current_image_ref}" "${current_sha}" \
+    up --detach --force-recreate --no-deps --no-build app
   wait_for_application "${current_release}" "${current_image_ref}" "${current_sha}" ||
-    fail 'Current release marker matches, but the application is not healthy.'
-  log "Commit ${requested_sha} is already the current ${deployment_environment} release."
+    fail 'Same-SHA configuration reload did not return the application to a healthy state; restore the staged environment backup and rerun the workflow.'
+  log "Configuration reload is healthy for ${deployment_environment} at ${requested_sha}."
   exit 0
 fi
 
