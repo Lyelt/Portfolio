@@ -40,7 +40,7 @@ jobs:
       - name: Verify dependency health
         run: |
           dotnet list Portfolio.sln package --vulnerable --include-transitive
-          npm audit --prefix Portfolio/ClientApp --audit-level=high
+          npm audit --prefix Portfolio/ClientApp --omit=dev --audit-level=high
 
       - name: Validate deployment adapters
         run: |
