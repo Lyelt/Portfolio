@@ -6,6 +6,13 @@ on:
       - staging
       - master
   workflow_dispatch:
+    inputs:
+      dashboard_action_uuid:
+        description: Optional HostingDashboard action UUID for correlation
+        required: false
+        type: string
+
+run-name: ${{ inputs.dashboard_action_uuid && format('Deploy · dashboard {0}', inputs.dashboard_action_uuid) || format('Deploy · {0}', github.sha) }}
 
 permissions:
   contents: read
@@ -112,6 +119,9 @@ jobs:
       - portfolio-deploy
     timeout-minutes: 60
     steps:
+      - name: Validate protected configuration
+        run: /usr/local/sbin/deploy-portfolio --preflight staging
+
       - name: Authenticate immutable image pull
         env:
           GHCR_TOKEN: ${{ github.token }}
@@ -155,6 +165,9 @@ jobs:
       - portfolio-deploy
     timeout-minutes: 60
     steps:
+      - name: Validate protected configuration
+        run: /usr/local/sbin/deploy-portfolio --preflight prod
+
       - name: Authenticate immutable image pull
         env:
           GHCR_TOKEN: ${{ github.token }}
