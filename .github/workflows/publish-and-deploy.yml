@@ -4,6 +4,13 @@ on:
   push:
     branches: [master, staging]
   workflow_dispatch:
+    inputs:
+      dashboard_action_uuid:
+        description: Optional HostingDashboard action UUID for correlation
+        required: false
+        type: string
+
+run-name: ${{ inputs.dashboard_action_uuid && format('Deploy · dashboard {0}', inputs.dashboard_action_uuid) || format('Deploy · {0}', github.sha) }}
 
 permissions: {}
 
@@ -131,6 +138,9 @@ jobs:
             exit 1
           fi
 
+      - name: Validate protected configuration
+        run: /usr/local/sbin/deploy-portfolio --preflight staging
+
       - name: Authenticate immutable image pull
         env:
           GHCR_TOKEN: ${{ github.token }}
@@ -196,6 +206,9 @@ jobs:
             printf 'Installed Portfolio host files are stale; rerun the reviewed ecosystem bootstrap before deployment.\n' >&2
             exit 1
           fi
+
+      - name: Validate protected configuration
+        run: /usr/local/sbin/deploy-portfolio --preflight prod
 
       - name: Authenticate immutable image pull
         env:

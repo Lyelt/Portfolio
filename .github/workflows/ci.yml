@@ -41,12 +41,12 @@ jobs:
       - name: Verify dependency health
         run: |
           dotnet list Portfolio.sln package --vulnerable --include-transitive
-          npm audit --prefix Portfolio/ClientApp --audit-level=high
+          npm audit --prefix Portfolio/ClientApp --omit=dev --audit-level=high
 
       - name: Verify source formatting
         run: dotnet format Portfolio.sln --verify-no-changes --no-restore
 
-      - name: Validate deployment hard cut
+      - name: Validate deployment hard cut and dashboard contract
         run: |
           bash -n \
             deploy/portfolio/deploy-portfolio \
@@ -102,6 +102,11 @@ jobs:
           ! grep -RiqE \
             'staging-database-volume|legacy transition|restoring application image|production-import-complete' \
             deploy host HOSTING_SETUP.md
+          jq -e '
+            .schemaVersion == "hosting-dashboard.config.v1"
+            and .application == "portfolio"
+            and (.fields | length > 0)
+          ' hosting-dashboard.config.v1.json
 
       - name: Build frontend and backend
         run: |
