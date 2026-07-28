@@ -1,0 +1,93 @@
+{
+  "$schema": "https://dashboard.ghobrial.dev/contracts/hosting-dashboard.config.v1.schema.json",
+  "schemaVersion": "hosting-dashboard.config.v1",
+  "contractId": "portfolio.config",
+  "repository": "Lyelt/Portfolio",
+  "application": "portfolio",
+  "canonicalExamples": {
+    "staging": "deploy/secrets/portfolio-staging.env.example",
+    "production": "deploy/secrets/portfolio-prod.env.example"
+  },
+  "environments": {
+    "staging": {
+      "installedPath": "/srv/secrets/portfolio/staging.env",
+      "validatorId": "portfolio.environment.v1",
+      "activation": "configuration-reload",
+      "protectedBranch": "staging"
+    },
+    "production": {
+      "installedPath": "/srv/secrets/portfolio/prod.env",
+      "validatorId": "portfolio.environment.v1",
+      "activation": "configuration-reload",
+      "protectedBranch": "master"
+    }
+  },
+  "groups": [
+    {
+      "id": "database",
+      "label": "PostgreSQL",
+      "order": 10
+    },
+    {
+      "id": "authentication",
+      "label": "Authentication",
+      "order": 20
+    },
+    {
+      "id": "game-night",
+      "label": "Game Night bootstrap",
+      "order": 30
+    }
+  ],
+  "fields": [
+    {
+      "key": "POSTGRES_DB",
+      "classification": "identifier",
+      "group": "database",
+      "required": true
+    },
+    {
+      "key": "POSTGRES_USER",
+      "classification": "identifier",
+      "group": "database",
+      "required": true
+    },
+    {
+      "key": "POSTGRES_PASSWORD",
+      "classification": "secret",
+      "group": "database",
+      "required": true
+    },
+    {
+      "key": "CONNECTION_STRING",
+      "classification": "secret",
+      "group": "database",
+      "required": true
+    },
+    {
+      "key": "JWT_SECURITY_KEY",
+      "classification": "secret",
+      "group": "authentication",
+      "required": true
+    },
+    {
+      "key": "JWT_ISSUER",
+      "classification": "identifier",
+      "group": "authentication",
+      "required": true
+    },
+    {
+      "key": "JWT_AUDIENCE",
+      "classification": "identifier",
+      "group": "authentication",
+      "required": true
+    },
+    {
+      "key": "GAME_NIGHT_FIRST_USER_NAME",
+      "classification": "identifier",
+      "group": "game-night",
+      "required": true
+    }
+  ],
+  "coordinatedTransactions": []
+}

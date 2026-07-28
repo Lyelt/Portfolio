@@ -4,6 +4,13 @@ on:
   schedule:
     - cron: '17 08 * * *'
   workflow_dispatch:
+    inputs:
+      dashboard_action_uuid:
+        description: Optional HostingDashboard action UUID for correlation
+        required: false
+        type: string
+
+run-name: ${{ inputs.dashboard_action_uuid && format('Backup · dashboard {0}', inputs.dashboard_action_uuid) || format('Backup · {0}', github.run_id) }}
 
 permissions:
   contents: read
